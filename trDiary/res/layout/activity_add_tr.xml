@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:gravity="fill_horizontal"
+    tools:context=".AddTrActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearLayoutTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="fill_horizontal"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutEnterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayoutTop"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp"
+        android:gravity="center|center_horizontal|fill"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Введите название:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#F8F8FF"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="291dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:maxLength="30" >
+
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/linearLayoutEnterName"
+        android:layout_alignRight="@+id/linearLayoutEnterName"
+        android:layout_below="@+id/linearLayoutEnterName"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btnCreateTr"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:text="Записать"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/btnCancelTr"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:text="Отмена"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+</RelativeLayout>

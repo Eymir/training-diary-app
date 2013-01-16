@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="myApp.trainingdiary"
+    android:versionCode="5"
+    android:versionName="0.5b" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_dairy"
+        android:label="@string/app_name"
+        android:theme="@style/AppBaseTheme" >
+        <activity
+            android:name="myApp.trainingdiary.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.AddTrActivity"
+            android:label="@string/title_activity_add_tr" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.AddExerciseActivity"
+            android:label="@string/title_activity_add_exercise" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.EditExActivity"
+            android:label="@string/title_activity_edit_ex" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.CreateExActivity"
+            android:label="@string/title_activity_create_ex" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.SelectExToAddInTrActivity"
+            android:label="@string/title_activity_select_ex_to_add_in_tr" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.SetResultAct.SetPowerResultActivity"
+            android:label="@string/title_activity_set_power_result" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.SetResultAct.SetCycleResultActivity"
+            android:label="@string/title_activity_set_cycle_result" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.Test"
+            android:label="@string/title_activity_test" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.StatisticActivity"
+            android:label="@string/title_activity_statistic" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.HistoryAct.HistoryMainAcrivity"
+            android:label="@string/title_activity_history_main_acrivity" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.HistoryAct.History_detailsv2"
+            android:label="@string/title_activity_history_details" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.SuperMainActivity"
+            android:label="@string/title_activity_super_main" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.History_detailsv2"
+            android:label="@string/title_activity_history_detailsv2" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.SortExAct.SortExInTrainingDay"
+            android:label="@string/title_activity_sort_ex_in_training_day" >
+        </activity>
+        <activity
+            android:name=".SortExAct.SetSortEx"
+            android:label="@string/title_activity_set_sort_ex" >
+        </activity>
+    </application>
+
+</manifest>
