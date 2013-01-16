@@ -139,6 +139,12 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 		dbHelper = new DBHelper(this);
 		ContentValues cv = new ContentValues();
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
+	    
+		//
+		
+		//
+		
+
 	    cv.put("trainingname", trainingName);
 	    cv.put("exercise", exName);
 	    db.insert("TrainingProgTable", null, cv);
