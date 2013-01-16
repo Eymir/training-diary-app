@@ -140,13 +140,17 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 		ContentValues cv = new ContentValues();
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
+		//для нумерации упражненеий в тренировке
+	    String sqlQuery  = "select exercise from TrainingProgTable where trainingname = ?";
+	    String[] args = {trainingName};
+        Cursor cEx = db.rawQuery(sqlQuery, args);         
+        int countEX = cEx.getCount();
+        int numEx = countEX + 1;		
 		//
-		
-		//
-		
-
+        
 	    cv.put("trainingname", trainingName);
 	    cv.put("exercise", exName);
+	    cv.put("exidintr", numEx);
 	    db.insert("TrainingProgTable", null, cv);
 	    Toast.makeText(this, "Упражнение добавлено в тренировку", Toast.LENGTH_LONG).show();
 	    dbHelper.close();    		
