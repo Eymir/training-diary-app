@@ -102,11 +102,13 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 	    String sqlQuery  = "select " +
 	    						"prog.exercise as Ex, " +
 	    						"prog.trainingname as Tr, " +
+	    						"prog.exidintr as id," +
 	    						"Ex.type as type " +
 	    							"from TrainingProgTable as prog " +
 	    									"inner join ExerciseTable as Ex " +
 	    						"on prog.exercise=Ex.exercise " +
-	    						"where Tr = ?";
+	    						"where Tr = ? "+
+	    						"ORDER BY id";
 	    
 	    String[] args = {strNameTr};	    
         Cursor c = db.rawQuery(sqlQuery, args);
