@@ -2,10 +2,9 @@ package myApp.trainingdiary.SortExAct;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import myApp.trainingdiary.AddExerciseActivity;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.forBD.DBHelper;
@@ -73,19 +72,20 @@ public class SortExInTrainingDay extends Activity {
 	    SQLiteDatabase db = dbHelper.getWritableDatabase(); 
 	    
 	    String sqlQuery  = "select " +
-	    						"prog.exercise as Ex, " +
-	    						"prog.trainingname as Tr, " +
-	    						"prog.exidintr as id, " +
-	    						"Ex.type as type " +
-	    							"from TrainingProgTable as prog " +
-	    									"inner join ExerciseTable as Ex " +
-	    						"on prog.exercise=Ex.exercise " +
-	    						"where Tr = ?";
+				"prog.exercise as Ex, " +
+				"prog.trainingname as Tr, " +
+				"prog.exidintr as id," +
+				"Ex.type as type " +
+					"from TrainingProgTable as prog " +
+							"inner join ExerciseTable as Ex " +
+				"on prog.exercise=Ex.exercise " +
+				"where Tr = ? "+
+				"ORDER BY id";
 	    
 	    String[] args = {strNameTr};	    
         Cursor c = db.rawQuery(sqlQuery, args);
         int size = c.getCount();  
-        SortedMap<String, Integer> list = new TreeMap<String, Integer>();
+        LinkedHashMap<String, Integer> list = new LinkedHashMap<String, Integer>();
         
         if(size > 0)
         {                	              	

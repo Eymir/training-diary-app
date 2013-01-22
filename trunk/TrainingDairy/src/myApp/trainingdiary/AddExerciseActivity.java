@@ -2,9 +2,8 @@ package myApp.trainingdiary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,6 +39,7 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 	final String LOG_TAG = "myLogs";
 	ListView lvEx;
 	String ParsedName;
+	Button btnSortEx;
 	
 	//Манюшка - для изменения порядка упражнений
 	final int MENU_SORTING_ID = 1;
@@ -55,6 +55,8 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 		
 		btnAddEx = (Button)findViewById(R.id.btnAddEx);
 		btnAddEx.setOnClickListener(this);
+		btnSortEx = (Button)findViewById(R.id.btnSortEx); 
+		btnSortEx.setOnClickListener(this);
 		lvEx = (ListView)findViewById(R.id.lvEx);
 		getEx();
 		
@@ -112,8 +114,9 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 	    
 	    String[] args = {strNameTr};	    
         Cursor c = db.rawQuery(sqlQuery, args);
-        int size = c.getCount();       
-		SortedMap<String, String> list = new TreeMap<String, String>();
+        int size = c.getCount(); 
+        
+        HashMap<String, String> list = new LinkedHashMap <String, String>();
         
         if(size > 0)
         {                	              	
@@ -121,10 +124,11 @@ public class AddExerciseActivity extends Activity implements OnClickListener
         	{        		
 	          int nameColIndex = c.getColumnIndex("Ex");
 	          int typeIndex = c.getColumnIndex("type");
+	         
 
 	          do 
 	          { 	        	  
-	            list.put(c.getString(nameColIndex), c.getString(typeIndex));
+	            list.put(c.getString(nameColIndex), c.getString(typeIndex));	            	            
 	          } while (c.moveToNext());
 	        } 	
 	        c.close();
@@ -147,10 +151,12 @@ public class AddExerciseActivity extends Activity implements OnClickListener
         Map<String, Object> m;
               
         for (Map.Entry<String, String> entry: list.entrySet()) {
+        	
             String name= entry.getKey();
-            String type = entry.getValue();
+            String type = entry.getValue();                                           
             m = new HashMap<String, Object>();
             m.put(ATTRIBUTE_NAME_TEXT, name);
+            
             if(type.equalsIgnoreCase("1")){
             	m.put(ATTRIBUTE_NAME_IMAGE, imgPow);	
             }
@@ -161,6 +167,7 @@ public class AddExerciseActivity extends Activity implements OnClickListener
             {
             	m.put(ATTRIBUTE_NAME_IMAGE, R.drawable.ic_launcher);
             }           
+            
             data.add(m);
         }
                
@@ -184,6 +191,12 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 	        SelectEx.putExtra("trainingName", strNameTr);
 	        startActivity(SelectEx);
 	        this.finish();
+	      break;
+	    case R.id.btnSortEx:
+	        Intent intentOpenSort = new Intent(this, SortExInTrainingDay.class);
+	        intentOpenSort.putExtra("trainingName", strNameTr);
+	        startActivity(intentOpenSort);
+	        finish();
 	      break;
 	    default:
 	      break;
