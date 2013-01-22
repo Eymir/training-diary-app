@@ -34,7 +34,6 @@
         android:focusableInTouchMode="false"
         android:gravity="center"
         android:inputType="number"
-        android:text="0"
         android:textSize="40sp" />
 
     <Button
@@ -43,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/etSetSort"
-        android:text="-"
+        android:text="@string/btn_txt_minus"
         android:textSize="40sp" />
 
     <TextView
@@ -51,8 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnPlus"
-        android:layout_alignParentLeft="true"
-        android:text="TextView" />
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:id="@+id/btnPlus"
@@ -61,17 +59,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="36dp"
-        android:text="+"
+        android:text="@string/btn_txt_plus"
         android:textSize="40sp" />
 
     <Button
         android:id="@+id/btnSetSort"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="90dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/btnMinus"
         android:layout_marginTop="18dp"
-        android:text="OK"
-        android:textSize="45sp" />
+        android:text="@string/btn_txt_OK"
+        android:textSize="40sp" />
 
 </RelativeLayout>

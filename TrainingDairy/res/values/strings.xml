@@ -27,5 +27,10 @@
     <string name="BaseExPodtyag">Подтягивания</string>
     <string name="BaseExBrus">Брусья</string>
     <string name="title_activity_set_sort_ex">SetSortEx</string>
+    <string name="AddExAct_SortEx">Изменить порядок</string>
+    <string name="AddExAct_addEx">Добавить упражнение</string>
+    <string name="btn_txt_OK">OK</string>
+    <string name="btn_txt_plus">+</string>
+    <string name="btn_txt_minus">-</string>
 
 </resources>
