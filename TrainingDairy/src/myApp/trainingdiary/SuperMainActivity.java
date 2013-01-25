@@ -64,6 +64,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 	      break;
 	    case R.id.btnAddTr:
 		    Intent intentAddTr = new Intent(this, AddTrActivity.class);
+		    intentAddTr.putExtra("NewRecord", true);
 	        startActivity(intentAddTr);	
 	        
 	      break;

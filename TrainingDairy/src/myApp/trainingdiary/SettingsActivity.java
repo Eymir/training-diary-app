@@ -60,17 +60,24 @@ public class SettingsActivity extends Activity implements OnClickListener
 	    {
 	    case R.id.btnClearDBTr:
 			dbHelper = new DBHelper(this);			    
-		    SQLiteDatabase db = dbHelper.getWritableDatabase();	
-		    int clearCount = db.delete("Trainingtable", null, null);
-		    Toast.makeText(this, "Из БД удалено "+ clearCount + " записей", Toast.LENGTH_LONG).show();
+		    SQLiteDatabase dbTr = dbHelper.getWritableDatabase();	
+		    int clearCountTr = dbTr.delete("Trainingtable", null, null);
+		    Toast.makeText(this, "Из БД удалено "+ clearCountTr + " записей", Toast.LENGTH_LONG).show();
+		    dbHelper.close();
 	    	refreshTextViews();
 	      break;
 	    case R.id.btnClearDBEx:
-	    	Toast.makeText(this, "Действие пока не назначено ", Toast.LENGTH_LONG).show();
+			dbHelper = new DBHelper(this);			    
+		    SQLiteDatabase dbEx = dbHelper.getWritableDatabase();	
+		    int clearCountEx = dbEx.delete("ExerciseTable", null, null);
+		    Toast.makeText(this, "Из БД удалено "+ clearCountEx + " записей", Toast.LENGTH_LONG).show();
+		    dbHelper.close();
+	    	refreshTextViews();
 	      break;
 	    case R.id.btnEditEx:
 	        Intent intentEditEx = new Intent(this, EditExActivity.class);
 	        startActivity(intentEditEx);
+	        ///finish();
 	      break;
 	    default:
 	      break;
