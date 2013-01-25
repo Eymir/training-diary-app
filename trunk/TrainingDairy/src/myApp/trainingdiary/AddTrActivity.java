@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.database.sqlite.SQLiteDatabase;
+import myApp.trainingdiary.R;
+
 
 public class AddTrActivity extends Activity implements OnClickListener
 {
@@ -22,6 +24,8 @@ public class AddTrActivity extends Activity implements OnClickListener
 	EditText editTextName;	
 	DBHelper dbHelper;	
 	final String LOG_TAG = "myLogs";
+	boolean NewRecord;
+	String NameTr;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -34,13 +38,22 @@ public class AddTrActivity extends Activity implements OnClickListener
 		btnCreateTr = (Button)findViewById(R.id.btnCreateTr);
 		btnCreateTr.setOnClickListener(this);				
 		editTextName = (EditText)findViewById(R.id.editTextName);		
-		dbHelper = new DBHelper(this);		
+		dbHelper = new DBHelper(this);	
+		
+		//Признак новой записи или переименование текущей
+		NewRecord = getIntent().getExtras().getBoolean("NewRecord");
+		
+		//Если запись не новая то получаем имя тренировки для вывода на активити
+		if (!NewRecord) {
+			NameTr = getIntent().getExtras().getString("trName");
+			editTextName.setText(NameTr);
+		}
+		
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_add_tr, menu);
 		return true;
 	}
@@ -61,24 +74,40 @@ public class AddTrActivity extends Activity implements OnClickListener
 	        finish();
 	      break;
 	    case R.id.btnCreateTr:
+	    	
+	    	//Проверям поле ввода на пустоту
 		    if(name.length() == 0)
 		    {
 		    	 Toast.makeText(this, "Не указано название тренировки", Toast.LENGTH_LONG).show();
 		    	 return;
-		    }	    	    
-		    cv.put("name", name);
-		    long rowID = db.insert("Trainingtable", null, cv);
-		    Log.d(LOG_TAG, "row inserted, ID = " + rowID);		    
-		    Toast.makeText(this, "Новая тренировка добавлена", Toast.LENGTH_LONG).show();
-		    editTextName.setText("");
-	        Intent intentMain = new Intent(this, MainActivity.class);
-	        startActivity(intentMain);
-	        finish();
+		    }
+		    
+	    	//Пишем новую тренировку
+	    	if (NewRecord)
+	    	{	    			    		    	    
+			    cv.put("name", name);
+			    long rowID = db.insert("Trainingtable", null, cv);
+			    Log.d(LOG_TAG, "row inserted, ID = " + rowID);		    
+			    Toast.makeText(this, "Новая тренировка добавлена", Toast.LENGTH_LONG).show();
+			    //editTextName.setText("");
+			    db.close();
+		        Intent intentMain = new Intent(this, MainActivity.class);
+		        startActivity(intentMain);
+		        finish();
+	    	}
+	    	else //переименовываем имеющуюся тренировку 
+	    	{
+	    		cv.put("name", name);
+	    		db.update("Trainingtable", cv, "name = ?", new String[] {NameTr});	 
+	    		db.close();
+		        Intent intentMain = new Intent(this, MainActivity.class);
+		        startActivity(intentMain);
+		        finish();
+			}
 	      break;	   
 	    default:
 	      break;
-	    }
-		
+	    }		
 	    dbHelper.close();	    
 	}
 	

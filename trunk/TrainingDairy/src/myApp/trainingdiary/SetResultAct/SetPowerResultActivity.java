@@ -11,6 +11,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -28,6 +29,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	String strNameEx;
 	String strNameTr;
 	DBHelper dbHelper;
+	final int MENU_DEL_LAST_SET = 1;
 	
 	//forms
 	Button btnW1p, btnW2p, btnW3p, btnW1m, btnW2m, btnW3m, btnW4p, btnW4m, btnRepp, btnRepm, btnSet;
@@ -87,8 +89,8 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		getMenuInflater().inflate(R.menu.activity_set_power_result, menu);
-		return true;
+			menu.add(0, MENU_DEL_LAST_SET, 1, "Удалить последний подход");
+			return true;
 	}
 
 	@Override
@@ -204,7 +206,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	    cv.put("exercisetype", "1");
 	    db.insert("TrainingStat", null, cv);
 	    
-	    //Toast.makeText(this, "Подход записан...", Toast.LENGTH_LONG).show();
+	    //db.close();
 	    dbHelper.close();	    
 	}
 	
@@ -246,9 +248,42 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
 		super.onBackPressed();
 		this.finish();
 	}
-
+	
+    
+	@Override
+	@SuppressLint("SimpleDateFormat")
+    public boolean onOptionsItemSelected(MenuItem item) {
+    
+		switch (item.getItemId()) 
+		{
+			case MENU_DEL_LAST_SET:
+				
+				dbHelper = new DBHelper(this);    	    
+			    SQLiteDatabase db = dbHelper.getWritableDatabase();			    
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");		
+				String Date = sdf.format(Calendar.getInstance().getTime());
+				//Получаем индекс последнего подхода в тренировке
+			    String sqlQuery  = "SELECT " +
+					    		"id " +
+					    		"FROM TrainingStat " +
+					    		"WHERE trainingdate = ? AND exercise = ? " +
+					    		"ORDER BY id DESC LIMIT 1";	
+			    
+			    String[] args = {Date,strNameEx};				    			    
+		        Cursor c = db.rawQuery(sqlQuery, args);
+		        c.moveToFirst();
+		        int index = c.getColumnIndex("id");
+		        int idEx = c.getInt(index);
+		        //Удаляем подход		        
+		        db.delete("TrainingStat", "id = " + idEx, null);
+		        //обновляем таблицу подходов				
+				RefreshTvEndedRep();
+				break;
+		}
+    	return super.onOptionsItemSelected(item);
+    }
+	
 }

@@ -98,6 +98,7 @@ public class MainActivity extends Activity implements OnClickListener
 	    {
 	    case R.id.btnAddTr:
 	        Intent intentAddTr = new Intent(this, AddTrActivity.class);
+	        intentAddTr.putExtra("NewRecord", true);
 	        startActivity(intentAddTr);
 	      break;
 	    default:
@@ -216,20 +217,37 @@ public class MainActivity extends Activity implements OnClickListener
     
     private void DelDialog() {
     	
+    	//Получаем тексты из ресов
+    	String title = getResources().getString(R.string.Dialog_del_tr_title);
+    	String Msg = getResources().getString(R.string.Dialog_del_tr_msg);
+    	String btnRename = getResources().getString(R.string.Dialog_del_tr_btn_rename);
+    	String btnDel = getResources().getString(R.string.Dialog_del_tr_btn_del);  
+    	//
+    	
     	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-	      adb.setTitle("Удаление тренировки");
-	      adb.setMessage("Удалить тренировку - "+TrainingNameToDel+" ?");
-	      adb.setNegativeButton("Нет", null);      
-	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+	      adb.setTitle(title);
+	      adb.setMessage(Msg + " "+ TrainingNameToDel + " ?");     
+	      adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
             	   deleteTr();
                }
            });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(btnRename, new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
+            	   renameTr();
                }
-           });        	    
+           });          
 	    adb.create().show();
+	}
+    
+    private void renameTr() {
+
+	    Intent addtrIntent = new Intent(this, AddTrActivity.class);
+	    addtrIntent.putExtra("NewRecord", false);
+	    addtrIntent.putExtra("trName", TrainingNameToDel);
+        startActivity(addtrIntent);	
+        finish();
+
 	}
     
 	private String ParserOnItemClick(String nonParsed)

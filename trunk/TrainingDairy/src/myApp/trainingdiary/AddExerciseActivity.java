@@ -41,7 +41,7 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 	String ParsedName;
 	Button btnSortEx;
 	
-	//Манюшка - для изменения порядка упражнений
+	//Минюшка - для изменения порядка упражнений
 	final int MENU_SORTING_ID = 1;
 	
 	@Override
