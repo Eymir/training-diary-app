@@ -1,0 +1,6 @@
+#summary Разработка
+#labels Phase-Implementation
+
+= Модель данных =
+
+<img src="http://www.gliffy.com/pubdoc/4266488/L.png"/>
