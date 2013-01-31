@@ -192,14 +192,13 @@ public class EditExActivity extends Activity implements OnClickListener
     	
     	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
 	      adb.setTitle("Удаление упражнение?");
-	      adb.setMessage("Удалить упражнение - "+ParsedName+" из тренировки?");
-	      adb.setNegativeButton("Нет", null);      
-	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+	      adb.setMessage("Удалить упражнение - "+ParsedName+" из тренировки?");     
+	      adb.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
             	   deleteEx();
                }
            });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
                }
            });        	    

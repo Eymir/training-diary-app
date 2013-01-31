@@ -37,5 +37,10 @@
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
     <string name="Dialog_del_tr_btn_cancel">Отмена</string>
+    <string name="SettingsAct_CountTr">Всего тренировок в БД</string>
+    <string name="SettingsAct_CountEx">Всего упражнений в БД</string>
+    <string name="SettingsAct_CountHist">Всего записей в истории</string>
+    <string name="YES">Да</string>
+    <string name="NO">Нет</string>
 
 </resources>
