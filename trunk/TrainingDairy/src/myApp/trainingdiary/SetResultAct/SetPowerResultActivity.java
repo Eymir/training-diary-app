@@ -7,7 +7,9 @@ import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
@@ -30,6 +32,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	String strNameTr;
 	DBHelper dbHelper;
 	final int MENU_DEL_LAST_SET = 1;
+	final int MENU_SHOW_LAST_RESULT = 2;
 	
 	//forms
 	Button btnW1p, btnW2p, btnW3p, btnW1m, btnW2m, btnW3m, btnW4p, btnW4m, btnRepp, btnRepm, btnSet;
@@ -90,6 +93,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 			menu.add(0, MENU_DEL_LAST_SET, 1, "Удалить последний подход");
+			menu.add(0, MENU_SHOW_LAST_RESULT, 1, "Показать историю упражнения");
 			return true;
 	}
 
@@ -254,36 +258,60 @@ public class SetPowerResultActivity extends Activity implements OnClickListener
 	
     
 	@Override
-	@SuppressLint("SimpleDateFormat")
     public boolean onOptionsItemSelected(MenuItem item) {
     
 		switch (item.getItemId()) 
 		{
 			case MENU_DEL_LAST_SET:
+			
+			DelDialog();	
 				
-				dbHelper = new DBHelper(this);    	    
-			    SQLiteDatabase db = dbHelper.getWritableDatabase();			    
-				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");		
-				String Date = sdf.format(Calendar.getInstance().getTime());
-				//Получаем индекс последнего подхода в тренировке
-			    String sqlQuery  = "SELECT " +
-					    		"id " +
-					    		"FROM TrainingStat " +
-					    		"WHERE trainingdate = ? AND exercise = ? " +
-					    		"ORDER BY id DESC LIMIT 1";	
-			    
-			    String[] args = {Date,strNameEx};				    			    
-		        Cursor c = db.rawQuery(sqlQuery, args);
-		        c.moveToFirst();
-		        int index = c.getColumnIndex("id");
-		        int idEx = c.getInt(index);
-		        //Удаляем подход		        
-		        db.delete("TrainingStat", "id = " + idEx, null);
-		        //обновляем таблицу подходов				
-				RefreshTvEndedRep();
-				break;
+			break;
 		}
     	return super.onOptionsItemSelected(item);
     }
+	
+    private void DelDialog() {
+    	
+    	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
+	      adb.setTitle("Удаление подхода!!!");
+	      adb.setMessage("Удалить последний подход?");    
+	      adb.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int id) {
+            	   DelLastEx();
+               }
+           });
+        adb.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int id) {
+               }
+           });        	    
+	    adb.create().show();
+	}
+    
+    @SuppressLint("SimpleDateFormat")
+	private void DelLastEx() {
+    	
+		dbHelper = new DBHelper(this);    	    
+	    SQLiteDatabase db = dbHelper.getWritableDatabase();			    
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");		
+		String Date = sdf.format(Calendar.getInstance().getTime());
+		//Получаем индекс последнего подхода в тренировке
+	    String sqlQuery  = "SELECT " +
+			    		"id " +
+			    		"FROM TrainingStat " +
+			    		"WHERE trainingdate = ? AND exercise = ? " +
+			    		"ORDER BY id DESC LIMIT 1";	
+	    
+	    String[] args = {Date,strNameEx};				    			    
+        Cursor c = db.rawQuery(sqlQuery, args);
+        c.moveToFirst();
+        int index = c.getColumnIndex("id");
+        int idEx = c.getInt(index);
+        //Удаляем подход		        
+        db.delete("TrainingStat", "id = " + idEx, null);
+        //обновляем таблицу подходов				
+		RefreshTvEndedRep();
+
+	}
 	
 }

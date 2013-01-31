@@ -265,13 +265,13 @@ public class MainActivity extends Activity implements OnClickListener
 	      adb.setTitle("Список тренировок пуст");
 	      adb.setMessage("Вы ещё не создали ни одной тренировки, для того чтобы начать вести дневник создайте хотя бы одну тренировку" +
 	      		" и добавьте в неё упражнения. Вы хотите создать тренировку?");     
-	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+	      adb.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
             	   startCreateTrActivity();
             	   
                }
            });
-        adb.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
             	   startSuperMain();
                }

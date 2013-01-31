@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-//import android.util.Log;
 
 public class SuperMainActivity<T> extends Activity implements OnClickListener
 {

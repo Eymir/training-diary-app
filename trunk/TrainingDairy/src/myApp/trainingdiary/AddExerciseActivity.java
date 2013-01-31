@@ -280,14 +280,13 @@ public class AddExerciseActivity extends Activity implements OnClickListener
     	
     	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
 	      adb.setTitle("Удаление упражнения из тренировки");
-	      adb.setMessage("Удалить упражнение - "+ParsedName+" ?");
-	      adb.setNegativeButton("Нет", null);      
-	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+	      adb.setMessage("Удалить упражнение - "+ParsedName+" ?");     
+	      adb.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
             	   deleteEx();
                }
            });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
                }
            });        	    
@@ -300,13 +299,13 @@ public class AddExerciseActivity extends Activity implements OnClickListener
 	      adb.setTitle("Отсутствуют упражнения");
 	      adb.setMessage("В созданной Вами тренировке пока нет ни одного упражнения, " +
 	      		" Добавить упражнения в тренировку?");     
-	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+	      adb.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener() {
              public void onClick(DialogInterface dialog, int id) {
           	   startEditExAct();
           	   
              }
          });
-      adb.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+      adb.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener() {
              public void onClick(DialogInterface dialog, int id) {
           	   startComeBackAct();
              }

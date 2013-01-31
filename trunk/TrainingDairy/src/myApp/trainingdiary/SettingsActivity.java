@@ -3,7 +3,6 @@ package myApp.trainingdiary;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
@@ -20,29 +19,27 @@ import android.widget.Toast;
 public class SettingsActivity extends Activity implements OnClickListener
 {
 	
-	Button btnClearDBEx;
-	Button btnClearDBTr;
-	Button btnEditEx;
-	TextView textViewNumTr, tvHistoryCount;
-	TextView textViewNumEx;
+	Button btnClearDBEx, btnClearDBTr, btnClearHist;
+	TextView tvCountTr, tvCountEx, tvCountHist ;
 	DBHelper dbHelper;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);		
-		btnClearDBEx = (Button)findViewById(R.id.btnClearDBEx);
-		btnClearDBEx.setOnClickListener(this);
-		btnClearDBTr = (Button)findViewById(R.id.btnClearDBTr);
-		btnClearDBTr.setOnClickListener(this);
-		btnEditEx = (Button)findViewById(R.id.btnEditEx);
-		btnEditEx.setOnClickListener(this);
-		tvHistoryCount = (TextView)findViewById(R.id.tvHistoryCount);		
-		textViewNumTr = (TextView)findViewById(R.id.textViewNumTr);
-		textViewNumEx = (TextView)findViewById(R.id.textViewNumEx);
+		setContentView(R.layout.activity_settings);
 		
-		refreshTextViews();		
+		btnClearDBEx = (Button)findViewById(R.id.btnClearDBEx);
+		btnClearDBEx.setOnClickListener(this);				
+		btnClearDBTr = (Button)findViewById(R.id.btnClearDBTr);
+		btnClearDBTr.setOnClickListener(this);				
+		btnClearHist = (Button)findViewById(R.id.btnClearHist);
+		btnClearHist.setOnClickListener(this);			
+		tvCountTr = (TextView)findViewById(R.id.tvCountTr);
+		tvCountHist = (TextView)findViewById(R.id.tvCountHist);
+		tvCountEx = (TextView)findViewById(R.id.tvCountEx);				
+		refreshTextViews();	
+		
 	}
 
 	@Override
@@ -74,14 +71,17 @@ public class SettingsActivity extends Activity implements OnClickListener
 		    dbHelper.close();
 	    	refreshTextViews();
 	      break;
-	    case R.id.btnEditEx:
-	        Intent intentEditEx = new Intent(this, EditExActivity.class);
-	        startActivity(intentEditEx);
-	        ///finish();
+	    case R.id.btnClearHist:
+			dbHelper = new DBHelper(this);			    
+		    SQLiteDatabase dbHis = dbHelper.getWritableDatabase();	
+		    int clearCountHist = dbHis.delete("TrainingStat", null, null);
+		    Toast.makeText(this, "Из БД удалено "+ clearCountHist + " записей", Toast.LENGTH_LONG).show();
+		    dbHelper.close();
+	    	refreshTextViews();
 	      break;
 	    default:
 	      break;
-	    }	
+	    }		
 	}
 
 	protected void refreshTextViews()
@@ -89,16 +89,22 @@ public class SettingsActivity extends Activity implements OnClickListener
 		dbHelper = new DBHelper(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();		       	
         Cursor cTr = db.query("Trainingtable", null, null, null, null, null, null);
-        textViewNumTr.setText(" "+ cTr.getCount());
+        String messTr = getResources().getString(R.string.SettingsAct_CountTr);
+        messTr = messTr + " = "+ cTr.getCount(); 
+        tvCountTr.setText(messTr);
         cTr.close();
-        
+              
         Cursor cEx = db.query("ExerciseTable", null, null, null, null, null, null);
-        textViewNumEx.setText(" "+ cEx.getCount());                 
+        String messEx = getResources().getString(R.string.SettingsAct_CountEx);
+        messEx = messEx + " = "+ cEx.getCount(); 
+        tvCountEx.setText(messEx);                
         cEx.close();
-        
+                
         Cursor cHistory = db.query("TrainingStat", null, null, null, null, null, null);
-        tvHistoryCount.setText(" "+ cHistory.getCount());
-        
+        String messHist = getResources().getString(R.string.SettingsAct_CountHist);
+        messHist = messHist + " = "+ cHistory.getCount(); 
+        tvCountHist.setText(messHist);   
+                
         dbHelper.close();	
 	}
 	
