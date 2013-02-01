@@ -25,4 +25,16 @@
         android:textColor="#F8F8FF"
         android:textSize="30sp" />
 
+    <ImageView
+        android:id="@id/drag_handler"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="4px"
+        android:layout_marginRight="10px"
+        android:layout_marginTop="4px"
+        android:layout_weight="0.69"
+        android:scaleType="fitCenter"
+        android:src="@drawable/drag" >
+    </ImageView>
+
 </LinearLayout>
