@@ -12,31 +12,33 @@
         android:orientation="vertical"
         android:paddingTop="3dp" >
 
-        <LinearLayout
+        <com.mobeta.android.dslv.DragSortListView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:dslv="http://schemas.android.com/apk/res/myApp.trainingdiary"
+            android:id="@id/lvEx"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/btnAddEx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/AddExAct_addEx"
-                android:textSize="13sp" />
-
-            <Button
-                android:id="@+id/btnSortEx"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/AddExAct_SortEx"
-                android:textSize="13sp" />
-
-        </LinearLayout>
-
+            android:layout_margin="10dp"
+            android:dividerHeight="5dp"
+            android:paddingBottom="0dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="0dp"
+            dslv:collapsed_height="2dp"
+            dslv:drag_enabled="true"
+            dslv:drag_handle_id="@id/drag_handler"
+            dslv:drag_scroll_start="0.33"
+            dslv:drag_start_mode="onDown"
+            dslv:float_alpha="0.6"
+            dslv:max_drag_scroll_speed="0.5"
+            dslv:remove_enabled="true"
+            dslv:remove_mode="flingLeft"
+            dslv:slide_shuffle_speed="0.3"
+            dslv:sort_enabled="true"
+            dslv:track_drag_sort="false"
+            dslv:use_default_controller="true" />
     </LinearLayout>
 
+    <!--
     <ListView
         android:id="@+id/lvEx"
         android:layout_width="match_parent"
@@ -44,7 +46,6 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/linearLayout1"
         android:background="@drawable/background" >
-
-    </ListView>
+    </ListView>    -->
 
 </RelativeLayout>
