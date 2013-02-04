@@ -6,9 +6,8 @@
     tools:context=".SetPowerResultActivity" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical" >
 
         <TextView
@@ -20,252 +19,73 @@
             android:textColor="#F8F8FF"
             android:textSize="15sp" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout1"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/textView1"
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tableLayout1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Вес:"
-            android:textColor="#F8F8FF"
-            android:textSize="15sp" />
+            android:layout_height="wrap_content" >
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout2"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:orientation="horizontal" >
-
-            <LinearLayout
+            <TableRow
+                android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:padding="5dip" >
 
-                <Button
-                    android:id="@+id/btnW1p"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:text="+"
-                    android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dip"
+                    android:text="Вес:"
+                    android:textColor="#F8F8FF"
+                    android:textSize="15sp" />
 
-                <EditText
-                    android:id="@+id/editTextW1"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:textSize="20sp" >
+                <TextView
+                    android:id="@+id/tv1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Повторения:"
+                    android:textColor="#F8F8FF"
+                    android:textSize="15sp" />
+            </TableRow>
 
-                    <requestFocus />
-                </EditText>
-
-                <Button
-                    android:id="@+id/btnW1m"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:text="-"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
+            <TableRow
+                android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
-
-                <Button
-                    android:id="@+id/btnW2p"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:text="+"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/editTextW2"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:textSize="20sp" />
-
-                <Button
-                    android:id="@+id/btnW2m"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:text="-"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical" >
-
-                <Button
-                    android:id="@+id/btnW3p"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:text="+"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/editTextW3"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:textSize="20sp" />
-
-                <Button
-                    android:id="@+id/btnW3m"
-                    android:layout_width="80dp"
-                    android:layout_height="45dp"
-                    android:text="-"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical" >
-
-                <Button
-                    android:id="@+id/btnW4p"
-                    android:layout_width="65dp"
-                    android:layout_height="45dp"
-                    android:text="+"
-                    android:textSize="20sp" />
+                android:padding="10dip" >
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="5dip"
+                    android:orientation="horizontal" >
 
-                    <TextView
-                        android:id="@+id/textView2"
+                    <kankan.wheel.widget.WheelView
+                        android:id="@+id/big_num_wheel"
+                        android:layout_width="140dp"
+                        android:layout_height="match_parent" />
+
+                    <kankan.wheel.widget.WheelView
+                        android:id="@+id/small_num_wheel"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="."
-                        android:textColor="#F8F8FF"
-                        android:textSize="25sp" />
-
-                    <EditText
-                        android:id="@+id/editTextW4"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:inputType="number"
-
-                        android:textSize="20sp" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnW4m"
-                    android:layout_width="65dp"
-                    android:layout_height="45dp"
-                    android:text="-"
-                    android:textSize="20sp" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout4" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/btnRepp"
-                android:layout_width="118dp"
-                android:layout_height="45dp"
-                android:text="+"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/editTextRep"
-                android:layout_width="118dp"
-                android:layout_height="40dp"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:gravity="center"
-                android:textSize="20sp" />
-
-            <Button
-                android:id="@+id/btnRepm"
-                android:layout_width="118dp"
-                android:layout_height="45dp"
-                android:text="-"
-                android:textSize="20sp" />
-
-        </LinearLayout>
+                <kankan.wheel.widget.WheelView
+                    android:id="@+id/repeat_wheel"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent" />
+            </TableRow>
+        </TableLayout>
 
         <Button
             android:id="@+id/btnSet"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Записать"
             android:textSize="25sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout3"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/tv1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Повторения:"
-            android:textColor="#F8F8FF"
-            android:textSize="15sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/ll"
-        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/tvEndedRep"
@@ -274,7 +94,6 @@
             android:textColor="#F8F8FF"
             android:textSize="12sp"
             android:textStyle="bold" />
-
     </LinearLayout>
 
 </RelativeLayout>
