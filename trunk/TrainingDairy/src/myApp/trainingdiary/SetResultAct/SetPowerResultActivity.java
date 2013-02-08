@@ -7,6 +7,7 @@ import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import myApp.trainingdiary.R;
+import myApp.trainingdiary.HistoryAct.History_detailsv2;
 import myApp.trainingdiary.forBD.DBHelper;
 import myApp.trainingdiary.wheel.NumericRightOrderWheelAdapter;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
@@ -73,6 +75,10 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		bigNumWheel = (WheelView) findViewById(R.id.big_num_wheel);
 		bigNumWheel.setViewAdapter(bigNumWheelAdapter);
 		bigNumWheel.setCyclic(true);
+		//Выставим на ноль, а то нифига не удобно
+		bigNumWheel.setCurrentItem(500);
+
+	
 
 		smallNumWheel = (WheelView) findViewById(R.id.small_num_wheel);
 		smallNumWheel.setViewAdapter(smallNumWheelAdapter);
@@ -80,7 +86,9 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		repeatWheel = (WheelView) findViewById(R.id.repeat_wheel);
 		repeatWheel.setViewAdapter(repeatWheelAdapter);
 		repeatWheel.setCyclic(true);
-
+		//Выставим на ноль, а то нифига не удобно
+		repeatWheel.setCurrentItem(99);
+		
 		btnSet = (Button) findViewById(R.id.btnSet);
 		btnSet.setOnClickListener(this);
 
@@ -210,9 +218,10 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 
 		switch (item.getItemId()) {
 		case MENU_DEL_LAST_SET:
-
 			DelDialog();
-
+			break;
+		case MENU_SHOW_LAST_RESULT:
+			showlastEx();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -259,6 +268,15 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		// обновляем таблицу подходов
 		RefreshTvEndedRep();
 
+	}
+	
+	private void showlastEx() {
+
+		Intent History_detailsv2 = new Intent(this, History_detailsv2.class);
+		History_detailsv2.putExtra("AllEx", false);
+		History_detailsv2.putExtra("nameEx", strNameEx);
+		startActivity(History_detailsv2);
+		
 	}
 
 }

@@ -123,7 +123,8 @@ public class HistoryMainAcrivity extends Activity
 	private void openHistoryDetails(String DateTraining)
 	{
 	    Intent intentOpenHistoryDetails = new Intent(this, History_detailsv2.class);
-	    intentOpenHistoryDetails.putExtra("strDateTr", DateTraining);
+	    intentOpenHistoryDetails.putExtra("AllEx", true);
+	    intentOpenHistoryDetails.putExtra("strDateTr", DateTraining);	    
         startActivity(intentOpenHistoryDetails);	
 	}
 	
