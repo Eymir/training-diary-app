@@ -283,6 +283,7 @@ public class MainActivity extends Activity implements OnClickListener
 	private void startCreateTrActivity() {
 		
    	    Intent intentOpenAddEx = new Intent(this, AddTrActivity.class);
+   	    intentOpenAddEx.putExtra("NewRecord", true);
         startActivity(intentOpenAddEx);	
         finish();
 	}

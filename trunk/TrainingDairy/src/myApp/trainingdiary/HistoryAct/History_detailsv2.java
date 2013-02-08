@@ -92,7 +92,7 @@ public class History_detailsv2 extends Activity {
 				row0.setLayoutParams(lprow0);
 				
 				TextView textName = new TextView(this);
-				textName.setText(Exercise);
+				textName.setText(Exercise + " " + TrDate);
 				textName.setTextSize(30);
 				textName.setTextColor(Color.WHITE);
 				LayoutParams lp1 = new LayoutParams(LayoutParams.MATCH_PARENT,
