@@ -21,14 +21,26 @@ public class History_detailsv2 extends Activity {
     int counter = 0;
     DBHelper dbHelper;
     String strDateTr;
+    String nameEx;
     final String LOG_TAG = "myLogs";
+    boolean AllEx;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_history_detailsv2);
-		strDateTr = getIntent().getExtras().getString("strDateTr");
-		getHistory();
+		setContentView(R.layout.activity_history_detailsv2);		
+		AllEx = getIntent().getExtras().getBoolean("AllEx");
+		
+		if(AllEx)
+		{
+			strDateTr = getIntent().getExtras().getString("strDateTr");
+		}
+		else
+		{
+			nameEx = getIntent().getExtras().getString("nameEx");
+		}
+		
+		getHistory();		
 	}
 
 	@Override
@@ -43,19 +55,35 @@ public class History_detailsv2 extends Activity {
 		TableLayout table = (TableLayout) findViewById(R.id.tableLay1);
 		
 		dbHelper = new DBHelper(this); 
-	    SQLiteDatabase db = dbHelper.getWritableDatabase();	    									   
-	    String sqlQuery  = "select exercise from TrainingStat where trainingdate = ? group by exercise";
-	    String[] args = {strDateTr};
+	    SQLiteDatabase db = dbHelper.getWritableDatabase();
+	    String sqlQuery;
+	    String param = "";
+	    	    
+	    if(AllEx)
+	    {
+	    	sqlQuery  = "select exercise, trainingdate  from TrainingStat where trainingdate = ? group by exercise";
+	    	param = strDateTr;
+	    }
+	    else
+	    {
+		    sqlQuery  = "select exercise, trainingdate from TrainingStat where exercise = ? group by exercise";
+		    param = nameEx;	
+	    }
+	    
+	    String[] args = {param};
+	    	    
         Cursor cEx = db.rawQuery(sqlQuery, args);             
         String result = "";
         
         if(cEx.moveToFirst())
         {     
         	int exNameIndex = cEx.getColumnIndex("exercise");
+        	int exTrDateIndex = cEx.getColumnIndex("trainingdate");
         	
 	        do
 	        {		        
 		        String Exercise = cEx.getString(exNameIndex);
+		        String TrDate = cEx.getString(exTrDateIndex);
 		        
 		        //Вывод названия упражнения
 				TableRow row0 = new TableRow(this);
@@ -84,7 +112,7 @@ public class History_detailsv2 extends Activity {
 		        
 		        
 			    String sqlQuery2  = "select power, count from TrainingStat where trainingdate = ? and exercise = ?";
-			    String[] args2 = {strDateTr,Exercise};				 
+			    String[] args2 = {TrDate,Exercise};				 
 		        Cursor cExHis = db.rawQuery(sqlQuery2, args2);
 		        
 		        	if(cExHis.moveToFirst())
@@ -104,13 +132,10 @@ public class History_detailsv2 extends Activity {
 		        			countRep++;	
 		        			result = countRep +".  "+ pow+"x"+cou;	
 		        			fullmass = pow * cou;
-		        			//Log.d(LOG_TAG, "---"+ fullmass + "---");
 		        			if(pow > maxPow) maxPow = pow;
 		        			if(fullmass > maxInt)
 		        				{
 		        					maxInt = fullmass;
-		        					//maxIntRes = pow+"x"+cou;
-		        					//Log.d(LOG_TAG, "----maxIntRes-----"+ maxIntRes + "---");
 		        				}
 		        			
 		        			//Вывод Результата подхода
@@ -156,26 +181,7 @@ public class History_detailsv2 extends Activity {
 						row2.addView(textMax);
 						table.addView(row2, new TableLayout.LayoutParams(
 								LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-						
-		        		//Выыод максимальной интенсивности
-//						TableRow row3 = new TableRow(this);
-//						LayoutParams lprow3 = new LayoutParams(LayoutParams.MATCH_PARENT,
-//								LayoutParams.MATCH_PARENT);
-//						row3.setLayoutParams(lprow3);
-//						
-//						TextView textInt = new TextView(this);
-//						textInt.setText("Макс. интенсивность = " + maxIntRes);
-//						//Log.d(LOG_TAG, "----setText-----"+ maxIntRes + "---");
-//						textInt.setTextSize(15);
-//						textInt.setTextColor(Color.RED);
-//						LayoutParams lp3 = new LayoutParams(LayoutParams.MATCH_PARENT,
-//								LayoutParams.MATCH_PARENT);
-//						textInt.setLayoutParams(lp3);
-//						
-//						row3.addView(textInt);
-//						table.addView(row3, new TableLayout.LayoutParams(
-//								LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-		        				        		
+								        				        		
 		        		//Выыод разделителя упражнений
 		        		View vv = new View(this);
 		        		vv.setBackgroundColor(Color.BLACK);
@@ -191,6 +197,5 @@ public class History_detailsv2 extends Activity {
         cEx.close();
         dbHelper.close();
 	}
-
 
 }
