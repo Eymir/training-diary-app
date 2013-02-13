@@ -55,7 +55,7 @@ public class MainActivity extends Activity implements OnClickListener
 		lvTrainings = (ListView)findViewById(R.id.lvTrainings);	
 		registerForContextMenu(lvTrainings);				
 		GetTrainings();
-				
+						
 		lvTrainings.setOnItemClickListener(new AdapterView.OnItemClickListener() 
 		{	
 			@Override

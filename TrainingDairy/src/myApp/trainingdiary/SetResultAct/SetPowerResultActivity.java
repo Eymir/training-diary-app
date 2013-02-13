@@ -2,7 +2,8 @@ package myApp.trainingdiary.SetResultAct;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
+import java.util.Currency;
+import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
@@ -10,6 +11,9 @@ import myApp.trainingdiary.R;
 import myApp.trainingdiary.HistoryAct.History_detailsv2;
 import myApp.trainingdiary.forBD.DBHelper;
 import myApp.trainingdiary.wheel.NumericRightOrderWheelAdapter;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,9 +46,10 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 	final int MENU_SHOW_LAST_RESULT = 2;
 
 	// forms
-	Button btnW1p, btnW2p, btnW3p, btnW1m, btnW2m, btnW3m, btnW4p, btnW4m,
-			btnRepp, btnRepm, btnSet;
-	EditText editTextW1, editTextW2, editTextW3, editTextW4, editTextRep;
+	Button btnSet;
+	//btnW1p, btnW2p, btnW3p, btnW1m, btnW2m, btnW3m, btnW4p, btnW4m,
+	//		btnRepp, btnRepm, 
+	//EditText editTextW1, editTextW2, editTextW3, editTextW4, editTextRep;
 	//
 	private WheelView bigNumWheel;
 	private WheelView smallNumWheel;
@@ -52,6 +58,12 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 	private ArrayWheelAdapter<String> smallNumWheelAdapter;
 	private NumericRightOrderWheelAdapter repeatWheelAdapter;
 	private NumericRightOrderWheelAdapter bigNumWheelAdapter;
+	
+	//Для проигрывания звуков....
+    private SoundPool soundPool;
+    private int soundClick;
+    boolean Soundloaded = false;
+    //
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +75,6 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		strNameEx = getIntent().getExtras().getString("nameEx");
 		strNameTr = getIntent().getExtras().getString("nameTr");
 		tvnameEx.setText(strNameEx);
-		//
 
 		smallNumWheelAdapter = new ArrayWheelAdapter<String>(this,
 				new String[] { "0", "5" });
@@ -75,9 +86,15 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		bigNumWheel = (WheelView) findViewById(R.id.big_num_wheel);
 		bigNumWheel.setViewAdapter(bigNumWheelAdapter);
 		bigNumWheel.setCyclic(true);
+<<<<<<< .mine
+		//Выставим на ноль, а то нифига не удобно
+		bigNumWheel.setCurrentItem(500);
+		
+=======
 		//Выставим на ноль, а то нифига не удобно
 		bigNumWheel.setCurrentItem(500);
 
+>>>>>>> .r18
 	
 
 		smallNumWheel = (WheelView) findViewById(R.id.small_num_wheel);
@@ -86,15 +103,60 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		repeatWheel = (WheelView) findViewById(R.id.repeat_wheel);
 		repeatWheel.setViewAdapter(repeatWheelAdapter);
 		repeatWheel.setCyclic(true);
+<<<<<<< .mine
+		//Выставим на ноль, а то нифига не удобно
+		repeatWheel.setCurrentItem(99);
+				
+		//Делаем счелчки при прокрутке барабан-----------------------------		
+		//Привязываем кнопку громкости к приложению
+		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);		
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);      
+        soundClick= soundPool.load(this, R.raw.click3, 1);
+		
+		bigNumWheel.addChangingListener(new OnWheelChangedListener() {
+			public void onChanged(WheelView wheel, int oldValue, int newValue) {
+				playClick();
+			}
+		});
+		
+		smallNumWheel.addChangingListener(new OnWheelChangedListener() {
+			public void onChanged(WheelView wheel, int oldValue, int newValue) {				
+				playClick();
+			}
+		});
+		
+		repeatWheel.addChangingListener(new OnWheelChangedListener() {
+			public void onChanged(WheelView wheel, int oldValue, int newValue) {
+				playClick();
+			}
+		});
+		//-------------------------------------------------------------------
+		
+=======
 		//Выставим на ноль, а то нифига не удобно
 		repeatWheel.setCurrentItem(99);
 		
+>>>>>>> .r18
 		btnSet = (Button) findViewById(R.id.btnSet);
 		btnSet.setOnClickListener(this);
 
 		RefreshTvEndedRep();
 	}
+	
+	private void playClick() {
+		
+        //Получаем настройки громкости
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        float actualVolume = (float) audioManager
+                .getStreamVolume(AudioManager.STREAM_MUSIC);
+        float maxVolume = (float) audioManager
+                .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = actualVolume / maxVolume;
 
+		soundPool.play(soundClick, volume, volume, 1, 0, 1f);
+
+	}
+		
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_DEL_LAST_SET, 1, "Удалить последний подход");
