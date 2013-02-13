@@ -86,15 +86,15 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		bigNumWheel = (WheelView) findViewById(R.id.big_num_wheel);
 		bigNumWheel.setViewAdapter(bigNumWheelAdapter);
 		bigNumWheel.setCyclic(true);
-<<<<<<< .mine
+
 		//Выставим на ноль, а то нифига не удобно
 		bigNumWheel.setCurrentItem(500);
 		
-=======
+
 		//Выставим на ноль, а то нифига не удобно
 		bigNumWheel.setCurrentItem(500);
 
->>>>>>> .r18
+
 	
 
 		smallNumWheel = (WheelView) findViewById(R.id.small_num_wheel);
@@ -103,7 +103,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		repeatWheel = (WheelView) findViewById(R.id.repeat_wheel);
 		repeatWheel.setViewAdapter(repeatWheelAdapter);
 		repeatWheel.setCyclic(true);
-<<<<<<< .mine
+
 		//Выставим на ноль, а то нифига не удобно
 		repeatWheel.setCurrentItem(99);
 				
@@ -132,11 +132,11 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		});
 		//-------------------------------------------------------------------
 		
-=======
+
 		//Выставим на ноль, а то нифига не удобно
 		repeatWheel.setCurrentItem(99);
 		
->>>>>>> .r18
+
 		btnSet = (Button) findViewById(R.id.btnSet);
 		btnSet.setOnClickListener(this);
 
