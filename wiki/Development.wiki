@@ -26,3 +26,14 @@ TrainingStat (История выполнения упражнений):
 	* exercisetype - Тип упражнения
         * power - Вес или расстояние (кг, м)
         * count - Количество повторений или время (разы, секунды)
+
+<img src="http://www.gliffy.com/pubdoc/4349858/L.png"/>
+
+Mesure (Список упражнений и их тип):
+	*  max - максимальное значение
+	*  precision - точность (если 0,5 значит шаг после запятой будет 0,5).
+Желательно поменять названия:
+exidintr -> position
+exercise -> name
+Типы:
+trainingDate\trainingDay:text -> traningDate:datetime
