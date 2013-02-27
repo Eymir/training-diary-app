@@ -33,7 +33,7 @@ Mesure (Список упражнений и их тип):
 	*  max - максимальное значение
 	*  precision - точность (если 0,5 значит шаг после запятой будет 0,5).
 Желательно поменять названия:
-exidintr -> position
-exercise -> name
+ * exidintr -> position
+ * exercise -> name
 Типы:
-trainingDate\trainingDay:text -> traningDate:datetime
+ * trainingDate\trainingDay:text -> traningDate:datetime
