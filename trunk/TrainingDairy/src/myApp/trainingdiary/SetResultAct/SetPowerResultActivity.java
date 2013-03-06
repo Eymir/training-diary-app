@@ -77,11 +77,11 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		tvnameEx.setText(strNameEx);
 
 		smallNumWheelAdapter = new ArrayWheelAdapter<String>(this,
-				new String[] { "0", "5" });
+				new String[] { ".0", ".5" });
 		repeatWheelAdapter = new NumericRightOrderWheelAdapter(this, 0, 99,
 				"%02d");
 		bigNumWheelAdapter = new NumericRightOrderWheelAdapter(this, 0, 500,
-				"%02d");
+				"%d");
 
 		bigNumWheel = (WheelView) findViewById(R.id.big_num_wheel);
 		bigNumWheel.setViewAdapter(bigNumWheelAdapter);
@@ -211,9 +211,8 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 		String Date = sdf.format(Calendar.getInstance().getTime());
 
 		// готовим вес
-		String strPower = bigNumWheelAdapter.getItem(bigNumWheel
-				.getCurrentItem())
-				+ "."
+		String strPower = String.valueOf(bigNumWheelAdapter.getItem(bigNumWheel
+				.getCurrentItem()))
 				+ smallNumWheelAdapter.getItemText(smallNumWheel
 						.getCurrentItem());
 
