@@ -42,5 +42,8 @@
     <string name="SettingsAct_CountHist">Всего записей в истории</string>
     <string name="YES">Да</string>
     <string name="NO">Нет</string>
-
+	<string name="baseExType_power">Силовой тип</string>
+	<string name="baseExType_cycle">Циклический тип</string>
+	<string name="baseMesure_repeat">Повторения</string>
+	<string name="baseMesure_bar_weight">Вес штанги</string>
 </resources>
