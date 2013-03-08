@@ -1,6 +1,11 @@
 package myApp.trainingdiary.forBD;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,176 +21,412 @@ import android.util.Log;
 public class DBHelper extends SQLiteOpenHelper {
 
 	public final static String LOG_TAG = "test";
+	Context context;
 
 	// final int DB_VERSION = 1; // версия БД
 
 	public DBHelper(Context context) {
 		super(context, "TrainingDiaryDB", null, 3); // Последняя цифра версия
 													// БД!!!!
+		this.context = context;
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		createTrainingTable(db);
+		createExerciseTypeTable(db);
+		createExerciseTable(db);
+		createExerciseInTrainingTable(db);
+		createMesureTable(db);
+		createMesureExTypeTable(db);
+		createTrainingStatTable(db);
 
-		// создаем таблицу тренировок с полями - просто таблица с названиями
-		// тренировок день1 день2 итд...
-		db.execSQL("create table Training ("
-				+ "id integer primary key autoincrement," + "name text" + ");");
+		createInitialTypes(db);
+	}
 
-		Log.d(LOG_TAG, "--- onCreate table Training  ---");
+	/**
+	 * Подходы
+	 */
+	private void createTrainingStatTable(SQLiteDatabase db) {
 
-		/*
-		 * Тип тренировки
-		 */
-		db.execSQL("create table ExerciseType ("
+		db.execSQL("create table TrainingStat ("
+				+ "id integer primary key autoincrement,"
+				+ "training_date datetime," + "exercise_id integer,"
+				+ "value text,"
+				+ "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)" + ");");
+
+		Log.d(LOG_TAG, "--- onCreate BD TrainingStat ---");
+	}
+
+	private void createMesureExTypeTable(SQLiteDatabase db) {
+		db.execSQL("create table MesureExType (" + "ex_type_id integer,"
+				+ "mesure_id integer," + "position integer,"
+				+ "FOREIGN KEY(ex_type_id) REFERENCES ExerciseType(id),"
+				+ "FOREIGN KEY(mesure_id) REFERENCES Mesure(id),"
+				+ "PRIMARY KEY (ex_type_id, mesure_id)" + ");");
+
+		Log.d("myLogs", "--- onCreate table MesureExType ---");
+	}
+
+	/**
+	 * Создаём таблицу измерений
+	 */
+	private void createMesureTable(SQLiteDatabase db) {
+
+		db.execSQL("create table Mesure ("
 				+ "id integer primary key autoincrement," + "name text,"
-				+ "icon_res integer" + ");");
+				+ "max integer," + "step float," + "type integer" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate table ExerciseType ---");
+		Log.d("myLogs", "--- onCreate table Mesure ---");
+	}
 
-		/*
-		 * Создаём таблицу упражнений exercise - название упражнения type - тип
-		 * упражнения;
-		 */
+	/**
+	 * Создаём таблицу соответивий тренировка - упражнение trainingname -
+	 * название тренировки exercise - название упражнения exidintr - номер
+	 * упражнения в тренировке
+	 */
+	private void createExerciseInTrainingTable(SQLiteDatabase db) {
+
+		db.execSQL("create table ExerciseInTraining (" + "training_id integer,"
+				+ "exercise_id integer," + "position integer,"
+				+ "FOREIGN KEY(training_id) REFERENCES Training(id),"
+				+ "FOREIGN KEY(exercise_id) REFERENCES Exercise(id),"
+				+ "PRIMARY KEY (training_id, exercise_id)" + ");");
+
+		Log.d("myLogs", "--- onCreate table ExerciseInTraining ---");
+	}
+
+	/**
+	 * Создаём таблицу упражнений exercise - название упражнения type - тип
+	 * упражнения;
+	 */
+	private void createExerciseTable(SQLiteDatabase db) {
+
 		db.execSQL("create table Exercise ("
 				+ "id integer primary key autoincrement," + "name text,"
 				+ "type_id integer,"
 				+ "FOREIGN KEY(type_id) REFERENCES ExerciseType(id)" + ");");
 
 		Log.d(LOG_TAG, "--- onCreate table Exercise ---");
-
-		/*
-		 * Создаём таблицу соответивий тренировка - упражнение trainingname -
-		 * название тренировки exercise - название упражнения exidintr - номер
-		 * упражнения в тренировке
-		 */
-
-		db.execSQL("create table ExcerciseInTraining ("
-				+ "training_id integer," + "exercise_id integer,"
-				+ "position integer,"
-				+ "FOREIGN KEY(training_id) REFERENCES Training(id),"
-				+ "FOREIGN KEY(exercise_id) REFERENCES Exercise(id),"
-				+ "PRIMARY KEY (training_id, exercise_id)"+ ");");
-
-		Log.d("myLogs", "--- onCreate table ExcerciseInTraining ---");
-
-		/*
-		 * Создаём таблицу измерений
-		 */
-		db.execSQL("create table Mesure ("
-				+ "id integer primary key autoincrement," + "name text,"
-				+ "max integer," + "step float" + ");");
-
-		Log.d("myLogs", "--- onCreate table Mesure ---");
-
-		db.execSQL("create table MesureExType (" + "exType_id integer,"
-				+ "mesure_id integer," + "position integer,"
-				+ "FOREIGN KEY(exType_id) REFERENCES ExerciseType(id),"
-				+ "FOREIGN KEY(mesure_id) REFERENCES Mesure(id),"
-				+ "PRIMARY KEY (exType_id, mesure_id)" + ");");
-		
-		Log.d("myLogs", "--- onCreate table MesureExType ---");
-		/*
-		 * Подходы
-		 */
-		db.execSQL("create table TrainingStat ("
-				+ "id integer primary key autoincrement,"
-				+ "trainingdate datetime," 
-				+ "exercise_id integer,"
-				+ "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)"
-				+ ");");
-
-		Log.d(LOG_TAG, "--- onCreate BD TrainingStat ---");
-		
-		/*
-		 * Подходы
-		 */
-		db.execSQL("create table MesureValue ("
-				+ "trainingstat_id integer," 
-				+ "mesure_id integer,"
-				+ "value float,"
-				+ "FOREIGN KEY(trainingstat_id) REFERENCES TrainingStat(id),"
-				+ "FOREIGN KEY(mesure_id) REFERENCES Mesure(id),"
-				+ "PRIMARY KEY (trainingstat_id, mesure_id)"
-				+ ");");
-
-		Log.d(LOG_TAG, "--- onCreate BD MesureValue ---");
-		
-		createInitialMesures(db);
-		createInitialTypes(db);
-		
 	}
 
-	private void createInitialMesures(SQLiteDatabase db) {
+	/**
+	 * Тип тренировки
+	 */
+	private void createExerciseTypeTable(SQLiteDatabase db) {
 
+		db.execSQL("create table ExerciseType ("
+				+ "id integer primary key autoincrement," + "name text,"
+				+ "icon_res integer" + ");");
+
+		Log.d(LOG_TAG, "--- onCreate table ExerciseType ---");
+	}
+
+	/**
+	 * создаем таблицу тренировок с полями - просто таблица с названиями
+	 * тренировок день1 день2 итд...
+	 */
+	private void createTrainingTable(SQLiteDatabase db) {
+		db.execSQL("create table Training ("
+				+ "id integer primary key autoincrement," + "name text,"
+				+ "position integer" + ");");
+		Log.d(LOG_TAG, "--- onCreate table Training  ---");
+	}
+
+	public long insertTraining(SQLiteDatabase db, String name, int position) {
+		ContentValues cv = new ContentValues();
+		cv.put("name", name);
+		cv.put("position", position);
+		long id = db.insert("Training", null, cv);
+		return id;
+	}
+
+	public long insertExercise(SQLiteDatabase db, String name, long type_id) {
+		ContentValues cv = new ContentValues();
+		cv.put("name", name);
+		cv.put("type_id", type_id);
+		long id = db.insert("Exercise", null, cv);
+		return id;
+	}
+
+	public long insertMesure(SQLiteDatabase db, String name, int max,
+			double step, int type) {
+		ContentValues cv = new ContentValues();
+		cv.put("name", name);
+		cv.put("max", max);
+		cv.put("step", step);
+		cv.put("type", type);
+		long id = db.insert("Mesure", null, cv);
+		return id;
+	}
+
+	public long insertExerciseType(SQLiteDatabase db, String name, int icon_res) {
+		ContentValues cv = new ContentValues();
+		cv.put("name", name);
+		cv.put("icon_res", icon_res);
+		long id = db.insert("ExerciseType", null, cv);
+		return id;
+	}
+
+	public long insertMesureExType(SQLiteDatabase db, long exType_id,
+			long mesure_id, int position) {
+		ContentValues cv = new ContentValues();
+		cv.put("ex_type_id", exType_id);
+		cv.put("mesure_id", mesure_id);
+		cv.put("position", position);
+		long id = db.insert("MesureExType", null, cv);
+		return id;
+	}
+
+	public long insertExerciseInTraining(SQLiteDatabase db, long training_id,
+			long exercise_id, int position) {
+		ContentValues cv = new ContentValues();
+		cv.put("training_id", training_id);
+		cv.put("exercise_id", exercise_id);
+		cv.put("position", position);
+		long id = db.insert("ExerciseInTraining", null, cv);
+		return id;
+	}
+
+	public long insertTrainingStat(SQLiteDatabase db, long exercise_id,
+			long trainingDate, String value) {
+		ContentValues cv = new ContentValues();
+		cv.put("training_date", trainingDate);
+		cv.put("value", value);
+		cv.put("exercise_id", exercise_id);
+		long id = db.insert("TrainingStat", null, cv);
+		return id;
 	}
 
 	private void createInitialTypes(SQLiteDatabase db) {
-		ContentValues cv_bar_weight = new ContentValues();	 
-		cv_bar_weight.put("name", R.string.baseMesure_bar_weight);
-		cv_bar_weight.put("max", 500);
-		cv_bar_weight.put("step", 0.5);
-		long bw_m_id = db.insert("Mesure", null, cv_bar_weight);
-		
-		ContentValues cv_repeat = new ContentValues();	 
-		cv_repeat.put("name", R.string.baseMesure_repeat);
-		cv_repeat.put("max", 99);
-		cv_repeat.put("step", 1);
-		long r_m_id = db.insert("Mesure", null, cv_repeat);
-		
-		ContentValues cv_power = new ContentValues();	 
-		cv_power.put("name", R.string.baseExType_power);
-		cv_power.put("icon_res", R.drawable.power);
-		long power_id = db.insert("ExerciseType", null, cv_power);
-		
-		ContentValues cv_cycle = new ContentValues();	 
-		cv_cycle.put("name", R.string.baseExType_cycle);
-		cv_cycle.put("icon_res", R.drawable.cycle);
-		db.insert("ExerciseType", null, cv_cycle);
-		
-		ContentValues cv_mesureExType1 = new ContentValues();	 
-		cv_mesureExType1.put("exType_id", power_id);
-		cv_mesureExType1.put("mesure_id", bw_m_id);
-		cv_mesureExType1.put("position", 0);
-		db.insert("MesureExType", null, cv_mesureExType1);
-		
-		ContentValues cv_mesureExType2 = new ContentValues();	 
-		cv_mesureExType2.put("exType_id", power_id);
-		cv_mesureExType2.put("mesure_id", r_m_id);
-		cv_mesureExType2.put("position", 1);
-		db.insert("MesureExType", null, cv_mesureExType2);
-		//TODO: Написать функции для каждой таблицы на insert
+		long bw_m_id = insertMesure(db,
+				context.getString(R.string.baseMesure_bar_weight), 500, 0.5, 0);
+
+		long r_m_id = insertMesure(db,
+				context.getString(R.string.baseMesure_repeat), 99, 1, 0);
+
+		long power_id = insertExerciseType(db,
+				context.getString(R.string.baseExType_power), R.drawable.power);
+
+		long cycle_id = insertExerciseType(db,
+				context.getString(R.string.baseExType_cycle), R.drawable.cycle);
+
+		insertMesureExType(db, power_id, bw_m_id, 0);
+		insertMesureExType(db, power_id, r_m_id, 1);
+
+		long d_m_id = insertMesure(db,
+				context.getString(R.string.baseMesure_distance), 99, 0.1, 0);
+
+		long t_m_id = insertMesure(db,
+				context.getString(R.string.baseMesure_time), 2, 1, 1);
+
+		insertMesureExType(db, cycle_id, d_m_id, 0);
+		insertMesureExType(db, cycle_id, t_m_id, 1);
+
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (oldVersion == 1 && newVersion == 2) {
-			db.beginTransaction();
-			try {
-				db.execSQL("alter table TrainingProgTable add column exidintr integer;");
-				db.setTransactionSuccessful();
-				Log.d(LOG_TAG, "--- add column sucsessful ---");
-			}
-			finally {
-				db.endTransaction();
-			}
+			upgradeFrom_1_To_2(db);
 		}
 		if (oldVersion == 2 && newVersion == 3) {
 			upgradeFrom_2_To_3(db);
 		}
 	}
 
-	private void upgradeFrom_2_To_3(SQLiteDatabase db) {
+	private void upgradeFrom_1_To_2(SQLiteDatabase db) {
+		db.beginTransaction();
 		try {
-			db.beginTransaction();
 			db.execSQL("alter table TrainingProgTable add column exidintr integer;");
 			db.setTransactionSuccessful();
 			Log.d(LOG_TAG, "--- add column sucsessful ---");
-		}
-
-		finally {
+		} finally {
 			db.endTransaction();
 		}
+	}
+
+	private void upgradeFrom_2_To_3(SQLiteDatabase db) {
+		try {
+			db.beginTransaction();
+			Cursor trainingTable_cursor = db.query("TrainingTable", null, null,
+					null, null, null, null);
+			Cursor exerciseTable_cursor = db.query("ExerciseTable", null, null,
+					null, null, null, null);
+			Cursor trainingProgTable_cursor = db.query("TrainingProgTable",
+					null, null, null, null, null, null);
+			Cursor trainingStat_cursor = db.query("TrainingStat", null, null,
+					null, null, null, null);
+
+			dropAllTablesVer2(db);
+
+			createTrainingTable(db);
+			createExerciseTypeTable(db);
+			createExerciseTable(db);
+			createExerciseInTrainingTable(db);
+			createMesureTable(db);
+			createMesureExTypeTable(db);
+			createTrainingStatTable(db);
+
+			createInitialTypes(db);
+
+			transferTrainingTableData(db, trainingTable_cursor);
+			transferExerciseTableData(db, exerciseTable_cursor);
+			transferTrainingProgTableData(db, trainingProgTable_cursor);
+			transferTrainingStatData(db, trainingStat_cursor);
+
+			Log.d(LOG_TAG, "--- add column sucsessful ---");
+
+		} finally {
+			if (db.inTransaction())
+				db.endTransaction();
+		}
+	}
+
+	private void transferTrainingStatData(SQLiteDatabase db, Cursor c) {
+		if (c != null) {
+			long power_id = findExTypeByName(db,
+					context.getString(R.string.baseExType_power));
+			long cycle_id = findExTypeByName(db,
+					context.getString(R.string.baseExType_cycle));
+			DecimalFormat formatter = new java.text.DecimalFormat("#.#");
+			if (c.moveToFirst()) {
+				do {
+					String trainingDate = c.getString(c
+							.getColumnIndex("trainingdate"));
+					String trainingDay = c.getString(c
+							.getColumnIndex("trainingday"));
+					String exercise = c.getString(c.getColumnIndex("exercise"));
+					String exerciseType = c.getString(c
+							.getColumnIndex("exercisetype"));
+					double power = c.getDouble(c.getColumnIndex("power"));
+					int count = c.getInt(c.getColumnIndex("count"));
+					long ex_id = findExerciseByName(db, exercise);
+					String value = DbFormatter.toValue(formatter.format(power),
+							String.valueOf(count));
+					SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+					Date date = null;
+					try {
+						date = sdf.parse(trainingDate);
+					} catch (ParseException e) {
+					}
+
+					if (ex_id > 0 && date != null) {
+						insertTrainingStat(db, ex_id, date.getTime(), value);
+					} else {
+						Log.e(LOG_TAG,
+								"Cannot insert TrainingStat cause - ex_id: "
+										+ ex_id + " date: " + date);
+					}
+				} while (c.moveToNext());
+			}
+		}
+	}
+
+	private void transferTrainingProgTableData(SQLiteDatabase db, Cursor c) {
+		if (c != null) {
+			if (c.moveToFirst()) {
+				do {
+					String ex_name = c.getString(c.getColumnIndex("exercise"));
+					String tr_name = c.getString(c
+							.getColumnIndex("trainingname"));
+					int position = c.getInt(c.getColumnIndex("exidintr"));
+					long ex_id = findExerciseByName(db, ex_name);
+					long tr_id = findTrainingByName(db, tr_name);
+					if (ex_id > 0 && tr_id > 0)
+						insertExerciseInTraining(db, tr_id, ex_id, position);
+					else {
+						Log.e(LOG_TAG,
+								"Cannot insert ExerciseInTraining cause - ex_id: "
+										+ ex_id + "tr_id: " + tr_id);
+					}
+				} while (c.moveToNext());
+			}
+		}
+	}
+
+	private long findTrainingByName(SQLiteDatabase db, String tr_name) {
+		long id = -1;
+		Cursor c = db.rawQuery("select id from Training where name=" + tr_name,
+				null);
+
+		if (c != null) {
+			if (c.moveToFirst()) {
+				id = c.getInt(c.getColumnIndex("id"));
+			}
+		}
+		return id;
+	}
+
+	private long findExerciseByName(SQLiteDatabase db, String ex_name) {
+		long id = -1;
+		Cursor c = db.rawQuery("select id from Exercise where name=" + ex_name,
+				null);
+
+		if (c != null) {
+			if (c.moveToFirst()) {
+				id = c.getInt(c.getColumnIndex("id"));
+			}
+		}
+		return id;
+	}
+
+	private void transferExerciseTableData(SQLiteDatabase db, Cursor c) {
+		if (c != null) {
+			long power_id = findExTypeByName(db,
+					context.getString(R.string.baseExType_power));
+			long cycle_id = findExTypeByName(db,
+					context.getString(R.string.baseExType_cycle));
+			Log.i(LOG_TAG, "findPowerExType: " + power_id);
+			Log.i(LOG_TAG, "findCycleExType: " + cycle_id);
+			if (c.moveToFirst()) {
+				do {
+					String name = c.getString(c.getColumnIndex("exercise"));
+					int type = c.getInt(c.getColumnIndex("type"));
+					switch (type) {
+					case 1:
+						insertExercise(db, name, power_id);
+						break;
+					case 2:
+						insertExercise(db, name, cycle_id);
+						break;
+					}
+
+				} while (c.moveToNext());
+			}
+		}
+	}
+
+	private long findExTypeByName(SQLiteDatabase db, String name) {
+		Cursor c = db.rawQuery(
+				"select id from ExerciseType where name=" + name, null);
+		long id = -1;
+		if (c != null) {
+			if (c.moveToFirst()) {
+				id = c.getInt(c.getColumnIndex("id"));
+			}
+		}
+		return id;
+	}
+
+	private void transferTrainingTableData(SQLiteDatabase db, Cursor c) {
+		int position = 0;
+		if (c != null) {
+			if (c.moveToFirst()) {
+				do {
+					String name = c.getString(c.getColumnIndex("name"));
+					insertTraining(db, name, position);
+					position++;
+				} while (c.moveToNext());
+			}
+		}
+	}
+
+	private void dropAllTablesVer2(SQLiteDatabase db) {
+		db.execSQL("DROP TABLE IF EXISTS TrainingTable");
+		db.execSQL("DROP TABLE IF EXISTS ExerciseTable");
+		db.execSQL("DROP TABLE IF EXISTS TrainingProgTable");
+		db.execSQL("DROP TABLE IF EXISTS TrainingStat");
 	}
 
 	public void changePositions(String strNameTr, List<Long> list) {
@@ -205,7 +446,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public Cursor getExcersices(String strNameTr) {
+	public Cursor getExersices(String strNameTr) {
 		SQLiteDatabase db = getWritableDatabase();
 		String sqlQuery = "select " + "prog.id as _id, "
 				+ "prog.exercise as ex_name, " + "prog.trainingname as Tr, "

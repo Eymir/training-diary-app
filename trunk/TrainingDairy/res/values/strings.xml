@@ -46,4 +46,6 @@
 	<string name="baseExType_cycle">Циклический тип</string>
 	<string name="baseMesure_repeat">Повторения</string>
 	<string name="baseMesure_bar_weight">Вес штанги</string>
+	<string name="baseMesure_distance">Расстояние(км)</string>
+	<string name="baseMesure_time">Время</string>
 </resources>
