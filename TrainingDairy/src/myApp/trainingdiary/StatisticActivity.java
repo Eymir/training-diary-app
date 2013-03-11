@@ -110,9 +110,9 @@ public class StatisticActivity extends Activity
         // массив ID View-компонентов, в которые будут вставлять данные
         int[] to = {R.id.label, R.id.icon};        
         // создаем адаптер
-        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-        // определяем список и присваиваем ему адаптер
-        lvExStat.setAdapter(sAdapter);                  	   	
+//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
+//        // определяем список и присваиваем ему адаптер
+//        lvExStat.setAdapter(sAdapter);                  	   	
 	}
 	
 }

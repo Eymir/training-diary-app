@@ -152,9 +152,9 @@ public class EditExActivity extends Activity implements OnClickListener
         // массив ID View-компонентов, в которые будут вставлять данные
         int[] to = {R.id.label, R.id.icon};        
         // создаем адаптер
-        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-        // определяем список и присваиваем ему адаптер
-        lvExinTrain.setAdapter(sAdapter);                  	   	
+//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
+//        // определяем список и присваиваем ему адаптер
+//        lvExinTrain.setAdapter(sAdapter);                  	   	
 	}
 	
 	@Override

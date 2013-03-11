@@ -129,9 +129,9 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
         // массив ID View-компонентов, в которые будут вставлять данные
         int[] to = {R.id.label, R.id.icon};        
         // создаем адаптер
-        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-        // определяем список и присваиваем ему адаптер
-        lvExToAdd.setAdapter(sAdapter);	    		
+//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
+//        // определяем список и присваиваем ему адаптер
+//        lvExToAdd.setAdapter(sAdapter);	    		
 	}
 	
 	private void writeExToTr(String exName)
@@ -158,10 +158,10 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	
 	private void setintent()
 	{	
-        Intent intentReturnToParent = new Intent(this, AddExerciseActivity.class);
-        intentReturnToParent.putExtra("name_string", trainingName);
-        startActivity(intentReturnToParent);
-        this.finish();
+//        Intent intentReturnToParent = new Intent(this, AddExerciseActivity.class);
+//        intentReturnToParent.putExtra("name_string", trainingName);
+//        startActivity(intentReturnToParent);
+//        this.finish();
 	}
 	
 	private String ParserOnItemClick(String nonParsed)
@@ -175,11 +175,11 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		Intent BackToMain = new Intent(this, AddExerciseActivity.class);
-		BackToMain.putExtra("name_string", trainingName);
-		startActivity(BackToMain);
-		finish();
+//		super.onBackPressed();
+//		Intent BackToMain = new Intent(this, AddExerciseActivity.class);
+//		BackToMain.putExtra("name_string", trainingName);
+//		startActivity(BackToMain);
+//		finish();
 	}
 	
 //    private void showEmtyDialog() {
