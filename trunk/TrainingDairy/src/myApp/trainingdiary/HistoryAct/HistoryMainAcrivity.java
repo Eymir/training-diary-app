@@ -107,8 +107,8 @@ public class HistoryMainAcrivity extends Activity
 	        
 	        String[] from = {ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE};
 	        int[] to = {R.id.label, R.id.icon};
-	        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-	        lvMainHistory.setAdapter(sAdapter);  	        
+//	        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
+//	        lvMainHistory.setAdapter(sAdapter);  	        
         }
         else 
         {

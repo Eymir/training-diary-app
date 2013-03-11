@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import myApp.trainingdiary.AddExerciseActivity;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
@@ -138,12 +137,12 @@ public class SortExInTrainingDay extends Activity {
 		
 	@Override
 	public void onBackPressed() {
-
-		super.onBackPressed();
-        Intent AddExerciseActivity = new Intent(this, AddExerciseActivity.class);
-        AddExerciseActivity.putExtra("name_string", strNameTr);
-        startActivity(AddExerciseActivity);
-        finish();
+//
+//		super.onBackPressed();
+//        Intent AddExerciseActivity = new Intent(this, AddExerciseActivity.class);
+//        AddExerciseActivity.putExtra("name_string", strNameTr);
+//        startActivity(AddExerciseActivity);
+//        finish();
 	}
 	
 	private String ParserName(String nonParsed)
