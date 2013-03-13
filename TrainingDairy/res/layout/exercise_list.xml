@@ -1,41 +1,35 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/background"
-    tools:context=".AddExerciseActivity" >
+    android:orientation="vertical"
+    android:paddingTop="3dp" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
+    <com.mobeta.android.dslv.DragSortListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:dslv="http://schemas.android.com/apk/res/myApp.trainingdiary"
+        android:id="@+id/exercise_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="3dp" >
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:dividerHeight="3dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingTop="0dp"
+        dslv:collapsed_height="2dp"
+        dslv:drag_enabled="true"
+        dslv:drag_handle_id="@id/drag_handler"
+        dslv:drag_scroll_start="0.33"
+        dslv:drag_start_mode="onDown"
+        dslv:float_alpha="0.6"
+        dslv:max_drag_scroll_speed="0.5"
+        dslv:remove_enabled="true"
+        dslv:slide_shuffle_speed="0.3"
+        dslv:sort_enabled="true"
+        dslv:track_drag_sort="false"
+        dslv:use_default_controller="true" />
 
-        <com.mobeta.android.dslv.DragSortListView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:dslv="http://schemas.android.com/apk/res/myApp.trainingdiary"
-            android:id="@+id/exercise_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:dividerHeight="5dp"
-            android:paddingBottom="0dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="0dp"
-            dslv:collapsed_height="2dp"
-            dslv:drag_enabled="true"
-            dslv:drag_handle_id="@id/drag_handler"
-            dslv:drag_scroll_start="0.33"
-            dslv:drag_start_mode="onDown"
-            dslv:float_alpha="0.6"
-            dslv:max_drag_scroll_speed="0.5"
-            dslv:remove_enabled="true"
-            dslv:slide_shuffle_speed="0.3"
-            dslv:sort_enabled="true"
-            dslv:track_drag_sort="false"
-            dslv:use_default_controller="true" />
-        
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

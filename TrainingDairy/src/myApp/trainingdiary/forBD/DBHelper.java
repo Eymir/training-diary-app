@@ -27,8 +27,9 @@ public class DBHelper extends SQLiteOpenHelper {
 	private final static int DB_VERSION = 3; // версия БД
 
 	public DBHelper(Context context) {
-		super(context, "TrainingDiaryDB", null, DB_VERSION); // Последняя цифра версия
-													// БД!!!!
+		super(context, "TrainingDiaryDB", null, DB_VERSION); // Последняя цифра
+																// версия
+		// БД!!!!
 		this.context = context;
 	}
 
@@ -228,7 +229,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(LOG_TAG, "onUpgrade. oldVer: "+oldVersion+" newVer: "+newVersion);
+		Log.d(LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
+				+ newVersion);
 		if (oldVersion == 1 && newVersion == 2) {
 			upgradeFrom_1_To_2(db);
 		}
@@ -251,19 +253,17 @@ public class DBHelper extends SQLiteOpenHelper {
 	private void upgradeFrom_2_To_3(SQLiteDatabase db) {
 		try {
 			db.beginTransaction();
-			
+
 			renameTrainingStatTable(db);
-			
+
 			Cursor trainingTable_cursor = db.query("TrainingTable", null, null,
 					null, null, null, null);
 			Cursor exerciseTable_cursor = db.query("ExerciseTable", null, null,
 					null, null, null, null);
 			Cursor trainingProgTable_cursor = db.query("TrainingProgTable",
 					null, null, null, null, null, null);
-			Cursor trainingStat_cursor = db.query("TrainingStatOld", null, null,
-					null, null, null, null);
-
-			
+			Cursor trainingStat_cursor = db.query("TrainingStatOld", null,
+					null, null, null, null, null);
 
 			createTrainingTable(db);
 			createExerciseTypeTable(db);
@@ -279,14 +279,13 @@ public class DBHelper extends SQLiteOpenHelper {
 			transferExerciseTableData(db, exerciseTable_cursor);
 			transferTrainingProgTableData(db, trainingProgTable_cursor);
 			transferTrainingStatData(db, trainingStat_cursor);
-			
-			dropAllTablesVer2(db);
-			
-			Log.d(LOG_TAG, "--- add column sucsessful ---");
 
+			dropAllTablesVer2(db);
+
+			Log.d(LOG_TAG, "--- upgradeFrom_2_To_3 done ---");
+			db.setTransactionSuccessful();
 		} finally {
-			if (db.inTransaction())
-				db.endTransaction();
+			db.endTransaction();
 		}
 	}
 
@@ -358,8 +357,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private long findTrainingByName(SQLiteDatabase db, String tr_name) {
 		long id = -1;
-		Cursor c = db.rawQuery("select id from Training where name=" + tr_name,
-				null);
+		Cursor c = db.rawQuery("select id from Training where name='" + tr_name
+				+ "'", null);
 
 		if (c != null) {
 			if (c.moveToFirst()) {
@@ -371,8 +370,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private long findExerciseByName(SQLiteDatabase db, String ex_name) {
 		long id = -1;
-		Cursor c = db.rawQuery("select id from Exercise where name=" + ex_name,
-				null);
+		Cursor c = db.rawQuery("select id from Exercise where name='" + ex_name
+				+ "'", null);
 
 		if (c != null) {
 			if (c.moveToFirst()) {
@@ -409,8 +408,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	private long findExTypeByName(SQLiteDatabase db, String name) {
-		Cursor c = db.rawQuery(
-				"select id from ExerciseType where name=" + name, null);
+		Cursor c = db.rawQuery("select id from ExerciseType where name='"
+				+ name + "'", null);
 		long id = -1;
 		if (c != null) {
 			if (c.moveToFirst()) {
@@ -497,7 +496,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
 				+ "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
-				+ "where ex_tr.training_id = ? and ex.tr.exercise_id = ex.id and ex.type_id = ex_type.id";
+				+ "where ex_tr.training_id = ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
 		Cursor c = db
 				.rawQuery(sqlQuery, new String[] { String.valueOf(tr_id) });
 		return c;

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package myApp.trainingdiary.wheel;
+package myApp.trainingdiary.customview;
 
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 import android.content.Context;
