@@ -59,7 +59,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 	    case R.id.btnStart:
 		    Intent intentOpenMain = new Intent(this, MainActivity.class);
 	        startActivity(intentOpenMain);
-	        finish();
 	      break;
 	    case R.id.btnAddTr:
 		    Intent intentAddTr = new Intent(this, AddTrActivity.class);
@@ -70,7 +69,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 	    case R.id.btnAddEx:
 		    Intent intentAddEx = new Intent(this, EditExActivity.class);
 	        startActivity(intentAddEx);
-	        finish();
 	      break;
 	    case R.id.btnHist:
 	    	//Log.d(LOG_TAG, "--- before run history ---");
@@ -88,7 +86,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 		      break;
 	    case R.id.btnExit:
 	    		//exit();
-	    		finish();
 		      break;
 	    default:
 	     break;
@@ -145,9 +142,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 	
 	@Override
 	public void onBackPressed() {
-
 		super.onBackPressed();
-		finish();
 	}
 	
 }
