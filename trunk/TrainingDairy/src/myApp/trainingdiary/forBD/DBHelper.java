@@ -162,7 +162,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		return id;
 	}
 
-	public long insertExerciseType(SQLiteDatabase db, String name, String icon_res) {
+	public long insertExerciseType(SQLiteDatabase db, String name,
+			String icon_res) {
 		ContentValues cv = new ContentValues();
 		cv.put("name", name);
 		cv.put("icon_res", icon_res);
@@ -208,10 +209,12 @@ public class DBHelper extends SQLiteOpenHelper {
 				context.getString(R.string.baseMesure_repeat), 99, 1, 0);
 
 		long power_id = insertExerciseType(db,
-				context.getString(R.string.baseExType_power), context.getResources().getResourceName(R.drawable.power));
+				context.getString(R.string.baseExType_power), context
+						.getResources().getResourceName(R.drawable.power));
 
 		long cycle_id = insertExerciseType(db,
-				context.getString(R.string.baseExType_cycle), context.getResources().getResourceName(R.drawable.cycle));
+				context.getString(R.string.baseExType_cycle), context
+						.getResources().getResourceName(R.drawable.cycle));
 
 		insertMesureExType(db, power_id, bw_m_id, 0);
 		insertMesureExType(db, power_id, r_m_id, 1);
@@ -496,7 +499,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	 * @return курсор с теми же тренировками что и в базе, только id
 	 *         возвращается как _id
 	 */
-	public Cursor getExercises(long tr_id) {
+	public Cursor getExercisesInTraining(long tr_id) {
 		SQLiteDatabase db = getWritableDatabase();
 		String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
 				+ "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
@@ -563,6 +566,16 @@ public class DBHelper extends SQLiteOpenHelper {
 			if (db != null)
 				db.close();
 		}
+	}
+
+	public Cursor getExercisesExceptExInTr(long tr_id) {
+		SQLiteDatabase db = getWritableDatabase();
+		String sqlQuery = "select ex.id as _id, ex.name name, ex_type.icon_res icon_res "
+				+ "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
+				+ "where ex_tr.training_id <> ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
+		Cursor c = db
+				.rawQuery(sqlQuery, new String[] { String.valueOf(tr_id) });
+		return c;
 	}
 
 }
