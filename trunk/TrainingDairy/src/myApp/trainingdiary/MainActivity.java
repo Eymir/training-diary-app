@@ -88,11 +88,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View v, int arg2,
 					long arg3) {
-				View cExerciseList = v.findViewById(R.id.exercise_list);
-				Log.d(DBHelper.LOG_TAG, "height: " + v.getHeight());
-				ExpandAnimation expandAni = new ExpandAnimation(cExerciseList,
-						500);
-				cExerciseList.startAnimation(expandAni);
+
 			}
 		});
 
@@ -123,14 +119,18 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	private void createTools() {
-		ActionItem addItem = new ActionItem(ID_ADD, "Add", getResources()
-				.getDrawable(R.drawable.add_32));
-		ActionItem renameItem = new ActionItem(ID_RENAME, "Rename",
-				getResources().getDrawable(R.drawable.ic_launcher));
-		ActionItem moveItem = new ActionItem(ID_MOVE, "Move", getResources()
-				.getDrawable(R.drawable.ic_launcher));
-		ActionItem deleteItem = new ActionItem(ID_DELETE, "Delete",
-				getResources().getDrawable(R.drawable.ic_launcher));
+		ActionItem addItem = new ActionItem(ID_ADD, getResources().getString(
+				R.string.add_action), getResources().getDrawable(
+				R.drawable.plus_orange));
+		ActionItem renameItem = new ActionItem(ID_RENAME, getResources()
+				.getString(R.string.rename_action), getResources().getDrawable(
+				R.drawable.pencil));
+		ActionItem moveItem = new ActionItem(ID_MOVE, getResources().getString(
+				R.string.move_action), getResources().getDrawable(
+				R.drawable.object_flip_vertical));
+		ActionItem deleteItem = new ActionItem(ID_DELETE, getResources()
+				.getString(R.string.delete_action), getResources().getDrawable(
+				R.drawable.deletered));
 
 		mQuickAction = new QuickAction(this);
 		if (addItem == null)
@@ -298,6 +298,31 @@ public class MainActivity extends Activity implements OnClickListener {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
+				// ¬озможно не самый лучший вариант здесь определ€ть лиснеры,
+				// так как может быть много лишних переназначений
+				if (view.getId() == R.id.label) {
+
+					view.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							View cExerciseList = ((View) v.getParent()
+									.getParent())
+									.findViewById(R.id.exercise_list);
+							if (cExerciseList == null)
+								Log.d(DBHelper.LOG_TAG, "cExerciseList is null");
+							else {
+								Log.d(DBHelper.LOG_TAG, cExerciseList
+										.getClass().toString());
+
+								ExpandAnimation expandAni = new ExpandAnimation(
+										cExerciseList, 500);
+								cExerciseList.startAnimation(expandAni);
+							}
+						}
+					});
+
+					return false;
+				}
 				if (view.getId() == R.id.tools) {
 					final long tr_id = cursor.getLong(columnIndex);
 					view.setOnClickListener(new View.OnClickListener() {
@@ -308,7 +333,6 @@ public class MainActivity extends Activity implements OnClickListener {
 							cur_drag_handler = (ImageView) ((View) v
 									.getParent())
 									.findViewById(R.id.drag_handler);
-
 						}
 					});
 					return true;
@@ -317,12 +341,12 @@ public class MainActivity extends Activity implements OnClickListener {
 					//
 					DragSortListView exerciseList = (DragSortListView) view;
 					exerciseList.setVisibility(View.GONE);
-//					if (exerciseList.getFooterViewsCount() == 0) {
-//						View addRowFooter = getLayoutInflater().inflate(
-//								R.layout.add_row, null);
-//						exerciseList.addFooterView(addRowFooter);
-//						addRowFooter.setFocusable(false);
-//					}
+					// if (exerciseList.getFooterViewsCount() == 0) {
+					// View addRowFooter = getLayoutInflater().inflate(
+					// R.layout.add_row, null);
+					// exerciseList.addFooterView(addRowFooter);
+					// addRowFooter.setFocusable(false);
+					// }
 					long tr_id = cursor.getLong(cursor.getColumnIndex("_id"));
 					Cursor ex_cursor = dbHelper.getExercises(tr_id);
 					String[] from = { "name", "icon_res" };
@@ -331,6 +355,22 @@ public class MainActivity extends Activity implements OnClickListener {
 							MainActivity.this, R.layout.training_row,
 							ex_cursor, from, to,
 							CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+					exerciseDragAdapter.setViewBinder(new ViewBinder() {
+
+						@Override
+						public boolean setViewValue(View view, Cursor cursor,
+								int columnIndex) {
+							if (view.getId() == R.id.icon) {
+								//Ќе провер€л
+								((ImageView) view).setImageResource(getResources()
+										.getIdentifier(
+												cursor.getString(columnIndex),
+												"drawable", getPackageName()));
+								return true;
+							}
+							return false;
+						}
+					});
 					exerciseList.setAdapter(exerciseDragAdapter);
 					return true;
 				}

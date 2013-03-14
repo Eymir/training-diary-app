@@ -119,7 +119,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		db.execSQL("create table ExerciseType ("
 				+ "id integer primary key autoincrement," + "name text,"
-				+ "icon_res integer" + ");");
+				+ "icon_res text" + ");");
 
 		Log.d(LOG_TAG, "--- onCreate table ExerciseType ---");
 	}
@@ -162,7 +162,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		return id;
 	}
 
-	public long insertExerciseType(SQLiteDatabase db, String name, int icon_res) {
+	public long insertExerciseType(SQLiteDatabase db, String name, String icon_res) {
 		ContentValues cv = new ContentValues();
 		cv.put("name", name);
 		cv.put("icon_res", icon_res);
@@ -208,10 +208,10 @@ public class DBHelper extends SQLiteOpenHelper {
 				context.getString(R.string.baseMesure_repeat), 99, 1, 0);
 
 		long power_id = insertExerciseType(db,
-				context.getString(R.string.baseExType_power), R.drawable.power);
+				context.getString(R.string.baseExType_power), context.getResources().getResourceName(R.drawable.power));
 
 		long cycle_id = insertExerciseType(db,
-				context.getString(R.string.baseExType_cycle), R.drawable.cycle);
+				context.getString(R.string.baseExType_cycle), context.getResources().getResourceName(R.drawable.cycle));
 
 		insertMesureExType(db, power_id, bw_m_id, 0);
 		insertMesureExType(db, power_id, r_m_id, 1);
