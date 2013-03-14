@@ -234,6 +234,10 @@ public class DBHelper extends SQLiteOpenHelper {
 		if (oldVersion == 1 && newVersion == 2) {
 			upgradeFrom_1_To_2(db);
 		}
+		if (oldVersion == 1 && newVersion == 3) {
+			upgradeFrom_1_To_2(db);
+			upgradeFrom_2_To_3(db);
+		}
 		if (oldVersion == 2 && newVersion == 3) {
 			upgradeFrom_2_To_3(db);
 		}
@@ -500,6 +504,65 @@ public class DBHelper extends SQLiteOpenHelper {
 		Cursor c = db
 				.rawQuery(sqlQuery, new String[] { String.valueOf(tr_id) });
 		return c;
+	}
+
+	public int getTrainingsCount() {
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
+			String sqlQuery = "select count(tr.id) as _count from Training tr";
+			Cursor c = db.rawQuery(sqlQuery, null);
+			c.moveToFirst();
+			int count = c.getInt(c.getColumnIndex("_count"));
+			c.close();
+			return count;
+		} finally {
+			if (db != null)
+				db.close();
+		}
+	}
+
+	public String getTrainingNameById(long tr_id) {
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
+			String sqlQuery = "select tr.name from Training tr where tr.id = ?";
+			Cursor c = db.rawQuery(sqlQuery,
+					new String[] { String.valueOf(tr_id) });
+			c.moveToFirst();
+			String name = c.getString(c.getColumnIndex("name"));
+			c.close();
+			return name;
+		} finally {
+			if (db != null)
+				db.close();
+		}
+	}
+
+	public void renameTraining(long cur_tr_id, String name) {
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
+			ContentValues cv = new ContentValues();
+			cv.put("name", name);
+			db.update("Training", cv, "id = ? ",
+					new String[] { String.valueOf(cur_tr_id) });
+		} finally {
+			if (db != null)
+				db.close();
+		}
+	}
+
+	public void deleteTraining(long cur_tr_id) {
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
+			db.delete("Training", "id = ? ",
+					new String[] { String.valueOf(cur_tr_id) });
+		} finally {
+			if (db != null)
+				db.close();
+		}
 	}
 
 }

@@ -3,7 +3,8 @@
 
     <string name="app_name">Дневник тренировок</string>
     <string name="menu_settings">Настройки</string>
-    <string name="title_activity_add_tr">Создание новой тренировки:</string>
+    <string name="title_create_training">Создание новой тренировки</string>
+    <string name="title_rename_training">Переименовать тренировку</string>
     <string name="title_activity_add_exercise">Упражнения на сегодня:</string>
     <string name="title_activity_settings">Настройки:</string>
     <string name="hello_world">Hello world!</string>
@@ -32,8 +33,8 @@
     <string name="btn_txt_OK">OK</string>
     <string name="btn_txt_plus">+</string>
     <string name="btn_txt_minus">-</string>
-    <string name="Dialog_del_tr_title">Изменить тренировку</string>
-    <string name="Dialog_del_tr_msg">Переименовать или удалить</string>
+    <string name="Dialog_del_tr_title">Удалить тренировку</string>
+    <string name="Dialog_del_tr_msg">Действительно удалить тренировку</string>
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
     <string name="Dialog_del_tr_btn_cancel">Отмена</string>
@@ -42,6 +43,14 @@
     <string name="SettingsAct_CountHist">Всего записей в истории</string>
     <string name="YES">Да</string>
     <string name="NO">Нет</string>
+    <string name="create_button">Создать</string>
+    <string name="rename_button">Переименовать</string>
+    <string name="cancel_button">Отменить</string>
+    <string name="delete_button">Удалить</string>
+    <string name="zero_input_notif">Введите название тренировки</string>
+    <string name="deleted">Удалено</string>
+    <string name="create_success">Тренировка успешно создана</string>
+    <string name="rename_success">Тренировка успешно переименована</string>
 	<string name="baseExType_power">Силовой тип</string>
 	<string name="baseExType_cycle">Циклический тип</string>
 	<string name="baseMesure_repeat">Повторения</string>

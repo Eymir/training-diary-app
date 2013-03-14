@@ -60,12 +60,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 		    Intent intentOpenMain = new Intent(this, MainActivity.class);
 	        startActivity(intentOpenMain);
 	      break;
-	    case R.id.btnAddTr:
-		    Intent intentAddTr = new Intent(this, AddTrActivity.class);
-		    intentAddTr.putExtra("NewRecord", true);
-	        startActivity(intentAddTr);	
-	        
-	      break;
 	    case R.id.btnAddEx:
 		    Intent intentAddEx = new Intent(this, EditExActivity.class);
 	        startActivity(intentAddEx);

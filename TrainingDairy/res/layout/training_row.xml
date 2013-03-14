@@ -7,10 +7,9 @@
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
         android:id="@+id/expand_layout"
-         >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
         <ImageView
             android:id="@+id/icon"
@@ -33,7 +32,19 @@
             android:text="@+id/label"
             android:textColor="#F8F8FF"
             android:textSize="30sp" />
-
+        
+        <ImageView
+            android:id="@+id/tools"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="4px"
+            android:layout_marginRight="10px"
+            android:layout_marginTop="4px"
+            android:layout_weight="0.69"
+            android:scaleType="fitCenter"
+            android:src="@drawable/tools" >
+        </ImageView>
+        
         <ImageView
             android:id="@+id/drag_handler"
             android:layout_width="40dp"
@@ -43,6 +54,7 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
+            android:visibility="gone"
             android:src="@drawable/drag" >
         </ImageView>
     </LinearLayout>
@@ -53,14 +65,15 @@
         android:id="@+id/exercise_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_margin="5dp"
+        android:layout_weight="1"
         android:dividerHeight="3dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:paddingBottom="0dp"
         android:paddingLeft="0dp"
         android:paddingTop="0dp"
         android:scrollbars="none"
-        android:focusable="false"
         dslv:collapsed_height="2dp"
         dslv:drag_enabled="true"
         dslv:drag_handle_id="@id/drag_handler"
