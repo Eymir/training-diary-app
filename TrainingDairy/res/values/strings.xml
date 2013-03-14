@@ -57,4 +57,8 @@
 	<string name="baseMesure_bar_weight">Вес штанги</string>
 	<string name="baseMesure_distance">Расстояние(км)</string>
 	<string name="baseMesure_time">Время</string>
+	<string name="add_action">Добавить</string>
+	<string name="rename_action">Переименовать</string>
+	<string name="move_action">Переместить</string>
+	<string name="delete_action">Удалить</string>
 </resources>

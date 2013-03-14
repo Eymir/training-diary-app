@@ -42,7 +42,7 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:src="@drawable/tools" >
+            android:src="@drawable/gtk_edit" >
         </ImageView>
         
         <ImageView
@@ -55,7 +55,7 @@
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
             android:visibility="gone"
-            android:src="@drawable/drag" >
+            android:src="@drawable/object_flip_vertical" >
         </ImageView>
     </LinearLayout>
 
