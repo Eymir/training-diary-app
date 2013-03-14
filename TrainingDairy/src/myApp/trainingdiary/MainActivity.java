@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +67,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Dialog createTrainingDialog;
 	private Dialog renameTrainingDialog;
 	private AlertDialog deleteTrainingDialog;
+	private Dialog chooseExerciseDialog = null;
 
 	private QuickAction mQuickAction;
 
@@ -83,14 +85,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		View addRowFooter = getLayoutInflater().inflate(R.layout.add_row, null);
 		trainingList.addFooterView(addRowFooter);
 		trainingList.setItemsCanFocus(false);
-		trainingList.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View v, int arg2,
-					long arg3) {
-
-			}
-		});
 
 		ImageButton addButton = (ImageButton) findViewById(R.id.add_button);
 		addButton.setOnClickListener(new OnClickListener() {
@@ -105,6 +99,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		createCreateTrDialog();
 		createRenameTrDialog();
 		createDeletionDialog();
+		createChooseExerciseDialog();
 		createTools();
 
 		trainingList.setDropListener(new DropListener() {
@@ -116,6 +111,51 @@ public class MainActivity extends Activity implements OnClickListener {
 				cur_drag_handler.setVisibility(View.GONE);
 			}
 		});
+	}
+
+	private void createChooseExerciseDialog() {
+		chooseExerciseDialog = new Dialog(this);
+		chooseExerciseDialog.setContentView(R.layout.choose_exercise_list);
+		chooseExerciseDialog.setTitle(R.string.choose_exercise);
+		final ListView exercise_list = (ListView) chooseExerciseDialog
+				.findViewById(R.id.exercise_list);
+		exercise_list.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int arg2,
+					long position) {
+				//TODO: Доделать
+//				Cursor cursor = ((AdapterView<SimpleCursorAdapter>)exercise_list).getCursor();
+//				cursor.moveToPosition(position);
+//				long ex_id = cursor.getLong(cursor.getColumnIndex("_id"));
+//				int count = dbHelper.getExerciseInTrainingCount(cur_tr_id);
+//				SQLiteDatabase db = dbHelper.getWritableDatabase();
+//				dbHelper.insertExerciseInTraining(db, cur_tr_id, ex_id , count);
+//				db.close();
+//				chooseExerciseDialog.cancel();
+			}
+		});
+		Cursor cursor = dbHelper.getExercisesExceptExInTr(cur_tr_id);
+		String[] from = { "name", "icon_res" };
+		int[] to = { R.id.label, R.id.icon };
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+				R.layout.choose_exercise_row, cursor, from, to,
+				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			@Override
+			public boolean setViewValue(View view, Cursor cursor,
+					int columnIndex) {
+				if (view.getId() == R.id.icon) {
+					((ImageView) view).setImageResource(getResources()
+							.getIdentifier(cursor.getString(columnIndex),
+									"drawable", getPackageName()));
+					return true;
+				}
+				return false;
+			}
+		});
+		exercise_list.setAdapter(adapter);
+		dbHelper.close();
 	}
 
 	private void createTools() {
@@ -156,16 +196,22 @@ public class MainActivity extends Activity implements OnClickListener {
 						case ID_DELETE:
 							String tr_name = dbHelper
 									.getTrainingNameById(cur_tr_id);
-							deleteTrainingDialog.setMessage(getResources()
-									.getString(R.string.Dialog_del_tr_msg)
-									+ " " + tr_name + "?");
+							deleteTrainingDialog.setMessage(String.format(
+									getResources().getString(
+											R.string.Dialog_del_tr_msg),
+									tr_name));
 							deleteTrainingDialog.show();
 							break;
 						case ID_MOVE:
 							cur_drag_handler.setVisibility(View.VISIBLE);
 							break;
 						case ID_ADD:
-							openAddExerciseActivity();
+							if (chooseExerciseDialog == null) {
+								createChooseExerciseDialog();
+								chooseExerciseDialog.show();
+							} else {
+								chooseExerciseDialog.show();
+							}
 							break;
 						}
 					}
@@ -348,11 +394,11 @@ public class MainActivity extends Activity implements OnClickListener {
 					// addRowFooter.setFocusable(false);
 					// }
 					long tr_id = cursor.getLong(cursor.getColumnIndex("_id"));
-					Cursor ex_cursor = dbHelper.getExercises(tr_id);
+					Cursor ex_cursor = dbHelper.getExercisesInTraining(tr_id);
 					String[] from = { "name", "icon_res" };
 					int[] to = { R.id.label, R.id.icon };
 					SimpleDragSortCursorAdapter exerciseDragAdapter = new SimpleDragSortCursorAdapter(
-							MainActivity.this, R.layout.training_row,
+							MainActivity.this, R.layout.exercise_row,
 							ex_cursor, from, to,
 							CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 					exerciseDragAdapter.setViewBinder(new ViewBinder() {
@@ -361,7 +407,7 @@ public class MainActivity extends Activity implements OnClickListener {
 						public boolean setViewValue(View view, Cursor cursor,
 								int columnIndex) {
 							if (view.getId() == R.id.icon) {
-								//Не проверял
+								// Не проверял
 								((ImageView) view).setImageResource(getResources()
 										.getIdentifier(
 												cursor.getString(columnIndex),

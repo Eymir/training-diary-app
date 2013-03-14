@@ -34,7 +34,7 @@
     <string name="btn_txt_plus">+</string>
     <string name="btn_txt_minus">-</string>
     <string name="Dialog_del_tr_title">Удалить тренировку</string>
-    <string name="Dialog_del_tr_msg">Действительно удалить тренировку</string>
+    <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку %1$?</string>
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
     <string name="Dialog_del_tr_btn_cancel">Отмена</string>
@@ -61,4 +61,5 @@
 	<string name="rename_action">Переименовать</string>
 	<string name="move_action">Переместить</string>
 	<string name="delete_action">Удалить</string>
+	<string name="choose_exercise">Выберите упражнение</string>
 </resources>
