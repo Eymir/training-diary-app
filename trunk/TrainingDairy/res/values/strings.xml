@@ -62,4 +62,8 @@
 	<string name="move_action">Переместить</string>
 	<string name="delete_action">Удалить</string>
 	<string name="choose_exercise">Выберите упражнение</string>
+	<string name="ex_name">Название</string>
+	<string name="ex_type">Тип</string>
+	<string name="ex_create">Создать новое</string>
+	<string name="ex_choose">Выбрать существующее</string>
 </resources>
