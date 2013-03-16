@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import myApp.trainingdiary.R;
+import myApp.trainingdiary.constant.Consts;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -21,7 +22,7 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-	public final static String LOG_TAG = "test";
+	
 	Context context;
 
 	private final static int DB_VERSION = 3; // версия БД
@@ -44,6 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		createTrainingStatTable(db);
 
 		createInitialTypes(db);
+		createInitialExercises(db);
 	}
 
 	/**
@@ -57,7 +59,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "value text,"
 				+ "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate BD TrainingStat ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate BD TrainingStat ---");
 	}
 
 	private void createMesureExTypeTable(SQLiteDatabase db) {
@@ -67,7 +69,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "FOREIGN KEY(mesure_id) REFERENCES Mesure(id),"
 				+ "PRIMARY KEY (ex_type_id, mesure_id)" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate table MesureExType ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate table MesureExType ---");
 	}
 
 	/**
@@ -79,7 +81,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "id integer primary key autoincrement," + "name text,"
 				+ "max integer," + "step float," + "type integer" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate table Mesure ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate table Mesure ---");
 	}
 
 	/**
@@ -95,7 +97,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "FOREIGN KEY(exercise_id) REFERENCES Exercise(id),"
 				+ "PRIMARY KEY (training_id, exercise_id)" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate table ExerciseInTraining ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate table ExerciseInTraining ---");
 	}
 
 	/**
@@ -109,7 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "type_id integer,"
 				+ "FOREIGN KEY(type_id) REFERENCES ExerciseType(id)" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate table Exercise ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate table Exercise ---");
 	}
 
 	/**
@@ -121,7 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "id integer primary key autoincrement," + "name text,"
 				+ "icon_res text" + ");");
 
-		Log.d(LOG_TAG, "--- onCreate table ExerciseType ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate table ExerciseType ---");
 	}
 
 	/**
@@ -132,7 +134,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("create table Training ("
 				+ "id integer primary key autoincrement," + "name text,"
 				+ "position integer" + ");");
-		Log.d(LOG_TAG, "--- onCreate table Training  ---");
+		Log.d(Consts.LOG_TAG, "--- onCreate table Training  ---");
 	}
 
 	public long insertTraining(SQLiteDatabase db, String name, int position) {
@@ -201,6 +203,10 @@ public class DBHelper extends SQLiteOpenHelper {
 		return id;
 	}
 
+	private void createInitialExercises(SQLiteDatabase db) {
+		//TODO: Создать начальные упражнения
+	}
+	
 	private void createInitialTypes(SQLiteDatabase db) {
 		long bw_m_id = insertMesure(db,
 				context.getString(R.string.baseMesure_bar_weight), 500, 0.5, 0);
@@ -232,7 +238,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
+		Log.d(Consts.LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
 				+ newVersion);
 		if (oldVersion == 1 && newVersion == 2) {
 			upgradeFrom_1_To_2(db);
@@ -251,7 +257,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		try {
 			db.execSQL("alter table TrainingProgTable add column exidintr integer;");
 			db.setTransactionSuccessful();
-			Log.d(LOG_TAG, "--- add column sucsessful ---");
+			Log.d(Consts.LOG_TAG, "--- add column sucsessful ---");
 		} finally {
 			db.endTransaction();
 		}
@@ -289,7 +295,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 			dropAllTablesVer2(db);
 
-			Log.d(LOG_TAG, "--- upgradeFrom_2_To_3 done ---");
+			Log.d(Consts.LOG_TAG, "--- upgradeFrom_2_To_3 done ---");
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -331,7 +337,7 @@ public class DBHelper extends SQLiteOpenHelper {
 					if (ex_id > 0 && date != null) {
 						insertTrainingStat(db, ex_id, date.getTime(), value);
 					} else {
-						Log.e(LOG_TAG,
+						Log.e(Consts.LOG_TAG,
 								"Cannot insert TrainingStat cause - ex_id: "
 										+ ex_id + " date: " + date);
 					}
@@ -353,7 +359,7 @@ public class DBHelper extends SQLiteOpenHelper {
 					if (ex_id > 0 && tr_id > 0)
 						insertExerciseInTraining(db, tr_id, ex_id, position);
 					else {
-						Log.e(LOG_TAG,
+						Log.e(Consts.LOG_TAG,
 								"Cannot insert ExerciseInTraining cause - ex_id: "
 										+ ex_id + "tr_id: " + tr_id);
 					}
@@ -394,8 +400,8 @@ public class DBHelper extends SQLiteOpenHelper {
 					context.getString(R.string.baseExType_power));
 			long cycle_id = findExTypeByName(db,
 					context.getString(R.string.baseExType_cycle));
-			Log.i(LOG_TAG, "findPowerExType: " + power_id);
-			Log.i(LOG_TAG, "findCycleExType: " + cycle_id);
+			Log.i(Consts.LOG_TAG, "findPowerExType: " + power_id);
+			Log.i(Consts.LOG_TAG, "findCycleExType: " + cycle_id);
 			if (c.moveToFirst()) {
 				do {
 					String name = c.getString(c.getColumnIndex("exercise"));
@@ -454,7 +460,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 			ContentValues cv = new ContentValues();
 			cv.put("exidintr", i);
-			// Log.d(LOG_TAG, "new_pos: " + newNumEX +
+			// Log.d(Consts.LOG_TAG, "new_pos: " + newNumEX +
 			// " old_pos: "+old_pos+" ex_name: " + strNameEx
 			// + " trainingname: " + strNameTr);
 			db.update("TrainingProgTable", cv, "id = ? ",

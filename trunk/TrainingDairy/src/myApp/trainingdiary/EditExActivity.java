@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import myApp.trainingdiary.addex.AddExerciseActivity;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
@@ -82,7 +84,7 @@ public class EditExActivity extends Activity implements OnClickListener
 	    {
 	    case R.id.btnAddEx:
 	    	finish();
-	        Intent intentOpenCreateEx = new Intent(this, CreateExActivity.class);
+	        Intent intentOpenCreateEx = new Intent(this, AddExerciseActivity.class);
 	        intentOpenCreateEx.putExtra("parent", 0); // родитель = 0 значит вывоз без передачи названия тренировки
 	        startActivity(intentOpenCreateEx);
 	      break;

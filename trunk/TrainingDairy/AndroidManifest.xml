@@ -14,11 +14,11 @@
         android:label="@string/app_name"
         android:theme="@style/AppBaseTheme" >
         <activity
-            android:name="myApp.trainingdiary.MainActivity"
+            android:name="myApp.trainingdiary.TrainingActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="myApp.trainingdiary.AddExerciseActivity"
+            android:name="myApp.trainingdiary.addex.AddExerciseActivity"
             android:label="@string/title_activity_add_exercise" >
         </activity>
         <activity
@@ -28,10 +28,6 @@
         <activity
             android:name="myApp.trainingdiary.EditExActivity"
             android:label="@string/title_activity_edit_ex" >
-        </activity>
-        <activity
-            android:name="myApp.trainingdiary.CreateExActivity"
-            android:label="@string/title_activity_create_ex" >
         </activity>
         <activity
             android:name="myApp.trainingdiary.SelectExToAddInTrActivity"
