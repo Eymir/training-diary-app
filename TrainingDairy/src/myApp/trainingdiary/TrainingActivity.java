@@ -18,6 +18,8 @@ import com.mobeta.android.dslv.DragSortListView.RemoveListener;
 import com.mobeta.android.dslv.SimpleDragSortCursorAdapter.ViewBinder;
 
 import myApp.trainingdiary.HistoryAct.HistoryMainAcrivity;
+import myApp.trainingdiary.addex.AddExerciseActivity;
+import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.customview.ExpandAnimation;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
@@ -54,7 +56,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
  * активити выбора тренировочного дня
  */
 
-public class MainActivity extends Activity implements OnClickListener {
+public class TrainingActivity extends Activity {
 
 	private static final int ID_ADD = 1;
 	private static final int ID_RENAME = 2;
@@ -105,7 +107,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		trainingList.setDropListener(new DropListener() {
 			@Override
 			public void drop(int from, int to) {
-				Log.i(DBHelper.LOG_TAG, "drop training");
+				Log.i(Consts.LOG_TAG, "drop training");
 				trainingDragAdapter.drop(from, to);
 				// dbHelper.changeTrainingPositions(getNewTrIdOrder());
 				cur_drag_handler.setVisibility(View.GONE);
@@ -174,7 +176,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		mQuickAction = new QuickAction(this);
 		if (addItem == null)
-			Log.d(DBHelper.LOG_TAG, "addItem is null");
+			Log.d(Consts.LOG_TAG, "addItem is null");
 
 		mQuickAction.addActionItem(addItem);
 		mQuickAction.addActionItem(renameItem);
@@ -206,20 +208,17 @@ public class MainActivity extends Activity implements OnClickListener {
 							cur_drag_handler.setVisibility(View.VISIBLE);
 							break;
 						case ID_ADD:
-							if (chooseExerciseDialog == null) {
-								createChooseExerciseDialog();
-								chooseExerciseDialog.show();
-							} else {
-								chooseExerciseDialog.show();
-							}
+							openAddExerciseActivity(cur_tr_id);
 							break;
 						}
 					}
 				});
 	}
 
-	protected void openAddExerciseActivity() {
-
+	protected void openAddExerciseActivity(long tr_id) {
+		Intent intentOpenAddEx = new Intent(this, AddExerciseActivity.class);
+		intentOpenAddEx.putExtra(Consts.TRAINING_ID, tr_id);
+		startActivity(intentOpenAddEx);
 	}
 
 	private void createCreateTrDialog() {
@@ -250,11 +249,11 @@ public class MainActivity extends Activity implements OnClickListener {
 					SQLiteDatabase db = dbHelper.getWritableDatabase();
 					dbHelper.insertTraining(db, name, count);
 					createTrainingDialog.cancel();
-					Toast.makeText(MainActivity.this, R.string.create_success,
+					Toast.makeText(TrainingActivity.this, R.string.create_success,
 							Toast.LENGTH_SHORT).show();
 					refreshTrainings();
 				} else {
-					Toast.makeText(MainActivity.this,
+					Toast.makeText(TrainingActivity.this,
 							R.string.zero_input_notif, Toast.LENGTH_SHORT)
 							.show();
 				}
@@ -288,12 +287,12 @@ public class MainActivity extends Activity implements OnClickListener {
 					String name = name_input.getText().toString();
 					dbHelper.renameTraining(cur_tr_id, name);
 					renameTrainingDialog.cancel();
-					Toast.makeText(MainActivity.this, R.string.rename_success,
+					Toast.makeText(TrainingActivity.this, R.string.rename_success,
 							Toast.LENGTH_SHORT).show();
 
 					refreshTrainings();
 				} else {
-					Toast.makeText(MainActivity.this,
+					Toast.makeText(TrainingActivity.this,
 							R.string.zero_input_notif, Toast.LENGTH_SHORT)
 							.show();
 				}
@@ -303,12 +302,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private List<Long> getNewTrIdOrder() {
 		List<Long> list = new ArrayList<Long>();
-		Log.d(DBHelper.LOG_TAG,
+		Log.d(Consts.LOG_TAG,
 				"getCursorPositions" + trainingDragAdapter.getCursorPositions());
 		for (Integer i = 0; i < trainingDragAdapter.getCount(); i++) {
 			list.add(trainingDragAdapter.getItemId(i));
 		}
-		Log.d(DBHelper.LOG_TAG, "getNewIdOrder" + list);
+		Log.d(Consts.LOG_TAG, "getNewIdOrder" + list);
 		return list;
 	}
 
@@ -320,16 +319,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		return true;
 	}
 
-	@Override
-	public void onClick(View arg0) {
-		switch (arg0.getId()) {
-		case R.id.add_button:
 
-			break;
-		default:
-			break;
-		}
-	}
 
 	protected void fetchTrainings() {
 		Cursor tr_cursor = dbHelper.getTrainings();
@@ -355,9 +345,9 @@ public class MainActivity extends Activity implements OnClickListener {
 									.getParent())
 									.findViewById(R.id.exercise_list);
 							if (cExerciseList == null)
-								Log.d(DBHelper.LOG_TAG, "cExerciseList is null");
+								Log.d(Consts.LOG_TAG, "cExerciseList is null");
 							else {
-								Log.d(DBHelper.LOG_TAG, cExerciseList
+								Log.d(Consts.LOG_TAG, cExerciseList
 										.getClass().toString());
 
 								ExpandAnimation expandAni = new ExpandAnimation(
@@ -398,7 +388,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					String[] from = { "name", "icon_res" };
 					int[] to = { R.id.label, R.id.icon };
 					SimpleDragSortCursorAdapter exerciseDragAdapter = new SimpleDragSortCursorAdapter(
-							MainActivity.this, R.layout.exercise_row,
+							TrainingActivity.this, R.layout.exercise_row,
 							ex_cursor, from, to,
 							CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 					exerciseDragAdapter.setViewBinder(new ViewBinder() {
@@ -449,7 +439,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			public void onClick(DialogInterface dialog, int id) {
 				dbHelper.deleteTraining(cur_tr_id);
 				refreshTrainings();
-				Toast.makeText(MainActivity.this, R.string.deleted,
+				Toast.makeText(TrainingActivity.this, R.string.deleted,
 						Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -485,8 +475,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private void startSuperMain() {
 
-		Intent intentOpenAddEx = new Intent(this, SuperMainActivity.class);
-		startActivity(intentOpenAddEx);
+
 		finish();
 	}
 

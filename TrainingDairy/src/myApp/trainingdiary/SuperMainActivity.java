@@ -57,7 +57,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 	    switch (arg0.getId()) 
 	    {
 	    case R.id.btnStart:
-		    Intent intentOpenMain = new Intent(this, MainActivity.class);
+		    Intent intentOpenMain = new Intent(this, TrainingActivity.class);
 	        startActivity(intentOpenMain);
 	      break;
 	    case R.id.btnAddEx:
