@@ -81,7 +81,7 @@ public class TrainingActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.training_list);
-		dbHelper = new DBHelper(this);
+		dbHelper = DBHelper.getInstance(this);
 		trainingList = (DragSortListView) findViewById(R.id.training_list);
 
 		View addRowFooter = getLayoutInflater().inflate(R.layout.add_row, null);
@@ -113,6 +113,12 @@ public class TrainingActivity extends Activity {
 				cur_drag_handler.setVisibility(View.GONE);
 			}
 		});
+	}
+	
+	@Override
+	protected void onResume() {
+//		refreshTrainings();
+		super.onResume();
 	}
 
 	private void createChooseExerciseDialog() {
@@ -157,7 +163,7 @@ public class TrainingActivity extends Activity {
 			}
 		});
 		exercise_list.setAdapter(adapter);
-		dbHelper.close();
+//		dbHelper.close();
 	}
 
 	private void createTools() {
@@ -414,15 +420,15 @@ public class TrainingActivity extends Activity {
 			}
 		});
 		trainingList.setAdapter(trainingDragAdapter);
-		dbHelper.close();
+//		dbHelper.close();
 	}
 
 	private void refreshTrainings() {
 		Cursor c = dbHelper.getTrainings();
 		trainingDragAdapter.swapCursor(c);
-		dbHelper.close();
+//		dbHelper.close();
 	}
-
+	
 	private void createDeletionDialog() {
 
 		// Получаем тексты из ресов

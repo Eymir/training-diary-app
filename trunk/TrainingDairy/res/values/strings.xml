@@ -34,7 +34,7 @@
     <string name="btn_txt_plus">+</string>
     <string name="btn_txt_minus">-</string>
     <string name="Dialog_del_tr_title">Удалить тренировку</string>
-    <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку %1$?</string>
+    <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку %1$s?</string>
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
     <string name="Dialog_del_tr_btn_cancel">Отмена</string>
@@ -66,4 +66,7 @@
 	<string name="ex_type">Тип</string>
 	<string name="ex_create">Создать новое</string>
 	<string name="ex_choose">Выбрать существующее</string>
+	<string name="create_exercise_success">Упражнение %1$s создано и добавленно в тренировку %2$s.</string>
+	<string name="input_exercise_name_notification">Введите название упражнения</string>
+	<string name="input_exercise_type_notification">Выберите тип упражнения</string>
 </resources>

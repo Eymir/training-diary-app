@@ -103,7 +103,7 @@ public class SetSortEx extends Activity implements OnClickListener {
 	
 	private void setSort() {
 		
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase(); 
 		ContentValues cv = new ContentValues();
 		String strnum = etSetSort.getText().toString();

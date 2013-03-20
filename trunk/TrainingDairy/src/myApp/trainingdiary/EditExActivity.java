@@ -95,7 +95,7 @@ public class EditExActivity extends Activity implements OnClickListener
 	
 	private void getEx()
 	{			
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor c = db.query("ExerciseTable", null, null, null, null, null, null);       
         int size = c.getCount();               
@@ -177,7 +177,7 @@ public class EditExActivity extends Activity implements OnClickListener
 		    
     private void deleteEx()
 	{
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();	    
 	    String[] args = {ParsedName};	
 	    int isDeleted = db.delete("ExerciseTable", "exercise=?", args);	    

@@ -56,7 +56,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 	    switch (arg0.getId()) 
 	    {
 	    case R.id.btnClearDBTr:
-			dbHelper = new DBHelper(this);			    
+			dbHelper = DBHelper.getInstance(this);			    
 		    SQLiteDatabase dbTr = dbHelper.getWritableDatabase();	
 		    int clearCountTr = dbTr.delete("Trainingtable", null, null);
 		    Toast.makeText(this, "Из БД удалено "+ clearCountTr + " записей", Toast.LENGTH_LONG).show();
@@ -64,7 +64,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 	    	refreshTextViews();
 	      break;
 	    case R.id.btnClearDBEx:
-			dbHelper = new DBHelper(this);			    
+			dbHelper = DBHelper.getInstance(this);			    
 		    SQLiteDatabase dbEx = dbHelper.getWritableDatabase();	
 		    int clearCountEx = dbEx.delete("ExerciseTable", null, null);
 		    Toast.makeText(this, "Из БД удалено "+ clearCountEx + " записей", Toast.LENGTH_LONG).show();
@@ -72,7 +72,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 	    	refreshTextViews();
 	      break;
 	    case R.id.btnClearHist:
-			dbHelper = new DBHelper(this);			    
+			dbHelper = DBHelper.getInstance(this);			    
 		    SQLiteDatabase dbHis = dbHelper.getWritableDatabase();	
 		    int clearCountHist = dbHis.delete("TrainingStat", null, null);
 		    Toast.makeText(this, "Из БД удалено "+ clearCountHist + " записей", Toast.LENGTH_LONG).show();
@@ -86,7 +86,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 
 	protected void refreshTextViews()
 	{	
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();		       	
         Cursor cTr = db.query("Trainingtable", null, null, null, null, null, null);
         String messTr = getResources().getString(R.string.SettingsAct_CountTr);

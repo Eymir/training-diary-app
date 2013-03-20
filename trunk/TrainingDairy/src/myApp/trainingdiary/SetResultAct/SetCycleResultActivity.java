@@ -179,7 +179,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 	@SuppressLint("SimpleDateFormat")
 	private void RefreshTvEndedRep()
 	{
-		dbHelper = new DBHelper(this);    	    
+		dbHelper = DBHelper.getInstance(this);    	    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");		
@@ -215,7 +215,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 	@SuppressLint("SimpleDateFormat")
 	private void SetRepOnDB()
 	{
-		dbHelper = new DBHelper(this);
+		dbHelper = DBHelper.getInstance(this);
 	    ContentValues cv = new ContentValues();	    	    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
