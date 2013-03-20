@@ -49,7 +49,7 @@ public class StatisticActivity extends Activity
 
 	private void getEx()
 	{			
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    String[] Col = {"exercise","exercisetype"};	    
         Cursor c = db.query("TrainingStat", Col, null, null, "exercise", null, null);       

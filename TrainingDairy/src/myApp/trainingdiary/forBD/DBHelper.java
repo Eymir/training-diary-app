@@ -22,12 +22,20 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-	
+	private static DBHelper mInstance = null;
+
 	Context context;
 
 	private final static int DB_VERSION = 3; // версия БД
 
-	public DBHelper(Context context) {
+	public static DBHelper getInstance(Context ctx) {
+		if (mInstance == null) {
+			mInstance = new DBHelper(ctx.getApplicationContext());
+		}
+		return mInstance;
+	}
+
+	private DBHelper(Context context) {
 		super(context, "TrainingDiaryDB", null, DB_VERSION); // Последняя цифра
 																// версия
 		// БД!!!!
@@ -193,6 +201,34 @@ public class DBHelper extends SQLiteOpenHelper {
 		return id;
 	}
 
+	public long insertExerciseInTrainingAtEnd(SQLiteDatabase db,
+			long training_id, long exercise_id) {
+		long position = getExerciseCount(training_id);
+		ContentValues cv = new ContentValues();
+		cv.put("training_id", training_id);
+		cv.put("exercise_id", exercise_id);
+		cv.put("position", position);
+		long id = db.insert("ExerciseInTraining", null, cv);
+		return id;
+	}
+
+	private long getExerciseCount(long training_id) {
+		SQLiteDatabase db = null;
+		try {
+			db = getWritableDatabase();
+			String sqlQuery = "select count(ex_tr.exercise_id) as _count from ExerciseInTraining ex_tr where training_id = ?";
+			Cursor c = db.rawQuery(sqlQuery,
+					new String[] { String.valueOf(training_id) });
+			c.moveToFirst();
+			int count = c.getInt(c.getColumnIndex("_count"));
+			c.close();
+			return count;
+		} finally {
+			if (db != null)
+				db.close();
+		}
+	}
+
 	public long insertTrainingStat(SQLiteDatabase db, long exercise_id,
 			long trainingDate, String value) {
 		ContentValues cv = new ContentValues();
@@ -204,9 +240,9 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	private void createInitialExercises(SQLiteDatabase db) {
-		//TODO: Создать начальные упражнения
+		// TODO: Создать начальные упражнения
 	}
-	
+
 	private void createInitialTypes(SQLiteDatabase db) {
 		long bw_m_id = insertMesure(db,
 				context.getString(R.string.baseMesure_bar_weight), 500, 0.5, 0);
@@ -581,6 +617,14 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "where ex_tr.training_id <> ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
 		Cursor c = db
 				.rawQuery(sqlQuery, new String[] { String.valueOf(tr_id) });
+		return c;
+	}
+
+	public Cursor getExerciseTypes() {
+		SQLiteDatabase db = getWritableDatabase();
+		String sqlQuery = "select ex_type.id as _id, ex_type.name name, ex_type.icon_res icon_res "
+				+ "from ExerciseType ex_type";
+		Cursor c = db.rawQuery(sqlQuery, null);
 		return c;
 	}
 

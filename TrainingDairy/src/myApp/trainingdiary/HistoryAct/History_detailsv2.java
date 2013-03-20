@@ -54,7 +54,7 @@ public class History_detailsv2 extends Activity {
 		
 		TableLayout table = (TableLayout) findViewById(R.id.tableLay1);
 		
-		dbHelper = new DBHelper(this); 
+		dbHelper = DBHelper.getInstance(this); 
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    String sqlQuery;
 	    String param = "";

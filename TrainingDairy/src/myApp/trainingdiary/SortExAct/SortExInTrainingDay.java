@@ -67,7 +67,7 @@ public class SortExInTrainingDay extends Activity {
 	
 	private void getExtoSort() {
 				
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase(); 
 	    
 	    String sqlQuery  = "select " +

@@ -67,7 +67,7 @@ public class HistoryMainAcrivity extends Activity
 	
 	private void GetTrainingsDay()
 	{
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    String[] Column = {"trainingdate"};	       	 
         Cursor c = db.query("TrainingStat", Column, null, null, "trainingdate", null, null);        

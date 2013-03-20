@@ -69,7 +69,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	
 	private void getEx()
 	{
-		dbHelper = new DBHelper(this);			    
+		dbHelper = DBHelper.getInstance(this);			    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor c = db.query("ExerciseTable", null, null, null, null, null, null);       
         int size = c.getCount();
@@ -136,7 +136,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	
 	private void writeExToTr(String exName)
 	{
-		dbHelper = new DBHelper(this);
+		dbHelper = DBHelper.getInstance(this);
 		ContentValues cv = new ContentValues();
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
@@ -236,7 +236,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	    		getResources().getString(R.string.BaseExPrised),getResources().getString(R.string.BaseExStan)};
 	    
 	    ContentValues cv = new ContentValues();	
-	    dbHelper = new DBHelper(this);
+	    dbHelper = DBHelper.getInstance(this);
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
 		    //Пихаем их в табличку

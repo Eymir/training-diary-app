@@ -109,7 +109,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 	
 //	private void showinstructions()
 //	{		
-//		dbHelper = new DBHelper(this);			    
+//		dbHelper = DBHelper.getInstance(this);			    
 //	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 //        Cursor cTr = db.query("Trainingtable", null, null, null, null, null, null);         
 //        Cursor cEx = db.query("ExerciseTable", null, null, null, null, null, null);       

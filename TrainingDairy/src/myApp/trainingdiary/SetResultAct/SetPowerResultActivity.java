@@ -202,7 +202,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 
 	@SuppressLint("SimpleDateFormat")
 	private void setRepOnDB() {
-		dbHelper = new DBHelper(this);
+		dbHelper = DBHelper.getInstance(this);
 		ContentValues cv = new ContentValues();
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -237,7 +237,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 
 	@SuppressLint("SimpleDateFormat")
 	private void RefreshTvEndedRep() {
-		dbHelper = new DBHelper(this);
+		dbHelper = DBHelper.getInstance(this);
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -310,7 +310,7 @@ public class SetPowerResultActivity extends Activity implements OnClickListener 
 	@SuppressLint("SimpleDateFormat")
 	private void DelLastEx() {
 
-		dbHelper = new DBHelper(this);
+		dbHelper = DBHelper.getInstance(this);
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		String Date = sdf.format(Calendar.getInstance().getTime());
