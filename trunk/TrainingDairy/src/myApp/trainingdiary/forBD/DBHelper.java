@@ -203,30 +203,25 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public long insertExerciseInTrainingAtEnd(SQLiteDatabase db,
 			long training_id, long exercise_id) {
-		long position = getExerciseCount(training_id);
+		long position = getExerciseCount(db, training_id);
 		ContentValues cv = new ContentValues();
 		cv.put("training_id", training_id);
 		cv.put("exercise_id", exercise_id);
 		cv.put("position", position);
+		Log.d(Consts.LOG_TAG, "insertExerciseInTrainingAtEnd.ContentValues: "
+				+ cv);
 		long id = db.insert("ExerciseInTraining", null, cv);
 		return id;
 	}
 
-	private long getExerciseCount(long training_id) {
-		SQLiteDatabase db = null;
-		try {
-			db = getWritableDatabase();
-			String sqlQuery = "select count(ex_tr.exercise_id) as _count from ExerciseInTraining ex_tr where training_id = ?";
-			Cursor c = db.rawQuery(sqlQuery,
-					new String[] { String.valueOf(training_id) });
-			c.moveToFirst();
-			int count = c.getInt(c.getColumnIndex("_count"));
-			c.close();
-			return count;
-		} finally {
-			if (db != null)
-				db.close();
-		}
+	private long getExerciseCount(SQLiteDatabase db, long training_id) {
+		String sqlQuery = "select count(ex_tr.exercise_id) as _count from ExerciseInTraining ex_tr where training_id = ?";
+		Cursor c = db.rawQuery(sqlQuery,
+				new String[] { String.valueOf(training_id) });
+		c.moveToFirst();
+		int count = c.getInt(c.getColumnIndex("_count"));
+		c.close();
+		return count;
 	}
 
 	public long insertTrainingStat(SQLiteDatabase db, long exercise_id,
@@ -488,12 +483,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS TrainingStatOld");
 	}
 
-	public void changeTrainingPositions(List<Long> list) {
-
-		SQLiteDatabase db = getWritableDatabase();
-
+	public void changeTrainingPositions(SQLiteDatabase db, List<Long> list) {
 		for (int i = 0; i < list.size(); i++) {
-
 			ContentValues cv = new ContentValues();
 			cv.put("exidintr", i);
 			// Log.d(Consts.LOG_TAG, "new_pos: " + newNumEX +
@@ -502,11 +493,9 @@ public class DBHelper extends SQLiteOpenHelper {
 			db.update("TrainingProgTable", cv, "id = ? ",
 					new String[] { String.valueOf(list.get(i)) });
 		}
-		db.close();
 	}
 
-	public Cursor getExersices(String strNameTr) {
-		SQLiteDatabase db = getWritableDatabase();
+	public Cursor getExersices(SQLiteDatabase db, String strNameTr) {
 		String sqlQuery = "select " + "prog.id as _id, "
 				+ "prog.exercise as ex_name, " + "prog.trainingname as Tr, "
 				+ "prog.exidintr as id," + "Ex.type as type "
@@ -527,8 +516,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	 * @return курсор с теми же тренировками что и в базе, только id
 	 *         возвращается как _id
 	 */
-	public Cursor getTrainings() {
-		SQLiteDatabase db = getWritableDatabase();
+	public Cursor getTrainings(SQLiteDatabase db) {
 		String sqlQuery = "select tr.id as _id, tr.name, tr.position from Training tr order by tr.position asc";
 		Cursor c = db.rawQuery(sqlQuery, null);
 		return c;
@@ -541,8 +529,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	 * @return курсор с теми же тренировками что и в базе, только id
 	 *         возвращается как _id
 	 */
-	public Cursor getExercisesInTraining(long tr_id) {
-		SQLiteDatabase db = getWritableDatabase();
+	public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
 		String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
 				+ "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
 				+ "where ex_tr.training_id = ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
@@ -551,67 +538,57 @@ public class DBHelper extends SQLiteOpenHelper {
 		return c;
 	}
 
-	public int getTrainingsCount() {
-		SQLiteDatabase db = null;
-		try {
-			db = getWritableDatabase();
-			String sqlQuery = "select count(tr.id) as _count from Training tr";
-			Cursor c = db.rawQuery(sqlQuery, null);
-			c.moveToFirst();
-			int count = c.getInt(c.getColumnIndex("_count"));
-			c.close();
-			return count;
-		} finally {
-			if (db != null)
-				db.close();
-		}
+	public int getTrainingsCount(SQLiteDatabase db) {
+		String sqlQuery = "select count(tr.id) as _count from Training tr";
+		Cursor c = db.rawQuery(sqlQuery, null);
+		c.moveToFirst();
+		int count = c.getInt(c.getColumnIndex("_count"));
+		c.close();
+		return count;
 	}
 
-	public String getTrainingNameById(long tr_id) {
-		SQLiteDatabase db = null;
-		try {
-			db = getWritableDatabase();
-			String sqlQuery = "select tr.name from Training tr where tr.id = ?";
-			Cursor c = db.rawQuery(sqlQuery,
-					new String[] { String.valueOf(tr_id) });
-			c.moveToFirst();
-			String name = c.getString(c.getColumnIndex("name"));
-			c.close();
-			return name;
-		} finally {
-			if (db != null)
-				db.close();
-		}
+	public int getExerciseCount(SQLiteDatabase db) {
+		String sqlQuery = "select count(t.id) as _count from Exercise t";
+		Cursor c = db.rawQuery(sqlQuery, null);
+		c.moveToFirst();
+		int count = c.getInt(c.getColumnIndex("_count"));
+		c.close();
+		return count;
+
 	}
 
-	public void renameTraining(long cur_tr_id, String name) {
-		SQLiteDatabase db = null;
-		try {
-			db = getWritableDatabase();
-			ContentValues cv = new ContentValues();
-			cv.put("name", name);
-			db.update("Training", cv, "id = ? ",
-					new String[] { String.valueOf(cur_tr_id) });
-		} finally {
-			if (db != null)
-				db.close();
-		}
+	public int getExerciseInTrainingCount(SQLiteDatabase db) {
+		String sqlQuery = "select count(t.exercise_id) as _count from ExerciseInTraining t";
+		Cursor c = db.rawQuery(sqlQuery, null);
+		c.moveToFirst();
+		int count = c.getInt(c.getColumnIndex("_count"));
+		c.close();
+		return count;
 	}
 
-	public void deleteTraining(long cur_tr_id) {
-		SQLiteDatabase db = null;
-		try {
-			db = getWritableDatabase();
-			db.delete("Training", "id = ? ",
-					new String[] { String.valueOf(cur_tr_id) });
-		} finally {
-			if (db != null)
-				db.close();
-		}
+	public String getTrainingNameById(SQLiteDatabase db, long tr_id) {
+		String sqlQuery = "select tr.name from Training tr where tr.id = ?";
+		Cursor c = db
+				.rawQuery(sqlQuery, new String[] { String.valueOf(tr_id) });
+		c.moveToFirst();
+		String name = c.getString(c.getColumnIndex("name"));
+		c.close();
+		return name;
 	}
 
-	public Cursor getExercisesExceptExInTr(long tr_id) {
-		SQLiteDatabase db = getWritableDatabase();
+	public void renameTraining(SQLiteDatabase db, long cur_tr_id, String name) {
+		ContentValues cv = new ContentValues();
+		cv.put("name", name);
+		db.update("Training", cv, "id = ? ",
+				new String[] { String.valueOf(cur_tr_id) });
+	}
+
+	public void deleteTraining(SQLiteDatabase db, long cur_tr_id) {
+		db.delete("Training", "id = ? ",
+				new String[] { String.valueOf(cur_tr_id) });
+	}
+
+	public Cursor getExercisesExceptExInTr(SQLiteDatabase db, long tr_id) {
 		String sqlQuery = "select ex.id as _id, ex.name name, ex_type.icon_res icon_res "
 				+ "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
 				+ "where ex_tr.training_id <> ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
@@ -620,12 +597,63 @@ public class DBHelper extends SQLiteOpenHelper {
 		return c;
 	}
 
-	public Cursor getExerciseTypes() {
-		SQLiteDatabase db = getWritableDatabase();
+	public Cursor getExerciseTypes(SQLiteDatabase db) {
 		String sqlQuery = "select ex_type.id as _id, ex_type.name name, ex_type.icon_res icon_res "
 				+ "from ExerciseType ex_type";
 		Cursor c = db.rawQuery(sqlQuery, null);
 		return c;
 	}
+
+	/**
+	 * Функция возвращающая количество записей по основным таблицам
+	 */
+	public String getStatistics(SQLiteDatabase db) {
+		String result = "";
+		result += "Training: " + getTrainingsCount(db) + "\n";
+		result += "Exercise: " + getExerciseCount(db) + "\n";
+		result += "ExerciseInTraining: " + getExerciseInTrainingCount(db)
+				+ "\n";
+		return result;
+	}
+
+	public Cursor getExercisesExceptExInTr(long tr_id) {
+		Cursor c = getExercisesExceptExInTr(getWritableDatabase(), tr_id);
+		return c;
+	}
+
+	public String getTrainingNameById(long tr_id) {
+		SQLiteDatabase db = getWritableDatabase();
+		String name = getTrainingNameById(db, tr_id);
+		db.close();
+		return name;
+	}
+
+	public void renameTraining(long tr_id, String name) {
+		SQLiteDatabase db = getWritableDatabase();
+		renameTraining(db, tr_id,name);
+		db.close();
+	}
+
+	public Cursor getTrainings() {
+		Cursor c = getTrainings(getWritableDatabase());
+		return c;
+	}
+
+	public Cursor getExercisesInTraining(long tr_id) {
+		Cursor c = getExercisesInTraining(getWritableDatabase(),tr_id);
+		return c;
+	}
+
+	public void deleteTraining(long tr_id) {
+		SQLiteDatabase db = getWritableDatabase();
+		deleteTraining(db, tr_id);
+		db.close();
+	}
+
+	public Cursor getExerciseTypes() {
+		Cursor c = getExerciseTypes(getWritableDatabase());
+		return c;
+	}
+
 
 }
