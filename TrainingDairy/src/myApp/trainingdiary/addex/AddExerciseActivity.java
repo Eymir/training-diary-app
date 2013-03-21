@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
@@ -74,6 +75,7 @@ public class AddExerciseActivity extends Activity {
 
 	private void initChoosePanel() {
 		Cursor ex_cursor = dbHelper.getExercisesExceptExInTr(tr_id);
+		Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
 		String[] from = { "name", "icon_res" };
 		int[] to = { R.id.label, R.id.icon };
 		SimpleCursorAdapter exerciseAdapter = new SimpleCursorAdapter(
@@ -110,11 +112,9 @@ public class AddExerciseActivity extends Activity {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
-				Log.d(Consts.LOG_TAG,
-						"TypeCursor.ColumnNames: " + cursor.getColumnNames());
+
 				if (view.getId() == R.id.icon) {
-					Log.d(Consts.LOG_TAG,
-							"icon.name: " + cursor.getString(columnIndex));
+
 					((ImageView) view).setImageResource(getResources()
 							.getIdentifier(cursor.getString(columnIndex),
 									"drawable", getPackageName()));
@@ -124,7 +124,6 @@ public class AddExerciseActivity extends Activity {
 			}
 		});
 		type_spinner.setAdapter(typeAdapter);
-		// type_cursor.close();
 
 		create_button.setOnClickListener(new OnClickListener() {
 
@@ -146,13 +145,19 @@ public class AddExerciseActivity extends Activity {
 	}
 
 	protected void createExercise() {
-		
+		Log.d(Consts.LOG_TAG, "tr_id: " + tr_id + " name_edit: "
+				+ name_edit.getText().toString() + " type_spinner.id:"
+				+ type_spinner.getSelectedItemId());
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long ex_id = dbHelper.insertExercise(db,
-				name_edit.getText().toString(),
-				type_spinner.getSelectedItemId());
-		dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
-		db.close();
+		try {
+			long ex_id = dbHelper.insertExercise(db, name_edit.getText()
+					.toString(), type_spinner.getSelectedItemId());
+			dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
+		} catch (SQLException e) {
+			Log.e(Consts.LOG_TAG, "Error while adding exercise", e);
+		} finally {
+			db.close();
+		}
 	}
 
 	private boolean validateCreateForm() {

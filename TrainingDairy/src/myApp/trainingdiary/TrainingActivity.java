@@ -114,10 +114,10 @@ public class TrainingActivity extends Activity {
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onResume() {
-//		refreshTrainings();
+		// refreshTrainings();
 		super.onResume();
 	}
 
@@ -132,15 +132,17 @@ public class TrainingActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int arg2,
 					long position) {
-				//TODO: Доделать
-//				Cursor cursor = ((AdapterView<SimpleCursorAdapter>)exercise_list).getCursor();
-//				cursor.moveToPosition(position);
-//				long ex_id = cursor.getLong(cursor.getColumnIndex("_id"));
-//				int count = dbHelper.getExerciseInTrainingCount(cur_tr_id);
-//				SQLiteDatabase db = dbHelper.getWritableDatabase();
-//				dbHelper.insertExerciseInTraining(db, cur_tr_id, ex_id , count);
-//				db.close();
-//				chooseExerciseDialog.cancel();
+				// TODO: Доделать
+				// Cursor cursor =
+				// ((AdapterView<SimpleCursorAdapter>)exercise_list).getCursor();
+				// cursor.moveToPosition(position);
+				// long ex_id = cursor.getLong(cursor.getColumnIndex("_id"));
+				// int count = dbHelper.getExerciseInTrainingCount(cur_tr_id);
+				// SQLiteDatabase db = dbHelper.getWritableDatabase();
+				// dbHelper.insertExerciseInTraining(db, cur_tr_id, ex_id ,
+				// count);
+				// db.close();
+				// chooseExerciseDialog.cancel();
 			}
 		});
 		Cursor cursor = dbHelper.getExercisesExceptExInTr(cur_tr_id);
@@ -163,7 +165,7 @@ public class TrainingActivity extends Activity {
 			}
 		});
 		exercise_list.setAdapter(adapter);
-//		dbHelper.close();
+		dbHelper.close();
 	}
 
 	private void createTools() {
@@ -251,12 +253,13 @@ public class TrainingActivity extends Activity {
 			public void onClick(View v) {
 				if (name_input.getText().length() > 0) {
 					String name = name_input.getText().toString();
-					int count = dbHelper.getTrainingsCount();
 					SQLiteDatabase db = dbHelper.getWritableDatabase();
+					int count = dbHelper.getTrainingsCount(db);
 					dbHelper.insertTraining(db, name, count);
+					db.close();
 					createTrainingDialog.cancel();
-					Toast.makeText(TrainingActivity.this, R.string.create_success,
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(TrainingActivity.this,
+							R.string.create_success, Toast.LENGTH_SHORT).show();
 					refreshTrainings();
 				} else {
 					Toast.makeText(TrainingActivity.this,
@@ -293,8 +296,8 @@ public class TrainingActivity extends Activity {
 					String name = name_input.getText().toString();
 					dbHelper.renameTraining(cur_tr_id, name);
 					renameTrainingDialog.cancel();
-					Toast.makeText(TrainingActivity.this, R.string.rename_success,
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(TrainingActivity.this,
+							R.string.rename_success, Toast.LENGTH_SHORT).show();
 
 					refreshTrainings();
 				} else {
@@ -325,8 +328,6 @@ public class TrainingActivity extends Activity {
 		return true;
 	}
 
-
-
 	protected void fetchTrainings() {
 		Cursor tr_cursor = dbHelper.getTrainings();
 		String[] from = { "_id", "name", "_id" };
@@ -353,8 +354,8 @@ public class TrainingActivity extends Activity {
 							if (cExerciseList == null)
 								Log.d(Consts.LOG_TAG, "cExerciseList is null");
 							else {
-								Log.d(Consts.LOG_TAG, cExerciseList
-										.getClass().toString());
+								Log.d(Consts.LOG_TAG, cExerciseList.getClass()
+										.toString());
 
 								ExpandAnimation expandAni = new ExpandAnimation(
 										cExerciseList, 500);
@@ -420,15 +421,15 @@ public class TrainingActivity extends Activity {
 			}
 		});
 		trainingList.setAdapter(trainingDragAdapter);
-//		dbHelper.close();
+		// dbHelper.close();
 	}
 
 	private void refreshTrainings() {
 		Cursor c = dbHelper.getTrainings();
 		trainingDragAdapter.swapCursor(c);
-//		dbHelper.close();
+		// dbHelper.close();
 	}
-	
+
 	private void createDeletionDialog() {
 
 		// Получаем тексты из ресов
@@ -480,7 +481,6 @@ public class TrainingActivity extends Activity {
 	}
 
 	private void startSuperMain() {
-
 
 		finish();
 	}
