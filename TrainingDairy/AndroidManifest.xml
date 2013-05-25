@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppBaseTheme" >
         <activity
-            android:name="myApp.trainingdiary.TrainingActivity"
+            android:name="myApp.trainingdiary.training.TrainingActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

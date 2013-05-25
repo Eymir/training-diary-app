@@ -32,7 +32,7 @@
             android:text="@+id/label"
             android:textColor="#F8F8FF"
             android:textSize="30sp" />
-        
+
         <ImageView
             android:id="@+id/tools"
             android:layout_width="40dp"
@@ -44,7 +44,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/gtk_edit" >
         </ImageView>
-        
+
         <ImageView
             android:id="@+id/drag_handler"
             android:layout_width="40dp"
@@ -54,37 +54,9 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:visibility="gone"
-            android:src="@drawable/object_flip_vertical" >
+            android:src="@drawable/object_flip_vertical"
+            android:visibility="gone" >
         </ImageView>
     </LinearLayout>
-
-    <myApp.trainingdiary.customview.ExpandedDragSortListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:dslv="http://schemas.android.com/apk/res/myApp.trainingdiary"
-        android:id="@+id/exercise_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:layout_weight="1"
-        android:dividerHeight="3dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:paddingBottom="0dp"
-        android:paddingLeft="0dp"
-        android:paddingTop="0dp"
-        android:scrollbars="none"
-        dslv:collapsed_height="2dp"
-        dslv:drag_enabled="true"
-        dslv:drag_handle_id="@id/drag_handler"
-        dslv:drag_scroll_start="0.33"
-        dslv:drag_start_mode="onDown"
-        dslv:float_alpha="0.6"
-        dslv:max_drag_scroll_speed="0.5"
-        dslv:remove_enabled="true"
-        dslv:slide_shuffle_speed="0.3"
-        dslv:sort_enabled="true"
-        dslv:track_drag_sort="false"
-        dslv:use_default_controller="true" />
 
 </LinearLayout>
