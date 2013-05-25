@@ -1,4 +1,4 @@
-package myApp.trainingdiary.addex;
+package myApp.trainingdiary.excercise;
 
 import myApp.trainingdiary.R;
 import android.content.Context;

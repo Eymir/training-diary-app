@@ -1,4 +1,4 @@
-package myApp.trainingdiary;
+package myApp.trainingdiary.excercise;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,13 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import myApp.trainingdiary.addex.AddExerciseActivity;
+import myApp.trainingdiary.R;
+import myApp.trainingdiary.SuperMainActivity;
+import myApp.trainingdiary.R.drawable;
+import myApp.trainingdiary.R.id;
+import myApp.trainingdiary.R.layout;
+import myApp.trainingdiary.R.menu;
+import myApp.trainingdiary.R.string;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;

@@ -1,11 +1,11 @@
-package myApp.trainingdiary.addex;
+package myApp.trainingdiary.excercise;
 
-import myApp.trainingdiary.TrainingActivity;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.training.TrainingActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -30,7 +30,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class AddExerciseActivity extends Activity {
+public class ExerciseActivity extends Activity {
 	private long tr_id;
 	private String trainingName;
 	// панели создания выбора упражнения
@@ -79,7 +79,7 @@ public class AddExerciseActivity extends Activity {
 		String[] from = { "name", "icon_res" };
 		int[] to = { R.id.label, R.id.icon };
 		SimpleCursorAdapter exerciseAdapter = new SimpleCursorAdapter(
-				AddExerciseActivity.this, R.layout.exercise_row, ex_cursor,
+				ExerciseActivity.this, R.layout.exercise_row, ex_cursor,
 				from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		exerciseAdapter.setViewBinder(new ViewBinder() {
 			@Override
@@ -104,7 +104,7 @@ public class AddExerciseActivity extends Activity {
 		String[] from = { "name", "icon_res" };
 		int[] to = { R.id.label, R.id.icon };
 		SimpleCursorAdapter typeAdapter = new SimpleCursorAdapter(
-				AddExerciseActivity.this, R.layout.exercise_type_row,
+				ExerciseActivity.this, R.layout.exercise_type_row,
 				type_cursor, from, to,
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		typeAdapter.setViewBinder(new ViewBinder() {
