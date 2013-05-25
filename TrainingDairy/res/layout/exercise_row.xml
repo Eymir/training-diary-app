@@ -47,7 +47,7 @@
         android:layout_weight="0.69"
         android:scaleType="fitCenter"
         android:visibility="gone"
-        android:src="@drawable/drag" >
+        android:src="@drawable/object_flip_vertical" >
     </ImageView>
 
 </LinearLayout>

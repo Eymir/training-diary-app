@@ -8,11 +8,6 @@ import java.util.TreeMap;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SuperMainActivity;
-import myApp.trainingdiary.R.drawable;
-import myApp.trainingdiary.R.id;
-import myApp.trainingdiary.R.layout;
-import myApp.trainingdiary.R.menu;
-import myApp.trainingdiary.R.string;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
@@ -28,12 +23,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 /*
- * Активити в котором мы создаём новые упражнения
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  */
 
 public class EditExActivity extends Activity implements OnClickListener
@@ -49,10 +43,10 @@ public class EditExActivity extends Activity implements OnClickListener
 	{
 		//Log.d(LOG_TAG, "--- onCreate ---");
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_ex);
+		setContentView(R.layout.activity_excercise);
 		btnAddEx = (Button)findViewById(R.id.btnAddEx);
 		btnAddEx.setOnClickListener(this);
-		lvExinTrain = (ListView)findViewById(R.id.lvExinTrain);
+//		lvExinTrain = (ListView)findViewById(R.id.lvExinTrain);
 		
 		getEx();
 		
@@ -91,7 +85,7 @@ public class EditExActivity extends Activity implements OnClickListener
 	    case R.id.btnAddEx:
 	    	finish();
 	        Intent intentOpenCreateEx = new Intent(this, AddExerciseActivity.class);
-	        intentOpenCreateEx.putExtra("parent", 0); // родитель = 0 значит вывоз без передачи названия тренировки
+	        intentOpenCreateEx.putExtra("parent", 0); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ = 0 пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	        startActivity(intentOpenCreateEx);
 	      break;
 	    default:
@@ -124,13 +118,13 @@ public class EditExActivity extends Activity implements OnClickListener
         }
         else 
         {
-        	Toast.makeText(this, "Список упражнений пуст", Toast.LENGTH_SHORT).show();
-        	list.put("Записей нет", "0");
+        	Toast.makeText(this, "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ", Toast.LENGTH_SHORT).show();
+        	list.put("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ", "0");
 		}
         
         int imgPow = R.drawable.power;
         int imgCyc = R.drawable.cycle;
-        // имена атрибутов для Map
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ Map
         final String ATTRIBUTE_NAME_TEXT = "text";
         final String ATTRIBUTE_NAME_IMAGE = "image";
                
@@ -155,13 +149,13 @@ public class EditExActivity extends Activity implements OnClickListener
             data.add(m);
         }
                
-        // массив имен атрибутов, из которых будут читаться данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
-        // массив ID View-компонентов, в которые будут вставлять данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ ID View-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         int[] to = {R.id.label, R.id.icon};        
-        // создаем адаптер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-//        // определяем список и присваиваем ему адаптер
+//        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //        lvExinTrain.setAdapter(sAdapter);                  	   	
 	}
 	
@@ -192,15 +186,15 @@ public class EditExActivity extends Activity implements OnClickListener
 //      db.rawQuery(sqlQuery, args);                
         dbHelper.close();
         if(isDeleted == 1)
-        Toast.makeText(this, "Упражнение удалено - "+ ParsedName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ - "+ ParsedName, Toast.LENGTH_SHORT).show();
         getEx();
 	}
     
     private void DelDialog() {
     	
     	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-	      adb.setTitle("Удаление упражнение?");
-	      adb.setMessage("Удалить упражнение - "+ParsedName+" из тренировки?");     
+	      adb.setTitle("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?");
+	      adb.setMessage("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - "+ParsedName+" пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?");     
 	      adb.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener() {
                public void onClick(DialogInterface dialog, int id) {
             	   deleteEx();

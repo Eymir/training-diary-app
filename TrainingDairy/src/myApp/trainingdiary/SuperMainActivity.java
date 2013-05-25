@@ -15,7 +15,7 @@ import android.widget.Button;
 public class SuperMainActivity<T> extends Activity implements OnClickListener
 {
 	
-	Button btnStart, btnAddEx, btnAddTr, btnStat, btnHis, btnSettings, btnExit;
+	Button btnStart, btnAddEx,  btnStat, btnHis, btnSettings, btnExit;
 	DBHelper dbHelper;
 	 final String LOG_TAG = "myLogs";
 
@@ -27,7 +27,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 		
 		btnStart = (Button)findViewById(R.id.btnStart);
 		btnAddEx = (Button)findViewById(R.id.btnAddEx);
-		btnAddTr = (Button)findViewById(R.id.btnAddTr);
 		btnStat = (Button)findViewById(R.id.btnStat);
 		btnHis = (Button)findViewById(R.id.btnHist);
 		btnSettings = (Button)findViewById(R.id.btnSettings);
@@ -35,7 +34,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 		
 		btnStart.setOnClickListener(this);
 		btnAddEx.setOnClickListener(this);
-		btnAddTr.setOnClickListener(this);
 		btnStat.setOnClickListener(this);
 		btnHis.setOnClickListener(this);
 		btnSettings.setOnClickListener(this);
@@ -91,10 +89,10 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 //	private void exit()
 //	{
 //    	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-//	      adb.setTitle("Выйти из приложения?");
-//	      adb.setMessage("Вы действительно хотите выйти?");
-//	      adb.setNegativeButton("Нет", null);      
-//	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+//	      adb.setTitle("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?");
+//	      adb.setMessage("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ?");
+//	      adb.setNegativeButton("пїЅпїЅпїЅ", null);      
+//	      adb.setPositiveButton("пїЅпїЅ", new DialogInterface.OnClickListener() {
 //                 public void onClick(DialogInterface dialog, int id) {
 //              	   finish();
 //              	   
@@ -121,14 +119,14 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 //        if(sizeTr == 0 || sizeEx == 0)
 //        {       	
 //        	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-//  	      adb.setTitle("Добро пожаловать в дневник тренировок");
-//  	      adb.setMessage("Для того чтобы начать вести дневник необходимо: \n" +
-//  	      		" 1. Создать тренирововчный день - кнопка создать тренировку \n" +
-//  	      		" 2. Создать необходимое количество упражнений - кнопка создать упражнение \n" +
-//  	      		" 3. Добавить Ваши упражнения в тренировочный день - кнопка начать тренировку - добавить упражнение." +
-//  	      		" Далее Вы просто нажимаете любое упражнение в тренировке и начинаете записывать результаты." +
-//  	      		" Для удаленитя тренировок или упражнений используйте длительное касание.");      
-//  	      adb.setPositiveButton("Продолжить", new DialogInterface.OnClickListener() {
+//  	      adb.setTitle("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
+//  	      adb.setMessage("пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: \n" +
+//  	      		" 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ \n" +
+//  	      		" 2. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ \n" +
+//  	      		" 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ." +
+//  	      		" пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ." +
+//  	      		" пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");      
+//  	      adb.setPositiveButton("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ", new DialogInterface.OnClickListener() {
 //                   public void onClick(DialogInterface dialog, int id) {
 //                   }
 //               });       
