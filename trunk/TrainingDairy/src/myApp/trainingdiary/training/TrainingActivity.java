@@ -1,4 +1,4 @@
-package myApp.trainingdiary;
+package myApp.trainingdiary.training;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -17,10 +17,15 @@ import com.mobeta.android.dslv.DragSortListView.DropListener;
 import com.mobeta.android.dslv.DragSortListView.RemoveListener;
 import com.mobeta.android.dslv.SimpleDragSortCursorAdapter.ViewBinder;
 
+import myApp.trainingdiary.R;
 import myApp.trainingdiary.HistoryAct.HistoryMainAcrivity;
-import myApp.trainingdiary.addex.AddExerciseActivity;
+import myApp.trainingdiary.R.drawable;
+import myApp.trainingdiary.R.id;
+import myApp.trainingdiary.R.layout;
+import myApp.trainingdiary.R.string;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.customview.ExpandAnimation;
+import myApp.trainingdiary.excercise.AddExerciseActivity;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
@@ -58,10 +63,13 @@ import android.widget.AdapterView.OnItemLongClickListener;
 
 public class TrainingActivity extends Activity {
 
-	private static final int ID_ADD = 1;
-	private static final int ID_RENAME = 2;
-	private static final int ID_MOVE = 3;
-	private static final int ID_DELETE = 4;
+	private static final int ID_ADD_TRAINING = 1;
+	private static final int ID_RENAME_TRAINING = 2;
+	private static final int ID_MOVE_TRAINING = 3;
+	private static final int ID_DELETE_TRAINING = 4;
+	private static final int ID_RENAME_EXERCISE = 5;
+	private static final int ID_REMOVE_EXERCISE = 6;
+	private static final int ID_MOVE_EXERCISE = 7;
 
 	private DBHelper dbHelper;
 	private DragSortListView trainingList;
@@ -71,11 +79,14 @@ public class TrainingActivity extends Activity {
 	private AlertDialog deleteTrainingDialog;
 	private Dialog chooseExerciseDialog = null;
 
-	private QuickAction mQuickAction;
+	private QuickAction trainingActionTools;
+	private QuickAction exerciseActionTools;
 
 	// id тренировки по которой вызван toolbar
 	private long cur_tr_id;
 	private ImageView cur_drag_handler;
+
+	private TrainingGuiBindMediator trMediator;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +94,11 @@ public class TrainingActivity extends Activity {
 		setContentView(R.layout.training_list);
 		dbHelper = DBHelper.getInstance(this);
 		trainingList = (DragSortListView) findViewById(R.id.training_list);
-
 		View addRowFooter = getLayoutInflater().inflate(R.layout.add_row, null);
 		trainingList.addFooterView(addRowFooter);
-		trainingList.setItemsCanFocus(false);
 
 		ImageButton addButton = (ImageButton) findViewById(R.id.add_button);
+		
 		addButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -102,7 +112,17 @@ public class TrainingActivity extends Activity {
 		createRenameTrDialog();
 		createDeletionDialog();
 		createChooseExerciseDialog();
-		createTools();
+		createTrainingTools();
+
+		trainingList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int pos,
+					long id) {
+				Toast.makeText(getApplicationContext(), String.valueOf(id),
+						Toast.LENGTH_SHORT).show();
+			}
+		});
 
 		trainingList.setDropListener(new DropListener() {
 			@Override
@@ -111,6 +131,44 @@ public class TrainingActivity extends Activity {
 				trainingDragAdapter.drop(from, to);
 				// dbHelper.changeTrainingPositions(getNewTrIdOrder());
 				cur_drag_handler.setVisibility(View.GONE);
+			}
+		});
+	}
+
+	private void createCreateTrDialog() {
+		createTrainingDialog = new Dialog(this);
+		createTrainingDialog.setContentView(R.layout.input_name_dialog);
+		createTrainingDialog.setTitle(R.string.title_rename_training);
+		final EditText name_input = (EditText) createTrainingDialog
+				.findViewById(R.id.name_input);
+		Button okButton = (Button) createTrainingDialog
+				.findViewById(R.id.ok_button);
+		okButton.setText(R.string.create_button);
+		Button cancelButton = (Button) createTrainingDialog
+				.findViewById(R.id.cancel_button);
+		cancelButton.setText(R.string.cancel_button);
+		cancelButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				createTrainingDialog.cancel();
+			}
+		});
+
+		okButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (name_input.getText().length() > 0) {
+					String name = name_input.getText().toString();
+					dbHelper.createTraining(name);
+					createTrainingDialog.cancel();
+					Toast.makeText(TrainingActivity.this,
+							R.string.create_success, Toast.LENGTH_SHORT).show();
+					refreshTrainings();
+				} else {
+					Toast.makeText(TrainingActivity.this,
+							R.string.zero_input_notif, Toast.LENGTH_SHORT)
+							.show();
+				}
 			}
 		});
 	}
@@ -168,31 +226,25 @@ public class TrainingActivity extends Activity {
 		dbHelper.close();
 	}
 
-	private void createTools() {
-		ActionItem addItem = new ActionItem(ID_ADD, getResources().getString(
-				R.string.add_action), getResources().getDrawable(
-				R.drawable.plus_orange));
-		ActionItem renameItem = new ActionItem(ID_RENAME, getResources()
-				.getString(R.string.rename_action), getResources().getDrawable(
-				R.drawable.pencil));
-		ActionItem moveItem = new ActionItem(ID_MOVE, getResources().getString(
-				R.string.move_action), getResources().getDrawable(
+	private void createTrainingTools() {
+		ActionItem renameItem = new ActionItem(ID_RENAME_TRAINING,
+				getResources().getString(R.string.rename_action),
+				getResources().getDrawable(R.drawable.pencil));
+		ActionItem moveItem = new ActionItem(ID_MOVE_TRAINING, getResources()
+				.getString(R.string.move_action), getResources().getDrawable(
 				R.drawable.object_flip_vertical));
-		ActionItem deleteItem = new ActionItem(ID_DELETE, getResources()
-				.getString(R.string.delete_action), getResources().getDrawable(
-				R.drawable.deletered));
+		ActionItem deleteItem = new ActionItem(ID_DELETE_TRAINING,
+				getResources().getString(R.string.delete_action),
+				getResources().getDrawable(R.drawable.deletered));
 
-		mQuickAction = new QuickAction(this);
-		if (addItem == null)
-			Log.d(Consts.LOG_TAG, "addItem is null");
+		trainingActionTools = new QuickAction(this);
 
-		mQuickAction.addActionItem(addItem);
-		mQuickAction.addActionItem(renameItem);
-		mQuickAction.addActionItem(moveItem);
-		mQuickAction.addActionItem(deleteItem);
+		trainingActionTools.addActionItem(renameItem);
+		trainingActionTools.addActionItem(moveItem);
+		trainingActionTools.addActionItem(deleteItem);
 
 		// setup the action item click listener
-		mQuickAction
+		trainingActionTools
 				.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
 					@Override
 					public void onItemClick(QuickAction quickAction, int pos,
@@ -200,10 +252,10 @@ public class TrainingActivity extends Activity {
 						ActionItem actionItem = quickAction.getActionItem(pos);
 
 						switch (actionId) {
-						case ID_RENAME:
+						case ID_RENAME_TRAINING:
 							renameTrainingDialog.show();
 							break;
-						case ID_DELETE:
+						case ID_DELETE_TRAINING:
 							String tr_name = dbHelper
 									.getTrainingNameById(cur_tr_id);
 							deleteTrainingDialog.setMessage(String.format(
@@ -212,12 +264,50 @@ public class TrainingActivity extends Activity {
 									tr_name));
 							deleteTrainingDialog.show();
 							break;
-						case ID_MOVE:
+						case ID_MOVE_TRAINING:
 							cur_drag_handler.setVisibility(View.VISIBLE);
 							break;
-						case ID_ADD:
-							openAddExerciseActivity(cur_tr_id);
+						}
+					}
+				});
+	}
+
+	private void createExcerciseTools() {
+		ActionItem renameItem = new ActionItem(ID_RENAME_EXERCISE,
+				getResources().getString(R.string.rename_action),
+				getResources().getDrawable(R.drawable.pencil));
+		ActionItem moveItem = new ActionItem(ID_MOVE_EXERCISE, getResources()
+				.getString(R.string.move_action), getResources().getDrawable(
+				R.drawable.object_flip_vertical));
+		ActionItem removeItem = new ActionItem(ID_REMOVE_EXERCISE,
+				getResources().getString(R.string.delete_action),
+				getResources().getDrawable(R.drawable.deletered));
+
+		exerciseActionTools = new QuickAction(this);
+
+		exerciseActionTools.addActionItem(renameItem);
+		exerciseActionTools.addActionItem(moveItem);
+		exerciseActionTools.addActionItem(removeItem);
+
+		// setup the action item click listener
+		exerciseActionTools
+				.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+					@Override
+					public void onItemClick(QuickAction quickAction, int pos,
+							int actionId) {
+						ActionItem actionItem = quickAction.getActionItem(pos);
+
+						switch (actionId) {
+						case ID_RENAME_EXERCISE:
+							// renameExerciseDialog.show();
 							break;
+						case ID_REMOVE_EXERCISE:
+							// removeExerciseDIalog.show();
+							break;
+						case ID_MOVE_EXERCISE:
+							// cur_drag_handler.setVisibility(View.VISIBLE);
+							break;
+
 						}
 					}
 				});
@@ -227,47 +317,6 @@ public class TrainingActivity extends Activity {
 		Intent intentOpenAddEx = new Intent(this, AddExerciseActivity.class);
 		intentOpenAddEx.putExtra(Consts.TRAINING_ID, tr_id);
 		startActivity(intentOpenAddEx);
-	}
-
-	private void createCreateTrDialog() {
-		createTrainingDialog = new Dialog(this);
-		createTrainingDialog.setContentView(R.layout.input_name_dialog);
-		createTrainingDialog.setTitle(R.string.title_create_training);
-		final EditText name_input = (EditText) createTrainingDialog
-				.findViewById(R.id.name_input);
-		Button okButton = (Button) createTrainingDialog
-				.findViewById(R.id.ok_button);
-		okButton.setText(R.string.create_button);
-		Button cancelButton = (Button) createTrainingDialog
-				.findViewById(R.id.cancel_button);
-		cancelButton.setText(R.string.cancel_button);
-		cancelButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				createTrainingDialog.cancel();
-			}
-		});
-
-		okButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (name_input.getText().length() > 0) {
-					String name = name_input.getText().toString();
-					SQLiteDatabase db = dbHelper.getWritableDatabase();
-					int count = dbHelper.getTrainingsCount(db);
-					dbHelper.insertTraining(db, name, count);
-					db.close();
-					createTrainingDialog.cancel();
-					Toast.makeText(TrainingActivity.this,
-							R.string.create_success, Toast.LENGTH_SHORT).show();
-					refreshTrainings();
-				} else {
-					Toast.makeText(TrainingActivity.this,
-							R.string.zero_input_notif, Toast.LENGTH_SHORT)
-							.show();
-				}
-			}
-		});
 	}
 
 	private void createRenameTrDialog() {
@@ -330,12 +379,11 @@ public class TrainingActivity extends Activity {
 
 	protected void fetchTrainings() {
 		Cursor tr_cursor = dbHelper.getTrainings();
-		String[] from = { "_id", "name", "_id" };
-		int[] to = { R.id.exercise_list, R.id.label, R.id.tools };
+		String[] from = { "name", "_id" };
+		int[] to = { R.id.label, R.id.tools };
 		trainingDragAdapter = new SimpleDragSortCursorAdapter(this,
 				R.layout.training_row, tr_cursor, from, to,
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
 		trainingDragAdapter.setViewBinder(new ViewBinder() {
 
 			@Override
@@ -343,35 +391,12 @@ public class TrainingActivity extends Activity {
 					int columnIndex) {
 				// ¬озможно не самый лучший вариант здесь определ€ть лиснеры,
 				// так как может быть много лишних переназначений
-				if (view.getId() == R.id.label) {
-
-					view.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							View cExerciseList = ((View) v.getParent()
-									.getParent())
-									.findViewById(R.id.exercise_list);
-							if (cExerciseList == null)
-								Log.d(Consts.LOG_TAG, "cExerciseList is null");
-							else {
-								Log.d(Consts.LOG_TAG, cExerciseList.getClass()
-										.toString());
-
-								ExpandAnimation expandAni = new ExpandAnimation(
-										cExerciseList, 500);
-								cExerciseList.startAnimation(expandAni);
-							}
-						}
-					});
-
-					return false;
-				}
 				if (view.getId() == R.id.tools) {
 					final long tr_id = cursor.getLong(columnIndex);
 					view.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							mQuickAction.show(v);
+							trainingActionTools.show(v);
 							cur_tr_id = tr_id;
 							cur_drag_handler = (ImageView) ((View) v
 									.getParent())
@@ -380,43 +405,7 @@ public class TrainingActivity extends Activity {
 					});
 					return true;
 				}
-				if (view.getId() == R.id.exercise_list) {
-					//
-					DragSortListView exerciseList = (DragSortListView) view;
-					exerciseList.setVisibility(View.GONE);
-					// if (exerciseList.getFooterViewsCount() == 0) {
-					// View addRowFooter = getLayoutInflater().inflate(
-					// R.layout.add_row, null);
-					// exerciseList.addFooterView(addRowFooter);
-					// addRowFooter.setFocusable(false);
-					// }
-					long tr_id = cursor.getLong(cursor.getColumnIndex("_id"));
-					Cursor ex_cursor = dbHelper.getExercisesInTraining(tr_id);
-					String[] from = { "name", "icon_res" };
-					int[] to = { R.id.label, R.id.icon };
-					SimpleDragSortCursorAdapter exerciseDragAdapter = new SimpleDragSortCursorAdapter(
-							TrainingActivity.this, R.layout.exercise_row,
-							ex_cursor, from, to,
-							CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-					exerciseDragAdapter.setViewBinder(new ViewBinder() {
 
-						@Override
-						public boolean setViewValue(View view, Cursor cursor,
-								int columnIndex) {
-							if (view.getId() == R.id.icon) {
-								// Ќе провер€л
-								((ImageView) view).setImageResource(getResources()
-										.getIdentifier(
-												cursor.getString(columnIndex),
-												"drawable", getPackageName()));
-								return true;
-							}
-							return false;
-						}
-					});
-					exerciseList.setAdapter(exerciseDragAdapter);
-					return true;
-				}
 				return false;
 			}
 		});

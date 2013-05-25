@@ -589,11 +589,12 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	public Cursor getExercisesExceptExInTr(SQLiteDatabase db, long tr_id) {
+		// TODO: нужно написать запрос который возвращает только те упражнения
+		// которые не входят в данную тренировку
 		String sqlQuery = "select ex.id as _id, ex.name name, ex_type.icon_res icon_res "
-				+ "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
-				+ "where ex_tr.training_id <> ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
-		Cursor c = db
-				.rawQuery(sqlQuery, new String[] { String.valueOf(tr_id) });
+				+ "from Exercise ex, ExerciseType ex_type "
+				+ "where (ex.type_id = ex_type.id)";
+		Cursor c = db.rawQuery(sqlQuery, null);
 		return c;
 	}
 
@@ -616,6 +617,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		return result;
 	}
 
+	public Long createTraining(String name) {
+		SQLiteDatabase db = getWritableDatabase();
+		int position = getTrainingsCount(db);
+		Long id = insertTraining(db, name, position);
+		return id;
+	}
+
 	public Cursor getExercisesExceptExInTr(long tr_id) {
 		Cursor c = getExercisesExceptExInTr(getWritableDatabase(), tr_id);
 		return c;
@@ -630,7 +638,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public void renameTraining(long tr_id, String name) {
 		SQLiteDatabase db = getWritableDatabase();
-		renameTraining(db, tr_id,name);
+		renameTraining(db, tr_id, name);
 		db.close();
 	}
 
@@ -640,7 +648,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	public Cursor getExercisesInTraining(long tr_id) {
-		Cursor c = getExercisesInTraining(getWritableDatabase(),tr_id);
+		Cursor c = getExercisesInTraining(getWritableDatabase(), tr_id);
 		return c;
 	}
 
@@ -654,6 +662,5 @@ public class DBHelper extends SQLiteOpenHelper {
 		Cursor c = getExerciseTypes(getWritableDatabase());
 		return c;
 	}
-
 
 }

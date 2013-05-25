@@ -1,7 +1,9 @@
 package myApp.trainingdiary;
 
 import myApp.trainingdiary.HistoryAct.HistoryMainAcrivity;
+import myApp.trainingdiary.excercise.EditExActivity;
 import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.training.TrainingActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
