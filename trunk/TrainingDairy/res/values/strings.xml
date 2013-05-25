@@ -5,6 +5,7 @@
     <string name="menu_settings">Настройки</string>
     <string name="title_create_training">Создание новой тренировки</string>
     <string name="title_rename_training">Переименовать тренировку</string>
+    <string name="title_rename_exercise">Переименовать упражнение</string>
     <string name="title_activity_add_exercise">Упражнения на сегодня:</string>
     <string name="title_activity_settings">Настройки:</string>
     <string name="hello_world">Hello world!</string>
@@ -13,7 +14,7 @@
     <string name="title_activity_select_ex_to_add_in_tr">Выберите упражнение:</string>
     <string name="title_activity_set_power_result">Выполнение упражнения</string>
     <string name="title_activity_set_cycle_result">Выполнение упражнения</string>
-    <string name="title_activity_test">Test</string>
+    <string name="title_activity_exercise_in_training">Test</string>
     <string name="title_activity_statistic">Статистика</string>
     <string name="title_activity_history_main_acrivity">Тренировочные дни</string>
     <string name="title_activity_history_details">HistoryDetails</string>
@@ -34,7 +35,9 @@
     <string name="btn_txt_plus">+</string>
     <string name="btn_txt_minus">-</string>
     <string name="Dialog_del_tr_title">Удалить тренировку</string>
+    <string name="Dialog_del_ex_title">Удалить упражнение</string>
     <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку %1$s?</string>
+    <string name="Dialog_del_ex_msg">Вы действительно хотите убрать упражнение %1$s из тренировки %2$s?</string>
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
     <string name="Dialog_del_tr_btn_cancel">Отмена</string>
@@ -59,6 +62,7 @@
 	<string name="baseMesure_time">Время</string>
 	<string name="add_action">Добавить</string>
 	<string name="rename_action">Переименовать</string>
+	<string name="stat_action">Статистика</string>
 	<string name="move_action">Переместить</string>
 	<string name="delete_action">Удалить</string>
 	<string name="choose_exercise">Выберите упражнение</string>
@@ -67,6 +71,12 @@
 	<string name="ex_create">Создать новое</string>
 	<string name="ex_choose">Выбрать существующее</string>
 	<string name="create_exercise_success">Упражнение %1$s создано и добавленно в тренировку %2$s.</string>
+	<string name="add_exercise_success">Упражнение %1$s добавленно в тренировку %2$s.</string>
 	<string name="input_exercise_name_notification">Введите название упражнения</string>
 	<string name="input_exercise_type_notification">Выберите тип упражнения</string>
+    <string name="exercise_main_button">Упражнения</string>
+    <string name="history_main_button">История</string>
+    <string name="stat_main_button">Статистика</string>
+    <string name="settings_main_button">Настройки</string>
+    <string name="exit_main_button">Выход</string>
 </resources>

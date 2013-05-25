@@ -204,7 +204,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
         		i++;
         	} while (c.moveToNext()); 
         	
-        	result = result + "\nВсего подходов: "+i; 
+        	result = result + "\nпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: "+i; 
         }
         
         c.close();
@@ -219,19 +219,19 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 	    ContentValues cv = new ContentValues();	    	    
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
-	    //готовим дату
+	    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");		
 		String Date = sdf.format(Calendar.getInstance().getTime());
 		
-		//готовим вес
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
 		String strPower = editTextW1.getText().toString() + editTextW2.getText().toString() + editTextW3.getText().toString() + "." + editTextW4.getText().toString();
 		Float floPower = (float) Float.parseFloat(strPower);
 		
-		//готовим повторения
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		String strRep = editTextRep.getText().toString();
 		int intRep = Integer.parseInt(strRep);
 		
-		//Log.d(LOG_TAG, "--- готовим ---");
+		//Log.d(LOG_TAG, "--- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ---");
 			
 	    cv.put("trainingdate", Date);
 	    cv.put("exercise", strNameEx);
@@ -241,7 +241,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 	    cv.put("exercisetype", "2");
 	    db.insert("TrainingStat", null, cv);
 	    
-	    Toast.makeText(this, "Подход записан...", Toast.LENGTH_LONG).show();
+	    Toast.makeText(this, "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ...", Toast.LENGTH_LONG).show();
 	    dbHelper.close();	    
 	}
 	

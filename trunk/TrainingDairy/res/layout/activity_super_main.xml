@@ -30,19 +30,11 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnAddTr"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:drawableLeft="@drawable/addtrn"
-                android:text="Создать тренировку"
-                android:textStyle="bold" />
-
-            <Button
                 android:id="@+id/btnAddEx"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/addexe"
-                android:text="Создать упражнение"
+                android:text="@string/exercise_main_button"
                 android:textStyle="bold" />
 
             <Button
@@ -50,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/hist1"
-                android:text="История"
+                android:text="@string/history_main_button"
                 android:textStyle="bold" />
 
             <Button
@@ -58,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/stat1"
-                android:text="Статистика"
+                android:text="@string/stat_main_button"
                 android:textStyle="bold" />
 
             <Button
@@ -66,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/settings1"
-                android:text="Настройки"
+                android:text="@string/settings_main_button"
                 android:textStyle="bold" />
 
             <Button
@@ -74,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:drawableLeft="@drawable/exit1"
-                android:text="Выход"
+                android:text="@string/exit_main_button"
                 android:textStyle="bold" />
 
         </LinearLayout>
