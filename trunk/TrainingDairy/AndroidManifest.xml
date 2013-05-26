@@ -34,7 +34,7 @@
             android:label="@string/title_activity_select_ex_to_add_in_tr" >
         </activity>
         <activity
-            android:name="myApp.trainingdiary.SetResultAct.SetPowerResultActivity"
+            android:name=".SetResultAct.ResultActivity"
             android:label="@string/title_activity_set_power_result" >
         </activity>
         <activity

@@ -3,13 +3,13 @@ package myApp.trainingdiary.forBD;
 public class DbFormatter {
 
 	/**
-	 * Приводит значения в формат хранения в БД (102.5x3)
-	 * @param mesureValues - значения необходимо передавать в том виде в котором хочется их записать
+	 * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ (102.5x3)
+	 * @param measureValues - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	 * @return
 	 */
-	public static String toValue(String... mesureValues) {
+	public static String toValue(String... measureValues) {
 		String value = "";
-		for (String m_v : mesureValues) {
+		for (String m_v : measureValues) {
 			if (value.isEmpty()) {
 				value += m_v;
 			} else {
