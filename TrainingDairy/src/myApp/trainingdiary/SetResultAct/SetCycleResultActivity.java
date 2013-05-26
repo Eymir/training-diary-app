@@ -53,7 +53,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 		btnW3m = (Button)findViewById(R.id.btnW3m);
 		btnRepp = (Button)findViewById(R.id.btnRepp);
 		btnRepm = (Button)findViewById(R.id.btnRepm);
-		btnSet = (Button)findViewById(R.id.btnSet);
+		btnSet = (Button)findViewById(R.id.write_button);
 		btnW4p = (Button)findViewById(R.id.btnW4p);
 		btnW4m = (Button)findViewById(R.id.btnW4m);
 		
@@ -133,7 +133,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 			String res2 = Integer.toString(b);
 			editTextRep.setText(res2);
 		   break;
-	    case R.id.btnSet:
+	    case R.id.write_button:
 	    	SetRepOnDB();
 	    	RefreshTvEndedRep();
 		   break;

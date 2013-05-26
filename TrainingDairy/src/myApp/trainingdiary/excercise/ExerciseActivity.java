@@ -9,6 +9,7 @@ import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
+import myApp.trainingdiary.SetResultAct.ResultActivity;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
@@ -84,9 +85,35 @@ public class ExerciseActivity extends Activity {
                 Log.i(Consts.LOG_TAG, "drop exercise");
                 exerciseAdapter.drop(from, to);
                 dbHelper.changeExercisePositions(tr_id, getNewExIdOrder());
+
                 cur_drag_handler.setVisibility(View.GONE);
             }
         });
+        exerciseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos,
+                                    long id) {
+                long ex_id = exerciseAdapter.getItemId(pos);
+                openResultActivity(ex_id);
+            }
+        });
+    }
+
+    private void openResultActivity(long ex_id) {
+        Intent intentOpenResultAct = new Intent(this, ResultActivity.class);
+        intentOpenResultAct.putExtra(Consts.EXERCISE_ID, ex_id);
+        intentOpenResultAct.putExtra(Consts.TRAINING_ID, tr_id);
+        startActivity(intentOpenResultAct);
+    }
+
+    private void printLogExInTr() {
+        Cursor c = dbHelper.getExercisesInTraining(tr_id);
+        while(c.moveToNext()){
+            Log.i(Consts.LOG_TAG,"exercise_id: "+c.getLong(c.getColumnIndex("_id"))+" pos: "+c.getLong(c.getColumnIndex("position")));
+        }
+        c.close();
+
     }
 
     private List<Long> getNewExIdOrder() {

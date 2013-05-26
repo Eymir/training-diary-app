@@ -48,8 +48,8 @@ public class DBHelper extends SQLiteOpenHelper {
         createExerciseTypeTable(db);
         createExerciseTable(db);
         createExerciseInTrainingTable(db);
-        createMesureTable(db);
-        createMesureExTypeTable(db);
+        createMeasureTable(db);
+        createMeasureExTypeTable(db);
         createTrainingStatTable(db);
 
         createInitialTypes(db);
@@ -65,31 +65,32 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "id integer primary key autoincrement,"
                 + "training_date datetime," + "exercise_id integer,"
                 + "value text,"
+                + "training_id integer,"
                 + "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)" + ");");
 
         Log.d(Consts.LOG_TAG, "--- onCreate BD TrainingStat ---");
     }
 
-    private void createMesureExTypeTable(SQLiteDatabase db) {
-        db.execSQL("create table MesureExType (" + "ex_type_id integer,"
-                + "mesure_id integer," + "position integer,"
+    private void createMeasureExTypeTable(SQLiteDatabase db) {
+        db.execSQL("create table MeasureExType (" + "ex_type_id integer,"
+                + "measure_id integer," + "position integer,"
                 + "FOREIGN KEY(ex_type_id) REFERENCES ExerciseType(id),"
-                + "FOREIGN KEY(mesure_id) REFERENCES Mesure(id),"
-                + "PRIMARY KEY (ex_type_id, mesure_id)" + ");");
+                + "FOREIGN KEY(measure_id) REFERENCES Measure(id),"
+                + "PRIMARY KEY (ex_type_id, measure_id)" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table MesureExType ---");
+        Log.d(Consts.LOG_TAG, "--- onCreate table MeasureExType ---");
     }
 
     /**
      * ������ ������� ���������
      */
-    private void createMesureTable(SQLiteDatabase db) {
+    private void createMeasureTable(SQLiteDatabase db) {
 
-        db.execSQL("create table Mesure ("
+        db.execSQL("create table Measure ("
                 + "id integer primary key autoincrement," + "name text,"
                 + "max integer," + "step float," + "type integer" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table Mesure ---");
+        Log.d(Consts.LOG_TAG, "--- onCreate table Measure ---");
     }
 
     /**
@@ -161,14 +162,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long insertMesure(SQLiteDatabase db, String name, int max,
-                             double step, int type) {
+    public long insertMeasure(SQLiteDatabase db, String name, int max,
+                              double step, int type) {
         ContentValues cv = new ContentValues();
         cv.put("name", name);
         cv.put("max", max);
         cv.put("step", step);
         cv.put("type", type);
-        long id = db.insert("Mesure", null, cv);
+        long id = db.insert("Measure", null, cv);
         return id;
     }
 
@@ -181,13 +182,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long insertMesureExType(SQLiteDatabase db, long exType_id,
-                                   long mesure_id, int position) {
+    public long insertMeasureExType(SQLiteDatabase db, long exType_id,
+                                    long measure_id, int position) {
         ContentValues cv = new ContentValues();
         cv.put("ex_type_id", exType_id);
-        cv.put("mesure_id", mesure_id);
+        cv.put("measure_id", measure_id);
         cv.put("position", position);
-        long id = db.insert("MesureExType", null, cv);
+        long id = db.insert("MeasureExType", null, cv);
         return id;
     }
 
@@ -224,12 +225,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public long insertTrainingStat(SQLiteDatabase db, long exercise_id,
+    public long insertTrainingStat(SQLiteDatabase db, long exercise_id, long training_id,
                                    long trainingDate, String value) {
         ContentValues cv = new ContentValues();
         cv.put("training_date", trainingDate);
         cv.put("value", value);
         cv.put("exercise_id", exercise_id);
+        cv.put("training_id", training_id);
         long id = db.insert("TrainingStat", null, cv);
         return id;
     }
@@ -239,11 +241,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createInitialTypes(SQLiteDatabase db) {
-        long bw_m_id = insertMesure(db,
-                context.getString(R.string.baseMesure_bar_weight), 500, 0.5, 0);
+        long bw_m_id = insertMeasure(db,
+                context.getString(R.string.baseMeasure_bar_weight), 500, 0.5, 0);
 
-        long r_m_id = insertMesure(db,
-                context.getString(R.string.baseMesure_repeat), 99, 1, 0);
+        long r_m_id = insertMeasure(db,
+                context.getString(R.string.baseMeasure_repeat), 99, 1, 0);
 
         long power_id = insertExerciseType(db,
                 context.getString(R.string.baseExType_power), context
@@ -253,17 +255,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 context.getString(R.string.baseExType_cycle), context
                 .getResources().getResourceName(R.drawable.cycle));
 
-        insertMesureExType(db, power_id, bw_m_id, 0);
-        insertMesureExType(db, power_id, r_m_id, 1);
+        insertMeasureExType(db, power_id, bw_m_id, 0);
+        insertMeasureExType(db, power_id, r_m_id, 1);
 
-        long d_m_id = insertMesure(db,
-                context.getString(R.string.baseMesure_distance), 99, 0.1, 0);
+        long d_m_id = insertMeasure(db,
+                context.getString(R.string.baseMeasure_distance), 99, 0.1, 0);
 
-        long t_m_id = insertMesure(db,
-                context.getString(R.string.baseMesure_time), 2, 1, 1);
+        long t_m_id = insertMeasure(db,
+                context.getString(R.string.baseMeasure_time), 2, 1, 1);
 
-        insertMesureExType(db, cycle_id, d_m_id, 0);
-        insertMesureExType(db, cycle_id, t_m_id, 1);
+        insertMeasureExType(db, cycle_id, d_m_id, 0);
+        insertMeasureExType(db, cycle_id, t_m_id, 1);
 
     }
 
@@ -313,8 +315,8 @@ public class DBHelper extends SQLiteOpenHelper {
             createExerciseTypeTable(db);
             createExerciseTable(db);
             createExerciseInTrainingTable(db);
-            createMesureTable(db);
-            createMesureExTypeTable(db);
+            createMeasureTable(db);
+            createMeasureExTypeTable(db);
             createTrainingStatTable(db);
 
             createInitialTypes(db);
@@ -366,7 +368,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     }
 
                     if (ex_id > 0 && date != null) {
-                        insertTrainingStat(db, ex_id, date.getTime(), value);
+                        insertTrainingStat(db, ex_id, 0, date.getTime(), value);
                     } else {
                         Log.e(Consts.LOG_TAG,
                                 "Cannot insert TrainingStat cause - ex_id: "
@@ -534,7 +536,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
         String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
                 + "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
-                + "where ex_tr.training_id = ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id";
+                + "where ex_tr.training_id = ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id "
+                + "order by ex_tr.position";
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
         return c;
@@ -708,11 +711,55 @@ public class DBHelper extends SQLiteOpenHelper {
             ContentValues cv = new ContentValues();
             cv.put("position", i);
             Log.d(Consts.LOG_TAG, "new_pos: " + i +
-            "  ex_id: " + list.get(i)
-            + " training_id: " + tr_id);
+                    "  ex_id: " + list.get(i)
+                    + " training_id: " + tr_id);
             db.update("ExerciseInTraining", cv, "training_id = ? AND exercise_id = ? ",
                     new String[]{String.valueOf(tr_id), String.valueOf(list.get(i))});
         }
         db.close();
+    }
+
+    public TrainingStat getLastTrainingStatByExerciseInTraining(long ex_id, long tr_id) {
+
+        String sqlQuery = "select * from TrainingStat tr_stat where tr_stat.exercise_id = ? AND tr_stat.training_id = ? ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_id)});
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                String value = c.getString(c.getColumnIndex("value"));
+                return new TrainingStat(id, new Date(trainingDate), exerciseId, trainingId, value);
+            } else {
+                return null;
+            }
+        } finally {
+            c.close();
+        }
+    }
+
+    public List<Measure> getMeasuresInExercise(long ex_id) {
+        List<Measure> measures = new ArrayList<Measure>();
+
+        String sqlQuery = "select m.* from Measure m, MeasureExType m_ex, Exercise ex " +
+                "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m.id = m_ex.measure_id " +
+                "order by m_ex.position ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        while (c.moveToNext()) {
+            Long id = c.getLong(c.getColumnIndex("id"));
+            String name = c.getString(c.getColumnIndex("name"));
+            Integer max = c.getInt(c.getColumnIndex("max"));
+            Double step = c.getDouble(c.getColumnIndex("step"));
+            Integer type = c.getInt(c.getColumnIndex("type"));
+            measures.add(new Measure(id, name, max, step, type));
+        }
+        c.close();
+
+        return measures;
     }
 }
