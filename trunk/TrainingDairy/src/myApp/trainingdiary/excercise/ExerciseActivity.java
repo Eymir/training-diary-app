@@ -9,7 +9,7 @@ import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
-import myApp.trainingdiary.SetResultAct.ResultActivity;
+import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.forBD.DBHelper;
 import android.os.Bundle;
@@ -301,7 +301,7 @@ public class ExerciseActivity extends Activity {
 
     private void createDeletionDialog() {
 
-        String title = getResources().getString(R.string.Dialog_del_tr_title);
+        String title = getResources().getString(R.string.dialog_del_tr_title);
         String btnRename = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 

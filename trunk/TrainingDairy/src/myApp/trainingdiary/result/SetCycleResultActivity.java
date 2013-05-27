@@ -1,4 +1,4 @@
-package myApp.trainingdiary.SetResultAct;
+package myApp.trainingdiary.result;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,7 +40,7 @@ public class SetCycleResultActivity extends Activity implements OnClickListener
 		setContentView(R.layout.activity_set_cycle_result);
 		
 		tvnameEx = (TextView)findViewById(R.id.tvNameEx);
-		tvEndedRep = (TextView)findViewById(R.id.tvEndedRep);
+		tvEndedRep = (TextView)findViewById(R.id.cur_training_stats);
 		strNameEx = getIntent().getExtras().getString("nameEx");
 		strNameTr = getIntent().getExtras().getString("nameTr");
 		tvnameEx.setText(strNameEx);

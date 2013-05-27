@@ -34,11 +34,11 @@
             android:label="@string/title_activity_select_ex_to_add_in_tr" >
         </activity>
         <activity
-            android:name=".SetResultAct.ResultActivity"
+            android:name=".result.ResultActivity"
             android:label="@string/title_activity_set_power_result" >
         </activity>
         <activity
-            android:name="myApp.trainingdiary.SetResultAct.SetCycleResultActivity"
+            android:name="myApp.trainingdiary.result.SetCycleResultActivity"
             android:label="@string/title_activity_set_cycle_result" >
         </activity>
         <activity
