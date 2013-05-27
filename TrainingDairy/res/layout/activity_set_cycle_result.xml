@@ -261,7 +261,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/tvEndedRep"
+            android:id="@+id/cur_training_stats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"

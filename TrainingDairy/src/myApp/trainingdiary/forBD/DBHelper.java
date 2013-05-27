@@ -4,9 +4,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import myApp.trainingdiary.R;
@@ -15,7 +13,6 @@ import myApp.trainingdiary.constant.Consts;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -63,7 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table TrainingStat ("
                 + "id integer primary key autoincrement,"
-                + "training_date datetime," + "exercise_id integer,"
+                + "date datetime," + "exercise_id integer,"
                 + "value text,"
                 + "training_id integer,"
                 + "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)" + ");");
@@ -227,12 +224,27 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public long insertTrainingStat(SQLiteDatabase db, long exercise_id, long training_id,
                                    long trainingDate, String value) {
+
         ContentValues cv = new ContentValues();
-        cv.put("training_date", trainingDate);
+        cv.put("date", trainingDate);
         cv.put("value", value);
         cv.put("exercise_id", exercise_id);
         cv.put("training_id", training_id);
         long id = db.insert("TrainingStat", null, cv);
+
+        return id;
+    }
+
+    public long insertTrainingStat(long exercise_id, long training_id,
+                                   long trainingDate, String value) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("date", trainingDate);
+        cv.put("value", value);
+        cv.put("exercise_id", exercise_id);
+        cv.put("training_id", training_id);
+        long id = db.insert("TrainingStat", null, cv);
+        db.close();
         return id;
     }
 
@@ -358,7 +370,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     double power = c.getDouble(c.getColumnIndex("power"));
                     int count = c.getInt(c.getColumnIndex("count"));
                     long ex_id = findExerciseByName(db, exercise);
-                    String value = DbFormatter.toValue(formatter.format(power),
+                    String value = DbFormatter.toStatValue(formatter.format(power),
                             String.valueOf(count));
                     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                     Date date = null;
@@ -721,14 +733,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public TrainingStat getLastTrainingStatByExerciseInTraining(long ex_id, long tr_id) {
 
-        String sqlQuery = "select * from TrainingStat tr_stat where tr_stat.exercise_id = ? AND tr_stat.training_id = ? ";
+        String sqlQuery = "select * from TrainingStat tr_stat " +
+                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStat WHERE training_id = ? AND exercise_id = ?)";
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_id)});
         try {
             if (c.moveToFirst()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
-                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("date"));
                 Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
                 Long trainingId = c.getLong(c.getColumnIndex("training_id"));
                 String value = c.getString(c.getColumnIndex("value"));
@@ -761,5 +774,40 @@ public class DBHelper extends SQLiteOpenHelper {
         c.close();
 
         return measures;
+    }
+
+    public List<TrainingStat> getTrainingStatForLastPeriod(long ex_id, int period) {
+        List<TrainingStat> stats = new ArrayList<TrainingStat>();
+        long since = new Date().getTime() - period;
+        String sqlQuery = "select * from TrainingStat tr_stat " +
+                "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
+                "order by tr_stat.date ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(since)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long trainingDate = c.getLong(c.getColumnIndex("date"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                String value = c.getString(c.getColumnIndex("value"));
+                stats.add(new TrainingStat(id, new Date(trainingDate), exerciseId, trainingId, value));
+            }
+            return stats;
+        } finally {
+            c.close();
+        }
+    }
+
+    public void deleteLastTrainingStat(long ex_id, long tr_id) {
+        SQLiteDatabase db = getWritableDatabase();
+//        String sqlQuery = "select * from TrainingStat tr_stat " +
+//                "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
+//                "order by tr_stat.date ";
+//        db.execSQL();
+        db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat WHERE training_id = ? AND exercise_id = ?) ",
+                new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
+        db.close();
     }
 }

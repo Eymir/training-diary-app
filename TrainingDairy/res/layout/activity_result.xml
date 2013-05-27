@@ -19,6 +19,7 @@
 
         <LinearLayout
                 android:id="@+id/measure_layout"
+                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -43,12 +44,11 @@
 
 
         <TextView
-                android:id="@+id/tvEndedRep"
+                android:id="@+id/cur_training_stats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#F8F8FF"
-                android:textSize="12sp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold"/>
     </LinearLayout>
-
+    <!--android:textColor="#F8F8FF"-->
 </RelativeLayout>

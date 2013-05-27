@@ -1,14 +1,14 @@
-package myApp.trainingdiary.SetResultAct;
+package myApp.trainingdiary.result;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-import android.app.ActionBar;
 import android.content.res.Resources;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.util.Log;
+import android.widget.*;
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
@@ -32,9 +32,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import myApp.trainingdiary.forBD.DbFormatter;
 import myApp.trainingdiary.forBD.Measure;
 import myApp.trainingdiary.forBD.TrainingStat;
 
@@ -44,7 +42,7 @@ import myApp.trainingdiary.forBD.TrainingStat;
 
 public class ResultActivity extends Activity implements OnClickListener {
 
-    TextView tvnameEx, tvEndedRep;
+    TextView tvnameEx, training_stat_text;
     String strNameEx;
     String strNameTr;
     DBHelper dbHelper;
@@ -73,20 +71,42 @@ public class ResultActivity extends Activity implements OnClickListener {
     boolean Soundloaded = false;
     private long ex_id;
     private long tr_id;
-    private List<MeasureWheels> measureWheels;
-    //
+    private List<MeasureWheels> measureWheelsList = new ArrayList<MeasureWheels>();
+    private AlertDialog undoDialog;
+    private Resources resources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        Resources res = getResources();
-        String last_result_text = res.getString(R.string.last_result);
+        resources = getResources();
+
         TextView lastResultView = (TextView) findViewById(R.id.last_result_text);
+        training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
         dbHelper = DBHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
         tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
 
+
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.measure_layout);
+
+        List<Measure> measureList = dbHelper.getMeasuresInExercise(ex_id);
+        for (Measure measure : measureList) {
+            MeasureWheels measureWheels = new MeasureWheels(measure);
+            linearLayout.addView(measureWheels.getView());
+            measureWheelsList.add(measureWheels);
+        }
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        soundClick = soundPool.load(this, R.raw.click3, 1);
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        Button writeButton = (Button) findViewById(R.id.write_button);
+        writeButton.setOnClickListener(this);
+        Button undoButton = (Button) findViewById(R.id.undo_button);
+        undoButton.setOnClickListener(this);
+
+        String last_result_text = resources.getString(R.string.last_result);
         TrainingStat tr_stat = dbHelper.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
         String last_result_info;
         if (tr_stat != null) {
@@ -96,20 +116,63 @@ public class ResultActivity extends Activity implements OnClickListener {
             last_result_info = getString(R.string.last_training_empty);
         }
         lastResultView.setText(String.format(last_result_text, last_result_info));
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.measure_layout);
+        if (tr_stat != null)
+            setLastTrainingStatOnWheels(tr_stat);
 
-        List<Measure> measureList = dbHelper.getMeasuresInExercise(ex_id);
-        for (Measure measure : measureList) {
-            MeasureWheels measureWheels = new MeasureWheels(measure);
-            linearLayout.addView(measureWheels.getView());
-        }
-        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        soundClick = soundPool.load(this, R.raw.click3, 1);
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-
+        createUndoDialog();
+        printCurrentTrainingProgress();
     }
 
+    private void setLastTrainingStatOnWheels(TrainingStat tr_stat) {
+        String value = tr_stat.getValue();
+
+        List<String> measureValues = DbFormatter.toMeasureValues(value);
+        for (int i = 0; i < measureWheelsList.size(); i++) {
+            MeasureWheels measureWheels = measureWheelsList.get(i);
+            String measureValue = measureValues.get(i);
+            measureWheels.setValue(measureValue);
+        }
+    }
+
+    private void createUndoDialog() {
+
+        String title = getResources().getString(R.string.dialog_del_approach_title);
+        String btnRename = getResources().getString(R.string.cancel_button);
+        String btnDel = getResources().getString(R.string.delete_button);
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setTitle(title);
+
+        adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dbHelper.deleteLastTrainingStat(ex_id, tr_id);
+                printCurrentTrainingProgress();
+                Toast.makeText(ResultActivity.this, R.string.deleted,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        adb.setNegativeButton(btnRename, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                undoDialog.cancel();
+            }
+        });
+
+        undoDialog = adb.create();
+    }
+
+    private void printCurrentTrainingProgress() {
+        List<TrainingStat> tr_stats = dbHelper.getTrainingStatForLastPeriod(ex_id, Consts.TWO_HOURS);
+        String stats = formTrainingStats(tr_stats);
+        training_stat_text.setText(stats);
+    }
+
+    private String formTrainingStats(List<TrainingStat> stats) {
+        String result = "";
+        for (TrainingStat stat : stats) {
+            result += stat.getValue() + "; ";
+        }
+        result += "\n" + getString(R.string.summ_approach) + stats.size();
+        return result;
+    }
 
     private class MeasureWheel {
         public WheelView wheelView;
@@ -126,7 +189,8 @@ public class ResultActivity extends Activity implements OnClickListener {
             measureWheelList = new ArrayList<MeasureWheel>();
             mainLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.wheel_column, null);
             LinearLayout wheelLayout = (LinearLayout) mainLayout.findViewById(R.id.wheel_layout);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 1F);
             wheelLayout.setLayoutParams(params);
             TextView textView = (TextView) mainLayout.findViewById(R.id.label);
             textView.setText(measure.getName() + ":");
@@ -164,6 +228,11 @@ public class ResultActivity extends Activity implements OnClickListener {
                     }
                     break;
             }
+            float weight = 1F / measureWheelList.size();
+            LinearLayout.LayoutParams main_params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, weight);
+            main_params.setMargins(10, 0, 10, 0);
+            mainLayout.setLayoutParams(main_params);
         }
 
         private MeasureWheel createTailWheel(Double step) {
@@ -179,7 +248,8 @@ public class ResultActivity extends Activity implements OnClickListener {
 
             WheelView wheelView = (WheelView) getLayoutInflater().inflate(R.layout.wheel, null);
             wheelView.setViewAdapter(wheelAdapter);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 2F);
             wheelView.setLayoutParams(params);
             measureWheel.wheelAdapter = wheelAdapter;
             measureWheel.wheelView = wheelView;
@@ -194,16 +264,13 @@ public class ResultActivity extends Activity implements OnClickListener {
         private MeasureWheel createNumWheel(Integer max, Double step) {
             MeasureWheel measureWheel = new MeasureWheel();
             int length = String.valueOf(max).length();
-            String zeros = "";
-            for (int i = 0; i < length; i++) {
-                zeros += "0";
-            }
             NumericRightOrderWheelAdapter wheelAdapter = new NumericRightOrderWheelAdapter(ResultActivity.this, 0, max,
-                    "%0" + length + "d");
+                    "%" + length + "d");
 
             WheelView wheelView = (WheelView) getLayoutInflater().inflate(R.layout.wheel, null);
             wheelView.setViewAdapter(wheelAdapter);
-            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 1F);
             wheelView.setLayoutParams(params);
             wheelView.setCyclic(true);
             wheelView.setCurrentItem(max);
@@ -228,6 +295,74 @@ public class ResultActivity extends Activity implements OnClickListener {
         public View getView() {
             return mainLayout;
         }
+
+        private List<MeasureWheel> getMeasureWheelList() {
+            return measureWheelList;
+        }
+
+
+        public String getStringValue() {
+            String result = "";
+
+            switch (measure.getType()) {
+                case 0:
+                    for (MeasureWheel measureWheel : measureWheelList) {
+                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
+                            result += String.valueOf(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getItem(measureWheel.wheelView
+                                    .getCurrentItem()));
+                        } else if (measureWheel.wheelAdapter instanceof ArrayWheelAdapter) {
+                            result += String.valueOf(((ArrayWheelAdapter) measureWheel.wheelAdapter).getItemText(measureWheel.wheelView
+                                    .getCurrentItem()));
+                        }
+                    }
+                    break;
+                case 1:
+
+                    break;
+            }
+            return result;
+        }
+
+        private int getIndexByValue(NumericRightOrderWheelAdapter adapter, int value) {
+            for (int i = 0; i < adapter.getItemsCount(); i++) {
+                if (adapter.getItem(i) == value) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        private int getIndexByValue(WheelViewAdapter wheelAdapter, String intValue) {
+//            for (int i = 0; i < wheelAdapter.getItemsCount(); i++) {
+//                if (wheelAdapter.getItem(i) == value) {
+//                    return i;
+//                }
+//            }
+            return 0;
+        }
+
+        public void setValue(String measureValue) {
+            switch (measure.getType()) {
+                case 0:
+                    for (MeasureWheel measureWheel : measureWheelList) {
+                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
+//                            int intValue = new Double(measureValue).intValue();
+//                            measureWheel.wheelView.setCurrentItem(
+//                                    getIndexByValue((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter, intValue));
+
+                        } else if (measureWheel.wheelAdapter instanceof ArrayWheelAdapter) {
+//                            String intValue = measureValue.substring(measureValue.indexOf("."));
+//                            measureWheel.wheelView.setCurrentItem(getIndexByValue(measureWheel.wheelAdapter, intValue));
+                        }
+                    }
+                    break;
+                case 1:
+
+                    break;
+            }
+        }
+
+
     }
 
     private void playClick() {
@@ -243,187 +378,52 @@ public class ResultActivity extends Activity implements OnClickListener {
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        menu.add(0, MENU_DEL_LAST_SET, 1, "������� ��������� ������");
-//        menu.add(0, MENU_SHOW_LAST_RESULT, 1, "�������� ������� ����������");
-//        return true;
-//    }
-
     @Override
     public void onClick(View arg0) {
 
         switch (arg0.getId()) {
             case R.id.write_button:
-                setRepOnDB();
-                RefreshTvEndedRep();
+                writeToDB();
+                printCurrentTrainingProgress();
+                break;
+            case R.id.undo_button:
+                String message = getResources().getString(R.string.dialog_del_approach_msg);
+                TrainingStat stat = dbHelper.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
+                if (stat != null) {
+                    String value = stat.getValue();
+                    message = String.format(message, value);
+                    undoDialog.setMessage(message);
+                    undoDialog.show();
+                }
                 break;
             default:
                 break;
         }
-
     }
 
-    private void changeCountET(EditText Et, String type) {
-        if (type.equalsIgnoreCase("+")) {
-            String i = Et.getText().toString();
-            int j = Integer.parseInt(i);
-            j = j + 1;
-            if (j > 9) {
-                j = 0;
-            }
-            String res = Integer.toString(j);
-            Et.setText(res);
-        } else if (type.equalsIgnoreCase("-")) {
-            String i = Et.getText().toString();
-            int j = Integer.parseInt(i);
-            j = j - 1;
-            if (j < 0) {
-                j = 0;
-            }
-            String res = Integer.toString(j);
-            Et.setText(res);
-        }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private void setRepOnDB() {
-        dbHelper = DBHelper.getInstance(this);
-        ContentValues cv = new ContentValues();
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        // ������� ����
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        String Date = sdf.format(Calendar.getInstance().getTime());
-
-        // ������� ���
-        String strPower = String.valueOf(bigNumWheelAdapter.getItem(bigNumWheel
-                .getCurrentItem()))
-                + smallNumWheelAdapter.getItemText(smallNumWheel
-                .getCurrentItem());
-
-        Float floPower = (float) Float.parseFloat(strPower);
-
-        // ������� ����������
-        // String strRep = repeatWheel.getCurrentItem();
-        int intRep = repeatWheelAdapter.getItem(repeatWheel.getCurrentItem());
-        // Integer.parseInt(strRep);
-
-        cv.put("trainingdate", Date);
-        cv.put("exercise", strNameEx);
-        cv.put("power", floPower);
-        cv.put("count", intRep);
-        cv.put("trainingday", strNameTr);
-        cv.put("exercisetype", "1");
-        db.insert("TrainingStat", null, cv);
-
-        // db.close();
-        dbHelper.close();
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private void RefreshTvEndedRep() {
-        dbHelper = DBHelper.getInstance(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        String Date = sdf.format(Calendar.getInstance().getTime());
-
-        String sqlQuery = "select power, count from TrainingStat where trainingdate = ? and exercise = ?";
-        String[] args = {Date, strNameEx};
-        Cursor c = db.rawQuery(sqlQuery, args);
-
+    private void writeToDB() {
         String result = "";
-
-        if (c.moveToFirst()) {
-            int exNameIndex = c.getColumnIndex("power");
-            int exNameIndex2 = c.getColumnIndex("count");
-            int i = 0;
-            do {
-                Float pow = c.getFloat(exNameIndex);
-                int cou = c.getInt(exNameIndex2);
-                result = result + pow + "x" + cou + "; ";
-                i++;
-            } while (c.moveToNext());
-
-            result = result + "\n����� ��������: " + i;
+        for (MeasureWheels measureWheels : measureWheelsList) {
+            result += measureWheels.getStringValue() + "x";
         }
-
-        c.close();
-        dbHelper.close();
-        tvEndedRep.setText(result);
+        result = result.substring(0, result.length() - 1);
+        if (result != null && !result.isEmpty())
+            dbHelper.insertTrainingStat(ex_id, tr_id, new Date().getTime(), result);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        this.finish();
+//    }
 
-        switch (item.getItemId()) {
-            case MENU_DEL_LAST_SET:
-                DelDialog();
-                break;
-            case MENU_SHOW_LAST_RESULT:
-                showlastEx();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void DelDialog() {
-
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("�������� �������!!!");
-        adb.setMessage("������� ��������� ������?");
-        adb.setPositiveButton(getResources().getString(R.string.YES),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        DelLastEx();
-                    }
-                });
-        adb.setNegativeButton(getResources().getString(R.string.NO),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-        adb.create().show();
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private void DelLastEx() {
-
-        dbHelper = DBHelper.getInstance(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        String Date = sdf.format(Calendar.getInstance().getTime());
-        // �������� ������ ���������� ������� � ����������
-        String sqlQuery = "SELECT " + "id " + "FROM TrainingStat "
-                + "WHERE trainingdate = ? AND exercise = ? "
-                + "ORDER BY id DESC LIMIT 1";
-
-        String[] args = {Date, strNameEx};
-        Cursor c = db.rawQuery(sqlQuery, args);
-        c.moveToFirst();
-        int index = c.getColumnIndex("id");
-        int idEx = c.getInt(index);
-        // ������� ������
-        db.delete("TrainingStat", "id = " + idEx, null);
-        // ��������� ������� ��������
-        RefreshTvEndedRep();
-
-    }
 
     private void showlastEx() {
-
         Intent History_detailsv2 = new Intent(this, History_detailsv2.class);
         History_detailsv2.putExtra("AllEx", false);
         History_detailsv2.putExtra("nameEx", strNameEx);
         startActivity(History_detailsv2);
-
     }
 
 }
