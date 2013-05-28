@@ -54,14 +54,15 @@
     <string name="delete_button">Удалить</string>
     <string name="zero_input_notif">Введите название тренировки</string>
     <string name="deleted">Удалено</string>
+    <string name="nothing_to_deleted">Нечего удалять</string>
     <string name="create_success">Тренировка успешно создана</string>
     <string name="rename_success">Тренировка успешно переименована</string>
     <string name="baseExType_power">Силовой тип</string>
     <string name="baseExType_cycle">Циклический тип</string>
     <string name="baseMeasure_repeat">Повторения</string>
-    <string name="baseMeasure_bar_weight">Вес штанги</string>
+    <string name="baseMeasure_bar_weight">Вес штанги(кг)</string>
     <string name="baseMeasure_distance">Расстояние(км)</string>
-    <string name="baseMeasure_time">Время</string>
+    <string name="baseMeasure_time">Время(мин,сек)</string>
     <string name="add_action">Добавить</string>
     <string name="rename_action">Переименовать</string>
     <string name="stat_action">Статистика</string>
@@ -72,7 +73,7 @@
     <string name="ex_type">Тип</string>
     <string name="ex_create">Создать новое</string>
     <string name="ex_choose">Выбрать существующее</string>
-    <string name="create_exercise_success">Упражнение %1$s создано и добавленно в тренировку %2$s.</string>
+    <string name="create_exercise_add_in_tr_success">Упражнение %1$s создано и добавленно в тренировку %2$s.</string>
     <string name="add_exercise_success">Упражнение %1$s добавленно в тренировку %2$s.</string>
     <string name="input_exercise_name_notification">Введите название упражнения</string>
     <string name="input_exercise_type_notification">Выберите тип упражнения</string>
@@ -84,5 +85,7 @@
     <string name="last_result">Последний результат: %1$s</string>
     <string name="write_button_text">Записать</string>
     <string name="last_training_empty">-</string>
-    <string name="summ_approach">Всего подходов:</string>
+    <string name="sum_approach">Всего подходов:</string>
+    <string name="empty_ex_list">Нет упражнений</string>
+    <string name="create_exercise_success">Упражнение %1$s создано</string>
 </resources>

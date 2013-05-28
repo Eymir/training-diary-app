@@ -7,16 +7,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.R.drawable;
-import myApp.trainingdiary.R.id;
-import myApp.trainingdiary.R.layout;
-import myApp.trainingdiary.R.menu;
-import myApp.trainingdiary.R.string;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
@@ -24,11 +18,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 /*
- * Активити со списком выбора упражнения для добавления в программу тренировок
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  */
 
 public class SelectExToAddInTrActivity extends Activity implements OnClickListener
@@ -99,14 +92,14 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
         }
         else 
         {
-        	//list.put("Записей нет", "0");
+        	//list.put("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ", "0");
         	//showEmtyDialog();
         	addDefaultEx();
 		}
         
         int imgPow = R.drawable.power;
         int imgCyc = R.drawable.cycle;
-        // имена атрибутов для Map
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ Map
         final String ATTRIBUTE_NAME_TEXT = "text";
         final String ATTRIBUTE_NAME_IMAGE = "image";
                
@@ -131,13 +124,13 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
             data.add(m);
         }
                
-        // массив имен атрибутов, из которых будут читаться данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
-        // массив ID View-компонентов, в которые будут вставлять данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ ID View-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         int[] to = {R.id.label, R.id.icon};        
-        // создаем адаптер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-//        // определяем список и присваиваем ему адаптер
+//        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //        lvExToAdd.setAdapter(sAdapter);	    		
 	}
 	
@@ -147,7 +140,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 		ContentValues cv = new ContentValues();
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
-		//для нумерации упражненеий в тренировке
+		//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	    String sqlQuery  = "select exercise from TrainingProgTable where trainingname = ?";
 	    String[] args = {trainingName};
         Cursor cEx = db.rawQuery(sqlQuery, args);         
@@ -159,7 +152,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	    cv.put("exercise", exName);
 	    cv.put("exidintr", numEx);
 	    db.insert("TrainingProgTable", null, cv);
-	    Toast.makeText(this, "Упражнение добавлено в тренировку", Toast.LENGTH_LONG).show();
+	    Toast.makeText(this, "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ", Toast.LENGTH_LONG).show();
 	    dbHelper.close();    		
 	}
 	
@@ -192,15 +185,15 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 //    private void showEmtyDialog() {
 //
 //    	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-//	      adb.setTitle("Нет упражнений");
-//	      adb.setMessage("В базе данных не найдено ни одного упражнения. Необходимо создать нужные Вам упражнения. Создать упражнение?");     
-//	      adb.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+//	      adb.setTitle("пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
+//	      adb.setMessage("пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?");     
+//	      adb.setPositiveButton("пїЅпїЅ", new DialogInterface.OnClickListener() {
 //             public void onClick(DialogInterface dialog, int id) {
 //          	   startCreateEx();
 //          	   
 //             }
 //         });
-//      adb.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+//      adb.setNegativeButton("пїЅпїЅпїЅ", new DialogInterface.OnClickListener() {
 //             public void onClick(DialogInterface dialog, int id) {
 //          	   startAddEx();
 //             }
@@ -212,7 +205,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 //    private void startCreateEx() {
 //
 //   	    Intent CreateExActivity = new Intent(this, CreateExActivity.class);
-//   	    CreateExActivity.putExtra("parent", 1); //Передаём родителя = 1 - создание упражнения работать удет с название тренировки
+//   	    CreateExActivity.putExtra("parent", 1); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ = 1 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //   	    CreateExActivity.putExtra("name_string", trainingName);
 //        startActivity(CreateExActivity);
 //        finish();
@@ -237,7 +230,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
     
     private void addDefaultEx() 
     {	
-	    	//Создадим базовые упражнения по дефолту ;)
+	    	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ;)
 	    String[] Ex_name = {getResources().getString(R.string.BaseExBrus),
 	    		getResources().getString(R.string.BaseExJim),getResources().getString(R.string.BaseExPodtyag),
 	    		getResources().getString(R.string.BaseExPrised),getResources().getString(R.string.BaseExStan)};
@@ -246,7 +239,7 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
 	    dbHelper = DBHelper.getInstance(this);
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    
-		    //Пихаем их в табличку
+		    //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		    for (int i = 0; i < Ex_name.length; i++) 
 		    {
 		      cv.clear();

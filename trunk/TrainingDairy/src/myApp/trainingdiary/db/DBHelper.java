@@ -1,4 +1,4 @@
-package myApp.trainingdiary.forBD;
+package myApp.trainingdiary.db;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -606,12 +606,10 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getExercisesExceptExInTr(SQLiteDatabase db, long tr_id) {
-        // TODO: ����� �������� ������ ������� ���������� ������ �� ����������
-        // ������� �� ������ � ������ ����������
         String sqlQuery = "select ex.id as _id, ex.name name, ex_type.icon_res icon_res "
-                + "from Exercise ex, ExerciseType ex_type "
-                + "where (ex.type_id = ex_type.id)";
-        Cursor c = db.rawQuery(sqlQuery, null);
+                + "from Exercise ex, ExerciseType ex_type, ExerciseInTraining ex_tr "
+                + "where ex.type_id = ex_type.id AND ex_tr.exercise_id = ex.id AND ex_tr.training_id <> ?";
+        Cursor c = db.rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
         return c;
     }
 
@@ -737,7 +735,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "where tr_stat.id = (SELECT MAX(id) FROM TrainingStat WHERE training_id = ? AND exercise_id = ?)";
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_id)});
+                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
         try {
             if (c.moveToFirst()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
@@ -769,10 +767,9 @@ public class DBHelper extends SQLiteOpenHelper {
             Integer max = c.getInt(c.getColumnIndex("max"));
             Double step = c.getDouble(c.getColumnIndex("step"));
             Integer type = c.getInt(c.getColumnIndex("type"));
-            measures.add(new Measure(id, name, max, step, type));
+            measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
         }
         c.close();
-
         return measures;
     }
 
@@ -800,14 +797,17 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void deleteLastTrainingStat(long ex_id, long tr_id) {
+    public int deleteLastTrainingStatInCurrentTraining(long ex_id, long tr_id, long tr_period) {
         SQLiteDatabase db = getWritableDatabase();
 //        String sqlQuery = "select * from TrainingStat tr_stat " +
 //                "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
 //                "order by tr_stat.date ";
 //        db.execSQL();
-        db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat WHERE training_id = ? AND exercise_id = ?) ",
-                new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
+        long since = new Date().getTime() - tr_period;
+        int deleted = db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat " +
+                "WHERE training_id = ? AND exercise_id = ? AND date > ? ) ",
+                new String[]{String.valueOf(tr_id), String.valueOf(ex_id), String.valueOf(since)});
         db.close();
+        return deleted;
     }
 }

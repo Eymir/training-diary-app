@@ -11,7 +11,7 @@ import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.constant.Consts;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;

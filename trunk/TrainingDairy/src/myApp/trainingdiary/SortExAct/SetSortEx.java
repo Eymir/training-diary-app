@@ -1,7 +1,7 @@
 package myApp.trainingdiary.SortExAct;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;

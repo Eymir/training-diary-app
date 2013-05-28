@@ -1,23 +1,17 @@
 package myApp.trainingdiary.excercise;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.constant.Consts;
-import myApp.trainingdiary.forBD.DBHelper;
-import myApp.trainingdiary.training.TrainingActivity;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
-import android.text.Layout;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -26,12 +20,11 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 public class AddExerciseActivity extends Activity {
-    private long tr_id;
+    private long tr_id = 0;
     private String trainingName;
 
     private View createExGonablePanel;
@@ -50,7 +43,11 @@ public class AddExerciseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_exercise);
         dbHelper = DBHelper.getInstance(this);
-        tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
+        try {
+            tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
+        } catch (NullPointerException e) {
+
+        }
         if (tr_id != 0)
             trainingName = dbHelper.getTrainingNameById(tr_id);
 
@@ -89,6 +86,11 @@ public class AddExerciseActivity extends Activity {
 
         initCreatePanel();
         initChoosePanel();
+        guiMediator.clickChoosePanel();
+        chooseClickableLayout.performClick();
+
+        View emptyRow = getLayoutInflater().inflate(layout.empty_row, null);
+        exerciseList.setEmptyView(emptyRow);
     }
 
     private void addExercise(long ex_id) {
@@ -100,6 +102,11 @@ public class AddExerciseActivity extends Activity {
         } finally {
             db.close();
         }
+    }
+
+    private void refreshChooseList() {
+        Cursor ex_cursor = dbHelper.getExercisesExceptExInTr(tr_id);
+        exerciseAdapter.swapCursor(ex_cursor);
     }
 
     private void initChoosePanel() {
@@ -159,13 +166,25 @@ public class AddExerciseActivity extends Activity {
             public void onClick(View button) {
                 if (validateCreateForm()) {
                     createExercise();
-                    Toast.makeText(
-                            getApplicationContext(),
-                            getResources().getString(
-                                    R.string.create_exercise_success,
-                                    name_edit.getText().toString(),
-                                    trainingName), Toast.LENGTH_SHORT).show();
-                    finish();
+
+                    if (tr_id != 0) {
+                        Toast.makeText(
+                                getApplicationContext(),
+                                getResources().getString(
+                                        R.string.create_exercise_add_in_tr_success,
+                                        name_edit.getText().toString(),
+                                        trainingName), Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        guiMediator.clickChoosePanel();
+                        Toast.makeText(
+                                getApplicationContext(),
+                                getResources().getString(
+                                        R.string.create_exercise_success,
+                                        name_edit.getText().toString()
+                                ), Toast.LENGTH_SHORT).show();
+                        refreshChooseList();
+                    }
                 }
             }
 

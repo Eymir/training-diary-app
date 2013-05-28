@@ -1,8 +1,8 @@
 package myApp.trainingdiary.result;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -14,27 +14,20 @@ import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.HistoryAct.History_detailsv2;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import myApp.trainingdiary.forBD.DbFormatter;
-import myApp.trainingdiary.forBD.Measure;
-import myApp.trainingdiary.forBD.TrainingStat;
+import myApp.trainingdiary.db.DbFormatter;
+import myApp.trainingdiary.db.Measure;
+import myApp.trainingdiary.db.TrainingStat;
 
 /*
  * ��������� ��� ������ ���������� ������� ���������� 
@@ -62,7 +55,7 @@ public class ResultActivity extends Activity implements OnClickListener {
     private ArrayWheelAdapter<String> smallNumWheelAdapter;
     private NumericRightOrderWheelAdapter repeatWheelAdapter;
     private NumericRightOrderWheelAdapter bigNumWheelAdapter;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm.ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
     //��� ������������ ������....
     private SoundPool soundPool;
@@ -86,7 +79,7 @@ public class ResultActivity extends Activity implements OnClickListener {
         dbHelper = DBHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
         tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
-
+        Log.d(Consts.LOG_TAG, "ex_id:" + ex_id + " tr_id:" + tr_id);
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.measure_layout);
 
@@ -103,7 +96,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 
         Button writeButton = (Button) findViewById(R.id.write_button);
         writeButton.setOnClickListener(this);
-        Button undoButton = (Button) findViewById(R.id.undo_button);
+        ImageButton undoButton = (ImageButton) findViewById(R.id.undo_button);
         undoButton.setOnClickListener(this);
 
         String last_result_text = resources.getString(R.string.last_result);
@@ -111,7 +104,7 @@ public class ResultActivity extends Activity implements OnClickListener {
         String last_result_info;
         if (tr_stat != null) {
             last_result_info = tr_stat.getValue()
-                    + "(" + sdf.format(tr_stat.getTrainingDate()) + ")";
+                    + " [" + sdf.format(tr_stat.getTrainingDate()) + "]";
         } else {
             last_result_info = getString(R.string.last_training_empty);
         }
@@ -141,13 +134,17 @@ public class ResultActivity extends Activity implements OnClickListener {
         String btnDel = getResources().getString(R.string.delete_button);
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle(title);
-
         adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                dbHelper.deleteLastTrainingStat(ex_id, tr_id);
-                printCurrentTrainingProgress();
-                Toast.makeText(ResultActivity.this, R.string.deleted,
-                        Toast.LENGTH_SHORT).show();
+                int deleted = dbHelper.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.TWO_HOURS);
+                if (deleted > 0) {
+                    printCurrentTrainingProgress();
+                    Toast.makeText(ResultActivity.this, R.string.deleted,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ResultActivity.this, R.string.nothing_to_deleted,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
         adb.setNegativeButton(btnRename, new DialogInterface.OnClickListener() {
@@ -170,8 +167,55 @@ public class ResultActivity extends Activity implements OnClickListener {
         for (TrainingStat stat : stats) {
             result += stat.getValue() + "; ";
         }
-        result += "\n" + getString(R.string.summ_approach) + stats.size();
+        result += "\n" + getString(R.string.sum_approach) + " " + stats.size();
         return result;
+    }
+
+    private void playClick() {
+
+        //�������� ��������� ���������
+        float actualVolume = (float) audioManager
+                .getStreamVolume(AudioManager.STREAM_MUSIC);
+        float maxVolume = (float) audioManager
+                .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        float volume = actualVolume / maxVolume;
+
+        soundPool.play(soundClick, volume, volume, 1, 0, 1f);
+
+    }
+
+    @Override
+    public void onClick(View arg0) {
+
+        switch (arg0.getId()) {
+            case R.id.write_button:
+                writeToDB();
+                printCurrentTrainingProgress();
+                break;
+            case R.id.undo_button:
+                String message = getResources().getString(R.string.dialog_del_approach_msg);
+                TrainingStat stat = dbHelper.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
+                if (stat != null) {
+                    Log.d(Consts.LOG_TAG, "undo value:" + stat.getValue());
+                    String value = stat.getValue();
+                    message = String.format(message, value);
+                    undoDialog.setMessage(message);
+                    undoDialog.show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void writeToDB() {
+        String result = "";
+        for (MeasureWheels measureWheels : measureWheelsList) {
+            result += measureWheels.getStringValue() + "x";
+        }
+        result = result.substring(0, result.length() - 1);
+        if (result != null && !result.isEmpty())
+            dbHelper.insertTrainingStat(ex_id, tr_id, new Date().getTime(), result);
     }
 
     private class MeasureWheel {
@@ -195,8 +239,8 @@ public class ResultActivity extends Activity implements OnClickListener {
             TextView textView = (TextView) mainLayout.findViewById(R.id.label);
             textView.setText(measure.getName() + ":");
             switch (measure.getType()) {
-                case 0:
-                    MeasureWheel measureWheel = createNumWheel(measure.getMax(), measure.getStep());
+                case Numeric:
+                    MeasureWheel measureWheel = createNumWheel(measure.getMax(), measure.getStep(), false);
                     wheelLayout.addView(measureWheel.wheelView);
                     measureWheelList.add(measureWheel);
                     if (measure.getStep() < 1) {
@@ -205,21 +249,21 @@ public class ResultActivity extends Activity implements OnClickListener {
                         wheelLayout.addView(measureTailWheel.wheelView);
                     }
                     break;
-                case 1:
+                case Temporal:
                     for (int i = measure.getMax(); i >= measure.getStep().intValue(); i--) {
                         MeasureWheel measureTimeWheel = null;
                         switch (i) {
                             case 0:
-                                measureTimeWheel = createNumWheel(1000, 1d);
+                                measureTimeWheel = createNumWheel(999, 1d, true);
                                 break;
                             case 1:
-                                measureTimeWheel = createNumWheel(60, 1d);
+                                measureTimeWheel = createNumWheel(59, 1d, true);
                                 break;
                             case 2:
-                                measureTimeWheel = createNumWheel(60, 1d);
+                                measureTimeWheel = createNumWheel(59, 1d, true);
                                 break;
                             case 3:
-                                measureTimeWheel = createNumWheel(24, 1d);
+                                measureTimeWheel = createNumWheel(23, 1d, true);
                                 break;
 
                         }
@@ -238,10 +282,14 @@ public class ResultActivity extends Activity implements OnClickListener {
         private MeasureWheel createTailWheel(Double step) {
             MeasureWheel measureWheel = new MeasureWheel();
             List<String> tails = new ArrayList<String>();
-            Double _step = 0d;
-            while (_step < 1) {
+            BigDecimal _step = BigDecimal.valueOf(0d);
+            Log.d(Consts.LOG_TAG, "step: " + step);
+            while (_step.doubleValue() < 1) {
                 tails.add(String.valueOf(_step).substring(1));
-                _step += step;
+                Log.d(Consts.LOG_TAG, "_step: " + _step);
+
+                _step = _step.add(BigDecimal.valueOf(step));
+
             }
             ArrayWheelAdapter<String> wheelAdapter = new ArrayWheelAdapter<String>(ResultActivity.this,
                     tails.toArray(new String[tails.size()]));
@@ -261,11 +309,12 @@ public class ResultActivity extends Activity implements OnClickListener {
             return measureWheel;
         }
 
-        private MeasureWheel createNumWheel(Integer max, Double step) {
+        private MeasureWheel createNumWheel(Integer max, Double step, boolean withZeros) {
             MeasureWheel measureWheel = new MeasureWheel();
             int length = String.valueOf(max).length();
+            String zero = (withZeros) ? "0" : "";
             NumericRightOrderWheelAdapter wheelAdapter = new NumericRightOrderWheelAdapter(ResultActivity.this, 0, max,
-                    "%" + length + "d");
+                    "%" + zero + length + "d");
 
             WheelView wheelView = (WheelView) getLayoutInflater().inflate(R.layout.wheel, null);
             wheelView.setViewAdapter(wheelAdapter);
@@ -305,7 +354,7 @@ public class ResultActivity extends Activity implements OnClickListener {
             String result = "";
 
             switch (measure.getType()) {
-                case 0:
+                case Numeric:
                     for (MeasureWheel measureWheel : measureWheelList) {
                         if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
                             result += String.valueOf(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getItem(measureWheel.wheelView
@@ -316,8 +365,14 @@ public class ResultActivity extends Activity implements OnClickListener {
                         }
                     }
                     break;
-                case 1:
-
+                case Temporal:
+                    for (MeasureWheel measureWheel : measureWheelList) {
+                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
+                            result += ":" + String.valueOf(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getItem(measureWheel.wheelView
+                                    .getCurrentItem()));
+                        }
+                    }
+                    result = result.substring(1);
                     break;
             }
             return result;
@@ -343,7 +398,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 
         public void setValue(String measureValue) {
             switch (measure.getType()) {
-                case 0:
+                case Numeric:
                     for (MeasureWheel measureWheel : measureWheelList) {
                         if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
 //                            int intValue = new Double(measureValue).intValue();
@@ -356,7 +411,7 @@ public class ResultActivity extends Activity implements OnClickListener {
                         }
                     }
                     break;
-                case 1:
+                case Temporal:
 
                     break;
             }
@@ -365,65 +420,5 @@ public class ResultActivity extends Activity implements OnClickListener {
 
     }
 
-    private void playClick() {
-
-        //�������� ��������� ���������
-        float actualVolume = (float) audioManager
-                .getStreamVolume(AudioManager.STREAM_MUSIC);
-        float maxVolume = (float) audioManager
-                .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        float volume = actualVolume / maxVolume;
-
-        soundPool.play(soundClick, volume, volume, 1, 0, 1f);
-
-    }
-
-    @Override
-    public void onClick(View arg0) {
-
-        switch (arg0.getId()) {
-            case R.id.write_button:
-                writeToDB();
-                printCurrentTrainingProgress();
-                break;
-            case R.id.undo_button:
-                String message = getResources().getString(R.string.dialog_del_approach_msg);
-                TrainingStat stat = dbHelper.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
-                if (stat != null) {
-                    String value = stat.getValue();
-                    message = String.format(message, value);
-                    undoDialog.setMessage(message);
-                    undoDialog.show();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void writeToDB() {
-        String result = "";
-        for (MeasureWheels measureWheels : measureWheelsList) {
-            result += measureWheels.getStringValue() + "x";
-        }
-        result = result.substring(0, result.length() - 1);
-        if (result != null && !result.isEmpty())
-            dbHelper.insertTrainingStat(ex_id, tr_id, new Date().getTime(), result);
-    }
-
-
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        this.finish();
-//    }
-
-
-    private void showlastEx() {
-        Intent History_detailsv2 = new Intent(this, History_detailsv2.class);
-        History_detailsv2.putExtra("AllEx", false);
-        History_detailsv2.putExtra("nameEx", strNameEx);
-        startActivity(History_detailsv2);
-    }
 
 }

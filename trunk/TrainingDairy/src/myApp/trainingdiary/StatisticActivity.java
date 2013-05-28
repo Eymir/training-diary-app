@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
@@ -14,11 +14,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 /*
- * Активити статистики по упражнениям
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  */
 
 public class StatisticActivity extends Activity
@@ -74,13 +73,13 @@ public class StatisticActivity extends Activity
         }
         else 
         {
-        	Toast.makeText(this, "Список упражнений пуст", Toast.LENGTH_SHORT).show();
-        	list.put("Записей нет", "0");
+        	Toast.makeText(this, "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ", Toast.LENGTH_SHORT).show();
+        	list.put("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ", "0");
 		}
         
         int imgPow = R.drawable.power;
         int imgCyc = R.drawable.cycle;
-        // имена атрибутов для Map
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ Map
         final String ATTRIBUTE_NAME_TEXT = "text";
         final String ATTRIBUTE_NAME_IMAGE = "image";
                
@@ -105,13 +104,13 @@ public class StatisticActivity extends Activity
             data.add(m);
         }
                
-        // массив имен атрибутов, из которых будут читаться данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
-        // массив ID View-компонентов, в которые будут вставлять данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ ID View-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         int[] to = {R.id.label, R.id.icon};        
-        // создаем адаптер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-//        // определяем список и присваиваем ему адаптер
+//        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //        lvExStat.setAdapter(sAdapter);                  	   	
 	}
 	

@@ -14,8 +14,7 @@ import com.mobeta.android.dslv.SimpleDragSortCursorAdapter.ViewBinder;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.constant.Consts;
-import myApp.trainingdiary.excercise.AddExerciseActivity;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,9 +22,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -35,7 +32,6 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 /*

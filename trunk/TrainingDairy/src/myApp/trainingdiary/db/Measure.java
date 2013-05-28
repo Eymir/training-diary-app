@@ -1,4 +1,4 @@
-package myApp.trainingdiary.forBD;
+package myApp.trainingdiary.db;
 
 /**
  * Created by Boris on 26.05.13.
@@ -8,9 +8,9 @@ public class Measure {
     private String name;
     private Integer max;
     private Double step;
-    private Integer type;
+    private MeasureType type;
 
-    public Measure(Long id, String name, Integer max, Double step, Integer type) {
+    public Measure(Long id, String name, Integer max, Double step, MeasureType type) {
         this.id = id;
         this.name = name;
         this.max = max;
@@ -50,11 +50,11 @@ public class Measure {
         this.step = step;
     }
 
-    public Integer getType() {
+    public MeasureType getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(MeasureType type) {
         this.type = type;
     }
 }

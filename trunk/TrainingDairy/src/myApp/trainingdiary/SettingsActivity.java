@@ -1,6 +1,6 @@
 package myApp.trainingdiary;
 
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /*
- * Активити с настроками и пока что добавлялкой упражнений 
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
  */
 
 public class SettingsActivity extends Activity implements OnClickListener
@@ -59,7 +59,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 			dbHelper = DBHelper.getInstance(this);			    
 		    SQLiteDatabase dbTr = dbHelper.getWritableDatabase();	
 		    int clearCountTr = dbTr.delete("Trainingtable", null, null);
-		    Toast.makeText(this, "Из БД удалено "+ clearCountTr + " записей", Toast.LENGTH_LONG).show();
+		    Toast.makeText(this, "пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ "+ clearCountTr + " пїЅпїЅпїЅпїЅпїЅпїЅпїЅ", Toast.LENGTH_LONG).show();
 		    dbHelper.close();
 	    	refreshTextViews();
 	      break;
@@ -67,7 +67,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 			dbHelper = DBHelper.getInstance(this);			    
 		    SQLiteDatabase dbEx = dbHelper.getWritableDatabase();	
 		    int clearCountEx = dbEx.delete("ExerciseTable", null, null);
-		    Toast.makeText(this, "Из БД удалено "+ clearCountEx + " записей", Toast.LENGTH_LONG).show();
+		    Toast.makeText(this, "пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ "+ clearCountEx + " пїЅпїЅпїЅпїЅпїЅпїЅпїЅ", Toast.LENGTH_LONG).show();
 		    dbHelper.close();
 	    	refreshTextViews();
 	      break;
@@ -75,7 +75,7 @@ public class SettingsActivity extends Activity implements OnClickListener
 			dbHelper = DBHelper.getInstance(this);			    
 		    SQLiteDatabase dbHis = dbHelper.getWritableDatabase();	
 		    int clearCountHist = dbHis.delete("TrainingStat", null, null);
-		    Toast.makeText(this, "Из БД удалено "+ clearCountHist + " записей", Toast.LENGTH_LONG).show();
+		    Toast.makeText(this, "пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ "+ clearCountHist + " пїЅпїЅпїЅпїЅпїЅпїЅпїЅ", Toast.LENGTH_LONG).show();
 		    dbHelper.close();
 	    	refreshTextViews();
 	      break;

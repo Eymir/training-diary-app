@@ -1,8 +1,8 @@
 package myApp.trainingdiary;
 
 import myApp.trainingdiary.HistoryAct.HistoryMainAcrivity;
-import myApp.trainingdiary.excercise.EditExActivity;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.excercise.AddExerciseActivity;
+import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.training.TrainingActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,101 +12,75 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class SuperMainActivity<T> extends Activity implements OnClickListener
-{
-	
-	Button btnStart, btnAddEx,  btnStat, btnHis, btnSettings, btnExit;
-	DBHelper dbHelper;
-	 final String LOG_TAG = "myLogs";
+public class SuperMainActivity<T> extends Activity implements OnClickListener {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_super_main);
-		
-		btnStart = (Button)findViewById(R.id.btnStart);
-		btnAddEx = (Button)findViewById(R.id.btnAddEx);
-		btnStat = (Button)findViewById(R.id.btnStat);
-		btnHis = (Button)findViewById(R.id.btnHist);
-		btnSettings = (Button)findViewById(R.id.btnSettings);
-		btnExit = (Button)findViewById(R.id.btnExit);
-		
-		btnStart.setOnClickListener(this);
-		btnAddEx.setOnClickListener(this);
-		btnStat.setOnClickListener(this);
-		btnHis.setOnClickListener(this);
-		btnSettings.setOnClickListener(this);
-		btnExit.setOnClickListener(this);
-		
-		//showinstructions();				
-	}
+    Button btnStart, btnAddEx, btnStat, btnHis, btnSettings, btnExit;
+    DBHelper dbHelper;
+    final String LOG_TAG = "myLogs";
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_super_main, menu);
-		return true;
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_super_main);
 
-	@Override
-	public void onClick(View arg0)
-	{
+        btnStart = (Button) findViewById(R.id.start_btn);
+        btnAddEx = (Button) findViewById(R.id.ex_btn);
+        btnStat = (Button) findViewById(R.id.btnStat);
+        btnHis = (Button) findViewById(R.id.btnHist);
+        btnSettings = (Button) findViewById(R.id.btnSettings);
+        btnExit = (Button) findViewById(R.id.btnExit);
 
-	    switch (arg0.getId()) 
-	    {
-	    case R.id.btnStart:
-		    Intent intentOpenMain = new Intent(this, TrainingActivity.class);
-	        startActivity(intentOpenMain);
-	      break;
-	    case R.id.btnAddEx:
-		    Intent intentAddEx = new Intent(this, EditExActivity.class);
-	        startActivity(intentAddEx);
-	      break;
-	    case R.id.btnHist:
-	    	//Log.d(LOG_TAG, "--- before run history ---");
-		    Intent intentHist = new Intent(this, HistoryMainAcrivity.class);
-	        startActivity(intentHist);
-	        //Log.d(LOG_TAG, "--- run history ---");
-		      break;
-	    case R.id.btnStat:
-		    Intent intentStat = new Intent(this, StatisticActivity.class);
-	        startActivity(intentStat);
-	      break;
-	    case R.id.btnSettings:
-		    Intent intentSet = new Intent(this, SettingsActivity.class);
-	        startActivity(intentSet);
-		      break;
-	    case R.id.btnExit:
-	    		//exit();
-		      break;
-	    default:
-	     break;
-	    }		
-	}
-	
-//	private void exit()
-//	{
-//    	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-//	      adb.setTitle("����� �� ����������?");
-//	      adb.setMessage("�� ������������� ������ �����?");
-//	      adb.setNegativeButton("���", null);      
-//	      adb.setPositiveButton("��", new DialogInterface.OnClickListener() {
-//                 public void onClick(DialogInterface dialog, int id) {
-//              	   finish();
-//              	   
-//                 }
-//             });
-//          adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                 public void onClick(DialogInterface dialog, int id) {
-//                     // User cancelled the dialog
-//                 }
-//             });        	    
-//	    adb.create().show();
-//	}
-	
-	
+        btnStart.setOnClickListener(this);
+        btnAddEx.setOnClickListener(this);
+        btnStat.setOnClickListener(this);
+        btnHis.setOnClickListener(this);
+        btnSettings.setOnClickListener(this);
+        btnExit.setOnClickListener(this);
+
+        //showinstructions();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_super_main, menu);
+        return true;
+    }
+
+    @Override
+    public void onClick(View arg0) {
+
+        switch (arg0.getId()) {
+            case R.id.start_btn:
+                Intent intentOpenMain = new Intent(this, TrainingActivity.class);
+                startActivity(intentOpenMain);
+                break;
+            case R.id.ex_btn:
+                Intent intentAddEx = new Intent(this, AddExerciseActivity.class);
+                startActivity(intentAddEx);
+                break;
+            case R.id.btnHist:
+                //Log.d(LOG_TAG, "--- before run history ---");
+                Intent intentHist = new Intent(this, HistoryMainAcrivity.class);
+                startActivity(intentHist);
+                //Log.d(LOG_TAG, "--- run history ---");
+                break;
+            case R.id.btnStat:
+                Intent intentStat = new Intent(this, StatisticActivity.class);
+                startActivity(intentStat);
+                break;
+            case R.id.btnSettings:
+                Intent intentSet = new Intent(this, SettingsActivity.class);
+                startActivity(intentSet);
+                break;
+            case R.id.btnExit:
+                finish();
+                break;
+            default:
+                break;
+        }
+    }
+
 //	private void showinstructions()
 //	{		
 //		dbHelper = DBHelper.getInstance(this);			    
@@ -133,10 +107,10 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener
 //  	    adb.create().show();        	        	
 //        }
 //	}
-	
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-	}
-	
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
 }

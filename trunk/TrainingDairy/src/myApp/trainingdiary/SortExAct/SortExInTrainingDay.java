@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -49,7 +49,7 @@ public class SortExInTrainingDay extends Activity {
 			    ParsedName = ParserName(Str);
 			    ParsedId = ParserId(Str);
 			    
-			    if(ParsedName.equalsIgnoreCase("Записей нет")) {			    	
+			    if(ParsedName.equalsIgnoreCase("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ")) {			    	
 			    }
 			    else{
 
@@ -104,7 +104,7 @@ public class SortExInTrainingDay extends Activity {
         }
         else 
         {
-        	Toast.makeText(this, "Список упражнений пуст", Toast.LENGTH_SHORT).show();
+        	Toast.makeText(this, "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ", Toast.LENGTH_SHORT).show();
         	return;
 		}
         
@@ -125,13 +125,13 @@ public class SortExInTrainingDay extends Activity {
             data.add(m);           
         }
         
-        // массив имен атрибутов, из которых будут читаться данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         String[] from = {ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_R, ATTRIBUTE_NAME_ID};
-        // массив ID View-компонентов, в которые будут вставлять данные
+        // пїЅпїЅпїЅпїЅпїЅпїЅ ID View-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         int[] to = {R.id.lvOnlyText2, R.id.lvOnlyFormat, R.id.lvOnlyText1};        
-        // создаем адаптер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.lvonlytrxt, from, to);        
-        // определяем список и присваиваем ему адаптер
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         lvExToSort.setAdapter(sAdapter);          
 	}
 		
@@ -169,7 +169,7 @@ public class SortExInTrainingDay extends Activity {
 		return ID;		
 	}
 	
-	//показываем активити для установки нового ID  упражнения
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ID  пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	private void openSetSortEx() {
 		
    	   	Intent SetSortEx = new Intent(this, SetSortEx.class);

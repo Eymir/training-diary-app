@@ -1,4 +1,4 @@
-package myApp.trainingdiary.forBD;
+package myApp.trainingdiary.db;
 
 import java.util.Arrays;
 import java.util.List;
