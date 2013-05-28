@@ -810,4 +810,14 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return deleted;
     }
+
+    public Cursor getTrainingsForHistory() {
+        //TODO: реализовать
+        return null;
+    }
+
+    public Cursor getExercisesForHistory() {
+        //TODO: реализовать
+        return null;
+    }
 }
