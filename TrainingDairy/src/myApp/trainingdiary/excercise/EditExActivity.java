@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SuperMainActivity;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,7 +44,7 @@ public class EditExActivity extends Activity implements OnClickListener
 		//Log.d(LOG_TAG, "--- onCreate ---");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_excercise);
-		btnAddEx = (Button)findViewById(R.id.btnAddEx);
+		btnAddEx = (Button)findViewById(R.id.ex_btn);
 		btnAddEx.setOnClickListener(this);
 //		lvExinTrain = (ListView)findViewById(R.id.lvExinTrain);
 		
@@ -82,7 +82,7 @@ public class EditExActivity extends Activity implements OnClickListener
 	{
 	    switch (arg0.getId()) 
 	    {
-	    case R.id.btnAddEx:
+	    case R.id.ex_btn:
 	    	finish();
 	        Intent intentOpenCreateEx = new Intent(this, AddExerciseActivity.class);
 	        intentOpenCreateEx.putExtra("parent", 0); // �������� = 0 ������ ����� ��� �������� �������� ����������

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -18,11 +18,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 /*
- * Основная активити с историей тренировок, тренировки сгруппированы по дате
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
  */
 
 public class HistoryMainAcrivity extends Activity
@@ -49,7 +48,7 @@ public class HistoryMainAcrivity extends Activity
 			{
 			    String Str = (String)lvMainHistory.getItemAtPosition(arg2).toString();
 			    String ParsedName = ParserOnItemClick(Str);	
-			    if(ParsedName.equalsIgnoreCase("<Записей нет>")) {			    	
+			    if(ParsedName.equalsIgnoreCase("<пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ>")) {			    	
 			    }
 			    else{
 			    	openHistoryDetails(ParsedName);
@@ -112,8 +111,8 @@ public class HistoryMainAcrivity extends Activity
         }
         else 
         {
-        	Toast.makeText(this, "В истории нет ни одной тренировки", Toast.LENGTH_LONG).show();
-        	String[] arrTrainings = new String[]{"<Записей нет>"};
+        	Toast.makeText(this, "пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ", Toast.LENGTH_LONG).show();
+        	String[] arrTrainings = new String[]{"<пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ>"};
 	        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrTrainings);		
 	        lvMainHistory.setAdapter(adapter);
         	return;

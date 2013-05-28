@@ -1,7 +1,7 @@
 package myApp.trainingdiary.HistoryAct;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.forBD.DBHelper;
+import myApp.trainingdiary.db.DBHelper;
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
@@ -85,7 +85,7 @@ public class History_detailsv2 extends Activity {
 		        String Exercise = cEx.getString(exNameIndex);
 		        String TrDate = cEx.getString(exTrDateIndex);
 		        
-		        //Вывод названия упражнения
+		        //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				TableRow row0 = new TableRow(this);
 				LayoutParams lprow0 = new LayoutParams(LayoutParams.MATCH_PARENT,
 						LayoutParams.MATCH_PARENT);
@@ -138,7 +138,7 @@ public class History_detailsv2 extends Activity {
 		        					maxInt = fullmass;
 		        				}
 		        			
-		        			//Вывод Результата подхода
+		        			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		        			TableRow row1 = new TableRow(this);
 		        			LayoutParams lprow1 = new LayoutParams(LayoutParams.WRAP_CONTENT,
 		        					LayoutParams.MATCH_PARENT);
@@ -155,7 +155,7 @@ public class History_detailsv2 extends Activity {
 		        			table.addView(row1, new TableLayout.LayoutParams(
 		        					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));	
 		        			
-		        			//Выыод разделителя между подходами
+		        			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		            		View vv2 = new View(this);
 		            		vv2.setBackgroundColor(Color.GRAY);
 		            		LayoutParams lpvv2 = new LayoutParams(LayoutParams.WRAP_CONTENT, 1);
@@ -164,14 +164,14 @@ public class History_detailsv2 extends Activity {
 		        			
 		        		} while (cExHis.moveToNext()); 
 		        	
-		        		//Выыод максимального веса упражнения
+		        		//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 						TableRow row2 = new TableRow(this);
 						LayoutParams lprow2 = new LayoutParams(LayoutParams.MATCH_PARENT,
 								LayoutParams.MATCH_PARENT);
 						row0.setLayoutParams(lprow2);
 						
 						TextView textMax = new TextView(this);
-						textMax.setText("Максимум = "+ maxPow);
+						textMax.setText("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ = "+ maxPow);
 						textMax.setTextSize(15);
 						textMax.setTextColor(Color.YELLOW);
 						LayoutParams lp2 = new LayoutParams(LayoutParams.MATCH_PARENT,
@@ -182,7 +182,7 @@ public class History_detailsv2 extends Activity {
 						table.addView(row2, new TableLayout.LayoutParams(
 								LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 								        				        		
-		        		//Выыод разделителя упражнений
+		        		//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		        		View vv = new View(this);
 		        		vv.setBackgroundColor(Color.BLACK);
 		        		LayoutParams lpvv = new LayoutParams(LayoutParams.MATCH_PARENT, 3);
