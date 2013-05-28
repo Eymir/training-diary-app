@@ -1,21 +1,21 @@
-package myApp.trainingdiary.HistoryAct;
+package myApp.trainingdiary.history;
 
-import myApp.trainingdiary.R;
-import myApp.trainingdiary.db.DBHelper;
-import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.TableRow.LayoutParams;
+import android.widget.TextView;
+import myApp.trainingdiary.R;
+import myApp.trainingdiary.db.DBHelper;
 
-public class History_detailsv2 extends Activity {
+public class HistoryTrainingDetailActivity extends Activity {
 	
     Button btn;
     int counter = 0;

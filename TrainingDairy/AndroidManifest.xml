@@ -50,11 +50,11 @@
             android:label="@string/title_activity_statistic" >
         </activity>
         <activity
-            android:name="myApp.trainingdiary.HistoryAct.HistoryMainAcrivity"
+            android:name=".history.HistoryMainActivity"
             android:label="@string/title_activity_history_main_acrivity" >
         </activity>
         <activity
-            android:name="myApp.trainingdiary.HistoryAct.History_detailsv2"
+            android:name=".history.HistoryExerciseDetailActivity"
             android:label="@string/title_activity_history_details" >
         </activity>
         <activity

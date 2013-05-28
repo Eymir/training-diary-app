@@ -1,6 +1,6 @@
 package myApp.trainingdiary;
 
-import myApp.trainingdiary.HistoryAct.HistoryMainAcrivity;
+import myApp.trainingdiary.history.HistoryMainActivity;
 import myApp.trainingdiary.excercise.AddExerciseActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.training.TrainingActivity;
@@ -61,7 +61,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener {
                 break;
             case R.id.btnHist:
                 //Log.d(LOG_TAG, "--- before run history ---");
-                Intent intentHist = new Intent(this, HistoryMainAcrivity.class);
+                Intent intentHist = new Intent(this, HistoryMainActivity.class);
                 startActivity(intentHist);
                 //Log.d(LOG_TAG, "--- run history ---");
                 break;
