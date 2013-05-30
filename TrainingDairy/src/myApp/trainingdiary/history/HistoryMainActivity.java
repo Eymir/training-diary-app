@@ -1,24 +1,26 @@
 package myApp.trainingdiary.history;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Calendar;
+import java.util.Date;
 
-import android.support.v4.widget.*;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.widget.*;
-import android.widget.CursorAdapter;
+
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.customview.CustomItemAdapter;
+import myApp.trainingdiary.customview.DateItem;
+import myApp.trainingdiary.customview.ExerciseItem;
+import myApp.trainingdiary.customview.Item;
+import myApp.trainingdiary.customview.SectionItem;
 import myApp.trainingdiary.db.DBHelper;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 import android.view.View;
 
@@ -34,16 +36,21 @@ public class HistoryMainActivity extends Activity {
     private ListView trainingHistoryList;
     private ListView exerciseHistoryList;
 
-    private SimpleCursorAdapter trainingHistoryAdapter;
-    private SimpleCursorAdapter exerciseHistoryAdapter;
+    private CustomItemAdapter trainingHistoryAdapter;
+    private CustomItemAdapter exerciseHistoryAdapter;
 
     private RadioButton trainingRadioButton;
     private RadioButton exerciseRadioButton;
+
+    private static final SimpleDateFormat SDF_DATE = new SimpleDateFormat("dd.MM.yyyy");
+
+    private static final SimpleDateFormat SDF_DATETIME = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_main);
+        dbHelper = DBHelper.getInstance(this);
         trainingHistoryList = (ListView) findViewById(R.id.training_history_list);
         exerciseHistoryList = (ListView) findViewById(R.id.exercise_history_list);
 
@@ -51,19 +58,22 @@ public class HistoryMainActivity extends Activity {
         trainingRadioButton = (RadioButton) findViewById(R.id.training_rb);
         exerciseRadioButton = (RadioButton) findViewById(R.id.exercise_rb);
 
-        trainingRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        trainingRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onClick(View view) {
                 exerciseHistoryList.setVisibility(View.GONE);
-                trainingHistoryList.setVisibility(View.VISIBLE);
+                if (!trainingHistoryAdapter.isEmpty())
+                    trainingHistoryList.setVisibility(View.VISIBLE);
             }
         });
 
-        exerciseRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        exerciseRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onClick(View view) {
                 trainingHistoryList.setVisibility(View.GONE);
-                exerciseHistoryList.setVisibility(View.VISIBLE);
+                if (!exerciseHistoryAdapter.isEmpty())
+                    exerciseHistoryList.setVisibility(View.VISIBLE);
             }
         });
 
@@ -73,66 +83,95 @@ public class HistoryMainActivity extends Activity {
         trainingHistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                long ex_id = trainingHistoryAdapter.getItemId(pos);
+                DateItem item = (DateItem) trainingHistoryAdapter.getItem(pos);
+                openTrainingDetails(item.getDate());
             }
         });
 
         exerciseHistoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                long ex_id = exerciseHistoryAdapter.getItemId(pos);
-                openExerciseHistoryDetails(ex_id);
+                ExerciseItem item = (ExerciseItem) exerciseHistoryAdapter.getItem(pos);
+                openExerciseHistoryDetails(item.getExId());
             }
         });
 
+        View emptyView = findViewById(R.id.empty_view);
+        trainingHistoryList.setEmptyView(emptyView);
+        exerciseHistoryList.setEmptyView(emptyView);
+    }
+
+    private void openTrainingDetails(Date date) {
+        Intent intentOpenHistoryDetails = new Intent(this, HistoryTrainingDetailActivity.class);
+        intentOpenHistoryDetails.putExtra(Consts.DATE_FIELD, date);
+        startActivity(intentOpenHistoryDetails);
     }
 
     private void loadTrainingList() {
-        Cursor tr_cursor = dbHelper.getTrainingsForHistory();
+        Cursor tr_cursor = dbHelper.getTrainingMainHistory();
         Log.d(Consts.LOG_TAG, "Exercise.count: " + tr_cursor.getCount());
-        String[] from = {"date", "_id"};
-        int[] to = {R.id.label, R.id.icon};
-        trainingHistoryAdapter = new SimpleCursorAdapter(
-                HistoryMainActivity.this, R.layout.exercise_plain_row, tr_cursor,
-                from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        trainingHistoryAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor,
-                                        int columnIndex) {
-                if (view.getId() == R.id.icon) {
-                    ((ImageView) view).setImageResource(R.drawable.ico_train);
-                    return true;
-                }
-                return false;
-            }
-        });
-
+        ArrayList<DateItem> itemArrayList = trainingCursorToItemArray(tr_cursor);
+        trainingHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
         trainingHistoryList.setAdapter(trainingHistoryAdapter);
+    }
+
+    private ArrayList<DateItem> trainingCursorToItemArray(Cursor cursor) {
+        ArrayList<DateItem> items = new ArrayList<DateItem>();
+        try {
+            Date previousDate = new Date(0L);
+            Calendar calendarPrevious = Calendar.getInstance();
+            Calendar calendarCurrent = Calendar.getInstance();
+            while (cursor.moveToNext()) {
+                Long tr_date_long = cursor.getLong(cursor.getColumnIndex("training_date"));
+                Date tr_date = new Date(tr_date_long);
+                calendarCurrent.setTime(tr_date);
+                int cur_day = calendarCurrent.get(Calendar.DAY_OF_YEAR);
+                calendarPrevious.setTime(previousDate);
+                int prev_day = calendarPrevious.get(Calendar.DAY_OF_YEAR);
+                String title = (cur_day == prev_day) ? SDF_DATETIME.format(tr_date) : SDF_DATE.format(tr_date);
+                previousDate = tr_date;
+                items.add(new DateItem(title, tr_date));
+            }
+        } finally {
+            cursor.close();
+        }
+        return items;
     }
 
     private void loadExerciseList() {
         Cursor ex_cursor = dbHelper.getExercisesForHistory();
         Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
-        String[] from = {"name", "icon_res"};
-        int[] to = {R.id.label, R.id.icon};
-        exerciseHistoryAdapter = new SimpleCursorAdapter(
-                HistoryMainActivity.this, R.layout.exercise_plain_row, ex_cursor,
-                from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        exerciseHistoryAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor,
-                                        int columnIndex) {
-                if (view.getId() == R.id.icon) {
-                    ((ImageView) view).setImageResource(getResources()
-                            .getIdentifier(cursor.getString(columnIndex),
-                                    "drawable", getPackageName()));
-                    return true;
-                }
-                return false;
-            }
-        });
-
+        ArrayList<?> itemArrayList = exerciseCursorToItemArray(ex_cursor);
+        exerciseHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
         exerciseHistoryList.setAdapter(exerciseHistoryAdapter);
+    }
+
+    private ArrayList<Item> exerciseCursorToItemArray(Cursor cursor) {
+        ArrayList<Item> items = new ArrayList<Item>();
+        try {
+            String lastTrName = "\n";
+            while (cursor.moveToNext()) {
+                //tr.name tr_name, ex.name ex_name, ex.id ex_id, ex_type.icon_res icon
+                String tr_name = cursor.getString(cursor.getColumnIndex("tr_name"));
+                String ex_name = cursor.getString(cursor.getColumnIndex("ex_name"));
+                String icon = cursor.getString(cursor.getColumnIndex("icon"));
+                Long ex_id = cursor.getLong(cursor.getColumnIndex("ex_id"));
+
+                if (tr_name != lastTrName) {
+                    if (tr_name == null || tr_name.isEmpty())
+                        items.add(new SectionItem(getResources().getString(R.string.empty_training_section)));
+                    else {
+                        items.add(new SectionItem(tr_name));
+                    }
+                    lastTrName = tr_name;
+                }
+                items.add(new ExerciseItem(ex_name, icon, ex_id));
+
+            }
+        } finally {
+            cursor.close();
+        }
+        return items;
     }
 
     private void openExerciseHistoryDetails(long ex_id) {
@@ -145,54 +184,6 @@ public class HistoryMainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_history_main_acrivity, menu);
         return true;
-    }
-
-    private void GetTrainingsDay() {
-        dbHelper = DBHelper.getInstance(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String[] Column = {"trainingdate"};
-        Cursor c = db.query("TrainingStat", Column, null, null, "trainingdate", null, null);
-        int size = c.getCount();
-        SortedMap<String, String> list = new TreeMap<String, String>();
-
-        if (size > 0) {
-            if (c.moveToFirst()) {
-                int nameColIndex = c.getColumnIndex("trainingdate");
-
-                do {
-                    list.put(c.getString(nameColIndex), "0");
-                } while (c.moveToNext());
-            }
-
-            c.close();
-            dbHelper.close();
-
-            int imgTr = R.drawable.ico_train;
-            final String ATTRIBUTE_NAME_TEXT = "text";
-            final String ATTRIBUTE_NAME_IMAGE = "image";
-
-            ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(list.size());
-            Map<String, Object> m;
-
-            for (Map.Entry<String, String> entry : list.entrySet()) {
-                String name = entry.getKey();
-                m = new HashMap<String, Object>();
-                m.put(ATTRIBUTE_NAME_TEXT, name);
-                m.put(ATTRIBUTE_NAME_IMAGE, imgTr);
-                data.add(m);
-            }
-
-            String[] from = {ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE};
-            int[] to = {R.id.label, R.id.icon};
-//	        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
-//	        lvMainHistory.setAdapter(sAdapter);  	        
-        } else {
-            Toast.makeText(this, "� ������� ��� �� ����� ����������", Toast.LENGTH_LONG).show();
-            String[] arrTrainings = new String[]{"<������� ���>"};
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrTrainings);
-            lvMainHistory.setAdapter(adapter);
-            return;
-        }
     }
 
     private void openHistoryDetails(String DateTraining) {

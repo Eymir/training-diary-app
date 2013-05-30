@@ -60,7 +60,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table TrainingStat ("
                 + "id integer primary key autoincrement,"
-                + "date datetime," + "exercise_id integer,"
+                + "date datetime,"
+                + "training_date datetime,"
+                + "exercise_id integer,"
                 + "value text,"
                 + "training_id integer,"
                 + "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)" + ");");
@@ -223,10 +225,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public long insertTrainingStat(SQLiteDatabase db, long exercise_id, long training_id,
-                                   long trainingDate, String value) {
+                                   long date, long trainingDate, String value) {
 
         ContentValues cv = new ContentValues();
-        cv.put("date", trainingDate);
+        cv.put("date", date);
+        cv.put("training_date", trainingDate);
         cv.put("value", value);
         cv.put("exercise_id", exercise_id);
         cv.put("training_id", training_id);
@@ -236,14 +239,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public long insertTrainingStat(long exercise_id, long training_id,
-                                   long trainingDate, String value) {
+                                   long date, long trainingDate, String value) {
         SQLiteDatabase db = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("date", trainingDate);
-        cv.put("value", value);
-        cv.put("exercise_id", exercise_id);
-        cv.put("training_id", training_id);
-        long id = db.insert("TrainingStat", null, cv);
+        long id = insertTrainingStat(db, exercise_id, training_id, date, trainingDate, value);
         db.close();
         return id;
     }
@@ -380,7 +378,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     }
 
                     if (ex_id > 0 && date != null) {
-                        insertTrainingStat(db, ex_id, 0, date.getTime(), value);
+                        insertTrainingStat(db, ex_id, 0, date.getTime(), date.getTime(), value);
                     } else {
                         Log.e(Consts.LOG_TAG,
                                 "Cannot insert TrainingStat cause - ex_id: "
@@ -739,11 +737,12 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             if (c.moveToFirst()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
-                Long trainingDate = c.getLong(c.getColumnIndex("date"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
                 Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
                 Long trainingId = c.getLong(c.getColumnIndex("training_id"));
                 String value = c.getString(c.getColumnIndex("value"));
-                return new TrainingStat(id, new Date(trainingDate), exerciseId, trainingId, value);
+                return new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value);
             } else {
                 return null;
             }
@@ -785,11 +784,12 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             while (c.moveToNext()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
-                Long trainingDate = c.getLong(c.getColumnIndex("date"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
                 Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
                 Long trainingId = c.getLong(c.getColumnIndex("training_id"));
                 String value = c.getString(c.getColumnIndex("value"));
-                stats.add(new TrainingStat(id, new Date(trainingDate), exerciseId, trainingId, value));
+                stats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
             }
             return stats;
         } finally {
@@ -811,13 +811,26 @@ public class DBHelper extends SQLiteOpenHelper {
         return deleted;
     }
 
-    public Cursor getTrainingsForHistory() {
-        //TODO: реализовать
-        return null;
+    public Cursor getTrainingMainHistory() {
+        String sqlQuery = "select * from TrainingStat " +
+                "group by training_date " +
+                "order by training_date asc ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        return c;
     }
 
     public Cursor getExercisesForHistory() {
-        //TODO: реализовать
-        return null;
+        String sqlQuery = "select tr.name tr_name, ex.name ex_name, ex.id ex_id, ex_type.icon_res icon " +
+                "from TrainingStat as stat left outer join Training as tr on stat.training_id = tr.id, " +
+                "Exercise ex, ExerciseType ex_type " +
+                "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
+                "group by ex.id " +
+                "order by tr.name, date desc ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        return c;
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import android.content.res.Resources;
 import android.util.Log;
 import android.widget.*;
+
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
@@ -17,6 +18,7 @@ import myApp.trainingdiary.R;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
+
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
+
 import myApp.trainingdiary.db.DbFormatter;
 import myApp.trainingdiary.db.Measure;
 import myApp.trainingdiary.db.TrainingStat;
@@ -214,8 +217,11 @@ public class ResultActivity extends Activity implements OnClickListener {
             result += measureWheels.getStringValue() + "x";
         }
         result = result.substring(0, result.length() - 1);
-        if (result != null && !result.isEmpty())
-            dbHelper.insertTrainingStat(ex_id, tr_id, new Date().getTime(), result);
+        if (result != null && !result.isEmpty()) {
+            List<TrainingStat> list = dbHelper.getTrainingStatForLastPeriod(ex_id, Consts.TWO_HOURS);
+            Date trainingDate = (list.isEmpty()) ? new Date() : list.get(0).getTrainingDate();
+            dbHelper.insertTrainingStat(ex_id, tr_id, new Date().getTime(), trainingDate.getTime(), result);
+        }
     }
 
     private class MeasureWheel {

@@ -88,4 +88,6 @@
     <string name="sum_approach">Всего подходов:</string>
     <string name="empty_ex_list">Нет упражнений</string>
     <string name="create_exercise_success">Упражнение %1$s создано</string><string name="training_radio_button">Тренировки</string><string name="exercises_radio_button">Упражнения</string>
+    <string name="empty_training_section">Вне тренировок</string>
+    <string name="empty">Пусто</string>
 </resources>
