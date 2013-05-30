@@ -9,6 +9,8 @@ public class Consts {
 
     public final static String EXERCISE_ID = "ex_id";
 
+    public final static String DATE_FIELD = "date";
+
     //It needs to be a setting
     public final static int TWO_HOURS = 7200000;
 

@@ -1,169 +1,170 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout1"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background"
-    android:orientation="vertical" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/linearLayout1"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/background"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/layout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:id="@+id/create_exercise_label_layout"
+            android:id="@+id/layout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:id="@+id/create_exercise_label_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/icon"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="4px"
-                android:layout_marginRight="10px"
-                android:layout_marginTop="4px"
-                android:layout_weight="0.69"
-                android:scaleType="fitCenter"
-                android:src="@drawable/plus_orange" >
+                    android:id="@+id/icon"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4px"
+                    android:layout_marginRight="10px"
+                    android:layout_marginTop="4px"
+                    android:layout_weight="0.69"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/plus_orange">
             </ImageView>
 
             <TextView
-                android:id="@+id/cr_ex_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="9.98"
-                android:height="40dp"
-                android:text="@string/ex_create"
-                android:textColor="#F8F8FF"
-                android:textSize="30sp" />
+                    android:id="@+id/cr_ex_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9.98"
+                    android:height="40dp"
+                    android:text="@string/ex_create"
+                    android:textColor="#F8F8FF"
+                    android:textSize="30sp"/>
 
             <ImageView
-                android:id="@+id/cr_ex_expand_indicator"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="4px"
-                android:layout_marginRight="10px"
-                android:layout_marginTop="4px"
-                android:layout_weight="0.69"
-                android:scaleType="fitCenter"
-                android:src="@drawable/arrow_exp_right" >
+                    android:id="@+id/cr_ex_expand_indicator"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4px"
+                    android:layout_marginRight="10px"
+                    android:layout_marginTop="4px"
+                    android:layout_weight="0.69"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow_exp_right">
             </ImageView>
         </LinearLayout>
 
         <TableLayout
-            android:id="@+id/create_exercise_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" >
+                android:id="@+id/create_exercise_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
             <TableRow
-                android:id="@+id/tableRow1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                    android:id="@+id/tableRow1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/name_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ex_name" />
+                        android:id="@+id/name_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ex_name"/>
 
                 <EditText
-                    android:id="@+id/name_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10" >
+                        android:id="@+id/name_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="10">
 
-                    <requestFocus />
+                    <requestFocus/>
                 </EditText>
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                    android:id="@+id/tableRow2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/type_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ex_type" />
+                        android:id="@+id/type_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ex_type"/>
 
                 <Spinner
-                    android:id="@+id/type_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                        android:id="@+id/type_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                    android:id="@+id/tableRow3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/create_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_button" />
+                        android:id="@+id/create_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_button"/>
             </TableRow>
         </TableLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/exercise_list_Layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+            android:id="@+id/exercise_list_Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/exercise_list_label_Layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" >
+                android:id="@+id/exercise_list_label_Layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/icon"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="4px"
-                android:layout_marginRight="10px"
-                android:layout_marginTop="4px"
-                android:layout_weight="0.69"
-                android:scaleType="fitCenter"
-                android:src="@drawable/pointer" >
+                    android:id="@+id/icon"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4px"
+                    android:layout_marginRight="10px"
+                    android:layout_marginTop="4px"
+                    android:layout_weight="0.69"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/pointer">
             </ImageView>
 
             <TextView
-                android:id="@+id/add_ex_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="9.98"
-                android:height="40dp"
-                android:text="@string/ex_choose"
-                android:textColor="#F8F8FF"
-                android:textSize="30sp" />
+                    android:id="@+id/add_ex_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9.98"
+                    android:height="40dp"
+                    android:text="@string/ex_choose"
+                    android:textColor="#F8F8FF"
+                    android:textSize="30sp"/>
 
             <ImageView
-                android:id="@+id/add_ex_expand_indicator"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="4px"
-                android:layout_marginRight="10px"
-                android:layout_marginTop="4px"
-                android:layout_weight="0.69"
-                android:scaleType="fitCenter"
-                android:src="@drawable/arrow_exp_right" >
+                    android:id="@+id/add_ex_expand_indicator"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4px"
+                    android:layout_marginRight="10px"
+                    android:layout_marginTop="4px"
+                    android:layout_weight="0.69"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow_exp_right">
             </ImageView>
         </LinearLayout>
 
         <ListView
-            android:id="@+id/exercise_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" >
+                android:id="@+id/exercise_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
         </ListView>
+
     </LinearLayout>
 
 </LinearLayout>

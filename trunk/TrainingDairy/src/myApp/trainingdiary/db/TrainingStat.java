@@ -8,16 +8,26 @@ import java.util.Date;
 public class TrainingStat {
     private Long id;
     private Date trainingDate;
+    private Date date;
     private Long exerciseId;
     private Long trainingId;
     private String value;
 
-    public TrainingStat(Long id, Date trainingDate, Long exerciseId, Long trainingId, String value) {
+    public TrainingStat(Long id, Date date, Date trainingDate, Long exerciseId, Long trainingId, String value) {
         this.id = id;
         this.trainingDate = trainingDate;
+        this.date = date;
         this.exerciseId = exerciseId;
         this.trainingId = trainingId;
         this.value = value;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Long getTrainingId() {

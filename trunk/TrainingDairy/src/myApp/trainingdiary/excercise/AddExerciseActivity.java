@@ -4,6 +4,7 @@ import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.db.DBHelper;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
@@ -88,9 +89,8 @@ public class AddExerciseActivity extends Activity {
         initChoosePanel();
         guiMediator.clickChoosePanel();
         chooseClickableLayout.performClick();
-
-        View emptyRow = getLayoutInflater().inflate(layout.empty_row, null);
-        exerciseList.setEmptyView(emptyRow);
+//        View emptyView = findViewById(R.id.empty_view);
+//        exerciseList.setEmptyView(emptyView);
     }
 
     private void addExercise(long ex_id) {
@@ -115,7 +115,7 @@ public class AddExerciseActivity extends Activity {
         String[] from = {"name", "icon_res"};
         int[] to = {R.id.label, R.id.icon};
         exerciseAdapter = new SimpleCursorAdapter(
-                AddExerciseActivity.this, R.layout.exercise_row, ex_cursor,
+                AddExerciseActivity.this, layout.exercise_plain_row, ex_cursor,
                 from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         exerciseAdapter.setViewBinder(new ViewBinder() {
             @Override
@@ -199,7 +199,9 @@ public class AddExerciseActivity extends Activity {
         try {
             long ex_id = dbHelper.insertExercise(db, name_edit.getText()
                     .toString(), type_spinner.getSelectedItemId());
-            dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
+            if (tr_id != 0)
+                dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
+
         } catch (SQLException e) {
             Log.e(Consts.LOG_TAG, "Error while adding exercise", e);
         } finally {
