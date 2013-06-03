@@ -1,4 +1,4 @@
-package myApp.trainingdiary.db;
+package myApp.trainingdiary.db.entity;
 
 import java.util.Date;
 

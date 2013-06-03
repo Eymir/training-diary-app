@@ -4,24 +4,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import android.util.Log;
 import android.widget.*;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.constant.Consts;
-import myApp.trainingdiary.customview.CustomItemAdapter;
-import myApp.trainingdiary.customview.DateItem;
-import myApp.trainingdiary.customview.ExerciseItem;
-import myApp.trainingdiary.customview.Item;
-import myApp.trainingdiary.customview.SectionItem;
+import myApp.trainingdiary.customview.itemadapter.CustomItemAdapter;
+import myApp.trainingdiary.customview.itemadapter.DateItem;
+import myApp.trainingdiary.customview.itemadapter.ExerciseItem;
+import myApp.trainingdiary.customview.itemadapter.Item;
+import myApp.trainingdiary.customview.itemadapter.SmallSectionItem;
 import myApp.trainingdiary.db.DBHelper;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.view.Menu;
 import android.view.View;
 
 /*
@@ -29,8 +29,6 @@ import android.view.View;
  */
 
 public class HistoryMainActivity extends Activity {
-
-    ListView lvMainHistory;
 
     private DBHelper dbHelper;
     private ListView trainingHistoryList;
@@ -102,14 +100,15 @@ public class HistoryMainActivity extends Activity {
     }
 
     private void openTrainingDetails(Date date) {
-        Intent intentOpenHistoryDetails = new Intent(this, HistoryTrainingDetailActivity.class);
+        Intent intentOpenHistoryDetails = new Intent(this, HistoryDetailActivity.class);
+        intentOpenHistoryDetails.putExtra(Consts.HISTORY_TYPE, Consts.TRAINING_TYPE);
         intentOpenHistoryDetails.putExtra(Consts.DATE_FIELD, date);
         startActivity(intentOpenHistoryDetails);
     }
 
     private void loadTrainingList() {
         Cursor tr_cursor = dbHelper.getTrainingMainHistory();
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + tr_cursor.getCount());
+        Log.d(Consts.LOG_TAG, "trainings.count: " + tr_cursor.getCount());
         ArrayList<DateItem> itemArrayList = trainingCursorToItemArray(tr_cursor);
         trainingHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
         trainingHistoryList.setAdapter(trainingHistoryAdapter);
@@ -118,18 +117,15 @@ public class HistoryMainActivity extends Activity {
     private ArrayList<DateItem> trainingCursorToItemArray(Cursor cursor) {
         ArrayList<DateItem> items = new ArrayList<DateItem>();
         try {
-            Date previousDate = new Date(0L);
-            Calendar calendarPrevious = Calendar.getInstance();
-            Calendar calendarCurrent = Calendar.getInstance();
+            List<Long> checkList = new ArrayList<Long>();
             while (cursor.moveToNext()) {
                 Long tr_date_long = cursor.getLong(cursor.getColumnIndex("training_date"));
-                Date tr_date = new Date(tr_date_long);
-                calendarCurrent.setTime(tr_date);
-                int cur_day = calendarCurrent.get(Calendar.DAY_OF_YEAR);
-                calendarPrevious.setTime(previousDate);
-                int prev_day = calendarPrevious.get(Calendar.DAY_OF_YEAR);
-                String title = (cur_day == prev_day) ? SDF_DATETIME.format(tr_date) : SDF_DATE.format(tr_date);
-                previousDate = tr_date;
+                checkList.add(tr_date_long);
+            }
+            for (Long date : checkList) {
+                Date tr_date = new Date(date);
+                boolean isSameDayExist = isSameDay(tr_date, new ArrayList<Long>(checkList));
+                String title = (isSameDayExist) ? SDF_DATETIME.format(tr_date) : SDF_DATE.format(tr_date);
                 items.add(new DateItem(title, tr_date));
             }
         } finally {
@@ -138,9 +134,28 @@ public class HistoryMainActivity extends Activity {
         return items;
     }
 
+    private boolean isSameDay(Date tr_date, List<Long> checkList) {
+        Calendar calendarCurrent = Calendar.getInstance();
+        Log.d(Consts.LOG_TAG, "tr_date: " + SDF_DATETIME.format(tr_date));
+        calendarCurrent.setTime(tr_date);
+        int tr_day = calendarCurrent.get(Calendar.DAY_OF_YEAR);
+        int tr_year = calendarCurrent.get(Calendar.YEAR);
+        checkList.remove(tr_date.getTime());
+        for (Long date : checkList) {
+            Date curDate = new Date(date);
+            calendarCurrent.setTime(curDate);
+            int cur_day = calendarCurrent.get(Calendar.DAY_OF_YEAR);
+            int cur_year = calendarCurrent.get(Calendar.YEAR);
+            if ((cur_day == tr_day) && (cur_year == tr_year)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void loadExerciseList() {
         Cursor ex_cursor = dbHelper.getExercisesForHistory();
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
+        Log.d(Consts.LOG_TAG, "Exercises.count: " + ex_cursor.getCount());
         ArrayList<?> itemArrayList = exerciseCursorToItemArray(ex_cursor);
         exerciseHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
         exerciseHistoryList.setAdapter(exerciseHistoryAdapter);
@@ -151,17 +166,16 @@ public class HistoryMainActivity extends Activity {
         try {
             String lastTrName = "\n";
             while (cursor.moveToNext()) {
-                //tr.name tr_name, ex.name ex_name, ex.id ex_id, ex_type.icon_res icon
                 String tr_name = cursor.getString(cursor.getColumnIndex("tr_name"));
                 String ex_name = cursor.getString(cursor.getColumnIndex("ex_name"));
                 String icon = cursor.getString(cursor.getColumnIndex("icon"));
                 Long ex_id = cursor.getLong(cursor.getColumnIndex("ex_id"));
-
-                if (tr_name != lastTrName) {
+                Log.d(Consts.LOG_TAG, "ex_name: " + ex_name + " tr_name: " + tr_name);
+                if (!tr_name.equals(lastTrName)) {
                     if (tr_name == null || tr_name.isEmpty())
-                        items.add(new SectionItem(getResources().getString(R.string.empty_training_section)));
+                        items.add(new SmallSectionItem(getResources().getString(R.string.empty_training_section)));
                     else {
-                        items.add(new SectionItem(tr_name));
+                        items.add(new SmallSectionItem(tr_name));
                     }
                     lastTrName = tr_name;
                 }
@@ -175,30 +189,10 @@ public class HistoryMainActivity extends Activity {
     }
 
     private void openExerciseHistoryDetails(long ex_id) {
-        Intent intentOpenHistoryDetails = new Intent(this, HistoryExerciseDetailActivity.class);
+        Intent intentOpenHistoryDetails = new Intent(this, HistoryDetailActivity.class);
         intentOpenHistoryDetails.putExtra(Consts.EXERCISE_ID, ex_id);
+        intentOpenHistoryDetails.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
         startActivity(intentOpenHistoryDetails);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_history_main_acrivity, menu);
-        return true;
-    }
-
-    private void openHistoryDetails(String DateTraining) {
-        Intent intentOpenHistoryDetails = new Intent(this, HistoryExerciseDetailActivity.class);
-        intentOpenHistoryDetails.putExtra("AllEx", true);
-        intentOpenHistoryDetails.putExtra("strDateTr", DateTraining);
-        startActivity(intentOpenHistoryDetails);
-    }
-
-    private String ParserOnItemClick(String nonParsed) {
-        int index = nonParsed.indexOf("text=");
-        String HalfParsed = nonParsed.substring(index + 5);
-        int index2 = HalfParsed.length();
-        String Parsed = HalfParsed.substring(0, index2 - 1);
-        return Parsed;
     }
 
 }

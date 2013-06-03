@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:text="@+id/label"
             android:textColor="#F8F8FF"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <LinearLayout
             android:id="@+id/wheel_layout"

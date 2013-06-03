@@ -29,8 +29,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import myApp.trainingdiary.db.DbFormatter;
-import myApp.trainingdiary.db.Measure;
-import myApp.trainingdiary.db.TrainingStat;
+import myApp.trainingdiary.db.entity.Measure;
+import myApp.trainingdiary.db.entity.TrainingStat;
 
 /*
  * ��������� ��� ������ ���������� ������� ���������� 
@@ -38,38 +38,24 @@ import myApp.trainingdiary.db.TrainingStat;
 
 public class ResultActivity extends Activity implements OnClickListener {
 
-    TextView tvnameEx, training_stat_text;
-    String strNameEx;
-    String strNameTr;
-    DBHelper dbHelper;
+
+
+    private DBHelper dbHelper;
     final int MENU_DEL_LAST_SET = 1;
     final int MENU_SHOW_LAST_RESULT = 2;
 
     // forms
-    Button btnSet;
-    //btnW1p, btnW2p, btnW3p, btnW1m, btnW2m, btnW3m, btnW4p, btnW4m,
-    //		btnRepp, btnRepm,
-    //EditText editTextW1, editTextW2, editTextW3, editTextW4, editTextRep;
-    //
-    private WheelView bigNumWheel;
-    private WheelView smallNumWheel;
-    private WheelView repeatWheel;
-
-    private ArrayWheelAdapter<String> smallNumWheelAdapter;
-    private NumericRightOrderWheelAdapter repeatWheelAdapter;
-    private NumericRightOrderWheelAdapter bigNumWheelAdapter;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
-    //��� ������������ ������....
     private SoundPool soundPool;
     private int soundClick;
     AudioManager audioManager;
-    boolean Soundloaded = false;
     private long ex_id;
     private long tr_id;
     private List<MeasureWheels> measureWheelsList = new ArrayList<MeasureWheels>();
     private AlertDialog undoDialog;
     private Resources resources;
+    private TextView training_stat_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +125,7 @@ public class ResultActivity extends Activity implements OnClickListener {
         adb.setTitle(title);
         adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                int deleted = dbHelper.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.TWO_HOURS);
+                int deleted = dbHelper.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
                 if (deleted > 0) {
                     printCurrentTrainingProgress();
                     Toast.makeText(ResultActivity.this, R.string.deleted,
@@ -160,7 +146,7 @@ public class ResultActivity extends Activity implements OnClickListener {
     }
 
     private void printCurrentTrainingProgress() {
-        List<TrainingStat> tr_stats = dbHelper.getTrainingStatForLastPeriod(ex_id, Consts.TWO_HOURS);
+        List<TrainingStat> tr_stats = dbHelper.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
         String stats = formTrainingStats(tr_stats);
         training_stat_text.setText(stats);
     }
@@ -218,9 +204,9 @@ public class ResultActivity extends Activity implements OnClickListener {
         }
         result = result.substring(0, result.length() - 1);
         if (result != null && !result.isEmpty()) {
-            List<TrainingStat> list = dbHelper.getTrainingStatForLastPeriod(ex_id, Consts.TWO_HOURS);
+            List<TrainingStat> list = dbHelper.getTrainingStatForLastPeriod(Consts.THREE_HOURS);
             Date trainingDate = (list.isEmpty()) ? new Date() : list.get(0).getTrainingDate();
-            dbHelper.insertTrainingStat(ex_id, tr_id, new Date().getTime(), trainingDate.getTime(), result);
+            dbHelper.insertTrainingStat(ex_id, tr_id, System.currentTimeMillis(), trainingDate.getTime(), result);
         }
     }
 
@@ -403,6 +389,7 @@ public class ResultActivity extends Activity implements OnClickListener {
         }
 
         public void setValue(String measureValue) {
+            //TODO: реализовать
             switch (measure.getType()) {
                 case Numeric:
                     for (MeasureWheel measureWheel : measureWheelList) {

@@ -1,4 +1,4 @@
-package myApp.trainingdiary.db;
+package myApp.trainingdiary.db.entity;
 
 /**
  * Created by Boris on 26.05.13.
