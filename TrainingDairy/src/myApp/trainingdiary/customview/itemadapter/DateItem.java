@@ -1,4 +1,4 @@
-package myApp.trainingdiary.customview;
+package myApp.trainingdiary.customview.itemadapter;
 
 
 import java.util.Date;
@@ -17,11 +17,12 @@ public class DateItem implements Item {
         this.title = title;
     }
 
-
     @Override
-    public boolean isSection() {
-        return false;
+    public ItemType getType() {
+        return ItemType.DATE;
     }
+
+
 
     public String getTitle() {
         return title;

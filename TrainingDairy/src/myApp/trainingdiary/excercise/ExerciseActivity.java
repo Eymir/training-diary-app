@@ -3,15 +3,20 @@ package myApp.trainingdiary.excercise;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.*;
+
 import com.mobeta.android.dslv.DragSortListView;
 import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
+
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
+import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.constant.Consts;
 import myApp.trainingdiary.db.DBHelper;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +26,7 @@ import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 
@@ -33,17 +39,14 @@ public class ExerciseActivity extends Activity {
     private static final int ID_REMOVE_EXERCISE = 6;
     private static final int ID_MOVE_EXERCISE = 7;
     private static final int ID_STAT_EXERCISE = 8;
+    private static final int ID_HISTORY_EXERCISE = 9;
 
     private long tr_id;
     private String trainingName;
     private DragSortListView exerciseList;
-    SimpleDragSortCursorAdapter exerciseAdapter;
+    private SimpleDragSortCursorAdapter exerciseAdapter;
 
     private DBHelper dbHelper;
-
-    private EditText name_edit;
-    private Spinner type_spinner;
-    private Button create_button;
 
     private QuickAction exerciseActionTools;
     private long cur_ex_id;
@@ -109,8 +112,8 @@ public class ExerciseActivity extends Activity {
 
     private void printLogExInTr() {
         Cursor c = dbHelper.getExercisesInTraining(tr_id);
-        while(c.moveToNext()){
-            Log.i(Consts.LOG_TAG,"exercise_id: "+c.getLong(c.getColumnIndex("_id"))+" pos: "+c.getLong(c.getColumnIndex("position")));
+        while (c.moveToNext()) {
+            Log.i(Consts.LOG_TAG, "exercise_id: " + c.getLong(c.getColumnIndex("_id")) + " pos: " + c.getLong(c.getColumnIndex("position")));
         }
         c.close();
 
@@ -155,6 +158,13 @@ public class ExerciseActivity extends Activity {
                                     "drawable", getPackageName()));
                     return true;
                 }
+//                if (view.getId() == R.id.label) {
+//                    TextView textView = (TextView) view;
+//                    textView.setMovementMethod(new ScrollingMovementMethod());
+//                    textView.setText(cursor.getString(columnIndex));
+//                    textView.setClickable(true);
+//                    return true;
+//                }
                 if (view.getId() == R.id.ex_tools) {
                     final long ex_id = cursor.getLong(columnIndex);
                     view.setOnClickListener(new View.OnClickListener() {
@@ -222,6 +232,13 @@ public class ExerciseActivity extends Activity {
         startActivity(intentOpenAddEx);
     }
 
+    protected void openHistoryDetailActivity(long ex_id) {
+        Intent intentOpenAct = new Intent(this, HistoryDetailActivity.class);
+        intentOpenAct.putExtra(Consts.EXERCISE_ID, ex_id);
+        intentOpenAct.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
+        startActivity(intentOpenAct);
+    }
+
     private void createExcerciseTools() {
         ActionItem renameItem = new ActionItem(ID_RENAME_EXERCISE,
                 getResources().getString(R.string.rename_action),
@@ -229,6 +246,9 @@ public class ExerciseActivity extends Activity {
         ActionItem statItem = new ActionItem(ID_STAT_EXERCISE,
                 getResources().getString(R.string.stat_action),
                 getResources().getDrawable(R.drawable.statistics));
+        ActionItem historyItem = new ActionItem(ID_HISTORY_EXERCISE,
+                getResources().getString(R.string.history_action),
+                getResources().getDrawable(R.drawable.carving_time_icon_12));
         ActionItem moveItem = new ActionItem(ID_MOVE_EXERCISE, getResources()
                 .getString(R.string.move_action), getResources().getDrawable(
                 R.drawable.object_flip_vertical));
@@ -238,8 +258,9 @@ public class ExerciseActivity extends Activity {
 
         exerciseActionTools = new QuickAction(this);
         exerciseActionTools.addActionItem(renameItem);
-        exerciseActionTools.addActionItem(statItem);
         exerciseActionTools.addActionItem(moveItem);
+        exerciseActionTools.addActionItem(historyItem);
+        exerciseActionTools.addActionItem(statItem);
         exerciseActionTools.addActionItem(removeItem);
 
         // setup the action item click listener
@@ -266,7 +287,9 @@ public class ExerciseActivity extends Activity {
                             case ID_MOVE_EXERCISE:
                                 cur_drag_handler.setVisibility(View.VISIBLE);
                                 break;
-
+                            case ID_HISTORY_EXERCISE:
+                                openHistoryDetailActivity(cur_ex_id);
+                                break;
                         }
                     }
                 });

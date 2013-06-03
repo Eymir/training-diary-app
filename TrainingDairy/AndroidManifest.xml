@@ -38,10 +38,6 @@
             android:label="@string/title_activity_set_power_result" >
         </activity>
         <activity
-            android:name="myApp.trainingdiary.result.SetCycleResultActivity"
-            android:label="@string/title_activity_set_cycle_result" >
-        </activity>
-        <activity
             android:name="myApp.trainingdiary.excercise.ExerciseActivity"
             android:label="@string/title_activity_exercise_in_training" >
         </activity>
@@ -54,10 +50,6 @@
             android:label="@string/title_activity_history_main_acrivity" >
         </activity>
         <activity
-            android:name=".history.HistoryExerciseDetailActivity"
-            android:label="@string/title_activity_history_details" >
-        </activity>
-        <activity
             android:name="myApp.trainingdiary.SuperMainActivity"
             android:label="@string/title_activity_super_main" >
             <intent-filter>
@@ -67,8 +59,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="myApp.trainingdiary.History_detailsv2"
-            android:label="@string/title_activity_history_detailsv2" >
+            android:name="myApp.trainingdiary.history.HistoryDetailActivity"
+            android:label="@string/title_activity_history_detail" >
         </activity>
         <activity
             android:name="myApp.trainingdiary.SortExAct.SortExInTrainingDay"

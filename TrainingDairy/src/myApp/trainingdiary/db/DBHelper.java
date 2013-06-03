@@ -9,6 +9,11 @@ import java.util.List;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.db.entity.Exercise;
+import myApp.trainingdiary.db.entity.ExerciseType;
+import myApp.trainingdiary.db.entity.Measure;
+import myApp.trainingdiary.db.entity.MeasureType;
+import myApp.trainingdiary.db.entity.TrainingStat;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -772,12 +777,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return measures;
     }
 
-    public List<TrainingStat> getTrainingStatForLastPeriod(long ex_id, int period) {
+    public List<TrainingStat> getTrainingStatForLastPeriodByExercise(long ex_id, int period) {
         List<TrainingStat> stats = new ArrayList<TrainingStat>();
-        long since = new Date().getTime() - period;
+        long since = System.currentTimeMillis() - period;
         String sqlQuery = "select * from TrainingStat tr_stat " +
                 "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
-                "order by tr_stat.date ";
+                "order by tr_stat.date desc ";
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(since)});
@@ -797,13 +802,34 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<TrainingStat> getTrainingStatForLastPeriod(int period) {
+        List<TrainingStat> stats = new ArrayList<TrainingStat>();
+        long since = System.currentTimeMillis() - period;
+        String sqlQuery = "select * from TrainingStat tr_stat " +
+                "where tr_stat.date > ? " +
+                "order by tr_stat.date desc ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(since)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                String value = c.getString(c.getColumnIndex("value"));
+                stats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
+            }
+            return stats;
+        } finally {
+            c.close();
+        }
+    }
+
     public int deleteLastTrainingStatInCurrentTraining(long ex_id, long tr_id, long tr_period) {
         SQLiteDatabase db = getWritableDatabase();
-//        String sqlQuery = "select * from TrainingStat tr_stat " +
-//                "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
-//                "order by tr_stat.date ";
-//        db.execSQL();
-        long since = new Date().getTime() - tr_period;
+        long since = System.currentTimeMillis() - tr_period;
         int deleted = db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat " +
                 "WHERE training_id = ? AND exercise_id = ? AND date > ? ) ",
                 new String[]{String.valueOf(tr_id), String.valueOf(ex_id), String.valueOf(since)});
@@ -826,11 +852,60 @@ public class DBHelper extends SQLiteOpenHelper {
                 "from TrainingStat as stat left outer join Training as tr on stat.training_id = tr.id, " +
                 "Exercise ex, ExerciseType ex_type " +
                 "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
-                "group by ex.id " +
+                "group by tr.name, ex.id " +
                 "order by tr.name, date desc ";
         SQLiteDatabase db = getWritableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, null);
         return c;
     }
+
+    public Cursor getTrainingStatByTrainingDate(Date training_date) {
+        String sqlQuery = "select ex.name, stat.value, stat.date,  type.icon_res icon " +
+                "from TrainingStat stat, Exercise ex, ExerciseType type " +
+                "where stat.training_date = ? AND ex.id = stat.exercise_id AND type.id = ex.type_id " +
+                "order by stat.exercise_id, stat.date asc ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(training_date.getTime())});
+        return c;
+    }
+
+    public Cursor getTrainingStatByExercise(long ex_id) {
+        String sqlQuery = "select stat.value, stat.training_date " +
+                "from TrainingStat stat " +
+                "where stat.exercise_id = ? " +
+                "order by training_date, date asc ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        return c;
+    }
+
+    public Exercise getExerciseById(long ex_id) {
+        String sqlQuery = "select ex.id ex_id, ex.name ex_name, " +
+                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
+                "from Exercise ex, ExerciseType ex_type " +
+                "where ex.id = ? AND ex.type_id = ex_type.id ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        try {
+            if (c.moveToFirst()) {
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                String ex_name = c.getString(c.getColumnIndex("ex_name"));
+                String type_name = c.getString(c.getColumnIndex("type_name"));
+                String type_icon = c.getString(c.getColumnIndex("type_icon"));
+                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
+            } else {
+                return null;
+            }
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            c.close();
+        }
+    }
+
 }

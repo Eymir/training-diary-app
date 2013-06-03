@@ -19,7 +19,7 @@
     <string name="title_activity_history_main_acrivity">Тренировочные дни</string>
     <string name="title_activity_history_details">HistoryDetails</string>
     <string name="title_activity_super_main">Дневник тренировок</string>
-    <string name="title_activity_history_detailsv2">Проделанная работа</string>
+    <string name="title_activity_history_detail">Проделанная работа</string>
     <string name="SupMainAct_btb_start_tr">Начать тренировку</string>
     <string name="title_activity_sort_ex_in_training_day">Установка последовательности</string>
     <string name="btnSortExInTr">Применить</string>
@@ -66,6 +66,7 @@
     <string name="add_action">Добавить</string>
     <string name="rename_action">Переименовать</string>
     <string name="stat_action">Статистика</string>
+    <string name="history_action">История</string>
     <string name="move_action">Переместить</string>
     <string name="delete_action">Удалить</string>
     <string name="choose_exercise">Выберите упражнение</string>

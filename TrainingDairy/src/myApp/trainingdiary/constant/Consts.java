@@ -12,6 +12,10 @@ public class Consts {
     public final static String DATE_FIELD = "date";
 
     //It needs to be a setting
-    public final static int TWO_HOURS = 7200000;
+    public final static int THREE_HOURS = 10800000;
+
+    public static final String HISTORY_TYPE = "history_type";
+    public static final int TRAINING_TYPE = 0;
+    public static final int EXERCISE_TYPE = 1;
 
 }

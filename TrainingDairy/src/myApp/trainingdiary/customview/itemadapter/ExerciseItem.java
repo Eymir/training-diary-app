@@ -1,4 +1,4 @@
-package myApp.trainingdiary.customview;
+package myApp.trainingdiary.customview.itemadapter;
 
 
 public class ExerciseItem implements Item {
@@ -37,9 +37,11 @@ public class ExerciseItem implements Item {
         this.exId = exId;
     }
 
+
+
     @Override
-    public boolean isSection() {
-        return false;
+    public ItemType getType() {
+        return ItemType.EXERCISE;
     }
 
 }
