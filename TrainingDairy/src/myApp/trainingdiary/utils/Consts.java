@@ -1,4 +1,4 @@
-package myApp.trainingdiary.constant;
+package myApp.trainingdiary.utils;
 
 public class Consts {
     //����� �����

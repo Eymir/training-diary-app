@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.*;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.itemadapter.CustomItemAdapter;
 import myApp.trainingdiary.customview.itemadapter.DateItem;
 import myApp.trainingdiary.customview.itemadapter.ExerciseItem;

@@ -3,7 +3,6 @@ package myApp.trainingdiary.excercise;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.text.method.ScrollingMovementMethod;
 import android.widget.*;
 
 import com.mobeta.android.dslv.DragSortListView;
@@ -14,8 +13,9 @@ import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
-import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.utils.Validator;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -63,7 +63,7 @@ public class ExerciseActivity extends Activity {
         tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
 
         trainingName = dbHelper.getTrainingNameById(tr_id);
-        setTitle(trainingName);
+        setTitle(getTitle() + ": " + trainingName);
 
         exerciseList = (DragSortListView) findViewById(R.id.exercise_in_training_list);
         View addRowFooter = getLayoutInflater().inflate(R.layout.add_row, null);
@@ -209,17 +209,14 @@ public class ExerciseActivity extends Activity {
         okButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (name_input.getText().length() > 0) {
-                    String name = name_input.getText().toString();
+                String name = name_input.getText().toString();
+                if (Validator.validateEmpty(ExerciseActivity.this, name)
+                        && Validator.validateTraining(ExerciseActivity.this, name)) {
                     dbHelper.renameExercise(cur_ex_id, name);
                     renameExerciseDialog.cancel();
                     Toast.makeText(ExerciseActivity.this,
                             R.string.rename_success, Toast.LENGTH_SHORT).show();
                     refreshExercise();
-                } else {
-                    Toast.makeText(ExerciseActivity.this,
-                            R.string.zero_input_notif, Toast.LENGTH_SHORT)
-                            .show();
                 }
             }
         });

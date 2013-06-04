@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
@@ -609,9 +609,10 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getExercisesExceptExInTr(SQLiteDatabase db, long tr_id) {
-        String sqlQuery = "select ex.id as _id, ex.name name, ex_type.icon_res icon_res "
-                + "from Exercise ex, ExerciseType ex_type, ExerciseInTraining ex_tr "
-                + "where ex.type_id = ex_type.id AND ex_tr.exercise_id = ex.id AND ex_tr.training_id <> ?";
+        String sqlQuery = "SELECT ex.id as _id, ex.name name, ex_type.icon_res icon_res "
+                + "FROM Exercise as ex, "
+                + "ExerciseType ex_type "
+                + "WHERE ex.type_id = ex_type.id AND ex.id not in (select ex_tr.exercise_id FROM ExerciseInTraining ex_tr WHERE ex_tr.training_id == ?) ";
         Cursor c = db.rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
         return c;
     }
@@ -908,4 +909,27 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean isExerciseInDB(String name) {
+        String sqlQuery = "select * " +
+                "from Exercise " +
+                "where name = ? ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
+        int count = c.getCount();
+        c.close();
+        return count != 0;
+    }
+
+    public boolean isTrainingInDB(String name) {
+        String sqlQuery = "select * " +
+                "from Training " +
+                "where name = ? ";
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
+        int count = c.getCount();
+        c.close();
+        return count != 0;
+    }
 }

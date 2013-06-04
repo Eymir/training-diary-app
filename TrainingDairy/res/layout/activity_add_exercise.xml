@@ -16,7 +16,8 @@
                 android:id="@+id/create_exercise_label_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:focusableInTouchMode="true">
 
             <ImageView
                     android:id="@+id/icon"
@@ -158,12 +159,26 @@
             </ImageView>
         </LinearLayout>
 
-        <ListView
-                android:id="@+id/exercise_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-        </ListView>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/list_panel">
+
+            <ListView
+                    android:id="@+id/exercise_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+            </ListView>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/empty"
+                    android:id="@+id/empty_view"/>
+        </LinearLayout>
 
     </LinearLayout>
 
