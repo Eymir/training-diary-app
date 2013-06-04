@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import myApp.trainingdiary.db.DBHelper;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
@@ -14,104 +15,93 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /*
  * �������� ���������� �� �����������
  */
 
-public class StatisticActivity extends Activity
-{
-	
-	ListView lvExStat;
-	final String LOG_TAG = "myLogs";
-	DBHelper dbHelper;
-	String ParsedName;
+public class StatisticActivity extends Activity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_statistic);		
-		lvExStat = (ListView)findViewById(R.id.lvExStat);		
-		getEx();
-		
-	}
+    ListView lvExStat;
+    final String LOG_TAG = "myLogs";
+    DBHelper dbHelper;
+    String ParsedName;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_statistic, menu);
-		return true;
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_statistic);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        TextView textView = (TextView) findViewById(R.id.textView);
+        listView.setEmptyView(textView);
+    }
 
-	private void getEx()
-	{			
-		dbHelper = DBHelper.getInstance(this);			    
-	    SQLiteDatabase db = dbHelper.getWritableDatabase();
-	    String[] Col = {"exercise","exercisetype"};	    
-        Cursor c = db.query("TrainingStat", Col, null, null, "exercise", null, null);       
-        int size = c.getCount();  
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_statistic, menu);
+        return true;
+    }
+
+    private void getEx() {
+        dbHelper = DBHelper.getInstance(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String[] Col = {"exercise", "exercisetype"};
+        Cursor c = db.query("TrainingStat", Col, null, null, "exercise", null, null);
+        int size = c.getCount();
         Log.d(LOG_TAG, "--- size  --- = " + size);
         SortedMap<String, String> list = new TreeMap<String, String>();
-        
-        if(size > 0)
-        {                	              	
-        	if (c.moveToFirst()) 
-        	{        		
-	          int nameColIndex = c.getColumnIndex("exercise");
-	          int typeIndex = c.getColumnIndex("exercisetype");
 
-	          do 
-	          { 	        	  
-	            list.put(c.getString(nameColIndex), c.getString(typeIndex));
-	          } while (c.moveToNext());
-	        } 	
-	        c.close();
-	        dbHelper.close();	              	        
+        if (size > 0) {
+            if (c.moveToFirst()) {
+                int nameColIndex = c.getColumnIndex("exercise");
+                int typeIndex = c.getColumnIndex("exercisetype");
+
+                do {
+                    list.put(c.getString(nameColIndex), c.getString(typeIndex));
+                } while (c.moveToNext());
+            }
+            c.close();
+            dbHelper.close();
+        } else {
+            Toast.makeText(this, "������ ���������� ����", Toast.LENGTH_SHORT).show();
+            list.put("������� ���", "0");
         }
-        else 
-        {
-        	Toast.makeText(this, "������ ���������� ����", Toast.LENGTH_SHORT).show();
-        	list.put("������� ���", "0");
-		}
-        
+
         int imgPow = R.drawable.power;
         int imgCyc = R.drawable.cycle;
         // ����� ��������� ��� Map
         final String ATTRIBUTE_NAME_TEXT = "text";
         final String ATTRIBUTE_NAME_IMAGE = "image";
-               
+
         ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(list.size());
         Map<String, Object> m;
-              
-        for (Map.Entry<String, String> entry: list.entrySet()) {
-            String name= entry.getKey();
+
+        for (Map.Entry<String, String> entry : list.entrySet()) {
+            String name = entry.getKey();
             String type = entry.getValue();
             m = new HashMap<String, Object>();
             m.put(ATTRIBUTE_NAME_TEXT, name);
-            if(type.equalsIgnoreCase("1")){
-            	m.put(ATTRIBUTE_NAME_IMAGE, imgPow);	
+            if (type.equalsIgnoreCase("1")) {
+                m.put(ATTRIBUTE_NAME_IMAGE, imgPow);
+            } else if (type.equalsIgnoreCase("2")) {
+                m.put(ATTRIBUTE_NAME_IMAGE, imgCyc);
+            } else {
+                m.put(ATTRIBUTE_NAME_IMAGE, R.drawable.ic_launcher);
             }
-            else if (type.equalsIgnoreCase("2")) {
-            	m.put(ATTRIBUTE_NAME_IMAGE, imgCyc);
-			}
-            else
-            {
-            	m.put(ATTRIBUTE_NAME_IMAGE, R.drawable.ic_launcher);
-            }           
             data.add(m);
         }
-               
+
         // ������ ���� ���������, �� ������� ����� �������� ������
-        String[] from = { ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE };
+        String[] from = {ATTRIBUTE_NAME_TEXT, ATTRIBUTE_NAME_IMAGE};
         // ������ ID View-�����������, � ������� ����� ��������� ������
-        int[] to = {R.id.label, R.id.icon};        
+        int[] to = {R.id.label, R.id.icon};
         // ������� �������
 //        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
 //        // ���������� ������ � ����������� ��� �������
 //        lvExStat.setAdapter(sAdapter);                  	   	
-	}
-	
+    }
+
 }
