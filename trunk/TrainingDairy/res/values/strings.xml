@@ -6,15 +6,13 @@
     <string name="title_create_training">Создание новой тренировки</string>
     <string name="title_rename_training">Переименовать тренировку</string>
     <string name="title_rename_exercise">Переименовать упражнение</string>
-    <string name="title_activity_add_exercise">Упражнения на сегодня:</string>
+    <string name="title_activity_add_exercise">Упражнения</string>
     <string name="title_activity_settings">Настройки:</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_edit_ex">Создание и удаление упражнений</string>
     <string name="title_activity_create_ex">Новое упражнение</string>
     <string name="title_activity_select_ex_to_add_in_tr">Выберите упражнение:</string>
-    <string name="title_activity_set_power_result">Выполнение упражнения</string>
-    <string name="title_activity_set_cycle_result">Выполнение упражнения</string>
-    <string name="title_activity_exercise_in_training">Test</string>
+    <string name="title_activity_result">Выполнение упражнения</string>
+    <string name="title_activity_exercise_in_training">Упражнения</string>
     <string name="title_activity_statistic">Статистика</string>
     <string name="title_activity_history_main_acrivity">Тренировочные дни</string>
     <string name="title_activity_history_details">HistoryDetails</string>
@@ -52,7 +50,9 @@
     <string name="rename_button">Переименовать</string>
     <string name="cancel_button">Отменить</string>
     <string name="delete_button">Удалить</string>
-    <string name="zero_input_notif">Введите название тренировки</string>
+    <string name="zero_input_notif">Имя не может быть пустым</string>
+    <string name="training_exist_notif">Тренировка с таким именем уже существует</string>
+    <string name="exercise_exist_notif">Упражнение с таким именем уже существует</string>
     <string name="deleted">Удалено</string>
     <string name="nothing_to_deleted">Нечего удалять</string>
     <string name="create_success">Тренировка успешно создана</string>
@@ -88,7 +88,10 @@
     <string name="last_training_empty">-</string>
     <string name="sum_approach">Всего подходов:</string>
     <string name="empty_ex_list">Нет упражнений</string>
-    <string name="create_exercise_success">Упражнение %1$s создано</string><string name="training_radio_button">Тренировки</string><string name="exercises_radio_button">Упражнения</string>
+    <string name="create_exercise_success">Упражнение %1$s создано</string>
+    <string name="training_radio_button">Тренировки</string>
+    <string name="exercises_radio_button">Упражнения</string>
     <string name="empty_training_section">Вне тренировок</string>
     <string name="empty">Пусто</string>
+    <string name="trainings">Тренировки</string>
 </resources>

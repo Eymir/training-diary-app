@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.itemadapter.BigSectionItem;
 import myApp.trainingdiary.customview.itemadapter.CustomItemAdapter;
 import myApp.trainingdiary.customview.itemadapter.Item;

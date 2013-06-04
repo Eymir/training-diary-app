@@ -1,9 +1,11 @@
 package myApp.trainingdiary.excercise;
 
 import myApp.trainingdiary.R;
+
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 /**
@@ -26,7 +28,9 @@ public class AddExGuiMediator {
     private ImageView createExpandIndicator;
     private ImageView chooseExpandIndicator;
 
-    public AddExGuiMediator(Context context, View createClickableLayout,
+    private EditText name_edit;
+
+    public AddExGuiMediator(Context context, EditText name_edit, View createClickableLayout,
                             View chooseClickableLayout, View createExGonablePanel,
                             View chooseExGonablePanel) {
         super();
@@ -34,7 +38,7 @@ public class AddExGuiMediator {
         this.chooseClickableLayout = chooseClickableLayout;
         this.createExGonablePanel = createExGonablePanel;
         this.chooseExGonablePanel = chooseExGonablePanel;
-
+        this.name_edit = name_edit;
         createExpandIndicator = (ImageView) createClickableLayout
                 .findViewById(R.id.cr_ex_expand_indicator);
         chooseExpandIndicator = (ImageView) chooseClickableLayout
@@ -54,6 +58,7 @@ public class AddExGuiMediator {
                     createExGonablePanel.setVisibility(View.GONE);
                     createExpandIndicator.setImageResource(R.drawable.arrow_exp_right);
                     chooseExpandIndicator.setImageResource(R.drawable.arrow_exp_down);
+                    name_edit.requestFocus();
                 }
             }
         });

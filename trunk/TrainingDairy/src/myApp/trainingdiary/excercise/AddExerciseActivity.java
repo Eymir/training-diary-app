@@ -2,7 +2,7 @@ package myApp.trainingdiary.excercise;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.layout;
-import myApp.trainingdiary.constant.Consts;
+import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.DBHelper;
 
 import android.os.Bundle;
@@ -25,7 +25,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 public class AddExerciseActivity extends Activity {
-    private long tr_id = 0;
+    private long tr_id = -1;
     private String trainingName;
 
     private View createExGonablePanel;
@@ -47,18 +47,19 @@ public class AddExerciseActivity extends Activity {
         try {
             tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
         } catch (NullPointerException e) {
-
         }
-        if (tr_id != 0)
+
+        if (tr_id > 0)
             trainingName = dbHelper.getTrainingNameById(tr_id);
 
-        View createClickableLayout = (View) findViewById(R.id.create_exercise_label_layout);
-        View chooseClickableLayout = (View) findViewById(R.id.exercise_list_label_Layout);
+        View createClickableLayout = findViewById(R.id.create_exercise_label_layout);
+        View chooseClickableLayout = findViewById(R.id.exercise_list_label_Layout);
 
-        createExGonablePanel = (View) findViewById(R.id.create_exercise_layout);
+        createExGonablePanel = findViewById(R.id.create_exercise_layout);
         exerciseList = (ListView) findViewById(R.id.exercise_list);
+        View exerciseListGonablePanel = findViewById(R.id.list_panel);
 
-        if (tr_id != 0)
+        if (tr_id > 0)
             exerciseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -77,20 +78,21 @@ public class AddExerciseActivity extends Activity {
 
         name_edit = (EditText) createExGonablePanel
                 .findViewById(R.id.name_edit);
+
         type_spinner = (Spinner) createExGonablePanel
                 .findViewById(R.id.type_spinner);
         create_button = (Button) createExGonablePanel
                 .findViewById(R.id.create_button);
 
-        guiMediator = new AddExGuiMediator(this, createClickableLayout,
-                chooseClickableLayout, createExGonablePanel, exerciseList);
+        guiMediator = new AddExGuiMediator(this,name_edit, createClickableLayout,
+                chooseClickableLayout, createExGonablePanel, exerciseListGonablePanel);
 
         initCreatePanel();
         initChoosePanel();
+        guiMediator.clickCreatePanel();
         guiMediator.clickChoosePanel();
-        chooseClickableLayout.performClick();
-//        View emptyView = findViewById(R.id.empty_view);
-//        exerciseList.setEmptyView(emptyView);
+        View emptyView = findViewById(R.id.empty_view);
+        exerciseList.setEmptyView(emptyView);
     }
 
     private void addExercise(long ex_id) {
@@ -111,7 +113,8 @@ public class AddExerciseActivity extends Activity {
 
     private void initChoosePanel() {
         Cursor ex_cursor = dbHelper.getExercisesExceptExInTr(tr_id);
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
+        Log.d(Consts.LOG_TAG, "Exercise.count: " + dbHelper.getExerciseCount(dbHelper.getWritableDatabase()));
+        Log.d(Consts.LOG_TAG, "Cursor.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res"};
         int[] to = {R.id.label, R.id.icon};
         exerciseAdapter = new SimpleCursorAdapter(
@@ -167,7 +170,7 @@ public class AddExerciseActivity extends Activity {
                 if (validateCreateForm()) {
                     createExercise();
 
-                    if (tr_id != 0) {
+                    if (tr_id > 0) {
                         Toast.makeText(
                                 getApplicationContext(),
                                 getResources().getString(
@@ -199,7 +202,7 @@ public class AddExerciseActivity extends Activity {
         try {
             long ex_id = dbHelper.insertExercise(db, name_edit.getText()
                     .toString(), type_spinner.getSelectedItemId());
-            if (tr_id != 0)
+            if (tr_id > 0)
                 dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
 
         } catch (SQLException e) {
@@ -219,6 +222,11 @@ public class AddExerciseActivity extends Activity {
         }
         if (type_spinner.getSelectedItemId() == AdapterView.INVALID_ROW_ID) {
             Toast.makeText(this, R.string.input_exercise_type_notification,
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (dbHelper.isExerciseInDB(name_edit.getText().toString())) {
+            Toast.makeText(this, R.string.exercise_exist_notif,
                     Toast.LENGTH_SHORT).show();
             return false;
         }
