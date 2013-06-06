@@ -4,6 +4,7 @@ import myApp.trainingdiary.history.HistoryMainActivity;
 import myApp.trainingdiary.excercise.AddExerciseActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.training.TrainingActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +38,11 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener {
         btnSettings.setOnClickListener(this);
         btnExit.setOnClickListener(this);
 
+        dbHelper = DBHelper.getInstance(this);
+        int count = dbHelper.getTrainingsCount(dbHelper.getWritableDatabase());
+        if (count > 0) {
+            btnStart.performClick();
+        }
         //showinstructions();
     }
 
