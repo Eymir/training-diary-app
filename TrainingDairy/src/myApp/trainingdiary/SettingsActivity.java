@@ -97,10 +97,4 @@ public class SettingsActivity extends Activity implements OnClickListener {
         dbHelper.close();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshTextViews();
-    }
-
 }

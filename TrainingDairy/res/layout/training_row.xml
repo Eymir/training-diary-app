@@ -26,9 +26,9 @@
         <TextView
             android:id="@+id/label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="9.98"
-            android:height="40dp"
+            android:maxLines="4"
             android:text="@+id/label"
             android:textColor="#F8F8FF"
             android:textSize="30sp" />
