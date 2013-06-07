@@ -87,36 +87,4 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener {
         }
     }
 
-//	private void showinstructions()
-//	{		
-//		dbHelper = DBHelper.getInstance(this);			    
-//	    SQLiteDatabase db = dbHelper.getWritableDatabase();
-//        Cursor cTr = db.query("Trainingtable", null, null, null, null, null, null);         
-//        Cursor cEx = db.query("ExerciseTable", null, null, null, null, null, null);       
-//        int sizeTr = cTr.getCount();         
-//        int sizeEx = cEx.getCount();
-//        
-//        if(sizeTr == 0 || sizeEx == 0)
-//        {       	
-//        	AlertDialog.Builder adb = new AlertDialog.Builder(this);   	
-//  	      adb.setTitle("����� ���������� � ������� ����������");
-//  	      adb.setMessage("��� ���� ����� ������ ����� ������� ����������: \n" +
-//  	      		" 1. ������� �������������� ���� - ������ ������� ���������� \n" +
-//  	      		" 2. ������� ����������� ���������� ���������� - ������ ������� ���������� \n" +
-//  	      		" 3. �������� ���� ���������� � ������������� ���� - ������ ������ ���������� - �������� ����������." +
-//  	      		" ����� �� ������ ��������� ����� ���������� � ���������� � ��������� ���������� ����������." +
-//  	      		" ��� ��������� ���������� ��� ���������� ����������� ���������� �������.");      
-//  	      adb.setPositiveButton("����������", new DialogInterface.OnClickListener() {
-//                   public void onClick(DialogInterface dialog, int id) {
-//                   }
-//               });       
-//  	    adb.create().show();        	        	
-//        }
-//	}
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
 }

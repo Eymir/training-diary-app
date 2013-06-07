@@ -11,10 +11,12 @@ import android.util.Log;
 import android.widget.*;
 
 import kankan.wheel.widget.OnWheelChangedListener;
+import kankan.wheel.widget.OnWheelClickedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
+import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
@@ -39,7 +41,6 @@ import myApp.trainingdiary.db.entity.TrainingStat;
 public class ResultActivity extends Activity implements OnClickListener {
 
 
-
     private DBHelper dbHelper;
     final int MENU_DEL_LAST_SET = 1;
     final int MENU_SHOW_LAST_RESULT = 2;
@@ -49,7 +50,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 
     private SoundPool soundPool;
     private int soundClick;
-    AudioManager audioManager;
+    private AudioManager audioManager;
     private long ex_id;
     private long tr_id;
     private List<MeasureWheels> measureWheelsList = new ArrayList<MeasureWheels>();
@@ -100,14 +101,13 @@ public class ResultActivity extends Activity implements OnClickListener {
         lastResultView.setText(String.format(last_result_text, last_result_info));
         if (tr_stat != null)
             setLastTrainingStatOnWheels(tr_stat);
-
         createUndoDialog();
         printCurrentTrainingProgress();
     }
 
     private void setLastTrainingStatOnWheels(TrainingStat tr_stat) {
         String value = tr_stat.getValue();
-
+        Log.d(Consts.LOG_TAG, "setLastTrainingStatOnWheels:" + value);
         List<String> measureValues = DbFormatter.toMeasureValues(value);
         for (int i = 0; i < measureWheelsList.size(); i++) {
             MeasureWheels measureWheels = measureWheelsList.get(i);
@@ -154,23 +154,19 @@ public class ResultActivity extends Activity implements OnClickListener {
     private String formTrainingStats(List<TrainingStat> stats) {
         String result = "";
         for (TrainingStat stat : stats) {
-            result += stat.getValue() + "; ";
+            result = stat.getValue() + "; " + result;
         }
         result += "\n" + getString(R.string.sum_approach) + " " + stats.size();
         return result;
     }
 
     private void playClick() {
-
-        //�������� ��������� ���������
         float actualVolume = (float) audioManager
                 .getStreamVolume(AudioManager.STREAM_MUSIC);
         float maxVolume = (float) audioManager
                 .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         float volume = actualVolume / maxVolume;
-
         soundPool.play(soundClick, volume, volume, 1, 0, 1f);
-
     }
 
     @Override
@@ -283,7 +279,7 @@ public class ResultActivity extends Activity implements OnClickListener {
                 _step = _step.add(BigDecimal.valueOf(step));
 
             }
-            ArrayWheelAdapter<String> wheelAdapter = new ArrayWheelAdapter<String>(ResultActivity.this,
+            ArrayWheelAdapter<String> wheelAdapter = new StringRightOrderWheelAdapter<String>(ResultActivity.this,
                     tails.toArray(new String[tails.size()]));
 
             WheelView wheelView = (WheelView) getLayoutInflater().inflate(R.layout.wheel, null);
@@ -293,6 +289,7 @@ public class ResultActivity extends Activity implements OnClickListener {
             wheelView.setLayoutParams(params);
             measureWheel.wheelAdapter = wheelAdapter;
             measureWheel.wheelView = wheelView;
+            wheelView.setCurrentItem(tails.size()-1);
             wheelView.addChangingListener(new OnWheelChangedListener() {
                 public void onChanged(WheelView wheel, int oldValue, int newValue) {
                     playClick();
@@ -370,23 +367,6 @@ public class ResultActivity extends Activity implements OnClickListener {
             return result;
         }
 
-        private int getIndexByValue(NumericRightOrderWheelAdapter adapter, int value) {
-            for (int i = 0; i < adapter.getItemsCount(); i++) {
-                if (adapter.getItem(i) == value) {
-                    return i;
-                }
-            }
-            return 0;
-        }
-
-        private int getIndexByValue(WheelViewAdapter wheelAdapter, String intValue) {
-//            for (int i = 0; i < wheelAdapter.getItemsCount(); i++) {
-//                if (wheelAdapter.getItem(i) == value) {
-//                    return i;
-//                }
-//            }
-            return 0;
-        }
 
         public void setValue(String measureValue) {
             //TODO: реализовать
@@ -394,18 +374,28 @@ public class ResultActivity extends Activity implements OnClickListener {
                 case Numeric:
                     for (MeasureWheel measureWheel : measureWheelList) {
                         if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-//                            int intValue = new Double(measureValue).intValue();
-//                            measureWheel.wheelView.setCurrentItem(
-//                                    getIndexByValue((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter, intValue));
-
-                        } else if (measureWheel.wheelAdapter instanceof ArrayWheelAdapter) {
-//                            String intValue = measureValue.substring(measureValue.indexOf("."));
-//                            measureWheel.wheelView.setCurrentItem(getIndexByValue(measureWheel.wheelAdapter, intValue));
+                            int intValue = new Double(measureValue).intValue();
+                            Log.d(Consts.LOG_TAG, measureValue + ": " + intValue);
+                            measureWheel.wheelView.setCurrentItem(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
+                        } else if (measureWheel.wheelAdapter instanceof StringRightOrderWheelAdapter) {
+                            String intValue = measureValue.substring(measureValue.indexOf("."));
+                            Log.d(Consts.LOG_TAG, measureValue + ": " + intValue);
+                            measureWheel.wheelView.setCurrentItem(((StringRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
                         }
                     }
                     break;
                 case Temporal:
-
+                    String[] mParts = measureValue.split(":");
+                    int i = 0;
+                    for (MeasureWheel measureWheel : measureWheelList) {
+                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
+                            int intValue = new Double(mParts[i]).intValue();
+                            Log.d(Consts.LOG_TAG, measureValue + ": " + intValue);
+                            measureWheel.wheelView.setCurrentItem(
+                                    ((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
+                            i++;
+                        }
+                    }
                     break;
             }
         }

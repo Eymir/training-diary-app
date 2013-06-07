@@ -18,6 +18,8 @@
 package myApp.trainingdiary.customview;
 
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
+import kankan.wheel.widget.adapters.ArrayWheelAdapter;
+
 import android.content.Context;
 
 /**
@@ -98,7 +100,17 @@ public class NumericRightOrderWheelAdapter extends AbstractWheelTextAdapter {
 		return maxValue - pos;
 	}
 
-	@Override
+    public int getIndexByValue( int value) {
+        for (int i = 0; i < getItemsCount(); i++) {
+            if (getItem(i) == value) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+
+    @Override
 	public int getItemsCount() {
 		return maxValue - minValue + 1;
 	}
