@@ -171,7 +171,7 @@ public class HistoryMainActivity extends Activity {
                 String icon = cursor.getString(cursor.getColumnIndex("icon"));
                 Long ex_id = cursor.getLong(cursor.getColumnIndex("ex_id"));
                 Log.d(Consts.LOG_TAG, "ex_name: " + ex_name + " tr_name: " + tr_name);
-                if (tr_name == null || !tr_name.equals(lastTrName)) {
+                if ((tr_name == null && lastTrName == null) || (tr_name != null && !tr_name.equals(lastTrName))) {
                     if (tr_name == null || tr_name.isEmpty())
                         items.add(new SmallSectionItem(getResources().getString(R.string.empty_training_section)));
                     else {
