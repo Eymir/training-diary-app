@@ -62,7 +62,7 @@ public class ExerciseActivity extends Activity {
         dbHelper = DBHelper.getInstance(this);
         tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
 
-        trainingName = dbHelper.getTrainingNameById(tr_id);
+        trainingName = dbHelper.READ.getTrainingNameById(tr_id);
         setTitle(getTitle() + ": " + trainingName);
 
         exerciseList = (DragSortListView) findViewById(R.id.exercise_in_training_list);
@@ -87,7 +87,7 @@ public class ExerciseActivity extends Activity {
             public void drop(int from, int to) {
                 Log.i(Consts.LOG_TAG, "drop exercise");
                 exerciseAdapter.drop(from, to);
-                dbHelper.changeExercisePositions(tr_id, getNewExIdOrder());
+                dbHelper.WRITE.changeExercisePositions(tr_id, getNewExIdOrder());
 
                 cur_drag_handler.setVisibility(View.GONE);
             }
@@ -111,7 +111,7 @@ public class ExerciseActivity extends Activity {
     }
 
     private void printLogExInTr() {
-        Cursor c = dbHelper.getExercisesInTraining(tr_id);
+        Cursor c = dbHelper.READ.getExercisesInTraining(tr_id);
         while (c.moveToNext()) {
             Log.i(Consts.LOG_TAG, "exercise_id: " + c.getLong(c.getColumnIndex("_id")) + " pos: " + c.getLong(c.getColumnIndex("position")));
         }
@@ -137,12 +137,12 @@ public class ExerciseActivity extends Activity {
     }
 
     private void refreshExercise() {
-        Cursor c = dbHelper.getExercisesInTraining(tr_id);
+        Cursor c = dbHelper.READ.getExercisesInTraining(tr_id);
         exerciseAdapter.swapCursor(c);
     }
 
     private void fetchExercises() {
-        Cursor ex_cursor = dbHelper.getExercisesInTraining(tr_id);
+        Cursor ex_cursor = dbHelper.READ.getExercisesInTraining(tr_id);
         Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res", "_id"};
         int[] to = {R.id.label, R.id.icon, id.ex_tools};
@@ -158,7 +158,7 @@ public class ExerciseActivity extends Activity {
                                     "drawable", getPackageName()));
                     return true;
                 }
-//                if (view.getId() == R.id.label) {
+//                if (view.getId() == READ.id.label) {
 //                    TextView textView = (TextView) view;
 //                    textView.setMovementMethod(new ScrollingMovementMethod());
 //                    textView.setText(cursor.getString(columnIndex));
@@ -212,7 +212,7 @@ public class ExerciseActivity extends Activity {
                 String name = name_input.getText().toString();
                 if (Validator.validateEmpty(ExerciseActivity.this, name)
                         && Validator.validateTraining(ExerciseActivity.this, name)) {
-                    dbHelper.renameExercise(cur_ex_id, name);
+                    dbHelper.WRITE.renameExercise(cur_ex_id, name);
                     renameExerciseDialog.cancel();
                     Toast.makeText(ExerciseActivity.this,
                             R.string.rename_success, Toast.LENGTH_SHORT).show();
@@ -274,7 +274,7 @@ public class ExerciseActivity extends Activity {
                                 break;
                             case ID_REMOVE_EXERCISE:
                                 String ex_name = dbHelper
-                                        .getExerciseNameById(cur_ex_id);
+                                        .READ.getExerciseNameById(cur_ex_id);
                                 removeExerciseDialog.setMessage(String.format(
                                         getResources().getString(
                                                 R.string.Dialog_del_ex_msg),
@@ -293,7 +293,7 @@ public class ExerciseActivity extends Activity {
     }
 
     private void initChoosePanel() {
-        Cursor ex_cursor = dbHelper.getExercisesExceptExInTr(tr_id);
+        Cursor ex_cursor = dbHelper.READ.getExercisesExceptExInTr(tr_id);
         Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res"};
         int[] to = {R.id.label, R.id.icon};
@@ -331,7 +331,7 @@ public class ExerciseActivity extends Activity {
 
         adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                dbHelper.deleteExerciseFromTraining(tr_id, cur_ex_id);
+                dbHelper.WRITE.deleteExerciseFromTraining(tr_id, cur_ex_id);
                 refreshExercise();
                 Toast.makeText(ExerciseActivity.this, R.string.deleted,
                         Toast.LENGTH_SHORT).show();

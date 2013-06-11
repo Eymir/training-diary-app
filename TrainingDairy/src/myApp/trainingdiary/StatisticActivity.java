@@ -99,7 +99,7 @@ public class StatisticActivity extends Activity {
         // ������ ID View-�����������, � ������� ����� ��������� ������
         int[] to = {R.id.label, R.id.icon};
         // ������� �������
-//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
+//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, READ.layout.exerciseslv, from, to);
 //        // ���������� ������ � ����������� ��� �������
 //        lvExStat.setAdapter(sAdapter);                  	   	
     }

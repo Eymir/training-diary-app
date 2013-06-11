@@ -28,15 +28,15 @@ public class SettingsActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-//		btnClearDBEx = (Button)findViewById(R.id.btnClearDBEx);
+//		btnClearDBEx = (Button)findViewById(READ.id.btnClearDBEx);
 //		btnClearDBEx.setOnClickListener(this);
-//		btnClearDBTr = (Button)findViewById(R.id.btnClearDBTr);
+//		btnClearDBTr = (Button)findViewById(READ.id.btnClearDBTr);
 //		btnClearDBTr.setOnClickListener(this);
-//		btnClearHist = (Button)findViewById(R.id.btnClearHist);
+//		btnClearHist = (Button)findViewById(READ.id.btnClearHist);
 //		btnClearHist.setOnClickListener(this);
-//		tvCountTr = (TextView)findViewById(R.id.tvCountTr);
-//		tvCountHist = (TextView)findViewById(R.id.tvCountHist);
-//		tvCountEx = (TextView)findViewById(R.id.tvCountEx);
+//		tvCountTr = (TextView)findViewById(READ.id.tvCountTr);
+//		tvCountHist = (TextView)findViewById(READ.id.tvCountHist);
+//		tvCountEx = (TextView)findViewById(READ.id.tvCountEx);
 //		refreshTextViews();
 
     }

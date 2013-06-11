@@ -50,7 +50,7 @@ public class AddExerciseActivity extends Activity {
         }
 
         if (tr_id > 0)
-            trainingName = dbHelper.getTrainingNameById(tr_id);
+            trainingName = dbHelper.READ.getTrainingNameById(tr_id);
 
         View createClickableLayout = findViewById(R.id.create_exercise_label_layout);
         View chooseClickableLayout = findViewById(R.id.exercise_list_label_Layout);
@@ -64,7 +64,7 @@ public class AddExerciseActivity extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                     long ex_id = exerciseAdapter.getItemId(pos);
-                    String ex_name = dbHelper.getExerciseNameById(ex_id);
+                    String ex_name = dbHelper.READ.getExerciseNameById(ex_id);
                     addExercise(ex_id);
                     Toast.makeText(
                             getApplicationContext(),
@@ -98,7 +98,7 @@ public class AddExerciseActivity extends Activity {
     private void addExercise(long ex_id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-            dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
+            dbHelper.WRITE.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
         } catch (SQLException e) {
             Log.e(Consts.LOG_TAG, "Error while adding exercise", e);
         } finally {
@@ -107,13 +107,13 @@ public class AddExerciseActivity extends Activity {
     }
 
     private void refreshChooseList() {
-        Cursor ex_cursor = dbHelper.getExercisesExceptExInTr(tr_id);
+        Cursor ex_cursor = dbHelper.READ.getExercisesExceptExInTr(tr_id);
         exerciseAdapter.swapCursor(ex_cursor);
     }
 
     private void initChoosePanel() {
-        Cursor ex_cursor = dbHelper.getExercisesExceptExInTr(tr_id);
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + dbHelper.getExerciseCount(dbHelper.getWritableDatabase()));
+        Cursor ex_cursor = dbHelper.READ.getExercisesExceptExInTr(tr_id);
+        Log.d(Consts.LOG_TAG, "Exercise.count: " + dbHelper.READ.getExerciseCount(dbHelper.getWritableDatabase()));
         Log.d(Consts.LOG_TAG, "Cursor.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res"};
         int[] to = {R.id.label, R.id.icon};
@@ -138,7 +138,7 @@ public class AddExerciseActivity extends Activity {
     }
 
     private void initCreatePanel() {
-        Cursor type_cursor = dbHelper.getExerciseTypes();
+        Cursor type_cursor = dbHelper.READ.getExerciseTypes();
         String[] from = {"name", "icon_res"};
         int[] to = {R.id.label, R.id.icon};
         SimpleCursorAdapter typeAdapter = new SimpleCursorAdapter(
@@ -200,10 +200,10 @@ public class AddExerciseActivity extends Activity {
                 + type_spinner.getSelectedItemId());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-            long ex_id = dbHelper.insertExercise(db, name_edit.getText()
+            long ex_id = dbHelper.WRITE.insertExercise(db, name_edit.getText()
                     .toString(), type_spinner.getSelectedItemId());
             if (tr_id > 0)
-                dbHelper.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
+                dbHelper.WRITE.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
 
         } catch (SQLException e) {
             Log.e(Consts.LOG_TAG, "Error while adding exercise", e);
@@ -225,7 +225,7 @@ public class AddExerciseActivity extends Activity {
                     Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (dbHelper.isExerciseInDB(name_edit.getText().toString())) {
+        if (dbHelper.READ.isExerciseInDB(name_edit.getText().toString())) {
             Toast.makeText(this, R.string.exercise_exist_notif,
                     Toast.LENGTH_SHORT).show();
             return false;

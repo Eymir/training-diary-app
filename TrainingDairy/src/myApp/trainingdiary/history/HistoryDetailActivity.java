@@ -46,16 +46,16 @@ public class HistoryDetailActivity extends Activity {
             case Consts.TRAINING_TYPE:
                 training_date = (Date) getIntent().getExtras().get(Consts.DATE_FIELD);
                 setTitle(getTitle() + ": " + SDF_DATETIME.format(training_date));
-                Cursor trainingCursor = dbHelper.getTrainingStatByTrainingDate(training_date);
+                Cursor trainingCursor = dbHelper.READ.getTrainingStatByTrainingDate(training_date);
                 ArrayList<?> trItemArrayList = trainingCursorToItemArray(trainingCursor);
                 CustomItemAdapter trainingHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, trItemArrayList);
                 listView.setAdapter(trainingHistoryAdapter);
                 break;
             case Consts.EXERCISE_TYPE:
                 ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
-                Exercise exercise = dbHelper.getExerciseById(ex_id);
+                Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
                 setTitle(getTitle() + ": " + ((exercise == null) ? null : exercise.getName()));
-                Cursor exerciseCursor = dbHelper.getTrainingStatByExercise(ex_id);
+                Cursor exerciseCursor = dbHelper.READ.getTrainingStatByExercise(ex_id);
                 ArrayList<?> exItemArrayList = exerciseCursorToItemArray(exerciseCursor);
                 CustomItemAdapter exerciseHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, exItemArrayList);
                 listView.setAdapter(exerciseHistoryAdapter);

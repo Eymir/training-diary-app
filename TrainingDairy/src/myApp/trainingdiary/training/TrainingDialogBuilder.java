@@ -46,11 +46,11 @@ public class TrainingDialogBuilder {
 //					db.close();
 //					createTrainingDialog.cancel();
 //					Toast.makeText(TrainingActivity.this,
-//							R.string.create_success, Toast.LENGTH_SHORT).show();
+//							READ.string.create_success, Toast.LENGTH_SHORT).show();
 //					refreshTrainings();
 //				} else {
 //					Toast.makeText(TrainingActivity.this,
-//							R.string.zero_input_notif, Toast.LENGTH_SHORT)
+//							READ.string.zero_input_notif, Toast.LENGTH_SHORT)
 //							.show();
 //				}
 			}

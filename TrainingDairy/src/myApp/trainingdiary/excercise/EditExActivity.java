@@ -46,7 +46,7 @@ public class EditExActivity extends Activity implements OnClickListener
 		setContentView(R.layout.activity_excercise);
 		btnAddEx = (Button)findViewById(R.id.ex_btn);
 		btnAddEx.setOnClickListener(this);
-//		lvExinTrain = (ListView)findViewById(R.id.lvExinTrain);
+//		lvExinTrain = (ListView)findViewById(READ.id.lvExinTrain);
 		
 		getEx();
 		
@@ -154,7 +154,7 @@ public class EditExActivity extends Activity implements OnClickListener
         // ������ ID View-�����������, � ������� ����� ��������� ������
         int[] to = {R.id.label, R.id.icon};        
         // ������� �������
-//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, R.layout.exerciseslv, from, to);        
+//        SimpleAdapter sAdapter = new SimpleAdapter(this, data, READ.layout.exerciseslv, from, to);
 //        // ���������� ������ � ����������� ��� �������
 //        lvExinTrain.setAdapter(sAdapter);                  	   	
 	}
