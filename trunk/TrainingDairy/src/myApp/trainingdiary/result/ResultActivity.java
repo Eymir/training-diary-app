@@ -11,7 +11,6 @@ import android.util.Log;
 import android.widget.*;
 
 import kankan.wheel.widget.OnWheelChangedListener;
-import kankan.wheel.widget.OnWheelClickedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
@@ -66,14 +65,14 @@ public class ResultActivity extends Activity implements OnClickListener {
 
         TextView lastResultView = (TextView) findViewById(R.id.last_result_text);
         training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
-        dbHelper = DBHelper.getInstance(this);
+        dbHelper = dbHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
         tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
         Log.d(Consts.LOG_TAG, "ex_id:" + ex_id + " tr_id:" + tr_id);
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.measure_layout);
 
-        List<Measure> measureList = dbHelper.getMeasuresInExercise(ex_id);
+        List<Measure> measureList = dbHelper.READ.getMeasuresInExercise(ex_id);
         for (Measure measure : measureList) {
             MeasureWheels measureWheels = new MeasureWheels(measure);
             linearLayout.addView(measureWheels.getView());
@@ -90,7 +89,7 @@ public class ResultActivity extends Activity implements OnClickListener {
         undoButton.setOnClickListener(this);
 
         String last_result_text = resources.getString(R.string.last_result);
-        TrainingStat tr_stat = dbHelper.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
+        TrainingStat tr_stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
         String last_result_info;
         if (tr_stat != null) {
             last_result_info = tr_stat.getValue()
@@ -125,7 +124,7 @@ public class ResultActivity extends Activity implements OnClickListener {
         adb.setTitle(title);
         adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                int deleted = dbHelper.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
+                int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
                 if (deleted > 0) {
                     printCurrentTrainingProgress();
                     Toast.makeText(ResultActivity.this, R.string.deleted,
@@ -146,7 +145,7 @@ public class ResultActivity extends Activity implements OnClickListener {
     }
 
     private void printCurrentTrainingProgress() {
-        List<TrainingStat> tr_stats = dbHelper.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
+        List<TrainingStat> tr_stats = dbHelper.READ.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
         String stats = formTrainingStats(tr_stats);
         training_stat_text.setText(stats);
     }
@@ -179,7 +178,7 @@ public class ResultActivity extends Activity implements OnClickListener {
                 break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
-                TrainingStat stat = dbHelper.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
+                TrainingStat stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
                 if (stat != null) {
                     Log.d(Consts.LOG_TAG, "undo value:" + stat.getValue());
                     String value = stat.getValue();
@@ -200,9 +199,9 @@ public class ResultActivity extends Activity implements OnClickListener {
         }
         result = result.substring(0, result.length() - 1);
         if (result != null && !result.isEmpty()) {
-            List<TrainingStat> list = dbHelper.getTrainingStatForLastPeriod(Consts.THREE_HOURS);
+            List<TrainingStat> list = dbHelper.READ.getTrainingStatForLastPeriod(Consts.THREE_HOURS);
             Date trainingDate = (list.isEmpty()) ? new Date() : list.get(0).getTrainingDate();
-            dbHelper.insertTrainingStat(ex_id, tr_id, System.currentTimeMillis(), trainingDate.getTime(), result);
+            dbHelper.WRITE.insertTrainingStat(ex_id, tr_id, System.currentTimeMillis(), trainingDate.getTime(), result);
         }
     }
 

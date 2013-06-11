@@ -3,19 +3,10 @@ package myApp.trainingdiary.db;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import myApp.trainingdiary.R;
 import myApp.trainingdiary.utils.Consts;
-import myApp.trainingdiary.db.entity.Exercise;
-import myApp.trainingdiary.db.entity.ExerciseType;
-import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.db.entity.MeasureType;
-import myApp.trainingdiary.db.entity.TrainingStat;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,9 +17,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static DBHelper mInstance = null;
 
-    Context context;
+    private Context context;
 
     private final static int DB_VERSION = 3; // ������ ��
+
+    public DbReader READ;
+    public DbWriter WRITE;
 
     public static DBHelper getInstance(Context ctx) {
         if (mInstance == null) {
@@ -37,10 +31,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return mInstance;
     }
 
+
     private DBHelper(Context context) {
-        super(context, "TrainingDiaryDB", null, DB_VERSION); // ��������� �����
-        // ������
-        // ��!!!!
+        super(context, "TrainingDiaryDB", null, DB_VERSION);
+        READ = new DbReader(this);
+        WRITE = new DbWriter(this);
         this.context = context;
     }
 
@@ -150,138 +145,37 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(Consts.LOG_TAG, "--- onCreate table Training  ---");
     }
 
-    public long insertTraining(SQLiteDatabase db, String name, int position) {
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        cv.put("position", position);
-        long id = db.insert("Training", null, cv);
-        return id;
-    }
-
-    public long insertExercise(SQLiteDatabase db, String name, long type_id) {
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        cv.put("type_id", type_id);
-        long id = db.insert("Exercise", null, cv);
-        return id;
-    }
-
-    public long insertMeasure(SQLiteDatabase db, String name, int max,
-                              double step, int type) {
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        cv.put("max", max);
-        cv.put("step", step);
-        cv.put("type", type);
-        long id = db.insert("Measure", null, cv);
-        return id;
-    }
-
-    public long insertExerciseType(SQLiteDatabase db, String name,
-                                   String icon_res) {
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        cv.put("icon_res", icon_res);
-        long id = db.insert("ExerciseType", null, cv);
-        return id;
-    }
-
-    public long insertMeasureExType(SQLiteDatabase db, long exType_id,
-                                    long measure_id, int position) {
-        ContentValues cv = new ContentValues();
-        cv.put("ex_type_id", exType_id);
-        cv.put("measure_id", measure_id);
-        cv.put("position", position);
-        long id = db.insert("MeasureExType", null, cv);
-        return id;
-    }
-
-    public long insertExerciseInTraining(SQLiteDatabase db, long training_id,
-                                         long exercise_id, int position) {
-        ContentValues cv = new ContentValues();
-        cv.put("training_id", training_id);
-        cv.put("exercise_id", exercise_id);
-        cv.put("position", position);
-        long id = db.insert("ExerciseInTraining", null, cv);
-        return id;
-    }
-
-    public long insertExerciseInTrainingAtEnd(SQLiteDatabase db,
-                                              long training_id, long exercise_id) {
-        long position = getExerciseCount(db, training_id);
-        ContentValues cv = new ContentValues();
-        cv.put("training_id", training_id);
-        cv.put("exercise_id", exercise_id);
-        cv.put("position", position);
-        Log.d(Consts.LOG_TAG, "insertExerciseInTrainingAtEnd.ContentValues: "
-                + cv);
-        long id = db.insert("ExerciseInTraining", null, cv);
-        return id;
-    }
-
-    private long getExerciseCount(SQLiteDatabase db, long training_id) {
-        String sqlQuery = "select count(ex_tr.exercise_id) as _count from ExerciseInTraining ex_tr where training_id = ?";
-        Cursor c = db.rawQuery(sqlQuery,
-                new String[]{String.valueOf(training_id)});
-        c.moveToFirst();
-        int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
-        return count;
-    }
-
-    public long insertTrainingStat(SQLiteDatabase db, long exercise_id, long training_id,
-                                   long date, long trainingDate, String value) {
-
-        ContentValues cv = new ContentValues();
-        cv.put("date", date);
-        cv.put("training_date", trainingDate);
-        cv.put("value", value);
-        cv.put("exercise_id", exercise_id);
-        cv.put("training_id", training_id);
-        long id = db.insert("TrainingStat", null, cv);
-
-        return id;
-    }
-
-    public long insertTrainingStat(long exercise_id, long training_id,
-                                   long date, long trainingDate, String value) {
-        SQLiteDatabase db = getWritableDatabase();
-        long id = insertTrainingStat(db, exercise_id, training_id, date, trainingDate, value);
-        db.close();
-        return id;
-    }
 
     private void createInitialExercises(SQLiteDatabase db) {
         // TODO: ������� ��������� ����������
     }
 
     private void createInitialTypes(SQLiteDatabase db) {
-        long bw_m_id = insertMeasure(db,
-                context.getString(R.string.baseMeasure_bar_weight), 500, 0.5, 0);
+        long bw_m_id = WRITE.insertMeasure(db,
+                context.getString(myApp.trainingdiary.R.string.baseMeasure_bar_weight), 500, 0.5, 0);
 
-        long r_m_id = insertMeasure(db,
-                context.getString(R.string.baseMeasure_repeat), 99, 1, 0);
+        long r_m_id = WRITE.insertMeasure(db,
+                context.getString(myApp.trainingdiary.R.string.baseMeasure_repeat), 99, 1, 0);
 
-        long power_id = insertExerciseType(db,
-                context.getString(R.string.baseExType_power), context
-                .getResources().getResourceName(R.drawable.power));
+        long power_id = WRITE.insertExerciseType(db,
+                context.getString(myApp.trainingdiary.R.string.baseExType_power), context
+                .getResources().getResourceName(myApp.trainingdiary.R.drawable.power));
 
-        long cycle_id = insertExerciseType(db,
-                context.getString(R.string.baseExType_cycle), context
-                .getResources().getResourceName(R.drawable.cycle));
+        long cycle_id = WRITE.insertExerciseType(db,
+                context.getString(myApp.trainingdiary.R.string.baseExType_cycle), context
+                .getResources().getResourceName(myApp.trainingdiary.R.drawable.cycle));
 
-        insertMeasureExType(db, power_id, bw_m_id, 0);
-        insertMeasureExType(db, power_id, r_m_id, 1);
+        WRITE.insertMeasureExType(db, power_id, bw_m_id, 0);
+        WRITE.insertMeasureExType(db, power_id, r_m_id, 1);
 
-        long d_m_id = insertMeasure(db,
-                context.getString(R.string.baseMeasure_distance), 99, 0.1, 0);
+        long d_m_id = WRITE.insertMeasure(db,
+                context.getString(myApp.trainingdiary.R.string.baseMeasure_distance), 99, 0.1, 0);
 
-        long t_m_id = insertMeasure(db,
-                context.getString(R.string.baseMeasure_time), 2, 1, 1);
+        long t_m_id = WRITE.insertMeasure(db,
+                context.getString(myApp.trainingdiary.R.string.baseMeasure_time), 2, 1, 1);
 
-        insertMeasureExType(db, cycle_id, d_m_id, 0);
-        insertMeasureExType(db, cycle_id, t_m_id, 1);
-
+        WRITE.insertMeasureExType(db, cycle_id, d_m_id, 0);
+        WRITE.insertMeasureExType(db, cycle_id, t_m_id, 1);
     }
 
     @Override
@@ -357,9 +251,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private void transferTrainingStatData(SQLiteDatabase db, Cursor c) {
         if (c != null) {
             long power_id = findExTypeByName(db,
-                    context.getString(R.string.baseExType_power));
+                    context.getString(myApp.trainingdiary.R.string.baseExType_power));
             long cycle_id = findExTypeByName(db,
-                    context.getString(R.string.baseExType_cycle));
+                    context.getString(myApp.trainingdiary.R.string.baseExType_cycle));
             DecimalFormat formatter = new java.text.DecimalFormat("#.#");
             if (c.moveToFirst()) {
                 do {
@@ -383,7 +277,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     }
 
                     if (ex_id > 0 && date != null) {
-                        insertTrainingStat(db, ex_id, 0, date.getTime(), date.getTime(), value);
+                        WRITE.insertTrainingStat(db, ex_id, 0, date.getTime(), date.getTime(), value);
                     } else {
                         Log.e(Consts.LOG_TAG,
                                 "Cannot insert TrainingStat cause - ex_id: "
@@ -405,7 +299,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     long ex_id = findExerciseByName(db, ex_name);
                     long tr_id = findTrainingByName(db, tr_name);
                     if (ex_id > 0 && tr_id > 0)
-                        insertExerciseInTraining(db, tr_id, ex_id, position);
+                        WRITE.insertExerciseInTraining(db, tr_id, ex_id, position);
                     else {
                         Log.e(Consts.LOG_TAG,
                                 "Cannot insert ExerciseInTraining cause - ex_id: "
@@ -445,9 +339,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private void transferExerciseTableData(SQLiteDatabase db, Cursor c) {
         if (c != null) {
             long power_id = findExTypeByName(db,
-                    context.getString(R.string.baseExType_power));
+                    context.getString(myApp.trainingdiary.R.string.baseExType_power));
             long cycle_id = findExTypeByName(db,
-                    context.getString(R.string.baseExType_cycle));
+                    context.getString(myApp.trainingdiary.R.string.baseExType_cycle));
             Log.i(Consts.LOG_TAG, "findPowerExType: " + power_id);
             Log.i(Consts.LOG_TAG, "findCycleExType: " + cycle_id);
             if (c.moveToFirst()) {
@@ -456,10 +350,10 @@ public class DBHelper extends SQLiteOpenHelper {
                     int type = c.getInt(c.getColumnIndex("type"));
                     switch (type) {
                         case 1:
-                            insertExercise(db, name, power_id);
+                            WRITE.insertExercise(db, name, power_id);
                             break;
                         case 2:
-                            insertExercise(db, name, cycle_id);
+                            WRITE.insertExercise(db, name, cycle_id);
                             break;
                     }
 
@@ -486,7 +380,7 @@ public class DBHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     String name = c.getString(c.getColumnIndex("name"));
-                    insertTraining(db, name, position);
+                    WRITE.insertTraining(db, name, position);
                     position++;
                 } while (c.moveToNext());
             }
@@ -500,436 +394,4 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS TrainingStatOld");
     }
 
-    public void changeTrainingPositions(List<Long> list) {
-        SQLiteDatabase db = getWritableDatabase();
-        for (int i = 0; i < list.size(); i++) {
-            ContentValues cv = new ContentValues();
-            cv.put("position", i);
-            // Log.d(Consts.LOG_TAG, "new_pos: " + newNumEX +
-            // " old_pos: "+old_pos+" ex_name: " + strNameEx
-            // + " trainingname: " + strNameTr);
-            db.update("Training", cv, "id = ? ",
-                    new String[]{String.valueOf(list.get(i))});
-        }
-        db.close();
-    }
-
-    public Cursor getExersices(SQLiteDatabase db, String strNameTr) {
-        String sqlQuery = "select " + "prog.id as _id, "
-                + "prog.exercise as ex_name, " + "prog.trainingname as Tr, "
-                + "prog.exidintr as id," + "Ex.type as type "
-                + "from TrainingProgTable as prog "
-                + "inner join ExerciseTable as Ex "
-                + "on prog.exercise=Ex.exercise " + "where Tr = ? "
-                + "ORDER BY id";
-
-        String[] args = {strNameTr};
-        Cursor c = db.rawQuery(sqlQuery, args);
-        return c;
-    }
-
-    /**
-     * �������� ���������� � ������� ����������� position �� ������ �������
-     * ���������� ������
-     *
-     * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     *         ������������ ��� _id
-     */
-    public Cursor getTrainings(SQLiteDatabase db) {
-        String sqlQuery = "select tr.id as _id, tr.name, tr.position from Training tr order by tr.position asc";
-        Cursor c = db.rawQuery(sqlQuery, null);
-        return c;
-    }
-
-    /**
-     * �������� ���������� � ���������� � ������� position �� ������ �������
-     * ���������� ������
-     *
-     * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     *         ������������ ��� _id
-     */
-    public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
-        String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
-                + "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
-                + "where ex_tr.training_id = ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id "
-                + "order by ex_tr.position";
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
-        return c;
-    }
-
-    public int getTrainingsCount(SQLiteDatabase db) {
-        String sqlQuery = "select count(tr.id) as _count from Training tr";
-        Cursor c = db.rawQuery(sqlQuery, null);
-        c.moveToFirst();
-        int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
-        return count;
-    }
-
-    public int getExerciseCount(SQLiteDatabase db) {
-        String sqlQuery = "select count(t.id) as _count from Exercise t";
-        Cursor c = db.rawQuery(sqlQuery, null);
-        c.moveToFirst();
-        int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
-        return count;
-
-    }
-
-    public int getExerciseInTrainingCount(SQLiteDatabase db) {
-        String sqlQuery = "select count(t.exercise_id) as _count from ExerciseInTraining t";
-        Cursor c = db.rawQuery(sqlQuery, null);
-        c.moveToFirst();
-        int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
-        return count;
-    }
-
-    public String getTrainingNameById(SQLiteDatabase db, long tr_id) {
-        String sqlQuery = "select tr.name from Training tr where tr.id = ?";
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
-        c.moveToFirst();
-        String name = c.getString(c.getColumnIndex("name"));
-        c.close();
-        return name;
-    }
-
-    public void renameTraining(SQLiteDatabase db, long cur_tr_id, String name) {
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        db.update("Training", cv, "id = ? ",
-                new String[]{String.valueOf(cur_tr_id)});
-    }
-
-    public void deleteTraining(SQLiteDatabase db, long cur_tr_id) {
-        db.delete("Training", "id = ? ",
-                new String[]{String.valueOf(cur_tr_id)});
-    }
-
-    public Cursor getExercisesExceptExInTr(SQLiteDatabase db, long tr_id) {
-        String sqlQuery = "SELECT ex.id as _id, ex.name name, ex_type.icon_res icon_res "
-                + "FROM Exercise as ex, "
-                + "ExerciseType ex_type "
-                + "WHERE ex.type_id = ex_type.id AND ex.id not in (select ex_tr.exercise_id FROM ExerciseInTraining ex_tr WHERE ex_tr.training_id == ?) ";
-        Cursor c = db.rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
-        return c;
-    }
-
-    public Cursor getExerciseTypes(SQLiteDatabase db) {
-        String sqlQuery = "select ex_type.id as _id, ex_type.name name, ex_type.icon_res icon_res "
-                + "from ExerciseType ex_type";
-        Cursor c = db.rawQuery(sqlQuery, null);
-        return c;
-    }
-
-    /**
-     * ������� ������������ ���������� ������� �� �������� ��������
-     */
-    public String getStatistics(SQLiteDatabase db) {
-        String result = "";
-        result += "Training: " + getTrainingsCount(db) + "\n";
-        result += "Exercise: " + getExerciseCount(db) + "\n";
-        result += "ExerciseInTraining: " + getExerciseInTrainingCount(db)
-                + "\n";
-        return result;
-    }
-
-    public Long createTraining(String name) {
-        SQLiteDatabase db = getWritableDatabase();
-        int position = getTrainingsCount(db);
-        Long id = insertTraining(db, name, position);
-        return id;
-    }
-
-    public Cursor getExercisesExceptExInTr(long tr_id) {
-        Cursor c = getExercisesExceptExInTr(getWritableDatabase(), tr_id);
-        return c;
-    }
-
-    public String getTrainingNameById(long tr_id) {
-        SQLiteDatabase db = getWritableDatabase();
-        String name = getTrainingNameById(db, tr_id);
-        db.close();
-        return name;
-    }
-
-    public void renameTraining(long tr_id, String name) {
-        SQLiteDatabase db = getWritableDatabase();
-        renameTraining(db, tr_id, name);
-        db.close();
-    }
-
-    public Cursor getTrainings() {
-        Cursor c = getTrainings(getWritableDatabase());
-        return c;
-    }
-
-    public Cursor getExercisesInTraining(long tr_id) {
-        Cursor c = getExercisesInTraining(getWritableDatabase(), tr_id);
-        return c;
-    }
-
-    public void deleteTraining(long tr_id) {
-        SQLiteDatabase db = getWritableDatabase();
-        deleteTraining(db, tr_id);
-        db.close();
-    }
-
-    public Cursor getExerciseTypes() {
-        Cursor c = getExerciseTypes(getWritableDatabase());
-        return c;
-    }
-
-    public void renameExercise(long ex_id, String name) {
-        SQLiteDatabase db = getWritableDatabase();
-        renameExercise(db, ex_id, name);
-        db.close();
-    }
-
-    private void renameExercise(SQLiteDatabase db, long ex_id, String name) {
-        ContentValues cv = new ContentValues();
-        cv.put("name", name);
-        db.update("Exercise", cv, "id = ? ",
-                new String[]{String.valueOf(ex_id)});
-    }
-
-    public String getExerciseNameById(long ex_id) {
-        SQLiteDatabase db = getWritableDatabase();
-        String name = getExerciseNameById(db, ex_id);
-        db.close();
-        return name;
-    }
-
-    private String getExerciseNameById(SQLiteDatabase db, long ex_id) {
-        String sqlQuery = "select ex.name from Exercise ex where ex.id = ?";
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        c.moveToFirst();
-        String name = c.getString(c.getColumnIndex("name"));
-        c.close();
-        return name;
-    }
-
-    public void deleteExerciseFromTraining(long tr_id, long ex_id) {
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete("ExerciseInTraining", "training_id = ? AND exercise_id = ?",
-                new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
-        db.close();
-    }
-
-    public void changeExercisePositions(long tr_id, List<Long> list) {
-        SQLiteDatabase db = getWritableDatabase();
-        for (int i = 0; i < list.size(); i++) {
-            ContentValues cv = new ContentValues();
-            cv.put("position", i);
-            Log.d(Consts.LOG_TAG, "new_pos: " + i +
-                    "  ex_id: " + list.get(i)
-                    + " training_id: " + tr_id);
-            db.update("ExerciseInTraining", cv, "training_id = ? AND exercise_id = ? ",
-                    new String[]{String.valueOf(tr_id), String.valueOf(list.get(i))});
-        }
-        db.close();
-    }
-
-    public TrainingStat getLastTrainingStatByExerciseInTraining(long ex_id, long tr_id) {
-
-        String sqlQuery = "select * from TrainingStat tr_stat " +
-                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStat WHERE training_id = ? AND exercise_id = ?)";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
-        try {
-            if (c.moveToFirst()) {
-                Long id = c.getLong(c.getColumnIndex("id"));
-                Long date = c.getLong(c.getColumnIndex("date"));
-                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
-                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
-                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
-                String value = c.getString(c.getColumnIndex("value"));
-                return new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value);
-            } else {
-                return null;
-            }
-        } finally {
-            c.close();
-        }
-    }
-
-    public List<Measure> getMeasuresInExercise(long ex_id) {
-        List<Measure> measures = new ArrayList<Measure>();
-
-        String sqlQuery = "select m.* from Measure m, MeasureExType m_ex, Exercise ex " +
-                "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m.id = m_ex.measure_id " +
-                "order by m_ex.position ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        while (c.moveToNext()) {
-            Long id = c.getLong(c.getColumnIndex("id"));
-            String name = c.getString(c.getColumnIndex("name"));
-            Integer max = c.getInt(c.getColumnIndex("max"));
-            Double step = c.getDouble(c.getColumnIndex("step"));
-            Integer type = c.getInt(c.getColumnIndex("type"));
-            measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
-        }
-        c.close();
-        return measures;
-    }
-
-    public List<TrainingStat> getTrainingStatForLastPeriodByExercise(long ex_id, int period) {
-        List<TrainingStat> stats = new ArrayList<TrainingStat>();
-        long since = System.currentTimeMillis() - period;
-        String sqlQuery = "select * from TrainingStat tr_stat " +
-                "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
-                "order by tr_stat.date desc ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(since)});
-        try {
-            while (c.moveToNext()) {
-                Long id = c.getLong(c.getColumnIndex("id"));
-                Long date = c.getLong(c.getColumnIndex("date"));
-                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
-                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
-                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
-                String value = c.getString(c.getColumnIndex("value"));
-                stats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
-            }
-            return stats;
-        } finally {
-            c.close();
-        }
-    }
-
-    public List<TrainingStat> getTrainingStatForLastPeriod(int period) {
-        List<TrainingStat> stats = new ArrayList<TrainingStat>();
-        long since = System.currentTimeMillis() - period;
-        String sqlQuery = "select * from TrainingStat tr_stat " +
-                "where tr_stat.date > ? " +
-                "order by tr_stat.date desc ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(since)});
-        try {
-            while (c.moveToNext()) {
-                Long id = c.getLong(c.getColumnIndex("id"));
-                Long date = c.getLong(c.getColumnIndex("date"));
-                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
-                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
-                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
-                String value = c.getString(c.getColumnIndex("value"));
-                stats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
-            }
-            return stats;
-        } finally {
-            c.close();
-        }
-    }
-
-    public int deleteLastTrainingStatInCurrentTraining(long ex_id, long tr_id, long tr_period) {
-        SQLiteDatabase db = getWritableDatabase();
-        long since = System.currentTimeMillis() - tr_period;
-        int deleted = db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat " +
-                "WHERE training_id = ? AND exercise_id = ? AND date > ? ) ",
-                new String[]{String.valueOf(tr_id), String.valueOf(ex_id), String.valueOf(since)});
-        db.close();
-        return deleted;
-    }
-
-    public Cursor getTrainingMainHistory() {
-        String sqlQuery = "select * from TrainingStat " +
-                "group by training_date " +
-                "order by training_date asc ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, null);
-        return c;
-    }
-
-    public Cursor getExercisesForHistory() {
-        String sqlQuery = "select tr.name tr_name, ex.name ex_name, ex.id ex_id, ex_type.icon_res icon " +
-                "from TrainingStat as stat left outer join Training as tr on stat.training_id = tr.id, " +
-                "Exercise ex, ExerciseType ex_type " +
-                "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
-                "group by tr.name, ex.id " +
-                "order by tr.name, date desc ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, null);
-        return c;
-    }
-
-    public Cursor getTrainingStatByTrainingDate(Date training_date) {
-        String sqlQuery = "select ex.name, stat.value, stat.date,  type.icon_res icon " +
-                "from TrainingStat stat, Exercise ex, ExerciseType type " +
-                "where stat.training_date = ? AND ex.id = stat.exercise_id AND type.id = ex.type_id " +
-                "order by stat.exercise_id, stat.date asc ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(training_date.getTime())});
-        return c;
-    }
-
-    public Cursor getTrainingStatByExercise(long ex_id) {
-        String sqlQuery = "select stat.value, stat.training_date " +
-                "from TrainingStat stat " +
-                "where stat.exercise_id = ? " +
-                "order by training_date, date asc ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        return c;
-    }
-
-    public Exercise getExerciseById(long ex_id) {
-        String sqlQuery = "select ex.id ex_id, ex.name ex_name, " +
-                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
-                "from Exercise ex, ExerciseType ex_type " +
-                "where ex.id = ? AND ex.type_id = ex_type.id ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        try {
-            if (c.moveToFirst()) {
-                Long type_id = c.getLong(c.getColumnIndex("type_id"));
-                String ex_name = c.getString(c.getColumnIndex("ex_name"));
-                String type_name = c.getString(c.getColumnIndex("type_name"));
-                String type_icon = c.getString(c.getColumnIndex("type_icon"));
-                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
-            } else {
-                return null;
-            }
-        } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
-            return null;
-        } finally {
-            c.close();
-        }
-    }
-
-    public boolean isExerciseInDB(String name) {
-        String sqlQuery = "select * " +
-                "from Exercise " +
-                "where name = ? ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
-        int count = c.getCount();
-        c.close();
-        return count != 0;
-    }
-
-    public boolean isTrainingInDB(String name) {
-        String sqlQuery = "select * " +
-                "from Training " +
-                "where name = ? ";
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
-        int count = c.getCount();
-        c.close();
-        return count != 0;
-    }
 }

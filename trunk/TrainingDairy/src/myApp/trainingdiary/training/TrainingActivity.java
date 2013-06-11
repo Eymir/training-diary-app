@@ -99,7 +99,7 @@ public class TrainingActivity extends Activity {
             public void drop(int from, int to) {
                 Log.i(Consts.LOG_TAG, "drop training");
                 trainingDragAdapter.drop(from, to);
-                dbHelper.changeTrainingPositions(getNewTrIdOrder());
+                dbHelper.WRITE.changeTrainingPositions(getNewTrIdOrder());
                 cur_drag_handler.setVisibility(View.GONE);
             }
         });
@@ -130,7 +130,7 @@ public class TrainingActivity extends Activity {
                 String name = name_input.getText().toString();
                 if (Validator.validateEmpty(TrainingActivity.this, name) &&
                         Validator.validateTraining(TrainingActivity.this, name)) {
-                    dbHelper.createTraining(name);
+                    dbHelper.WRITE.createTraining(name, dbHelper.READ.getTrainingsCount(dbHelper.getReadableDatabase()));
                     createTrainingDialog.cancel();
                     Toast.makeText(TrainingActivity.this,
                             R.string.create_success, Toast.LENGTH_SHORT).show();
@@ -177,7 +177,7 @@ public class TrainingActivity extends Activity {
                                 break;
                             case ID_DELETE_TRAINING:
                                 String tr_name = dbHelper
-                                        .getTrainingNameById(cur_tr_id);
+                                        .READ.getTrainingNameById(cur_tr_id);
                                 deleteTrainingDialog.setMessage(String.format(
                                         getResources().getString(
                                                 R.string.Dialog_del_tr_msg),
@@ -223,7 +223,7 @@ public class TrainingActivity extends Activity {
                 String name = name_input.getText().toString();
                 if (Validator.validateEmpty(TrainingActivity.this, name)
                         && Validator.validateTraining(TrainingActivity.this, name)) {
-                    dbHelper.renameTraining(cur_tr_id, name);
+                    dbHelper.WRITE.renameTraining(cur_tr_id, name);
                     renameTrainingDialog.cancel();
                     Toast.makeText(TrainingActivity.this,
                             R.string.rename_success, Toast.LENGTH_SHORT).show();
@@ -246,7 +246,7 @@ public class TrainingActivity extends Activity {
     }
 
     protected void fetchTrainings() {
-        Cursor tr_cursor = dbHelper.getTrainings();
+        Cursor tr_cursor = dbHelper.READ.getTrainings();
         String[] from = {"name", "_id"};
         int[] to = {R.id.label, R.id.tools};
         trainingDragAdapter = new SimpleDragSortCursorAdapter(this,
@@ -281,7 +281,7 @@ public class TrainingActivity extends Activity {
     }
 
     private void refreshTrainings() {
-        Cursor c = dbHelper.getTrainings();
+        Cursor c = dbHelper.READ.getTrainings();
         trainingDragAdapter.swapCursor(c);
         // dbHelper.close();
     }
@@ -297,7 +297,7 @@ public class TrainingActivity extends Activity {
 
         adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                dbHelper.deleteTraining(cur_tr_id);
+                dbHelper.WRITE.deleteTraining(cur_tr_id);
                 refreshTrainings();
                 Toast.makeText(TrainingActivity.this, R.string.deleted,
                         Toast.LENGTH_SHORT).show();

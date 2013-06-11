@@ -107,7 +107,7 @@ public class HistoryMainActivity extends Activity {
     }
 
     private void loadTrainingList() {
-        Cursor tr_cursor = dbHelper.getTrainingMainHistory();
+        Cursor tr_cursor = dbHelper.READ.getTrainingMainHistory();
         Log.d(Consts.LOG_TAG, "trainings.count: " + tr_cursor.getCount());
         ArrayList<DateItem> itemArrayList = trainingCursorToItemArray(tr_cursor);
         trainingHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
@@ -154,7 +154,7 @@ public class HistoryMainActivity extends Activity {
     }
 
     private void loadExerciseList() {
-        Cursor ex_cursor = dbHelper.getExercisesForHistory();
+        Cursor ex_cursor = dbHelper.READ.getExercisesForHistory();
         Log.d(Consts.LOG_TAG, "Exercises.count: " + ex_cursor.getCount());
         ArrayList<?> itemArrayList = exerciseCursorToItemArray(ex_cursor);
         exerciseHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);

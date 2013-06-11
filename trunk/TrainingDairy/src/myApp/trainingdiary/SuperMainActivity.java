@@ -39,7 +39,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener {
         btnExit.setOnClickListener(this);
 
         dbHelper = DBHelper.getInstance(this);
-        int count = dbHelper.getTrainingsCount(dbHelper.getWritableDatabase());
+        int count = dbHelper.READ.getTrainingsCount(dbHelper.getWritableDatabase());
         if (count > 0) {
             btnStart.performClick();
         }

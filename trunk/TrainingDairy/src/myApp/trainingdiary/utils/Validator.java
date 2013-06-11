@@ -23,7 +23,7 @@ public class Validator {
     public static boolean validateTraining(Context context, String name) {
         DBHelper dbHelper = DBHelper.getInstance(context);
 
-        if (dbHelper.isTrainingInDB(name)) {
+        if (dbHelper.READ.isTrainingInDB(name)) {
             Toast.makeText(context,
                     R.string.training_exist_notif, Toast.LENGTH_SHORT)
                     .show();
@@ -35,7 +35,7 @@ public class Validator {
     public static boolean validateExercise(Context context, String name) {
         DBHelper dbHelper = DBHelper.getInstance(context);
 
-        if (dbHelper.isExerciseInDB(name)) {
+        if (dbHelper.READ.isExerciseInDB(name)) {
             Toast.makeText(context,
                     R.string.exercise_exist_notif, Toast.LENGTH_SHORT)
                     .show();
