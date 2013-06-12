@@ -1,74 +1,52 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background"
-    android:paddingLeft="3dp"
-    tools:context=".SettingsActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:paddingLeft="3dp"
+                tools:context=".SettingsActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="14dp"
-        android:orientation="vertical" >
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="14dp"
+            android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvCountEx"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="12.51"
-            android:text="@string/SettingsAct_CountEx"
-            android:textColor="#F8F8FF" />
+                android:id="@+id/tvCountEx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="12.51"
+                android:text="@string/count_ex"
+                android:textColor="#F8F8FF"/>
 
         <TextView
-            android:id="@+id/tvCountTr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="12.51"
-            android:text="@string/SettingsAct_CountTr"
-            android:textColor="#F8F8FF" />
+                android:id="@+id/tvCountTr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="12.51"
+                android:text="@string/count_tr"
+                android:textColor="#F8F8FF"/>
 
         <TextView
-            android:id="@+id/tvCountHist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.28"
-            android:text="@string/SettingsAct_CountHist"
-            android:textColor="#F8F8FF" />
+                android:id="@+id/tvCountHist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.28"
+                android:text="@string/count_tr_stat"
+                android:textColor="#F8F8FF"/>
+
+        <Button
+                android:id="@+id/backup_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/backup_button_text"
+                android:layout_weight="1"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/linearLayout2"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/btnClearDBEx"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Удалить все упражнения" />
-
-        <Button
-            android:id="@+id/btnClearDBTr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Удалить все программы" />
-
-        <Button
-            android:id="@+id/btnClearHist"
-            android:layout_width="316dp"
-            android:layout_height="wrap_content"
-            android:text="Очистить историю" />
-
-    </LinearLayout>
 
 </RelativeLayout>
