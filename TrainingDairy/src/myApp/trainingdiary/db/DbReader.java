@@ -20,27 +20,28 @@ import myApp.trainingdiary.utils.Consts;
  */
 public class DbReader {
     private DBHelper dbHelper;
+
     public DbReader(DBHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
+
     public Cursor getTrainingMainHistory() {
         String sqlQuery = "select * from TrainingStat " +
                 "group by training_date " +
                 "order by training_date asc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
+
         Cursor c = db
                 .rawQuery(sqlQuery, null);
         return c;
     }
 
     public Cursor getExercisesForHistory() {
-        String sqlQuery = "select tr.name tr_name, ex.name ex_name, ex.id ex_id, ex_type.icon_res icon " +
-                "from TrainingStat as stat left outer join Training as tr on stat.training_id = tr.id, " +
-                "Exercise ex, ExerciseType ex_type " +
+        String sqlQuery = "select ex.name ex_name, ex.id ex_id, ex_type.icon_res icon, max(stat.date) tr_date " +
+                "from Exercise ex, ExerciseType ex_type, TrainingStat stat " +
                 "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
-                "group by tr.name, ex.id " +
-                "order by tr.name desc, date desc ";
+                "group by ex.id " +
+                "order by max(stat.date) desc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, null);
@@ -143,6 +144,7 @@ public class DbReader {
             c.close();
         }
     }
+
     public TrainingStat getLastTrainingStatByExerciseInTraining(long ex_id, long tr_id) {
 
         String sqlQuery = "select * from TrainingStat tr_stat " +
@@ -212,6 +214,7 @@ public class DbReader {
             c.close();
         }
     }
+
     public String getExerciseNameById(long ex_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String name = getExerciseNameById(db, ex_id);
@@ -228,6 +231,7 @@ public class DbReader {
         c.close();
         return name;
     }
+
     public Cursor getExercisesExceptExInTr(long tr_id) {
         Cursor c = getExercisesExceptExInTr(dbHelper.getReadableDatabase(), tr_id);
         return c;
@@ -254,6 +258,7 @@ public class DbReader {
         Cursor c = getExerciseTypes(dbHelper.getReadableDatabase());
         return c;
     }
+
     public Cursor getExercisesExceptExInTr(SQLiteDatabase db, long tr_id) {
         String sqlQuery = "SELECT ex.id as _id, ex.name name, ex_type.icon_res icon_res "
                 + "FROM Exercise as ex, "
@@ -269,6 +274,7 @@ public class DbReader {
         Cursor c = db.rawQuery(sqlQuery, null);
         return c;
     }
+
     /**
      * �������� ���������� � ������� ����������� position �� ������ �������
      * ���������� ������
@@ -308,6 +314,13 @@ public class DbReader {
         return count;
     }
 
+    public int getExerciseCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int count = getExerciseCount(db);
+        db.close();
+        return count;
+    }
+
     public int getExerciseCount(SQLiteDatabase db) {
         String sqlQuery = "select count(t.id) as _count from Exercise t";
         Cursor c = db.rawQuery(sqlQuery, null);
@@ -336,6 +349,7 @@ public class DbReader {
         c.close();
         return name;
     }
+
     /**
      * ������� ������������ ���������� ������� �� �������� ��������
      */
@@ -346,5 +360,14 @@ public class DbReader {
         result += "ExerciseInTraining: " + getExerciseInTrainingCount(db)
                 + "\n";
         return result;
+    }
+
+    public int getAllTrainingStats(SQLiteDatabase db) {
+        String sqlQuery = "select count(stat.id) as _count from TrainingStat stat";
+        Cursor c = db.rawQuery(sqlQuery, null);
+        c.moveToFirst();
+        int count = c.getInt(c.getColumnIndex("_count"));
+        c.close();
+        return count;
     }
 }

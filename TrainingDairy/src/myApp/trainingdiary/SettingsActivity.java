@@ -2,13 +2,11 @@ package myApp.trainingdiary;
 
 import myApp.trainingdiary.db.DBHelper;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,81 +15,46 @@ import android.widget.Toast;
  * �������� � ���������� � ���� ��� ����������� ���������� 
  */
 
-public class SettingsActivity extends Activity implements OnClickListener {
+public class SettingsActivity extends Activity {
 
-    Button btnClearDBEx, btnClearDBTr, btnClearHist;
-    TextView tvCountTr, tvCountEx, tvCountHist;
-    DBHelper dbHelper;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-//		btnClearDBEx = (Button)findViewById(READ.id.btnClearDBEx);
-//		btnClearDBEx.setOnClickListener(this);
-//		btnClearDBTr = (Button)findViewById(READ.id.btnClearDBTr);
-//		btnClearDBTr.setOnClickListener(this);
-//		btnClearHist = (Button)findViewById(READ.id.btnClearHist);
-//		btnClearHist.setOnClickListener(this);
-//		tvCountTr = (TextView)findViewById(READ.id.tvCountTr);
-//		tvCountHist = (TextView)findViewById(READ.id.tvCountHist);
-//		tvCountEx = (TextView)findViewById(READ.id.tvCountEx);
-//		refreshTextViews();
-
-    }
-
-
-    @Override
-    public void onClick(View arg0) {
-        switch (arg0.getId()) {
-            case R.id.btnClearDBTr:
-                dbHelper = DBHelper.getInstance(this);
-                SQLiteDatabase dbTr = dbHelper.getWritableDatabase();
-                int clearCountTr = dbTr.delete("Trainingtable", null, null);
-                Toast.makeText(this, "�� �� ������� " + clearCountTr + " �������", Toast.LENGTH_LONG).show();
-                dbHelper.close();
-                refreshTextViews();
-                break;
-            case R.id.btnClearDBEx:
-                dbHelper = DBHelper.getInstance(this);
-                SQLiteDatabase dbEx = dbHelper.getWritableDatabase();
-                int clearCountEx = dbEx.delete("ExerciseTable", null, null);
-                Toast.makeText(this, "�� �� ������� " + clearCountEx + " �������", Toast.LENGTH_LONG).show();
-                dbHelper.close();
-                refreshTextViews();
-                break;
-            case R.id.btnClearHist:
-                dbHelper = DBHelper.getInstance(this);
-                SQLiteDatabase dbHis = dbHelper.getWritableDatabase();
-                int clearCountHist = dbHis.delete("TrainingStat", null, null);
-                Toast.makeText(this, "�� �� ������� " + clearCountHist + " �������", Toast.LENGTH_LONG).show();
-                dbHelper.close();
-                refreshTextViews();
-                break;
-            default:
-                break;
-        }
+        dbHelper = DBHelper.getInstance(this);
+        refreshTextViews();
+        Button backup = (Button) findViewById(R.id.backup_button);
+        backup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),
+                        getApplicationContext().getResources().getString(R.string.coming_soon),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     protected void refreshTextViews() {
-        dbHelper = DBHelper.getInstance(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor cTr = db.query("Trainingtable", null, null, null, null, null, null);
-        String messTr = getResources().getString(R.string.SettingsAct_CountTr);
-        messTr = messTr + " = " + cTr.getCount();
+        TextView tvCountTr = (TextView) findViewById(R.id.tvCountTr);
+        TextView tvCountEx = (TextView) findViewById(R.id.tvCountEx);
+        TextView tvCountHist = (TextView) findViewById(R.id.tvCountHist);
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int cTr = dbHelper.READ.getTrainingsCount(db);
+        String messTr = getResources().getString(R.string.count_tr);
+        messTr = messTr + ": " + cTr;
         tvCountTr.setText(messTr);
-        cTr.close();
 
-        Cursor cEx = db.query("ExerciseTable", null, null, null, null, null, null);
-        String messEx = getResources().getString(R.string.SettingsAct_CountEx);
-        messEx = messEx + " = " + cEx.getCount();
+        int cEx = dbHelper.READ.getExerciseCount(db);
+        String messEx = getResources().getString(R.string.count_ex);
+        messEx = messEx + ": " + cEx;
         tvCountEx.setText(messEx);
-        cEx.close();
 
-        Cursor cHistory = db.query("TrainingStat", null, null, null, null, null, null);
-        String messHist = getResources().getString(R.string.SettingsAct_CountHist);
-        messHist = messHist + " = " + cHistory.getCount();
+        int cHs = dbHelper.READ.getAllTrainingStats(db);
+        String messHist = getResources().getString(R.string.count_tr_stat);
+        messHist = messHist + ": " + cHs;
         tvCountHist.setText(messHist);
 
         dbHelper.close();

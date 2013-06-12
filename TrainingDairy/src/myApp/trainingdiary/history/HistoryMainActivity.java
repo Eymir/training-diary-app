@@ -164,23 +164,12 @@ public class HistoryMainActivity extends Activity {
     private ArrayList<Item> exerciseCursorToItemArray(Cursor cursor) {
         ArrayList<Item> items = new ArrayList<Item>();
         try {
-            String lastTrName = "\n";
             while (cursor.moveToNext()) {
-                String tr_name = cursor.getString(cursor.getColumnIndex("tr_name"));
                 String ex_name = cursor.getString(cursor.getColumnIndex("ex_name"));
                 String icon = cursor.getString(cursor.getColumnIndex("icon"));
                 Long ex_id = cursor.getLong(cursor.getColumnIndex("ex_id"));
-                Log.d(Consts.LOG_TAG, "ex_name: " + ex_name + " tr_name: " + tr_name);
-                if ((tr_name == null && lastTrName == null) || (tr_name != null && !tr_name.equals(lastTrName))) {
-                    if (tr_name == null || tr_name.isEmpty())
-                        items.add(new SmallSectionItem(getResources().getString(R.string.empty_training_section)));
-                    else {
-                        items.add(new SmallSectionItem(tr_name));
-                    }
-                    lastTrName = tr_name;
-                }
+                Log.d(Consts.LOG_TAG, "ex_name: " + ex_name);
                 items.add(new ExerciseItem(ex_name, icon, ex_id));
-
             }
         } finally {
             cursor.close();
