@@ -35,7 +35,9 @@
     <string name="dialog_del_approach_title">Удалить подход</string>
     <string name="Dialog_del_ex_title">Удалить упражнение</string>
     <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку %1$s?</string>
-    <string name="Dialog_del_ex_msg">Вы действительно хотите убрать упражнение %1$s из тренировки %2$s?</string>
+    <string name="Dialog_del_ex_msg">Вы действительно хотите убрать упражнение %1$s из тренировки
+        %2$s?
+    </string>
     <string name="dialog_del_approach_msg">Вы действительно хотите удалить подход %1$s?</string>
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
@@ -56,11 +58,16 @@
     <string name="nothing_to_deleted">Нечего удалять</string>
     <string name="create_success">Тренировка успешно создана</string>
     <string name="rename_success">Тренировка успешно переименована</string>
-    <string name="baseExType_power">Силовой тип</string>
-    <string name="baseExType_cycle">Циклический тип</string>
-    <string name="baseMeasure_repeat">Повторения</string>
-    <string name="baseMeasure_bar_weight">Вес штанги(кг)</string>
-    <string name="baseMeasure_distance">Расстояние(км)</string>
+    <string name="bar_ex_type_base">Штанга</string>
+    <string name="long_dist_ex_type_base">Длинная дистанция</string>
+    <string name="count_ex_type_base">Разы</string>
+    <string name="weight_ex_type_base">Вес</string>
+    <string name="size_ex_type_base">Замеры</string>
+    <string name="size_measure_base">Объем(см)</string>
+    <string name="weight_measure_base">Вес(кг)</string>
+    <string name="repeat_measure_base">Повторения</string>
+    <string name="power_weight_measure_base">Вес снаряда(кг)</string>
+    <string name="long_distance_measure_base">Расстояние(км)</string>
     <string name="baseMeasure_time">Время(мин,сек)</string>
     <string name="add_action">Добавить</string>
     <string name="rename_action">Переименовать</string>
@@ -73,7 +80,9 @@
     <string name="ex_type">Тип</string>
     <string name="ex_create">Создать новое</string>
     <string name="ex_choose">Выбрать существующее</string>
-    <string name="create_exercise_add_in_tr_success">Упражнение %1$s создано и добавленно в тренировку %2$s.</string>
+    <string name="create_exercise_add_in_tr_success">Упражнение %1$s создано и добавленно в
+        тренировку %2$s.
+    </string>
     <string name="add_exercise_success">Упражнение %1$s добавленно в тренировку %2$s.</string>
     <string name="input_exercise_name_notification">Введите название упражнения</string>
     <string name="input_exercise_type_notification">Выберите тип упражнения</string>

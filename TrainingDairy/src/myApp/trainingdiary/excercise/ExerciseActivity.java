@@ -287,6 +287,10 @@ public class ExerciseActivity extends Activity {
                             case ID_HISTORY_EXERCISE:
                                 openHistoryDetailActivity(cur_ex_id);
                                 break;
+                            case ID_STAT_EXERCISE:
+                                Toast.makeText(ExerciseActivity.this, R.string.coming_soon,
+                                        Toast.LENGTH_SHORT).show();
+                                break;
                         }
                     }
                 });

@@ -1,5 +1,7 @@
 package myApp.trainingdiary.db.entity;
 
+import java.util.ArrayList;
+
 /**
  * Created by Boris on 04.06.13.
  */
@@ -7,6 +9,15 @@ public class ExerciseType {
     private Long id;
     private String icon;
     private String name;
+
+    private ArrayList<Measure> measures;
+
+    public ArrayList<Measure> getMeasures() {
+        if (measures == null)
+            measures = new ArrayList<Measure>();
+        return measures;
+    }
+
 
     public Long getId() {
         return id;
