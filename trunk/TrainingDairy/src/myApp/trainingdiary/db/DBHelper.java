@@ -5,6 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import myApp.trainingdiary.R;
+import myApp.trainingdiary.db.entity.EntityManager;
+import myApp.trainingdiary.db.entity.ExerciseType;
+import myApp.trainingdiary.db.entity.Measure;
+import myApp.trainingdiary.db.entity.MeasureType;
 import myApp.trainingdiary.utils.Consts;
 
 import android.content.Context;
@@ -15,14 +20,16 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+
     private static DBHelper mInstance = null;
 
-    private Context context;
 
-    private final static int DB_VERSION = 3; // ������ ��
+    private final static int DB_VERSION = 4;
 
     public DbReader READ;
     public DbWriter WRITE;
+    public Context CONTEXT;
+    private EntityManager EM;
 
     public static DBHelper getInstance(Context ctx) {
         if (mInstance == null) {
@@ -36,7 +43,8 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, "TrainingDiaryDB", null, DB_VERSION);
         READ = new DbReader(this);
         WRITE = new DbWriter(this);
-        this.context = context;
+        EM = new EntityManager(this);
+        this.CONTEXT = context;
     }
 
     @Override
@@ -52,6 +60,7 @@ public class DBHelper extends SQLiteOpenHelper {
         createInitialTypes(db);
         createInitialExercises(db);
     }
+
 
     /**
      * �������
@@ -151,28 +160,83 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createInitialTypes(SQLiteDatabase db) {
+        ExerciseType power_weight_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.power),
+                CONTEXT.getString(R.string.bar_ex_type_base));
+        power_weight_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.power_weight_measure_base),
+                        500, 0.5, MeasureType.Numeric));
+        power_weight_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.repeat_measure_base),
+                        99, 1.0, MeasureType.Numeric));
+        EM.persist(db, power_weight_type);
+
+        ExerciseType long_dist_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.cycle),
+                CONTEXT.getString(R.string.long_dist_ex_type_base));
+        long_dist_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.long_distance_measure_base),
+                        99, 0.1, MeasureType.Numeric));
+        long_dist_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.baseMeasure_time),
+                        2, 1.0, MeasureType.Temporal));
+        EM.persist(db, long_dist_type);
+
+        ExerciseType count_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.count),
+                CONTEXT.getString(R.string.count_ex_type_base));
+        count_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.repeat_measure_base),
+                        500, 1.0, MeasureType.Numeric));
+        EM.persist(db, count_type);
+
+        ExerciseType weight_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.weight),
+                CONTEXT.getString(R.string.weight_ex_type_base));
+        weight_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.weight_measure_base),
+                        500, 0.001, MeasureType.Numeric));
+        EM.persist(db, weight_type);
+
+        ExerciseType size_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.size),
+                CONTEXT.getString(R.string.size_ex_type_base));
+        size_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.size_measure_base),
+                        99, 0.1, MeasureType.Numeric));
+        EM.persist(db, size_type);
+    }
+
+    private void createInitialTypes_ver_3(SQLiteDatabase db) {
         long bw_m_id = WRITE.insertMeasure(db,
-                context.getString(myApp.trainingdiary.R.string.baseMeasure_bar_weight), 500, 0.5, 0);
+                CONTEXT.getString(R.string.power_weight_measure_base), 500, 0.5, 0);
 
         long r_m_id = WRITE.insertMeasure(db,
-                context.getString(myApp.trainingdiary.R.string.baseMeasure_repeat), 99, 1, 0);
+                CONTEXT.getString(R.string.repeat_measure_base), 99, 1, 0);
 
         long power_id = WRITE.insertExerciseType(db,
-                context.getString(myApp.trainingdiary.R.string.baseExType_power), context
-                .getResources().getResourceName(myApp.trainingdiary.R.drawable.power));
+                CONTEXT.getString(R.string.bar_ex_type_base), CONTEXT
+                .getResources().getResourceName(R.drawable.power));
 
         long cycle_id = WRITE.insertExerciseType(db,
-                context.getString(myApp.trainingdiary.R.string.baseExType_cycle), context
-                .getResources().getResourceName(myApp.trainingdiary.R.drawable.cycle));
+                CONTEXT.getString(R.string.long_dist_ex_type_base), CONTEXT
+                .getResources().getResourceName(R.drawable.cycle));
 
         WRITE.insertMeasureExType(db, power_id, bw_m_id, 0);
         WRITE.insertMeasureExType(db, power_id, r_m_id, 1);
 
         long d_m_id = WRITE.insertMeasure(db,
-                context.getString(myApp.trainingdiary.R.string.baseMeasure_distance), 99, 0.1, 0);
+                CONTEXT.getString(R.string.long_distance_measure_base), 99, 0.1, 0);
 
         long t_m_id = WRITE.insertMeasure(db,
-                context.getString(myApp.trainingdiary.R.string.baseMeasure_time), 2, 1, 1);
+                CONTEXT.getString(R.string.baseMeasure_time), 2, 1, 1);
 
         WRITE.insertMeasureExType(db, cycle_id, d_m_id, 0);
         WRITE.insertMeasureExType(db, cycle_id, t_m_id, 1);
@@ -192,6 +256,13 @@ public class DBHelper extends SQLiteOpenHelper {
         if (oldVersion == 2 && newVersion == 3) {
             upgradeFrom_2_To_3(db);
         }
+        if (oldVersion == 3 && newVersion == 4) {
+            upgradeFrom_3_To_4(db);
+        }
+    }
+
+    private void upgradeFrom_3_To_4(SQLiteDatabase db) {
+
     }
 
     private void upgradeFrom_1_To_2(SQLiteDatabase db) {
@@ -228,7 +299,7 @@ public class DBHelper extends SQLiteOpenHelper {
             createMeasureExTypeTable(db);
             createTrainingStatTable(db);
 
-            createInitialTypes(db);
+            createInitialTypes_ver_3(db);
 
             transferTrainingTableData(db, trainingTable_cursor);
             transferExerciseTableData(db, exerciseTable_cursor);
@@ -251,9 +322,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private void transferTrainingStatData(SQLiteDatabase db, Cursor c) {
         if (c != null) {
             long power_id = findExTypeByName(db,
-                    context.getString(myApp.trainingdiary.R.string.baseExType_power));
+                    CONTEXT.getString(R.string.bar_ex_type_base));
             long cycle_id = findExTypeByName(db,
-                    context.getString(myApp.trainingdiary.R.string.baseExType_cycle));
+                    CONTEXT.getString(R.string.long_dist_ex_type_base));
             DecimalFormat formatter = new java.text.DecimalFormat("#.#");
             if (c.moveToFirst()) {
                 do {
@@ -339,9 +410,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private void transferExerciseTableData(SQLiteDatabase db, Cursor c) {
         if (c != null) {
             long power_id = findExTypeByName(db,
-                    context.getString(myApp.trainingdiary.R.string.baseExType_power));
+                    CONTEXT.getString(R.string.bar_ex_type_base));
             long cycle_id = findExTypeByName(db,
-                    context.getString(myApp.trainingdiary.R.string.baseExType_cycle));
+                    CONTEXT.getString(R.string.long_dist_ex_type_base));
             Log.i(Consts.LOG_TAG, "findPowerExType: " + power_id);
             Log.i(Consts.LOG_TAG, "findCycleExType: " + cycle_id);
             if (c.moveToFirst()) {
