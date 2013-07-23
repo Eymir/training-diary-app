@@ -20,9 +20,9 @@
     <string name="SupMainAct_btb_start_tr">Начать тренировку</string>
     <string name="title_activity_sort_ex_in_training_day">Установка последовательности</string>
     <string name="btnSortExInTr">Применить</string>
-    <string name="BaseExJim">Жим лежа</string>
-    <string name="BaseExPrised">Присед</string>
-    <string name="BaseExStan">Становая тяга</string>
+    <string name="jim_ex_name_base">Жим лежа</string>
+    <string name="prised_ex_name_base">Присед</string>
+    <string name="stanovaya_ex_name_base">Становая тяга</string>
     <string name="BaseExPodtyag">Подтягивания</string>
     <string name="BaseExBrus">Брусья</string>
     <string name="title_activity_set_sort_ex">Назначте номер упражнения</string>
@@ -104,4 +104,13 @@
     <string name="trainings">Тренировки</string>
     <string name="coming_soon">Появится в следующей версии</string>
     <string name="backup_button_text">Сохранить бэкап</string>
+    <string name="bitceps_ex_name_base">Штанга на битцепс стоя</string>
+    <string name="french_ex_name_base">Французкий жим</string>
+    <string name="run_ex_name_base">Бег (км)</string>
+    <string name="pushups_ex_name_base">Отжимания от пола</string>
+    <string name="podtyagivaniya_ex_name_base">Подтягивания</string>
+    <string name="weight_ex_name_base">Вес</string>
+    <string name="dumbbell_ex_type_base">Гантели</string>
+    <string name="dumbbell_ex_name_base">Разводка гантелей</string>
+    <string name="bitceps_size_ex_name_base">Объем битцепса</string>
 </resources>

@@ -232,8 +232,8 @@ public class SelectExToAddInTrActivity extends Activity implements OnClickListen
     {	
 	    	//�������� ������� ���������� �� ������� ;)
 	    String[] Ex_name = {getResources().getString(R.string.BaseExBrus),
-	    		getResources().getString(R.string.BaseExJim),getResources().getString(R.string.BaseExPodtyag),
-	    		getResources().getString(R.string.BaseExPrised),getResources().getString(R.string.BaseExStan)};
+	    		getResources().getString(R.string.jim_ex_name_base),getResources().getString(R.string.BaseExPodtyag),
+	    		getResources().getString(R.string.prised_ex_name_base),getResources().getString(R.string.stanovaya_ex_name_base)};
 	    
 	    ContentValues cv = new ContentValues();	
 	    dbHelper = DBHelper.getInstance(this);
