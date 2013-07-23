@@ -7,6 +7,7 @@ import java.util.Date;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.entity.EntityManager;
+import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
@@ -59,6 +60,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         createInitialTypes(db);
         createInitialExercises(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(Consts.LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
+                + newVersion);
+
+        switch (oldVersion) {
+            case 1:
+                upgradeFrom_1_To_2(db);
+            case 2:
+                upgradeFrom_2_To_3(db);
+            case 3:
+                upgradeFrom_3_To_4(db);
+        }
+
     }
 
 
@@ -156,13 +173,71 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     private void createInitialExercises(SQLiteDatabase db) {
-        // TODO: ������� ��������� ����������
+        Log.d(Consts.LOG_TAG, "--- onCreate createInitialExercises ---");
+        //Jim
+        Exercise jim = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                CONTEXT.getString(R.string.jim_ex_name_base));
+        EM.persist(db, jim);
+        //Ganteli
+        Exercise dumbbell = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.dumbbell_ex_type_base)),
+                CONTEXT.getString(R.string.dumbbell_ex_name_base));
+        EM.persist(db, dumbbell);
+        //Prised
+        Exercise prised = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                CONTEXT.getString(R.string.prised_ex_name_base));
+        EM.persist(db, prised);
+        //Stanovaya
+        Exercise stanovaya = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                CONTEXT.getString(R.string.stanovaya_ex_name_base));
+        EM.persist(db, stanovaya);
+        //Штанга на битцепс
+        Exercise bar_bitceps = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                CONTEXT.getString(R.string.bitceps_ex_name_base));
+        EM.persist(db, bar_bitceps);
+        //Французкий жим
+        Exercise french_jim = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                CONTEXT.getString(R.string.french_ex_name_base));
+        EM.persist(db, french_jim);
+        //Бег (км)
+        Exercise run = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.long_dist_ex_type_base)),
+                CONTEXT.getString(R.string.run_ex_name_base));
+        EM.persist(db, run);
+        //Отжимания
+        Exercise pushups = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.count_ex_type_base)),
+                CONTEXT.getString(R.string.pushups_ex_name_base));
+        EM.persist(db, pushups);
+        //Подтягивания
+        Exercise podtyagivaniya = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.count_ex_type_base)),
+                CONTEXT.getString(R.string.podtyagivaniya_ex_name_base));
+        EM.persist(db, podtyagivaniya);
+        //Вес
+        Exercise weight = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.weight_ex_type_base)),
+                CONTEXT.getString(R.string.weight_ex_name_base));
+        EM.persist(db, weight);
+        //Объем битцепса
+        Exercise bitceps_size = new Exercise(null,
+                READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.size_ex_type_base)),
+                CONTEXT.getString(R.string.bitceps_size_ex_name_base));
+        EM.persist(db, bitceps_size);
     }
 
     private void createInitialTypes(SQLiteDatabase db) {
+        Log.d(Consts.LOG_TAG, "--- onCreate createInitialTypes ---");
+
         ExerciseType power_weight_type = new ExerciseType(null,
                 CONTEXT.getResources().getResourceName(R.drawable.power),
                 CONTEXT.getString(R.string.bar_ex_type_base));
+        Log.d(Consts.LOG_TAG, "icon_res power: " + CONTEXT.getResources().getResourceName(R.drawable.power));
         power_weight_type.getMeasures()
                 .add(new Measure(null,
                         CONTEXT.getString(R.string.power_weight_measure_base),
@@ -172,6 +247,19 @@ public class DBHelper extends SQLiteOpenHelper {
                         CONTEXT.getString(R.string.repeat_measure_base),
                         99, 1.0, MeasureType.Numeric));
         EM.persist(db, power_weight_type);
+
+        ExerciseType dumbbells_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.dumbbell),
+                CONTEXT.getString(R.string.dumbbell_ex_type_base));
+        dumbbells_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.power_weight_measure_base),
+                        99, 1.0, MeasureType.Numeric));
+        dumbbells_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.repeat_measure_base),
+                        99, 1.0, MeasureType.Numeric));
+        EM.persist(db, dumbbells_type);
 
         ExerciseType long_dist_type = new ExerciseType(null,
                 CONTEXT.getResources().getResourceName(R.drawable.cycle),
@@ -242,27 +330,137 @@ public class DBHelper extends SQLiteOpenHelper {
         WRITE.insertMeasureExType(db, cycle_id, t_m_id, 1);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(Consts.LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
-                + newVersion);
-        if (oldVersion == 1 && newVersion == 2) {
-            upgradeFrom_1_To_2(db);
-        }
-        if (oldVersion == 1 && newVersion == 3) {
-            upgradeFrom_1_To_2(db);
-            upgradeFrom_2_To_3(db);
-        }
-        if (oldVersion == 2 && newVersion == 3) {
-            upgradeFrom_2_To_3(db);
-        }
-        if (oldVersion == 3 && newVersion == 4) {
-            upgradeFrom_3_To_4(db);
+    private void createTypes_ver_4(SQLiteDatabase db) {
+        ExerciseType dumbbells_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.dumbbell),
+                CONTEXT.getString(R.string.dumbbell_ex_type_base));
+        dumbbells_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.power_weight_measure_base),
+                        99, 1.0, MeasureType.Numeric));
+        dumbbells_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.repeat_measure_base),
+                        99, 1.0, MeasureType.Numeric));
+        EM.persist(db, dumbbells_type);
+        ExerciseType count_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.count),
+                CONTEXT.getString(R.string.count_ex_type_base));
+        count_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.repeat_measure_base),
+                        500, 1.0, MeasureType.Numeric));
+        EM.persist(db, count_type);
+
+        ExerciseType weight_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.weight),
+                CONTEXT.getString(R.string.weight_ex_type_base));
+        weight_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.weight_measure_base),
+                        500, 0.001, MeasureType.Numeric));
+        EM.persist(db, weight_type);
+
+        ExerciseType size_type = new ExerciseType(null,
+                CONTEXT.getResources().getResourceName(R.drawable.size),
+                CONTEXT.getString(R.string.size_ex_type_base));
+        size_type.getMeasures()
+                .add(new Measure(null,
+                        CONTEXT.getString(R.string.size_measure_base),
+                        99, 0.1, MeasureType.Numeric));
+        EM.persist(db, size_type);
+    }
+
+
+    private void upgradeFrom_3_To_4(SQLiteDatabase db) {
+        try {
+            db.beginTransaction();
+            createTypes_ver_4(db);
+            createExercise_ver_4(db);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 
-    private void upgradeFrom_3_To_4(SQLiteDatabase db) {
-
+    private void createExercise_ver_4(SQLiteDatabase db) {
+        //Jim
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.jim_ex_name_base))) {
+            Exercise jim = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                    CONTEXT.getString(R.string.jim_ex_name_base));
+            EM.persist(db, jim);
+        }
+        //Ganteli
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.dumbbell_ex_name_base))) {
+            Exercise dumbbell = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.dumbbell_ex_type_base)),
+                    CONTEXT.getString(R.string.dumbbell_ex_name_base));
+            EM.persist(db, dumbbell);
+        }
+        //Prised
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.prised_ex_name_base))) {
+            Exercise prised = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                    CONTEXT.getString(R.string.prised_ex_name_base));
+            EM.persist(db, prised);
+        }
+        //Stanovaya
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.stanovaya_ex_name_base))) {
+            Exercise stanovaya = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                    CONTEXT.getString(R.string.stanovaya_ex_name_base));
+            EM.persist(db, stanovaya);
+        }
+        //Штанга на битцепс
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.bitceps_ex_name_base))) {
+            Exercise bar_bitceps = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                    CONTEXT.getString(R.string.bitceps_ex_name_base));
+            EM.persist(db, bar_bitceps);
+        }
+        //Французкий жим
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.french_ex_name_base))) {
+            Exercise french_jim = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
+                    CONTEXT.getString(R.string.french_ex_name_base));
+            EM.persist(db, french_jim);
+        }
+        //Бег (км)
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.run_ex_name_base))) {
+            Exercise run = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.long_dist_ex_type_base)),
+                    CONTEXT.getString(R.string.run_ex_name_base));
+            EM.persist(db, run);
+        }
+        //Отжимания
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.pushups_ex_name_base))) {
+            Exercise pushups = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.count_ex_type_base)),
+                    CONTEXT.getString(R.string.pushups_ex_name_base));
+            EM.persist(db, pushups);
+        }
+        //Подтягивания
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.podtyagivaniya_ex_name_base))) {
+            Exercise podtyagivaniya = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.count_ex_type_base)),
+                    CONTEXT.getString(R.string.podtyagivaniya_ex_name_base));
+            EM.persist(db, podtyagivaniya);
+        }
+        //Вес
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.weight_ex_name_base))) {
+            Exercise weight = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.weight_ex_type_base)),
+                    CONTEXT.getString(R.string.weight_ex_name_base));
+            EM.persist(db, weight);
+        }
+        //Объем битцепса
+        if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.bitceps_size_ex_name_base))) {
+            Exercise bitceps_size = new Exercise(null,
+                    READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.size_ex_type_base)),
+                    CONTEXT.getString(R.string.bitceps_size_ex_name_base));
+            EM.persist(db, bitceps_size);
+        }
     }
 
     private void upgradeFrom_1_To_2(SQLiteDatabase db) {

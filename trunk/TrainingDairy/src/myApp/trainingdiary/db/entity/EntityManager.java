@@ -23,6 +23,9 @@ public class EntityManager {
     }
 
     public ExerciseType persist(SQLiteDatabase db, ExerciseType ex_type) {
+        if (ex_type.getId() == null) {
+            return ex_type;
+        }
         long type_id = dBHelper.WRITE.insertExerciseType(db,
                 ex_type.getName(), ex_type.getIcon());
         ex_type.setId(type_id);
@@ -35,5 +38,17 @@ public class EntityManager {
             i++;
         }
         return ex_type;
+
+    }
+
+    public Exercise persist(SQLiteDatabase db, Exercise exercise) {
+        if (exercise.getId() == null) {
+            return exercise;
+        }
+        ExerciseType type = exercise.getType();
+        type = persist(db, type);
+        long id = dBHelper.WRITE.insertExercise(db, exercise.getName(), type.getId());
+        exercise.setId(id);
+        return exercise;
     }
 }

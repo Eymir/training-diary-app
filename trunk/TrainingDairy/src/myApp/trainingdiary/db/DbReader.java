@@ -70,6 +70,28 @@ public class DbReader {
         return c;
     }
 
+    public ExerciseType getExerciseTypeByName(SQLiteDatabase db, String name) {
+        String sqlQuery = "select " +
+                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
+                "from ExerciseType ex_type " +
+                "where ex_type.name = ? ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{name});
+        try {
+            if (c.moveToFirst()) {
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                String type_name = c.getString(c.getColumnIndex("type_name"));
+                String type_icon = c.getString(c.getColumnIndex("type_icon"));
+                return new ExerciseType(type_id, type_icon, type_name);
+            } else {
+                return null;
+            }
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            return null;
+        }
+    }
+
     public Exercise getExerciseById(long ex_id) {
         String sqlQuery = "select ex.id ex_id, ex.name ex_name, " +
                 "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
@@ -97,15 +119,23 @@ public class DbReader {
     }
 
     public boolean isExerciseInDB(String name) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try {
+            return isExerciseInDB(db, name);
+        } finally {
+            db.close();
+        }
+    }
+
+    public boolean isExerciseInDB(SQLiteDatabase db, String name) {
         String sqlQuery = "select * " +
                 "from Exercise " +
                 "where name = ? ";
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
         int count = c.getCount();
         c.close();
-        return count != 0;
+        return count > 0;
     }
 
     public boolean isTrainingInDB(String name) {
@@ -117,7 +147,7 @@ public class DbReader {
                 .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
         int count = c.getCount();
         c.close();
-        return count != 0;
+        return count > 0;
     }
 
     public List<TrainingStat> getTrainingStatForLastPeriod(int period) {
@@ -280,7 +310,7 @@ public class DbReader {
      * ���������� ������
      *
      * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     *         ������������ ��� _id
+     * ������������ ��� _id
      */
     public Cursor getTrainings(SQLiteDatabase db) {
         String sqlQuery = "select tr.id as _id, tr.name, tr.position from Training tr order by tr.position asc";
@@ -293,7 +323,7 @@ public class DbReader {
      * ���������� ������
      *
      * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     *         ������������ ��� _id
+     * ������������ ��� _id
      */
     public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
         String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
