@@ -23,7 +23,7 @@ public class EntityManager {
     }
 
     public ExerciseType persist(SQLiteDatabase db, ExerciseType ex_type) {
-        if (ex_type.getId() == null) {
+        if (ex_type.getId() != null) {
             return ex_type;
         }
         long type_id = dBHelper.WRITE.insertExerciseType(db,
@@ -42,7 +42,7 @@ public class EntityManager {
     }
 
     public Exercise persist(SQLiteDatabase db, Exercise exercise) {
-        if (exercise.getId() == null) {
+        if (exercise.getId() != null) {
             return exercise;
         }
         ExerciseType type = exercise.getType();

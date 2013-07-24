@@ -84,7 +84,7 @@ public class AddExerciseActivity extends Activity {
         create_button = (Button) createExGonablePanel
                 .findViewById(R.id.create_button);
 
-        guiMediator = new AddExGuiMediator(this,name_edit, createClickableLayout,
+        guiMediator = new AddExGuiMediator(this, name_edit, createClickableLayout,
                 chooseClickableLayout, createExGonablePanel, exerciseListGonablePanel);
 
         initCreatePanel();
@@ -150,12 +150,13 @@ public class AddExerciseActivity extends Activity {
             @Override
             public boolean setViewValue(View view, Cursor cursor,
                                         int columnIndex) {
-
                 if (view.getId() == R.id.icon) {
-
+                    String name = cursor.getString(columnIndex);
+                    Log.d(Consts.LOG_TAG, "image.name: " + name);
                     ((ImageView) view).setImageResource(getResources()
-                            .getIdentifier(cursor.getString(columnIndex),
+                            .getIdentifier(name,
                                     "drawable", getPackageName()));
+
                     return true;
                 }
                 return false;
