@@ -358,7 +358,15 @@ public class DbReader {
         int count = c.getInt(c.getColumnIndex("_count"));
         c.close();
         return count;
+    }
 
+    public int getExerciseTypeCount(SQLiteDatabase db) {
+        String sqlQuery = "select count(t.id) as _count from ExerciseType t";
+        Cursor c = db.rawQuery(sqlQuery, null);
+        c.moveToFirst();
+        int count = c.getInt(c.getColumnIndex("_count"));
+        c.close();
+        return count;
     }
 
     public int getExerciseInTrainingCount(SQLiteDatabase db) {

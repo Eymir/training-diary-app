@@ -1,66 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="myApp.trainingdiary"
-    android:versionCode="7"
-    android:versionName="0.7b" >
+          package="myApp.trainingdiary"
+          android:versionCode="7"
+          android:versionName="0.7b">
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
+            android:minSdkVersion="9"
+            android:targetSdkVersion="17"/>
 
     <application
-        android:allowBackup="false"
-        android:icon="@drawable/ic_dairy"
-        android:label="@string/app_name"
-        android:theme="@style/AppBaseTheme" >
+            android:allowBackup="false"
+            android:icon="@drawable/ic_dairy"
+            android:label="@string/app_name"
+            android:theme="@style/AppBaseTheme">
         <activity
-            android:name="myApp.trainingdiary.training.TrainingActivity"
-            android:label="@string/trainings" >
+                android:name="myApp.trainingdiary.training.TrainingActivity"
+                android:label="@string/trainings"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.excercise.AddExerciseActivity"
-            android:label="@string/title_activity_add_exercise" >
+                android:name="myApp.trainingdiary.excercise.AddExerciseActivity"
+                android:label="@string/title_activity_add_exercise"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+                android:name="myApp.trainingdiary.SettingsActivity"
+                android:label="@string/title_activity_settings"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.excercise.EditExActivity"
-            android:label="@string/title_activity_edit_ex" >
+                android:name="myApp.trainingdiary.excercise.EditExActivity"
+                android:label="@string/title_activity_edit_ex"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.excercise.SelectExToAddInTrActivity"
-            android:label="@string/title_activity_select_ex_to_add_in_tr" >
+                android:name="myApp.trainingdiary.excercise.SelectExToAddInTrActivity"
+                android:label="@string/title_activity_select_ex_to_add_in_tr"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".result.ResultActivity"
-            android:label="@string/title_activity_result" >
+                android:name=".result.ResultActivity"
+                android:label="@string/title_activity_result"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.excercise.ExerciseActivity"
-            android:label="@string/title_activity_exercise_in_training" >
+                android:name="myApp.trainingdiary.excercise.ExerciseActivity"
+                android:label="@string/title_activity_exercise_in_training"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.StatisticActivity"
-            android:label="@string/title_activity_statistic" >
+                android:name="myApp.trainingdiary.StatisticActivity"
+                android:label="@string/title_activity_statistic">
         </activity>
         <activity
-            android:name=".history.HistoryMainActivity"
-            android:label="@string/title_activity_history_main_acrivity" >
+                android:name=".history.HistoryMainActivity"
+                android:label="@string/title_activity_history_main_acrivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name="myApp.trainingdiary.SuperMainActivity"
-            android:label="@string/title_activity_super_main" >
+                android:name="myApp.trainingdiary.SuperMainActivity"
+                android:label="@string/title_activity_super_main"
+                android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name="myApp.trainingdiary.history.HistoryDetailActivity"
-            android:label="@string/title_activity_history_detail" >
+                android:name="myApp.trainingdiary.history.HistoryDetailActivity"
+                android:label="@string/title_activity_history_detail"
+                android:screenOrientation="portrait">
         </activity>
     </application>
 

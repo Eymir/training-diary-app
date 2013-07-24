@@ -21,9 +21,7 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-
     private static DBHelper mInstance = null;
-
 
     private final static int DB_VERSION = 4;
 
@@ -58,15 +56,22 @@ public class DBHelper extends SQLiteOpenHelper {
         createMeasureExTypeTable(db);
         createTrainingStatTable(db);
 
+        Log.d(Consts.LOG_TAG, "before - createInitialTypes count: "
+                + READ.getExerciseTypeCount(db));
         createInitialTypes(db);
+        Log.d(Consts.LOG_TAG, "after - createInitialTypes count: "
+                + READ.getExerciseTypeCount(db));
+        Log.d(Consts.LOG_TAG, "before - createInitialExercises count: "
+                + READ.getExerciseCount(db));
         createInitialExercises(db);
+        Log.d(Consts.LOG_TAG, "after - createInitialExercises count: "
+                + READ.getExerciseCount(db));
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(Consts.LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
                 + newVersion);
-
         switch (oldVersion) {
             case 1:
                 upgradeFrom_1_To_2(db);
@@ -331,6 +336,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createTypes_ver_4(SQLiteDatabase db) {
+        Log.d(Consts.LOG_TAG, "--- createTypes_ver_4 ---");
         ExerciseType dumbbells_type = new ExerciseType(null,
                 CONTEXT.getResources().getResourceName(R.drawable.dumbbell),
                 CONTEXT.getString(R.string.dumbbell_ex_type_base));
@@ -358,7 +364,7 @@ public class DBHelper extends SQLiteOpenHelper {
         weight_type.getMeasures()
                 .add(new Measure(null,
                         CONTEXT.getString(R.string.weight_measure_base),
-                        500, 0.001, MeasureType.Numeric));
+                        300, 0.1, MeasureType.Numeric));
         EM.persist(db, weight_type);
 
         ExerciseType size_type = new ExerciseType(null,
@@ -375,8 +381,17 @@ public class DBHelper extends SQLiteOpenHelper {
     private void upgradeFrom_3_To_4(SQLiteDatabase db) {
         try {
             db.beginTransaction();
+            Log.d(Consts.LOG_TAG, "before - createTypes_ver_4 count: "
+                    + READ.getExerciseTypeCount(db));
             createTypes_ver_4(db);
+            Log.d(Consts.LOG_TAG, "after - createTypes_ver_4 count: "
+                    + READ.getExerciseTypeCount(db));
+
+            Log.d(Consts.LOG_TAG, "before - createExercise_ver_4 count: "
+                    + READ.getExerciseCount(db));
             createExercise_ver_4(db);
+            Log.d(Consts.LOG_TAG, "after - createExercise_ver_4 count: "
+                    + READ.getExerciseCount(db));
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -384,6 +399,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createExercise_ver_4(SQLiteDatabase db) {
+        Log.d(Consts.LOG_TAG, "--- createExercise_ver_4 ---");
+
         //Jim
         if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.jim_ex_name_base))) {
             Exercise jim = new Exercise(null,
