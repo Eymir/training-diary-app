@@ -5,7 +5,6 @@ import myApp.trainingdiary.db.DBHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.app.Activity;
-import android.database.Cursor;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -52,7 +51,7 @@ public class SettingsActivity extends Activity {
         messEx = messEx + ": " + cEx;
         tvCountEx.setText(messEx);
 
-        int cHs = dbHelper.READ.getAllTrainingStats(db);
+        int cHs = dbHelper.READ.getTrainingStatCount(db);
         String messHist = getResources().getString(R.string.count_tr_stat);
         messHist = messHist + ": " + cHs;
         tvCountHist.setText(messHist);

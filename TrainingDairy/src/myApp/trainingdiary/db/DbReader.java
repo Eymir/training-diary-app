@@ -310,7 +310,7 @@ public class DbReader {
      * ���������� ������
      *
      * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     * ������������ ��� _id
+     *         ������������ ��� _id
      */
     public Cursor getTrainings(SQLiteDatabase db) {
         String sqlQuery = "select tr.id as _id, tr.name, tr.position from Training tr order by tr.position asc";
@@ -323,7 +323,7 @@ public class DbReader {
      * ���������� ������
      *
      * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     * ������������ ��� _id
+     *         ������������ ��� _id
      */
     public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
         String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
@@ -400,12 +400,38 @@ public class DbReader {
         return result;
     }
 
-    public int getAllTrainingStats(SQLiteDatabase db) {
+    public int getTrainingStatCount(SQLiteDatabase db) {
         String sqlQuery = "select count(stat.id) as _count from TrainingStat stat";
         Cursor c = db.rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
         c.close();
         return count;
+    }
+
+
+    public List<TrainingStat> getExerciseProgress(Long ex_id) {
+        List<TrainingStat> stats = new ArrayList<TrainingStat>();
+        String sqlQuery = "select * from TrainingStat tr_stat " +
+                "where tr_stat.exercise_id = ? " +
+                "order by tr_stat.date asc ";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                String value = c.getString(c.getColumnIndex("value"));
+                stats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
+            }
+            return stats;
+        } finally {
+            c.close();
+            db.close();
+        }
     }
 }

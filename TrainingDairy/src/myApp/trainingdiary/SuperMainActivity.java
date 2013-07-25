@@ -3,6 +3,7 @@ package myApp.trainingdiary;
 import myApp.trainingdiary.history.HistoryMainActivity;
 import myApp.trainingdiary.excercise.AddExerciseActivity;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.training.TrainingActivity;
 
 import android.app.Activity;

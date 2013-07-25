@@ -49,7 +49,7 @@
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name="myApp.trainingdiary.StatisticActivity"
+                android:name=".statistic.StatisticActivity"
                 android:label="@string/title_activity_statistic">
         </activity>
         <activity

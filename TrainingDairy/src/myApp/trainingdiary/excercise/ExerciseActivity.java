@@ -13,6 +13,7 @@ import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
+import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.utils.Validator;
@@ -108,6 +109,12 @@ public class ExerciseActivity extends Activity {
         intentOpenResultAct.putExtra(Consts.EXERCISE_ID, ex_id);
         intentOpenResultAct.putExtra(Consts.TRAINING_ID, tr_id);
         startActivity(intentOpenResultAct);
+    }
+
+    private void openStatActivity(long ex_id) {
+        Intent activity = new Intent(this, StatisticActivity.class);
+        activity.putExtra(Consts.EXERCISE_ID, ex_id);
+        startActivity(activity);
     }
 
     private void printLogExInTr() {
@@ -288,8 +295,7 @@ public class ExerciseActivity extends Activity {
                                 openHistoryDetailActivity(cur_ex_id);
                                 break;
                             case ID_STAT_EXERCISE:
-                                Toast.makeText(ExerciseActivity.this, R.string.coming_soon,
-                                        Toast.LENGTH_SHORT).show();
+                                openStatActivity(cur_ex_id);
                                 break;
                         }
                     }
