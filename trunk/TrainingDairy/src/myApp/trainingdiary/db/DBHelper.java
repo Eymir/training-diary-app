@@ -47,6 +47,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         createTrainingTable(db);
         createExerciseTypeTable(db);
@@ -553,7 +558,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     double power = c.getDouble(c.getColumnIndex("power"));
                     int count = c.getInt(c.getColumnIndex("count"));
                     long ex_id = findExerciseByName(db, exercise);
-                    String value = DbFormatter.toStatValue(formatter.format(power),
+                    String value = MeasureFormatter.toStatValue(formatter.format(power),
                             String.valueOf(count));
                     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
                     Date date = null;

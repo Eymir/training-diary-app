@@ -103,6 +103,7 @@
     <string name="empty">Пусто</string>
     <string name="trainings">Тренировки</string>
     <string name="coming_soon">Появится в следующей версии</string>
+    <string name="exercise_not_chosen">Упражнение не выбрано</string>
     <string name="backup_button_text">Сохранить бэкап</string>
     <string name="bitceps_ex_name_base">Штанга на битцепс стоя</string>
     <string name="french_ex_name_base">Французкий жим</string>
@@ -113,4 +114,5 @@
     <string name="dumbbell_ex_type_base">Гантели</string>
     <string name="dumbbell_ex_name_base">Разводка гантелей</string>
     <string name="bitceps_size_ex_name_base">Объем битцепса</string>
+    <string name="exercise_nothing_to_show">Не было ни одной тренировки</string>
 </resources>

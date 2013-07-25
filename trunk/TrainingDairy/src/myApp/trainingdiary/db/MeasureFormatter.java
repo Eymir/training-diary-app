@@ -3,7 +3,7 @@ package myApp.trainingdiary.db;
 import java.util.Arrays;
 import java.util.List;
 
-public class DbFormatter {
+public class MeasureFormatter {
 
     /**
      * �������� �������� � ������ �������� � �� (102.5x3)
@@ -26,6 +26,11 @@ public class DbFormatter {
     public static List<String> toMeasureValues(String statValue) {
         String[] values = statValue.split("x");
         return Arrays.asList(values);
+    }
+
+    public static double getValueByPos(String statValue, int pos) {
+        List<String> values = toMeasureValues(statValue);
+        return Double.valueOf(values.get(pos));
     }
 
 }

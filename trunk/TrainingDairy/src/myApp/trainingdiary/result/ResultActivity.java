@@ -16,6 +16,7 @@ import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
+import myApp.trainingdiary.db.MeasureFormatter;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
@@ -29,7 +30,6 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import myApp.trainingdiary.db.DbFormatter;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.TrainingStat;
 
@@ -107,7 +107,7 @@ public class ResultActivity extends Activity implements OnClickListener {
     private void setLastTrainingStatOnWheels(TrainingStat tr_stat) {
         String value = tr_stat.getValue();
         Log.d(Consts.LOG_TAG, "setLastTrainingStatOnWheels:" + value);
-        List<String> measureValues = DbFormatter.toMeasureValues(value);
+        List<String> measureValues = MeasureFormatter.toMeasureValues(value);
         for (int i = 0; i < measureWheelsList.size(); i++) {
             MeasureWheels measureWheels = measureWheelsList.get(i);
             String measureValue = measureValues.get(i);

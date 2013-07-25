@@ -19,4 +19,5 @@ public class Consts {
     public static final int TRAINING_TYPE = 0;
     public static final int EXERCISE_TYPE = 1;
 
+    public static final String STATISTIC_TYPE = "STATISTIC_TYPE";
 }
