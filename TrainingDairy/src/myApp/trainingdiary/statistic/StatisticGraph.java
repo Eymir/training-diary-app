@@ -1,13 +1,20 @@
 package myApp.trainingdiary.statistic;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.chart.PointStyle;
+import org.achartengine.model.SeriesSelection;
 import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
 
 /**
  * Created by Lenovo on 28.07.13.
@@ -15,6 +22,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 public class StatisticGraph {
 
 
+    private final Context context;
     /**
      * The main dataset that includes all the series that go into a chart.
      */
@@ -36,8 +44,10 @@ public class StatisticGraph {
      */
     private GraphicalView mChartView;
 
-    public StatisticGraph() {
+
+    public StatisticGraph(Context context) {
         //set some properties on the main renderer
+        this.context = context;
         mRenderer.setApplyBackgroundColor(true);
         mRenderer.setMarginsColor(Color.TRANSPARENT);
         mRenderer.setGridColor(Color.BLACK);
@@ -49,17 +59,17 @@ public class StatisticGraph {
         mRenderer.setMargins(new int[]{20, 30, 15, 0});
         mRenderer.setZoomButtonsVisible(true);
         mRenderer.setPointSize(10);
-
+        createGraphView();
     }
 
-    public void repaint(){
+    public void repaint() {
         mChartView.repaint();
     }
 
-    private void createGraphView() {
+    private View createGraphView() {
 
         if (mChartView == null) {
-            mChartView = ChartFactory.getLineChartView(this, mDataset, mRenderer);
+            mChartView = ChartFactory.getLineChartView(context, mDataset, mRenderer);
             // enable the chart click events
             mRenderer.setClickEnabled(true);
             mRenderer.setSelectableBuffer(10);
@@ -68,11 +78,11 @@ public class StatisticGraph {
                     // handle the click event on the chart
                     SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
                     if (seriesSelection == null) {
-                        Toast.makeText(StatisticActivity.this, "No chart element", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "No chart element", Toast.LENGTH_SHORT).show();
                     } else {
                         // display information of the clicked point
                         Toast.makeText(
-                                StatisticActivity.this,
+                                context,
                                 "Chart element in series index " + seriesSelection.getSeriesIndex()
                                         + " data point index " + seriesSelection.getPointIndex() + " was clicked"
                                         + " closest point value X=" + seriesSelection.getXValue() + ", Y="
@@ -80,23 +90,25 @@ public class StatisticGraph {
                     }
                 }
             });
-            graphLayout.addView(mChartView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
+
         } else {
             mChartView.repaint();
         }
+
+        return mChartView;
     }
 
     public void saveState(Bundle outState)
 
-{
-    outState.putSerializable("dataset", mDataset);
-    outState.putSerializable("renderer", mRenderer);
-    outState.putSerializable("current_series", mCurrentSeries);
-    outState.putSerializable("current_renderer", mCurrentRenderer);
+    {
+        outState.putSerializable("dataset", mDataset);
+        outState.putSerializable("renderer", mRenderer);
+        outState.putSerializable("current_series", mCurrentSeries);
+        outState.putSerializable("current_renderer", mCurrentRenderer);
 
-}
-    public void restoreState(Bundle savedState){
+    }
+
+    public void restoreState(Bundle savedState) {
         mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("dataset");
         mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("renderer");
         mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
@@ -123,5 +135,41 @@ public class StatisticGraph {
         mChartView.repaint();
     }
 
+    private int getColor(int seriesCount) {
 
+        switch (seriesCount) {
+            case 0:
+                return Color.GREEN;
+            case 1:
+                return Color.BLUE;
+            case 2:
+                return Color.RED;
+            case 3:
+                return Color.GRAY;
+            case 4:
+                return Color.BLACK;
+            case 5:
+                return Color.MAGENTA;
+            case 6:
+                return Color.DKGRAY;
+            case 7:
+                return Color.YELLOW;
+            default:
+                return Color.CYAN;
+        }
+    }
+
+
+    public View getView() {
+        return mChartView;
+    }
+
+    public XYSeries getSeries(String name) {
+        for (XYSeries series : mDataset.getSeries()) {
+            if (series.getTitle().equalsIgnoreCase(name)) {
+                return series;
+            }
+        }
+        return null;
+    }
 }

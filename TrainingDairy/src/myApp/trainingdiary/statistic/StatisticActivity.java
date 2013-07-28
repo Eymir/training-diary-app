@@ -61,7 +61,7 @@ public class StatisticActivity extends Activity {
         graphLayout = (LinearLayout) findViewById(R.id.graph);
         icon = (ImageView) findViewById(R.id.icon);
         dbHelper = DBHelper.getInstance(this);
-        graph = createGraph();
+        createGraph();
         try {
             ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
         } catch (NullPointerException e) {
@@ -78,10 +78,15 @@ public class StatisticActivity extends Activity {
             }
         });
 
+        graphLayout.addView(graph.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private StatisticGraph createGraph() {
-        return new StatisticGraph();
+        if (graph == null) {
+            graph = new StatisticGraph(this);
+        }
+        return graph;
     }
 
     private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, Long group_count) {
@@ -103,17 +108,17 @@ public class StatisticActivity extends Activity {
                 measure = exercise.getType().getMeasures().get(0);
             }
             if (group_measure_id == null) {
-                addSeries(measure.getName());
+                graph.addSeries(measure.getName());
                 for (TrainingStat stat : progress) {
-                    mCurrentSeries.add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                    graph.getSeries(measure.getName()).add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
                 }
             } else {
                 int m_g_pos = getPosByMeasureId(group_measure_id, exercise.getType());
                 Measure group_measure = getMeasureById(measure_id, exercise.getType());
                 if (m_g_pos == pos) {
-                    addSeries(measure.getName());
+                    graph.addSeries(measure.getName());
                     for (TrainingStat stat : progress) {
-                        mCurrentSeries.add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                        graph.getSeries(measure.getName()).add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
                     }
                 } else {
                     Map<String, List<Pair>> map = new HashMap<String, List<Pair>>();
@@ -143,9 +148,9 @@ public class StatisticActivity extends Activity {
                         map.remove(minKey);
                     }
                     for (String key : map.keySet()) {
-                        addSeries(group_measure.getName() + "_" + key);
+                        graph.addSeries(group_measure.getName() + "_" + key);
                         for (Pair p : map.get(key)) {
-                            mCurrentSeries.add(((Date) p.first).getTime(), (Double) p.second);
+                            graph.getSeries(group_measure.getName() + "_" + key).add(((Date) p.first).getTime(), (Double) p.second);
                         }
                     }
                 }
@@ -175,30 +180,6 @@ public class StatisticActivity extends Activity {
     }
 
 
-    private int getColor(int seriesCount) {
-
-        switch (seriesCount) {
-            case 0:
-                return Color.GREEN;
-            case 1:
-                return Color.BLUE;
-            case 2:
-                return Color.RED;
-            case 3:
-                return Color.GRAY;
-            case 4:
-                return Color.BLACK;
-            case 5:
-                return Color.MAGENTA;
-            case 6:
-                return Color.DKGRAY;
-            case 7:
-                return Color.YELLOW;
-            default:
-                return Color.CYAN;
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -224,7 +205,7 @@ public class StatisticActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        createGraphView();
+        graph.repaint();
     }
 
 
