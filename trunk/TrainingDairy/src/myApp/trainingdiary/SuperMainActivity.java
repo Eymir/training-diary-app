@@ -18,7 +18,6 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener {
 
     Button btnStart, btnAddEx, btnStat, btnHis, btnSettings, btnExit;
     DBHelper dbHelper;
-    final String LOG_TAG = "myLogs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +39,7 @@ public class SuperMainActivity<T> extends Activity implements OnClickListener {
         btnExit.setOnClickListener(this);
 
         dbHelper = DBHelper.getInstance(this);
-//        int count = dbHelper.READ.getTrainingsCount(dbHelper.getWritableDatabase());
-//        if (count > 0) {
-//            btnStart.performClick();
-//        }
-        //showinstructions();
+
     }
 
     @Override

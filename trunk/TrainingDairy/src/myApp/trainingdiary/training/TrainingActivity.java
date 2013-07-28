@@ -16,6 +16,8 @@ import com.mobeta.android.dslv.SimpleDragSortCursorAdapter.ViewBinder;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.utils.EmptyStringValidator;
+import myApp.trainingdiary.utils.TrainingExistValidator;
 import myApp.trainingdiary.utils.Validator;
 
 import android.os.Bundle;
@@ -50,7 +52,7 @@ public class TrainingActivity extends Activity {
     private DBHelper dbHelper;
     private DragSortListView trainingList;
     private SimpleDragSortCursorAdapter trainingDragAdapter;
-    private Dialog createTrainingDialog;
+    private Dialog createInputTextDialog;
     private Dialog renameTrainingDialog;
     private AlertDialog deleteTrainingDialog;
 
@@ -73,7 +75,7 @@ public class TrainingActivity extends Activity {
         addButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                createTrainingDialog.show();
+                createInputTextDialog.show();
             }
         });
 
@@ -106,38 +108,31 @@ public class TrainingActivity extends Activity {
     }
 
     private void createCreateTrDialog() {
-        createTrainingDialog = new Dialog(this);
-        createTrainingDialog.setContentView(R.layout.input_name_dialog);
-        createTrainingDialog.setTitle(R.string.title_create_training);
-        final EditText name_input = (EditText) createTrainingDialog
-                .findViewById(R.id.name_input);
-        Button okButton = (Button) createTrainingDialog
-                .findViewById(R.id.ok_button);
-        okButton.setText(R.string.create_button);
-        Button cancelButton = (Button) createTrainingDialog
-                .findViewById(R.id.cancel_button);
-        cancelButton.setText(R.string.cancel_button);
-        cancelButton.setOnClickListener(new OnClickListener() {
+        String title = getResources().getString(R.string.title_create_training);
+        String positiveButton = getResources().getString(R.string.create_button);
+        String negativeButton = getResources().getString(R.string.cancel_button);
+        DialogProvider.InputTextDialogClickListener listener = new DialogProvider.InputTextDialogClickListener() {
             @Override
-            public void onClick(View v) {
-                createTrainingDialog.cancel();
+            public void onPositiveClick(String text) {
+                dbHelper.WRITE.createTraining(text, dbHelper.READ.getTrainingsCount(dbHelper.getReadableDatabase()));
+//                createInputTextDialog.cancel();
+                Toast.makeText(TrainingActivity.this,
+                        R.string.create_success, Toast.LENGTH_SHORT).show();
+                refreshTrainings();
             }
-        });
 
-        okButton.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String name = name_input.getText().toString();
-                if (Validator.validateEmpty(TrainingActivity.this, name) &&
-                        Validator.validateTraining(TrainingActivity.this, name)) {
-                    dbHelper.WRITE.createTraining(name, dbHelper.READ.getTrainingsCount(dbHelper.getReadableDatabase()));
-                    createTrainingDialog.cancel();
-                    Toast.makeText(TrainingActivity.this,
-                            R.string.create_success, Toast.LENGTH_SHORT).show();
-                    refreshTrainings();
-                }
+            public void onNegativeClick() {
+                createInputTextDialog.cancel();
             }
-        });
+        };
+        createInputTextDialog = DialogProvider.createInputTextDialog(this,
+                title,
+                positiveButton,
+                negativeButton,
+                new EmptyStringValidator(new TrainingExistValidator()),
+                listener);
+
     }
 
     @Override
@@ -199,39 +194,26 @@ public class TrainingActivity extends Activity {
     }
 
     private void createRenameTrDialog() {
-        renameTrainingDialog = new Dialog(this);
-        renameTrainingDialog.setContentView(R.layout.input_name_dialog);
-        renameTrainingDialog.setTitle(R.string.title_rename_training);
-        final EditText name_input = (EditText) renameTrainingDialog
-                .findViewById(R.id.name_input);
-        Button okButton = (Button) renameTrainingDialog
-                .findViewById(R.id.ok_button);
-        okButton.setText(R.string.rename_button);
-        Button cancelButton = (Button) renameTrainingDialog
-                .findViewById(R.id.cancel_button);
-        cancelButton.setText(R.string.cancel_button);
-        cancelButton.setOnClickListener(new OnClickListener() {
+        String title = getResources().getString(R.string.title_rename_training);
+        String positiveButton = getResources().getString(R.string.rename_button);
+        String negativeButton = getResources().getString(R.string.cancel_button);
+        DialogProvider.InputTextDialogClickListener listener = new DialogProvider.InputTextDialogClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onPositiveClick(String text) {
+                dbHelper.WRITE.renameTraining(cur_tr_id, text);
+//                renameTrainingDialog.cancel();
+                Toast.makeText(TrainingActivity.this,
+                        R.string.rename_success, Toast.LENGTH_SHORT).show();
+                refreshTrainings();
+            }
+
+            @Override
+            public void onNegativeClick() {
                 renameTrainingDialog.cancel();
             }
-        });
-
-        okButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = name_input.getText().toString();
-                if (Validator.validateEmpty(TrainingActivity.this, name)
-                        && Validator.validateTraining(TrainingActivity.this, name)) {
-                    dbHelper.WRITE.renameTraining(cur_tr_id, name);
-                    renameTrainingDialog.cancel();
-                    Toast.makeText(TrainingActivity.this,
-                            R.string.rename_success, Toast.LENGTH_SHORT).show();
-
-                    refreshTrainings();
-                }
-            }
-        });
+        };
+        renameTrainingDialog = DialogProvider.createInputTextDialog(this, title, positiveButton, negativeButton,
+                new TrainingExistValidator(new EmptyStringValidator()), listener);
     }
 
     private List<Long> getNewTrIdOrder() {
@@ -287,29 +269,24 @@ public class TrainingActivity extends Activity {
     }
 
     private void createDeletionDialog() {
-        String title = getResources().getString(R.string.Dialog_del_ex_title);
-        String btnRename = getResources().getString(R.string.cancel_button);
+        String title = getResources().getString(R.string.dialog_del_tr_title);
+        String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-
-        adb.setTitle(title);
-
-        adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        deleteTrainingDialog = DialogProvider.createSimpleDialog(this, title, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+            @Override
+            public void onPositiveClick() {
                 dbHelper.WRITE.deleteTraining(cur_tr_id);
                 refreshTrainings();
                 Toast.makeText(TrainingActivity.this, R.string.deleted,
                         Toast.LENGTH_SHORT).show();
             }
-        });
-        adb.setNegativeButton(btnRename, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+
+            @Override
+            public void onNegativeClick() {
                 deleteTrainingDialog.cancel();
             }
         });
-
-        deleteTrainingDialog = adb.create();
     }
 
 }

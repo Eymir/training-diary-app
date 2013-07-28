@@ -17,6 +17,7 @@ import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
 import myApp.trainingdiary.db.MeasureFormatter;
+import myApp.trainingdiary.training.DialogProvider;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
@@ -118,12 +119,12 @@ public class ResultActivity extends Activity implements OnClickListener {
     private void createUndoDialog() {
 
         String title = getResources().getString(R.string.dialog_del_approach_title);
-        String btnRename = getResources().getString(R.string.cancel_button);
-        String btnDel = getResources().getString(R.string.delete_button);
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle(title);
-        adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        String cancelButton = getResources().getString(R.string.cancel_button);
+        String deleteButton = getResources().getString(R.string.delete_button);
+
+        undoDialog = DialogProvider.createSimpleDialog(this, title, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+            @Override
+            public void onPositiveClick() {
                 int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
                 if (deleted > 0) {
                     printCurrentTrainingProgress();
@@ -134,14 +135,12 @@ public class ResultActivity extends Activity implements OnClickListener {
                             Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-        adb.setNegativeButton(btnRename, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+
+            @Override
+            public void onNegativeClick() {
                 undoDialog.cancel();
             }
         });
-
-        undoDialog = adb.create();
     }
 
     private void printCurrentTrainingProgress() {
@@ -288,7 +287,7 @@ public class ResultActivity extends Activity implements OnClickListener {
             wheelView.setLayoutParams(params);
             measureWheel.wheelAdapter = wheelAdapter;
             measureWheel.wheelView = wheelView;
-            wheelView.setCurrentItem(tails.size()-1);
+            wheelView.setCurrentItem(tails.size() - 1);
             wheelView.addChangingListener(new OnWheelChangedListener() {
                 public void onChanged(WheelView wheel, int oldValue, int newValue) {
                     playClick();

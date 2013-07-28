@@ -14,9 +14,13 @@ import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
+import myApp.trainingdiary.training.DialogProvider;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.DBHelper;
-import myApp.trainingdiary.utils.Validator;
+import myApp.trainingdiary.utils.EmptyStringValidator;
+import myApp.trainingdiary.utils.ExerciseExistValidator;
+import myApp.trainingdiary.utils.TrainingExistValidator;
+import myApp.trainingdiary.utils.ValidatorUtils;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -81,7 +85,7 @@ public class ExerciseActivity extends Activity {
 
         fetchExercises();
         createExcerciseTools();
-        createRenameTrDialog();
+        createRenameExDialog();
         createDeletionDialog();
         exerciseList.setDropListener(new DragSortListView.DropListener() {
             @Override
@@ -194,41 +198,28 @@ public class ExerciseActivity extends Activity {
         exerciseList.setAdapter(exerciseAdapter);
     }
 
-    private void createRenameTrDialog() {
-        renameExerciseDialog = new Dialog(this);
-        renameExerciseDialog.setContentView(R.layout.input_name_dialog);
-        renameExerciseDialog.setTitle(R.string.title_rename_exercise);
-        final EditText name_input = (EditText) renameExerciseDialog
-                .findViewById(R.id.name_input);
-        Button okButton = (Button) renameExerciseDialog
-                .findViewById(R.id.ok_button);
-        okButton.setText(R.string.rename_button);
-        Button cancelButton = (Button) renameExerciseDialog
-                .findViewById(R.id.cancel_button);
-        cancelButton.setText(R.string.cancel_button);
-        cancelButton.setOnClickListener(new OnClickListener() {
+    private void createRenameExDialog() {
+        String title = getResources().getString(R.string.title_rename_exercise);
+        String positiveButton = getResources().getString(R.string.rename_button);
+        String negativeButton = getResources().getString(R.string.cancel_button);
+        DialogProvider.InputTextDialogClickListener listener = new DialogProvider.InputTextDialogClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onPositiveClick(String text) {
+                dbHelper.WRITE.renameExercise(cur_ex_id, text);
+                renameExerciseDialog.cancel();
+                Toast.makeText(ExerciseActivity.this,
+                        R.string.rename_success, Toast.LENGTH_SHORT).show();
+                refreshExercise();
+            }
+
+            @Override
+            public void onNegativeClick() {
                 renameExerciseDialog.cancel();
             }
-        });
-
-        okButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = name_input.getText().toString();
-                if (Validator.validateEmpty(ExerciseActivity.this, name)
-                        && Validator.validateTraining(ExerciseActivity.this, name)) {
-                    dbHelper.WRITE.renameExercise(cur_ex_id, name);
-                    renameExerciseDialog.cancel();
-                    Toast.makeText(ExerciseActivity.this,
-                            R.string.rename_success, Toast.LENGTH_SHORT).show();
-                    refreshExercise();
-                }
-            }
-        });
+        };
+        renameExerciseDialog = DialogProvider.createInputTextDialog(this, title, positiveButton, negativeButton,
+                new ExerciseExistValidator(new EmptyStringValidator()), listener);
     }
-
 
     protected void openAddExerciseActivity(long tr_id) {
         Intent intentOpenAddEx = new Intent(this, AddExerciseActivity.class);
@@ -331,29 +322,24 @@ public class ExerciseActivity extends Activity {
 
     private void createDeletionDialog() {
 
-        String title = getResources().getString(R.string.dialog_del_tr_title);
-        String btnRename = getResources().getString(R.string.cancel_button);
+        String title = getResources().getString(R.string.Dialog_del_ex_title);
+        String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        AlertDialog.Builder adb = new AlertDialog.Builder(this);
-
-        adb.setTitle(title);
-
-        adb.setPositiveButton(btnDel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+            @Override
+            public void onPositiveClick() {
                 dbHelper.WRITE.deleteExerciseFromTraining(tr_id, cur_ex_id);
                 refreshExercise();
                 Toast.makeText(ExerciseActivity.this, R.string.deleted,
                         Toast.LENGTH_SHORT).show();
             }
-        });
-        adb.setNegativeButton(btnRename, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+
+            @Override
+            public void onNegativeClick() {
                 removeExerciseDialog.cancel();
             }
         });
-
-        removeExerciseDialog = adb.create();
     }
 
 
