@@ -41,26 +41,6 @@ import myApp.trainingdiary.db.entity.TrainingStat;
 import myApp.trainingdiary.utils.Consts;
 
 public class StatisticActivity extends Activity {
-    /**
-     * The main dataset that includes all the series that go into a chart.
-     */
-    private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
-    /**
-     * The main renderer that includes all the renderers customizing a chart.
-     */
-    private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-    /**
-     * The most recently added series.
-     */
-    private XYSeries mCurrentSeries;
-    /**
-     * The most recently created renderer, customizing the current series.
-     */
-    private XYSeriesRenderer mCurrentRenderer;
-    /**
-     * The chart view that displays the data.
-     */
-    private GraphicalView mChartView;
 
     private ImageButton settingButton;
     private TextView label;
@@ -70,6 +50,7 @@ public class StatisticActivity extends Activity {
     private ImageView icon;
 
     private static final SimpleDateFormat SDF_DATE = new SimpleDateFormat("dd.MM.yy");
+    private StatisticGraph graph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,20 +60,8 @@ public class StatisticActivity extends Activity {
         label = (TextView) findViewById(R.id.label);
         graphLayout = (LinearLayout) findViewById(R.id.graph);
         icon = (ImageView) findViewById(R.id.icon);
-        //set some properties on the main renderer
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setMarginsColor(Color.TRANSPARENT);
-        mRenderer.setGridColor(Color.BLACK);
-        mRenderer.setBackgroundColor(Color.WHITE);
-        mRenderer.setAxisTitleTextSize(32);
-        mRenderer.setChartTitleTextSize(40);
-        mRenderer.setLabelsTextSize(30);
-        mRenderer.setLegendTextSize(30);
-        mRenderer.setMargins(new int[]{20, 30, 15, 0});
-        mRenderer.setZoomButtonsVisible(true);
-        mRenderer.setPointSize(10);
         dbHelper = DBHelper.getInstance(this);
-        createGraphView();
+        graph = createGraph();
         try {
             ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
         } catch (NullPointerException e) {
@@ -109,6 +78,10 @@ public class StatisticActivity extends Activity {
             }
         });
 
+    }
+
+    private StatisticGraph createGraph() {
+        return new StatisticGraph();
     }
 
     private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, Long group_count) {
@@ -180,7 +153,7 @@ public class StatisticActivity extends Activity {
         } else {
             label.setText(exercise.getName() + " - " + getString(R.string.exercise_nothing_to_show));
         }
-        mChartView.repaint();
+        graph.repaint();
     }
 
     private int getPosByMeasureId(Long measure_id, ExerciseType type) {
@@ -201,23 +174,6 @@ public class StatisticActivity extends Activity {
         return null;
     }
 
-    private void addSeries(String name) {
-        // create a new series of data
-        XYSeries series = new XYSeries(name);
-        mDataset.addSeries(series);
-        mCurrentSeries = series;
-        // create a new renderer for the new series
-        XYSeriesRenderer renderer = new XYSeriesRenderer();
-        mRenderer.addSeriesRenderer(renderer);
-        // set some renderer properties
-        renderer.setPointStyle(PointStyle.CIRCLE);
-        renderer.setFillPoints(true);
-        renderer.setDisplayChartValues(true);
-        renderer.setDisplayChartValuesDistance(10);
-        renderer.setColor(getColor(mDataset.getSeriesCount()));
-        mCurrentRenderer = renderer;
-        mChartView.repaint();
-    }
 
     private int getColor(int seriesCount) {
 
@@ -253,11 +209,8 @@ public class StatisticActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        graph.saveState(outState);
         // save the current data, for instance when changing screen orientation
-        outState.putSerializable("dataset", mDataset);
-        outState.putSerializable("renderer", mRenderer);
-        outState.putSerializable("current_series", mCurrentSeries);
-        outState.putSerializable("current_renderer", mCurrentRenderer);
     }
 
     @Override
@@ -265,10 +218,7 @@ public class StatisticActivity extends Activity {
         super.onRestoreInstanceState(savedState);
         // restore the current data, for instance when changing the screen
         // orientation
-        mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("dataset");
-        mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("renderer");
-        mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
-        mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
+        graph.restoreState(savedState);
     }
 
     @Override
@@ -277,35 +227,5 @@ public class StatisticActivity extends Activity {
         createGraphView();
     }
 
-    private void createGraphView() {
-
-        if (mChartView == null) {
-            mChartView = ChartFactory.getLineChartView(this, mDataset, mRenderer);
-            // enable the chart click events
-            mRenderer.setClickEnabled(true);
-            mRenderer.setSelectableBuffer(10);
-            mChartView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    // handle the click event on the chart
-                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-                    if (seriesSelection == null) {
-                        Toast.makeText(StatisticActivity.this, "No chart element", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // display information of the clicked point
-                        Toast.makeText(
-                                StatisticActivity.this,
-                                "Chart element in series index " + seriesSelection.getSeriesIndex()
-                                        + " data point index " + seriesSelection.getPointIndex() + " was clicked"
-                                        + " closest point value X=" + seriesSelection.getXValue() + ", Y="
-                                        + seriesSelection.getValue(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            graphLayout.addView(mChartView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-        } else {
-            mChartView.repaint();
-        }
-    }
 
 }
