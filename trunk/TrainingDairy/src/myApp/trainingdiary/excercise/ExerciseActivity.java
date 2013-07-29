@@ -2,7 +2,6 @@ package myApp.trainingdiary.excercise;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.widget.*;
 
 import com.mobeta.android.dslv.DragSortListView;
@@ -14,13 +13,11 @@ import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
-import myApp.trainingdiary.training.DialogProvider;
+import myApp.trainingdiary.utils.DialogProvider;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.utils.EmptyStringValidator;
 import myApp.trainingdiary.utils.ExerciseExistValidator;
-import myApp.trainingdiary.utils.TrainingExistValidator;
-import myApp.trainingdiary.utils.ValidatorUtils;
 
 import android.os.Bundle;
 import android.app.Activity;

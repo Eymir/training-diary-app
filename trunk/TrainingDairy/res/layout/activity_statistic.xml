@@ -27,13 +27,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.2"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/exercise_not_chosen"
                     android:id="@+id/label"
                     android:maxLines="2"
                     android:layout_gravity="center"/>
 
-            <ImageButton
+            <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"

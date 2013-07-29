@@ -1,4 +1,4 @@
-package myApp.trainingdiary.customview.itemadapter;
+package myApp.trainingdiary.customview.itemadapter.item;
 
 public class BigSectionItem implements Item {
 

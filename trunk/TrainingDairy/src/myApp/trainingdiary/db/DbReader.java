@@ -48,6 +48,18 @@ public class DbReader {
         return c;
     }
 
+    public Cursor getExercisesWithStat() {
+        String sqlQuery = "select ex.name ex_name, ex.id _id, ex_type.icon_res icon, max(stat.date) tr_date " +
+                "from Exercise ex, ExerciseType ex_type, TrainingStat stat " +
+                "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
+                "group by ex.id " +
+                "order by ex_name asc ";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        return c;
+    }
+
     public Cursor getTrainingStatByTrainingDate(Date training_date) {
         String sqlQuery = "select ex.name, stat.value, stat.date,  type.icon_res icon " +
                 "from TrainingStat stat, Exercise ex, ExerciseType type " +
@@ -199,24 +211,25 @@ public class DbReader {
         }
     }
 
-    public List<Measure> getMeasuresInExercise(long ex_id) {
+    public List<Measure> getMeasuresInExercise(Long ex_id) {
         List<Measure> measures = new ArrayList<Measure>();
-
-        String sqlQuery = "select m.* from Measure m, MeasureExType m_ex, Exercise ex " +
-                "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m.id = m_ex.measure_id " +
-                "order by m_ex.position ";
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        while (c.moveToNext()) {
-            Long id = c.getLong(c.getColumnIndex("id"));
-            String name = c.getString(c.getColumnIndex("name"));
-            Integer max = c.getInt(c.getColumnIndex("max"));
-            Double step = c.getDouble(c.getColumnIndex("step"));
-            Integer type = c.getInt(c.getColumnIndex("type"));
-            measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+        if (ex_id != null) {
+            String sqlQuery = "select m.* from Measure m, MeasureExType m_ex, Exercise ex " +
+                    "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m.id = m_ex.measure_id " +
+                    "order by m_ex.position ";
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                Integer max = c.getInt(c.getColumnIndex("max"));
+                Double step = c.getDouble(c.getColumnIndex("step"));
+                Integer type = c.getInt(c.getColumnIndex("type"));
+                measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+            }
+            c.close();
         }
-        c.close();
         return measures;
     }
 
@@ -310,7 +323,7 @@ public class DbReader {
      * ���������� ������
      *
      * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     *         ������������ ��� _id
+     * ������������ ��� _id
      */
     public Cursor getTrainings(SQLiteDatabase db) {
         String sqlQuery = "select tr.id as _id, tr.name, tr.position from Training tr order by tr.position asc";
@@ -323,7 +336,7 @@ public class DbReader {
      * ���������� ������
      *
      * @return ������ � ���� �� ������������ ��� � � ����, ������ id
-     *         ������������ ��� _id
+     * ������������ ��� _id
      */
     public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
         String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "

@@ -115,4 +115,10 @@
     <string name="dumbbell_ex_name_base">Разводка гантелей</string>
     <string name="bitceps_size_ex_name_base">Объем битцепса</string>
     <string name="exercise_nothing_to_show">Не было ни одной тренировки</string>
+    <string name="dialog_statistic_setting_title">Настройки</string>
+    <string name="choose_exercise_stat">Упражнение:</string>
+    <string name="measure_stat">По измерению:</string>
+    <string name="group_by_stat">Сгрупировать по:</string>
+    <string name="group_count_stat">Количество групп:</string>
+    <string name="build_button">Построить</string>
 </resources>
