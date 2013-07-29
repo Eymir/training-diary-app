@@ -11,11 +11,10 @@ import android.widget.*;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.utils.Consts;
-import myApp.trainingdiary.customview.itemadapter.CustomItemAdapter;
-import myApp.trainingdiary.customview.itemadapter.DateItem;
-import myApp.trainingdiary.customview.itemadapter.ExerciseItem;
-import myApp.trainingdiary.customview.itemadapter.Item;
-import myApp.trainingdiary.customview.itemadapter.SmallSectionItem;
+import myApp.trainingdiary.customview.itemadapter.item.CustomItemAdapter;
+import myApp.trainingdiary.customview.itemadapter.item.DateItem;
+import myApp.trainingdiary.customview.itemadapter.item.ExerciseItem;
+import myApp.trainingdiary.customview.itemadapter.item.Item;
 import myApp.trainingdiary.db.DBHelper;
 
 import android.os.Bundle;

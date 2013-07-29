@@ -18,10 +18,10 @@ import java.util.Date;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.utils.Consts;
-import myApp.trainingdiary.customview.itemadapter.BigSectionItem;
-import myApp.trainingdiary.customview.itemadapter.CustomItemAdapter;
-import myApp.trainingdiary.customview.itemadapter.Item;
-import myApp.trainingdiary.customview.itemadapter.StatisticItem;
+import myApp.trainingdiary.customview.itemadapter.item.BigSectionItem;
+import myApp.trainingdiary.customview.itemadapter.item.CustomItemAdapter;
+import myApp.trainingdiary.customview.itemadapter.item.Item;
+import myApp.trainingdiary.customview.itemadapter.item.StatisticItem;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
 

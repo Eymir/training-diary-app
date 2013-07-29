@@ -17,7 +17,7 @@ import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
 import myApp.trainingdiary.db.MeasureFormatter;
-import myApp.trainingdiary.training.DialogProvider;
+import myApp.trainingdiary.utils.DialogProvider;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
@@ -27,7 +27,6 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
 

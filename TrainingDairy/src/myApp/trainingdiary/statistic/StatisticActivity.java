@@ -1,8 +1,7 @@
 package myApp.trainingdiary.statistic;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
@@ -11,18 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.achartengine.ChartFactory;
-import org.achartengine.GraphicalView;
-import org.achartengine.chart.PointStyle;
-import org.achartengine.model.SeriesSelection;
-import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
-import org.achartengine.renderer.XYMultipleSeriesRenderer;
-import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,16 +26,18 @@ import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.TrainingStat;
+import myApp.trainingdiary.utils.DialogProvider;
 import myApp.trainingdiary.utils.Consts;
 
 public class StatisticActivity extends Activity {
 
-    private ImageButton settingButton;
+    private ImageView settingButton;
     private TextView label;
     private LinearLayout graphLayout;
     private DBHelper dbHelper;
     private Long ex_id;
     private ImageView icon;
+    private AlertDialog settingDialog;
 
     private static final SimpleDateFormat SDF_DATE = new SimpleDateFormat("dd.MM.yy");
     private StatisticGraph graph;
@@ -56,7 +46,7 @@ public class StatisticActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
-        settingButton = (ImageButton) findViewById(R.id.setting_button);
+        settingButton = (ImageView) findViewById(R.id.setting_button);
         label = (TextView) findViewById(R.id.label);
         graphLayout = (LinearLayout) findViewById(R.id.graph);
         icon = (ImageView) findViewById(R.id.icon);
@@ -70,16 +60,32 @@ public class StatisticActivity extends Activity {
         if (ex_id != null) {
             drawExerciseProgress(ex_id, null, null, null);
         }
+        createSettingDialog();
 
         settingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                settingDialog.show();
             }
         });
 
         graphLayout.addView(graph.getView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    private void createSettingDialog() {
+        settingDialog = DialogProvider.createStatisticSettingDialog(this, ex_id, new DialogProvider.StatisticSettingsDialogClickListener() {
+            @Override
+            public void onPositiveClick(DialogProvider.StatisticSettingsEvent event) {
+                ex_id = event.getExId();
+                drawExerciseProgress(ex_id, event.getDrawMeasureId(), event.getGroupMeasureId(), event.getGroupCount());
+            }
+
+            @Override
+            public void onNegativeClick() {
+                settingDialog.cancel();
+            }
+        });
     }
 
     private StatisticGraph createGraph() {

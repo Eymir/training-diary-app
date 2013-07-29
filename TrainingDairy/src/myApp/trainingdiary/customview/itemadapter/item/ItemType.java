@@ -1,4 +1,4 @@
-package myApp.trainingdiary.customview.itemadapter;
+package myApp.trainingdiary.customview.itemadapter.item;
 
 /**
  * Created by Boris on 04.06.13.
