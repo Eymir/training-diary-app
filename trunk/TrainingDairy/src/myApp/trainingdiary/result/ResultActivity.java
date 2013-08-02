@@ -16,7 +16,7 @@ import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
-import myApp.trainingdiary.db.MeasureFormatter;
+import myApp.trainingdiary.utils.MeasureFormatter;
 import myApp.trainingdiary.utils.DialogProvider;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
@@ -366,7 +366,6 @@ public class ResultActivity extends Activity implements OnClickListener {
 
 
         public void setValue(String measureValue) {
-            //TODO: реализовать
             switch (measure.getType()) {
                 case Numeric:
                     for (MeasureWheel measureWheel : measureWheelList) {

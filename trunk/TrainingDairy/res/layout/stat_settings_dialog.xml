@@ -23,17 +23,31 @@
     </TableRow>
 
     <TableRow
-            android:id="@+id/tableRow2"
+        android:id="@+id/tableRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/measure_stat"/>
+
+    <Spinner
+            android:id="@+id/measure_stat_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+</TableRow>
+    <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/measure_stat"/>
+                android:text="@string/group_by_checkbox_name"/>
 
-        <Spinner
-                android:id="@+id/measure_stat_spinner"
+        <CheckBox
+                android:id="@+id/group_by_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
     </TableRow>
@@ -41,7 +55,8 @@
     <TableRow
             android:id="@+id/tableRow3"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:visibility="gone">
 
         <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +74,8 @@
     <TableRow
             android:id="@+id/tableRow4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
         <TextView
                 android:layout_width="wrap_content"

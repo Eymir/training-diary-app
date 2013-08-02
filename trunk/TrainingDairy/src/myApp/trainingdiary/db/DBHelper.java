@@ -12,6 +12,7 @@ import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
 import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.MeasureFormatter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -204,7 +205,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
                 CONTEXT.getString(R.string.stanovaya_ex_name_base));
         EM.persist(db, stanovaya);
-        //Штанга на битцепс
+        //Штанга на бицепс
         Exercise bar_bitceps = new Exercise(null,
                 READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
                 CONTEXT.getString(R.string.bitceps_ex_name_base));
@@ -234,7 +235,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.weight_ex_type_base)),
                 CONTEXT.getString(R.string.weight_ex_name_base));
         EM.persist(db, weight);
-        //Объем битцепса
+        //Объем бицепса
         Exercise bitceps_size = new Exercise(null,
                 READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.size_ex_type_base)),
                 CONTEXT.getString(R.string.bitceps_size_ex_name_base));
@@ -434,7 +435,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     CONTEXT.getString(R.string.stanovaya_ex_name_base));
             EM.persist(db, stanovaya);
         }
-        //Штанга на битцепс
+        //Штанга на бицепс
         if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.bitceps_ex_name_base))) {
             Exercise bar_bitceps = new Exercise(null,
                     READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
@@ -476,7 +477,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     CONTEXT.getString(R.string.weight_ex_name_base));
             EM.persist(db, weight);
         }
-        //Объем битцепса
+        //Объем бицепса
         if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.bitceps_size_ex_name_base))) {
             Exercise bitceps_size = new Exercise(null,
                     READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.size_ex_type_base)),

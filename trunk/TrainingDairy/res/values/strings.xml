@@ -105,7 +105,7 @@
     <string name="coming_soon">Появится в следующей версии</string>
     <string name="exercise_not_chosen">Упражнение не выбрано</string>
     <string name="backup_button_text">Сохранить бэкап</string>
-    <string name="bitceps_ex_name_base">Штанга на битцепс стоя</string>
+    <string name="bitceps_ex_name_base">Штанга на бицепс стоя</string>
     <string name="french_ex_name_base">Французкий жим</string>
     <string name="run_ex_name_base">Бег (км)</string>
     <string name="pushups_ex_name_base">Отжимания от пола</string>
@@ -113,7 +113,7 @@
     <string name="weight_ex_name_base">Вес</string>
     <string name="dumbbell_ex_type_base">Гантели</string>
     <string name="dumbbell_ex_name_base">Разводка гантелей</string>
-    <string name="bitceps_size_ex_name_base">Объем битцепса</string>
+    <string name="bitceps_size_ex_name_base">Объем бицепса</string>
     <string name="exercise_nothing_to_show">Не было ни одной тренировки</string>
     <string name="dialog_statistic_setting_title">Настройки</string>
     <string name="choose_exercise_stat">Упражнение:</string>
@@ -121,4 +121,5 @@
     <string name="group_by_stat">Сгрупировать по:</string>
     <string name="group_count_stat">Количество групп:</string>
     <string name="build_button">Построить</string>
+    <string name="group_by_checkbox_name">Группировать:</string>
 </resources>
