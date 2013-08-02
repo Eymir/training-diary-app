@@ -60,7 +60,6 @@ public class HistoryDetailActivity extends Activity {
                 CustomItemAdapter exerciseHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, exItemArrayList);
                 listView.setAdapter(exerciseHistoryAdapter);
                 break;
-
         }
 
     }

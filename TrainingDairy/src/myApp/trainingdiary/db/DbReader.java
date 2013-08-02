@@ -447,4 +447,20 @@ public class DbReader {
             db.close();
         }
     }
+
+    public Long getMeasurePosInExercise(Long ex_id, Long m_id) {
+        if (ex_id != null) {
+            String sqlQuery = "select m_ex.position pos from MeasureExType m_ex, Exercise ex " +
+                    "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m_ex.measure_id = ? ";
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(m_id)});
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("pos"));
+                return id;
+            }
+            c.close();
+        }
+        return null;
+    }
 }

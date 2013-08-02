@@ -7,7 +7,6 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,7 +20,7 @@ import java.util.Map;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.DBHelper;
-import myApp.trainingdiary.db.MeasureFormatter;
+import myApp.trainingdiary.utils.MeasureFormatter;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
@@ -78,7 +77,7 @@ public class StatisticActivity extends Activity {
             @Override
             public void onPositiveClick(DialogProvider.StatisticSettingsEvent event) {
                 ex_id = event.getExId();
-                drawExerciseProgress(ex_id, event.getDrawMeasureId(), event.getGroupMeasureId(), event.getGroupCount());
+                drawExerciseProgress(ex_id, event.getDrawMeasureId(), event.getGroupMeasureId(), event.getGroups());
             }
 
             @Override
@@ -95,7 +94,7 @@ public class StatisticActivity extends Activity {
         return graph;
     }
 
-    private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, Long group_count) {
+    private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, List<Double> groups) {
         Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
         exercise.getType().getMeasures().addAll(dbHelper.READ.getMeasuresInExercise(ex_id));
         List<TrainingStat> progress = dbHelper.READ.getExerciseProgress(ex_id);
@@ -139,10 +138,10 @@ public class StatisticActivity extends Activity {
                             map.put(groupValue, list);
                         }
                     }
-                    if (group_count == null || group_count < 1) {
-                        group_count = 1L;
+                    if (groups == null || groups.size()==0) {
+//                        groups = 1L;
                     }
-                    while (map.size() > group_count) {
+                    while (map.size() > 5) {
                         String minKey = null;
                         int minKeySize = Integer.MAX_VALUE;
                         for (String key : map.keySet()) {
