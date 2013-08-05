@@ -2,7 +2,7 @@ package myApp.trainingdiary.utils;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.customview.CustomCursorAdapter;
-import myApp.trainingdiary.customview.itemadapter.EntityArrayAdapter;
+import myApp.trainingdiary.customview.EntityArrayAdapter;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.TrainingStat;
@@ -23,7 +23,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.Toast;
@@ -130,10 +129,11 @@ public class DialogProvider {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 measureAdapter.clear();
                 measureAdapter.addAll(dbHelper.READ.getMeasuresInExercise(exerciseSpinner.getSelectedItemId()));
-                if (measureAdapter.getCount() > 1) {
+                if (measureAdapter.getCount() > 1 && groupByCheckBox.isChecked()) {
                     groupAdapter.clear();
-                    groupAdapter.addAll(dbHelper.READ.getMeasuresInExercise(exerciseSpinner.getSelectedItemId()));
-                    groupAdapter.remove(measureSpinner.getSelectedItem());
+                    groupAdapter.addAll(dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
+                            exerciseSpinner.getSelectedItemId(), measureSpinner.getSelectedItemId()
+                    ));
                 }
             }
 
@@ -146,10 +146,14 @@ public class DialogProvider {
         measureSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (measureAdapter.getCount() > 1) {
+                dbHelper.READ.getMeasureById(measureSpinner.getSelectedItemId());
+                if (measureAdapter.getCount() > 1 && groupByCheckBox.isChecked()) {
                     groupAdapter.clear();
-                    groupAdapter.addAll(dbHelper.READ.getMeasuresInExercise(exerciseSpinner.getSelectedItemId()));
-                    groupAdapter.remove(measureSpinner.getSelectedItem());
+                    Log.d(Consts.LOG_TAG, "measureSpinner.getSelectedItemId: " + measureSpinner.getSelectedItemId());
+                    List<Measure> measures = dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
+                            exerciseSpinner.getSelectedItemId(), measureSpinner.getSelectedItemId());
+                    Log.d(Consts.LOG_TAG, "measures: " + measures);
+                    groupAdapter.addAll(measures);
                 }
             }
 
@@ -171,7 +175,8 @@ public class DialogProvider {
                         Log.e(Consts.LOG_TAG, "exerciseSpinner has invalid row");
                         return;
                     }
-                    List<Double> list = getGroups(dbHelper, groupSpinner.getSelectedItemId(), exerciseSpinner.getSelectedItemId());
+                    List<Double> list = getGroups(dbHelper, groupSpinner.getSelectedItemId(),
+                            exerciseSpinner.getSelectedItemId());
                     if (list != null) {
                         groupValueAdapter.clear();
                         groupValueAdapter.addAll(list);
@@ -200,13 +205,13 @@ public class DialogProvider {
                 }
             }
         });
+
         builder.setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 listener.onNegativeClick();
             }
         });
-
 
         builder.setView(view);
         return builder.create();
@@ -237,16 +242,15 @@ public class DialogProvider {
 
     private static EntityArrayAdapter getMeasureAdapter(DBHelper dbHelper, Context context, Long ex_id) {
         ArrayList<Measure> list = (ArrayList<Measure>) dbHelper.READ.getMeasuresInExercise(ex_id);
-        EntityArrayAdapter adapter = new EntityArrayAdapter(context, list);
+        EntityArrayAdapter adapter = new EntityArrayAdapter(context, R.layout.entity_spinner_string, R.layout.entity_spinner_string_list, list);
         return adapter;
     }
 
     private static EntityArrayAdapter getMeasureAdapterWithoutData(Context context) {
         ArrayList<Measure> list = new ArrayList<Measure>();
-        EntityArrayAdapter adapter = new EntityArrayAdapter(context, list);
+        EntityArrayAdapter adapter = new EntityArrayAdapter(context, R.layout.entity_spinner_string, R.layout.entity_spinner_string_list, list);
         return adapter;
     }
-
 
     private static SimpleCursorAdapter getExerciseAdapter(Activity activity, DBHelper dbHelper, final Context context) {
 
@@ -254,7 +258,7 @@ public class DialogProvider {
         String[] from = {"ex_name", "icon"};
         int[] to = {R.id.label, R.id.icon};
         CustomCursorAdapter adapter = new CustomCursorAdapter(activity,
-                context, R.layout.exercise_plain_row_spinner,
+                context, R.layout.exercise_plain_row_spinner, R.layout.exercise_plain_row_spinner_list,
                 ex_cursor, from, to,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         return adapter;

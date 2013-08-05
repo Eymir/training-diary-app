@@ -10,20 +10,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import myApp.trainingdiary.R;
-
 /**
  * Created by Lenovo on 02.08.13.
  */
 public class CustomCursorAdapter extends SimpleCursorAdapter {
     private final int[] to;
     private final String[] from;
-    private int layout;
-    private Activity activity;
+    private final int dropDownLayout;
+    private final int mainViewLayout;
+    private final Activity activity;
 
-    public CustomCursorAdapter(Activity activity, Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-        super(context, layout, c, from, to, flags);
-        this.layout = layout;
+    public CustomCursorAdapter(Activity activity, Context context, int mainViewLayout, int dropDownLayout, Cursor c, String[] from, int[] to, int flags) {
+        super(context, mainViewLayout, c, from, to, flags);
+        this.mainViewLayout = mainViewLayout;
+        this.dropDownLayout = dropDownLayout;
         this.activity = activity;
         this.from = from;
         this.to = to;
@@ -31,15 +31,15 @@ public class CustomCursorAdapter extends SimpleCursorAdapter {
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, parent);
+        return getCustomView(position, dropDownLayout, convertView, parent);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, parent);
+        return getCustomView(position, mainViewLayout, convertView, parent);
     }
 
-    public View getCustomView(int position, View convertView, ViewGroup parent) {
+    public View getCustomView(int position, int layout, View convertView, ViewGroup parent) {
 
         Cursor c = getCursor();
         c.moveToPosition(position);

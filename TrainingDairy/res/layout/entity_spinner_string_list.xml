@@ -10,5 +10,6 @@
             android:layout_height="wrap_content"
             android:height="30dp"
             android:text="@string/empty"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+            android:maxLines="4"
+            android:textAppearance="?android:attr/textAppearanceLargeInverse"/>
 </LinearLayout>

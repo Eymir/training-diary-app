@@ -57,4 +57,15 @@ public class Measure {
     public void setType(MeasureType type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Measure{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", max=" + max +
+                ", step=" + step +
+                ", type=" + type +
+                '}';
+    }
 }
