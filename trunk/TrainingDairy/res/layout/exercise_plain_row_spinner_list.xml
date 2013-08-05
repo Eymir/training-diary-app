@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="9.98"
             android:text="@+id/label"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:maxLines="4"
+            android:textAppearance="?android:attr/textAppearanceLargeInverse"/>
 
 </LinearLayout>

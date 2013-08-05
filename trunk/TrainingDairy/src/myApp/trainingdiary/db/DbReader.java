@@ -233,6 +233,28 @@ public class DbReader {
         return measures;
     }
 
+    public List<Measure> getMeasuresInExerciseExceptParticularMeasure(Long ex_id, Long m_id) {
+        List<Measure> measures = new ArrayList<Measure>();
+        if (ex_id != null) {
+            String sqlQuery = "select m.* from Measure m, MeasureExType m_ex, Exercise ex " +
+                    "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m.id = m_ex.measure_id AND m.id <> ? " +
+                    "order by m_ex.position ";
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(m_id)});
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                Integer max = c.getInt(c.getColumnIndex("max"));
+                Double step = c.getDouble(c.getColumnIndex("step"));
+                Integer type = c.getInt(c.getColumnIndex("type"));
+                measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+            }
+            c.close();
+        }
+        return measures;
+    }
+
     public List<TrainingStat> getTrainingStatForLastPeriodByExercise(long ex_id, int period) {
         List<TrainingStat> stats = new ArrayList<TrainingStat>();
         long since = System.currentTimeMillis() - period;
@@ -462,5 +484,25 @@ public class DbReader {
             c.close();
         }
         return null;
+    }
+
+    public Measure getMeasureById(Long m_id) {
+        if (m_id != null) {
+            String sqlQuery = "select m.* from Measure m " +
+                    "where m.id = ? ";
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(m_id)});
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                Integer max = c.getInt(c.getColumnIndex("max"));
+                Double step = c.getDouble(c.getColumnIndex("step"));
+                Integer type = c.getInt(c.getColumnIndex("type"));
+                return new Measure(id, name, max, step, MeasureType.valueOf(type));
+            }
+            c.close();
+        }
+        throw new RuntimeException("Measure with id: " + m_id + " not found in DB.");
     }
 }
