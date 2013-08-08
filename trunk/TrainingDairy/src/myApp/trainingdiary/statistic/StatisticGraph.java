@@ -172,4 +172,8 @@ public class StatisticGraph {
         }
         return null;
     }
+
+    public void clear() {
+        if (mDataset.getSeriesCount() > 0) mDataset.clear();
+    }
 }

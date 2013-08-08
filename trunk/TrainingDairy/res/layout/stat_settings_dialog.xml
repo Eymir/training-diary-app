@@ -82,10 +82,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/group_count_stat"/>
 
-        <Spinner
+        <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/group_count_stat_spinner"
+                android:id="@+id/groups_button"
                 android:layout_column="1"/>
     </TableRow>
 </TableLayout>

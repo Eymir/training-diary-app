@@ -505,4 +505,23 @@ public class DbReader {
         }
         throw new RuntimeException("Measure with id: " + m_id + " not found in DB.");
     }
+
+    public List<Measure> getAllMeasures() {
+        List<Measure> measures = new ArrayList<Measure>();
+            String sqlQuery = "select m.* from Measure m " +
+                    "order by m.id ";
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor c = db
+                    .rawQuery(sqlQuery, null);
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                Integer max = c.getInt(c.getColumnIndex("max"));
+                Double step = c.getDouble(c.getColumnIndex("step"));
+                Integer type = c.getInt(c.getColumnIndex("type"));
+                measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+            }
+            c.close();
+        return measures;
+    }
 }
