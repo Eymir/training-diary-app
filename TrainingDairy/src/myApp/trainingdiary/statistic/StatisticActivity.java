@@ -3,6 +3,7 @@ package myApp.trainingdiary.statistic;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.View;
@@ -95,6 +96,8 @@ public class StatisticActivity extends Activity {
     }
 
     private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, List<Double> groups) {
+        Log.d(Consts.LOG_TAG, "ex_id: " + ex_id + " measure_id: " + measure_id + " group_measure_id: " + group_measure_id + " groups: " + groups);
+        graph.clear();
         Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
         exercise.getType().getMeasures().addAll(dbHelper.READ.getMeasuresInExercise(ex_id));
         List<TrainingStat> progress = dbHelper.READ.getExerciseProgress(ex_id);
@@ -119,38 +122,29 @@ public class StatisticActivity extends Activity {
                 }
             } else {
                 int m_g_pos = getPosByMeasureId(group_measure_id, exercise.getType());
-                Measure group_measure = getMeasureById(measure_id, exercise.getType());
+                Measure group_measure = getMeasureById(group_measure_id, exercise.getType());
                 if (m_g_pos == pos) {
                     graph.addSeries(measure.getName());
                     for (TrainingStat stat : progress) {
                         graph.getSeries(measure.getName()).add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
                     }
                 } else {
+                    if (groups == null || groups.size() == 0) {
+//                        groups = 1L;
+                    }
                     Map<String, List<Pair>> map = new HashMap<String, List<Pair>>();
                     for (TrainingStat stat : progress) {
                         String groupValue = MeasureFormatter.toMeasureValues(stat.getValue()).get(m_g_pos);
-                        Double value = MeasureFormatter.getValueByPos(stat.getValue(), pos);
-                        if (map.containsKey(groupValue)) {
-                            map.get(groupValue).add(new Pair(stat.getDate(), value));
-                        } else {
-                            List list = new ArrayList<Pair>();
-                            list.add(new Pair(stat.getDate(), value));
-                            map.put(groupValue, list);
-                        }
-                    }
-                    if (groups == null || groups.size()==0) {
-//                        groups = 1L;
-                    }
-                    while (map.size() > 5) {
-                        String minKey = null;
-                        int minKeySize = Integer.MAX_VALUE;
-                        for (String key : map.keySet()) {
-                            if (minKeySize > map.get(key).size()) {
-                                minKeySize = map.get(key).size();
-                                minKey = key;
+                        if (groups.contains(Double.valueOf(groupValue))) {
+                            Double value = MeasureFormatter.getValueByPos(stat.getValue(), pos);
+                            if (map.containsKey(groupValue)) {
+                                map.get(groupValue).add(new Pair(stat.getDate(), value));
+                            } else {
+                                List list = new ArrayList<Pair>();
+                                list.add(new Pair(stat.getDate(), value));
+                                map.put(groupValue, list);
                             }
                         }
-                        map.remove(minKey);
                     }
                     for (String key : map.keySet()) {
                         graph.addSeries(group_measure.getName() + "_" + key);

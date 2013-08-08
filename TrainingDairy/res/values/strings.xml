@@ -122,4 +122,5 @@
     <string name="group_count_stat">Количество групп:</string>
     <string name="build_button">Построить</string>
     <string name="group_by_checkbox_name">Группировать:</string>
+    <string name="group_values_dialog_title">Выберите группы</string>
 </resources>

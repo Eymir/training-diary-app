@@ -1,14 +1,19 @@
 package myApp.trainingdiary;
 
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.db.entity.Measure;
+import myApp.trainingdiary.utils.Consts;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
@@ -31,6 +36,8 @@ public class SettingsActivity extends Activity {
                 Toast.makeText(getApplicationContext(),
                         getApplicationContext().getResources().getString(R.string.coming_soon),
                         Toast.LENGTH_SHORT).show();
+                List<Measure> measures = dbHelper.READ.getAllMeasures();
+                Log.i(Consts.LOG_TAG, measures.toString());
             }
         });
     }

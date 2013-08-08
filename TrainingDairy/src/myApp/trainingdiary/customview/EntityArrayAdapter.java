@@ -41,7 +41,6 @@ public class EntityArrayAdapter extends ArrayAdapter {
 
     private View getCustomView(int position, int layout, View convertView, ViewGroup parent) {
         View v = convertView;
-        Log.d(Consts.LOG_TAG, "EntityArrayAdapter.position: " + position);
         final Object o = items.get(position);
         if (o instanceof Measure) {
             Measure m = (Measure) o;
