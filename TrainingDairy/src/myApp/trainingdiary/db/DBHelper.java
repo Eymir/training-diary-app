@@ -389,6 +389,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.beginTransaction();
             Log.d(Consts.LOG_TAG, "before - createTypes_ver_4 count: "
                     + READ.getExerciseTypeCount(db));
+            renameTypes_ver_4(db);
             createTypes_ver_4(db);
             Log.d(Consts.LOG_TAG, "after - createTypes_ver_4 count: "
                     + READ.getExerciseTypeCount(db));
@@ -402,6 +403,14 @@ public class DBHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+    }
+
+    private void renameTypes_ver_4(SQLiteDatabase db) {
+        ExerciseType ex_type = READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.baseExType_power));
+        WRITE.renameExerciseType(db, ex_type.getId(), CONTEXT.getString(R.string.bar_ex_type_base));
+
+        ExerciseType ex_type_1 = READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.baseExType_cycle));
+        WRITE.renameExerciseType(db, ex_type_1.getId(), CONTEXT.getString(R.string.long_dist_ex_type_base));
     }
 
     private void createExercise_ver_4(SQLiteDatabase db) {

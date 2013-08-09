@@ -185,6 +185,7 @@ public class DbWriter {
         Long id = insertTraining(db, name, position);
         return id;
     }
+
     public long insertTrainingStat(long exercise_id, long training_id,
                                    long date, long trainingDate, String value) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -192,6 +193,7 @@ public class DbWriter {
         db.close();
         return id;
     }
+
     public long insertTrainingStat(SQLiteDatabase db, long exercise_id, long training_id,
                                    long date, long trainingDate, String value) {
         ContentValues cv = new ContentValues();
@@ -202,5 +204,12 @@ public class DbWriter {
         cv.put("training_id", training_id);
         long id = db.insert("TrainingStat", null, cv);
         return id;
+    }
+
+    public void renameExerciseType(SQLiteDatabase db, Long id, String name) {
+        ContentValues cv = new ContentValues();
+        cv.put("name", name);
+        db.update("ExerciseType", cv, "id = ? ",
+                new String[]{String.valueOf(id)});
     }
 }

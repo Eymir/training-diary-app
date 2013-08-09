@@ -30,7 +30,9 @@ public class MeasureFormatter {
 
     public static double getValueByPos(String statValue, int pos) {
         List<String> values = toMeasureValues(statValue);
-        return Double.valueOf(values.get(pos));
+        String value = values.get(pos);
+        value = value.replaceAll(",", ".");
+        return Double.valueOf(value);
     }
 
 }

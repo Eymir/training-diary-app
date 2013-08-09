@@ -123,4 +123,7 @@
     <string name="build_button">Построить</string>
     <string name="group_by_checkbox_name">Группировать:</string>
     <string name="group_values_dialog_title">Выберите группы</string>
+
+    <string name="baseExType_power">Силовой тип</string>
+    <string name="baseExType_cycle">Циклический тип</string>
 </resources>
