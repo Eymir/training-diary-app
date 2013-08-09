@@ -118,7 +118,7 @@ public class StatisticActivity extends Activity {
             if (group_measure_id == null) {
                 graph.addSeries(measure.getName());
                 for (TrainingStat stat : progress) {
-                    graph.getSeries(measure.getName()).add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                    graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
                 }
             } else {
                 int m_g_pos = getPosByMeasureId(group_measure_id, exercise.getType());
@@ -126,7 +126,7 @@ public class StatisticActivity extends Activity {
                 if (m_g_pos == pos) {
                     graph.addSeries(measure.getName());
                     for (TrainingStat stat : progress) {
-                        graph.getSeries(measure.getName()).add(stat.getDate().getTime(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                        graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
                     }
                 } else {
                     if (groups == null || groups.size() == 0) {
@@ -149,11 +149,12 @@ public class StatisticActivity extends Activity {
                     for (String key : map.keySet()) {
                         graph.addSeries(group_measure.getName() + "_" + key);
                         for (Pair p : map.get(key)) {
-                            graph.getSeries(group_measure.getName() + "_" + key).add(((Date) p.first).getTime(), (Double) p.second);
+                            graph.getSeries(group_measure.getName() + "_" + key).add(((Date) p.first), (Double) p.second);
                         }
                     }
                 }
             }
+//            graph.addMonthAndYear(progress.get(0).getDate(), progress.get(progress.size() - 1).getDate());
         } else {
             label.setText(exercise.getName() + " - " + getString(R.string.exercise_nothing_to_show));
         }

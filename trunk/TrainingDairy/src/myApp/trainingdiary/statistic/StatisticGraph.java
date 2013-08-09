@@ -11,17 +11,24 @@ import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
 import org.achartengine.model.SeriesSelection;
+import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Lenovo on 28.07.13.
  */
 public class StatisticGraph {
 
-
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd.MM HH:mm");
+    public static final String FORMAT = "dd";
     private final Context context;
     /**
      * The main dataset that includes all the series that go into a chart.
@@ -49,17 +56,42 @@ public class StatisticGraph {
         //set some properties on the main renderer
         this.context = context;
         mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setMarginsColor(Color.TRANSPARENT);
-        mRenderer.setGridColor(Color.BLACK);
-        mRenderer.setBackgroundColor(Color.WHITE);
-        mRenderer.setAxisTitleTextSize(32);
-        mRenderer.setChartTitleTextSize(40);
-        mRenderer.setLabelsTextSize(30);
-        mRenderer.setLegendTextSize(30);
-        mRenderer.setMargins(new int[]{20, 30, 15, 0});
+        mRenderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
+        mRenderer.setGridColor(Color.GRAY);
+//        mRenderer.setBackgroundColor(Color.BLACK);
+        mRenderer.setAxesColor(Color.LTGRAY);
+        mRenderer.setShowGrid(true);
+        mRenderer.setClickEnabled(false);
+        mRenderer.setAxisTitleTextSize(24);
+        mRenderer.setAntialiasing(true);
+        mRenderer.setChartTitleTextSize(30);
+        mRenderer.setLabelsTextSize(12);
+        mRenderer.setLegendTextSize(16);
+        mRenderer.setMargins(new int[]{20, 40, 15, 0});
         mRenderer.setZoomButtonsVisible(true);
-        mRenderer.setPointSize(10);
+        mRenderer.setPointSize(3);
+//        mRenderer.setShowCustomTextGrid(true);
         createGraphView();
+    }
+
+    public void addMonthAndYear(Date a, Date b) {
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(a);
+        int yearA = c.get(Calendar.YEAR);
+        c.setTime(b);
+        int yearB = c.get(Calendar.YEAR);
+        c.setTime(new Date(0L));
+        for (int i = yearA - 1; i <= yearB + 1; i++) {
+            c.set(Calendar.YEAR, i);
+            c.set(Calendar.MONTH, 0);
+            mRenderer.addXTextLabel(c.getTime().getTime(), String.valueOf(i));
+            for (int m = 0; m < 12; m++) {
+                c.set(Calendar.MONTH, m);
+                mRenderer.addXTextLabel(c.getTime().getTime(),
+                        c.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()));
+            }
+        }
     }
 
     public void repaint() {
@@ -69,7 +101,7 @@ public class StatisticGraph {
     private View createGraphView() {
 
         if (mChartView == null) {
-            mChartView = ChartFactory.getLineChartView(context, mDataset, mRenderer);
+            mChartView = ChartFactory.getTimeChartView(context, mDataset, mRenderer, null);
             // enable the chart click events
             mRenderer.setClickEnabled(true);
             mRenderer.setSelectableBuffer(10);
@@ -78,19 +110,15 @@ public class StatisticGraph {
                     // handle the click event on the chart
                     SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
                     if (seriesSelection == null) {
-                        Toast.makeText(context, "No chart element", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "No chart element", Toast.LENGTH_SHORT).show();
                     } else {
                         // display information of the clicked point
                         Toast.makeText(
-                                context,
-                                "Chart element in series index " + seriesSelection.getSeriesIndex()
-                                        + " data point index " + seriesSelection.getPointIndex() + " was clicked"
-                                        + " closest point value X=" + seriesSelection.getXValue() + ", Y="
-                                        + seriesSelection.getValue(), Toast.LENGTH_SHORT).show();
+                                context, "x[" + SDF.format(new Date(Double.valueOf(seriesSelection.getXValue()).longValue())) + "], y[" +
+                                String.valueOf(seriesSelection.getValue()) + "]", Toast.LENGTH_LONG).show();
                     }
                 }
             });
-
         } else {
             mChartView.repaint();
         }
@@ -118,9 +146,7 @@ public class StatisticGraph {
 
     public void addSeries(String name) {
         // create a new series of data
-        XYSeries series = new XYSeries(name);
-
-        mDataset.addSeries(series);
+        TimeSeries series = new TimeSeries(name);
         mCurrentSeries = series;
         // create a new renderer for the new series
         XYSeriesRenderer renderer = new XYSeriesRenderer();
@@ -129,8 +155,11 @@ public class StatisticGraph {
         renderer.setPointStyle(PointStyle.CIRCLE);
         renderer.setFillPoints(true);
         renderer.setDisplayChartValues(true);
-        renderer.setDisplayChartValuesDistance(10);
+        renderer.setDisplayChartValuesDistance(20);
         renderer.setColor(getColor(mDataset.getSeriesCount()));
+        renderer.setLineWidth(2);
+        renderer.setChartValuesTextSize(14);
+        mDataset.addSeries(series);
         mCurrentRenderer = renderer;
         mChartView.repaint();
     }
@@ -164,10 +193,10 @@ public class StatisticGraph {
         return mChartView;
     }
 
-    public XYSeries getSeries(String name) {
+    public TimeSeries getSeries(String name) {
         for (XYSeries series : mDataset.getSeries()) {
             if (series.getTitle().equalsIgnoreCase(name)) {
-                return series;
+                return (TimeSeries) series;
             }
         }
         return null;

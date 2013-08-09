@@ -46,7 +46,9 @@ public class EntityManager {
             return exercise;
         }
         ExerciseType type = exercise.getType();
-        type = persist(db, type);
+        if (type != null)
+            type = persist(db, type);
+
         long id = dBHelper.WRITE.insertExercise(db, exercise.getName(), type.getId());
         exercise.setId(id);
         return exercise;
