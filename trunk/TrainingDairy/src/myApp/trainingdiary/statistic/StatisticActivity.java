@@ -154,7 +154,7 @@ public class StatisticActivity extends Activity {
                     }
                 }
             }
-//            graph.addMonthAndYear(progress.get(0).getDate(), progress.get(progress.size() - 1).getDate());
+            graph.matchSeries();
         } else {
             label.setText(exercise.getName() + " - " + getString(R.string.exercise_nothing_to_show));
         }
