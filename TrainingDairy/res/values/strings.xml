@@ -119,7 +119,7 @@
     <string name="choose_exercise_stat">Упражнение:</string>
     <string name="measure_stat">По измерению:</string>
     <string name="group_by_stat">Сгрупировать по:</string>
-    <string name="group_count_stat">Количество групп:</string>
+    <string name="groups_stat">Группы:</string>
     <string name="build_button">Построить</string>
     <string name="group_by_checkbox_name">Группировать:</string>
     <string name="group_values_dialog_title">Выберите группы</string>

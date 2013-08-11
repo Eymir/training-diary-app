@@ -24,6 +24,7 @@ public class MeasureFormatter {
     }
 
     public static List<String> toMeasureValues(String statValue) {
+        statValue = statValue.replaceAll(",", ".");
         String[] values = statValue.split("x");
         return Arrays.asList(values);
     }

@@ -15,7 +15,6 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -33,7 +32,7 @@ import android.widget.TableRow;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class DialogProvider {
@@ -120,6 +119,7 @@ public class DialogProvider {
         final AlertDialog.Builder groupsDialogBuilder = new AlertDialog.Builder(activity);
         final ListView groupListView = (ListView) inflater.inflate(R.layout.list, null);
         groupListView.setAdapter(groupValueAdapter);
+
         groupListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         groupsDialogBuilder.setTitle(R.string.group_values_dialog_title);
         groupsDialogBuilder.setView(groupListView);
@@ -127,8 +127,10 @@ public class DialogProvider {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Log.d(Consts.LOG_TAG, "getCheckedItemPositions.size: " + groupListView.getCheckedItemPositions().size());
-                List<Double> list = getChosenObjects(groupValueAdapter, groupListView.getCheckedItemPositions());
+                List<Double> list = getChosenObjects(groupListView, groupListView.getCheckedItemPositions());
                 groupsButton.setText(list.toString());
+
+                dialogInterface.dismiss();
             }
         });
         final AlertDialog groupsDialog = groupsDialogBuilder.create();
@@ -145,10 +147,7 @@ public class DialogProvider {
                 if (checked) {
                     tableRow3.setVisibility(View.VISIBLE);
                     tableRow4.setVisibility(View.VISIBLE);
-                    groupAdapter.clear();
-                    Measure m = (Measure) measureSpinner.getSelectedItem();
-                    groupAdapter.addAll(dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
-                            exerciseSpinner.getSelectedItemId(), m.getId()));
+                    fillGroupByMeasureSection(groupAdapter, measureSpinner, dbHelper, exerciseSpinner, groupSpinner, groupValueAdapter, groupsButton, groupListView);
                 } else {
                     tableRow3.setVisibility(View.GONE);
                     tableRow4.setVisibility(View.GONE);
@@ -160,23 +159,9 @@ public class DialogProvider {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 measureAdapter.clear();
-                measureAdapter.addAll(dbHelper.READ.getMeasuresInExercise(exerciseSpinner.getSelectedItemId()));
+                addAll(measureAdapter, dbHelper.READ.getMeasuresInExercise(exerciseSpinner.getSelectedItemId()));
                 if (measureAdapter.getCount() > 1 && groupByCheckBox.isChecked()) {
-                    groupAdapter.clear();
-                    Measure m = (Measure) measureSpinner.getSelectedItem();
-                    groupAdapter.addAll(dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
-                            exerciseSpinner.getSelectedItemId(), m.getId()));
-                    Measure m_g = (Measure) groupSpinner.getSelectedItem();
-                    if (m_g != null) {
-                        List<Double> list = getGroups(dbHelper, m_g.getId(),
-                                exerciseSpinner.getSelectedItemId());
-                        if (list != null) {
-                            groupValueAdapter.clear();
-                            groupValueAdapter.addAll(list);
-                        } else {
-                            Log.e(Consts.LOG_TAG, "groups is null");
-                        }
-                    }
+                    fillGroupByMeasureSection(groupAdapter, measureSpinner, dbHelper, exerciseSpinner, groupSpinner, groupValueAdapter, groupsButton, groupListView);
                 }
             }
 
@@ -190,22 +175,7 @@ public class DialogProvider {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (measureAdapter.getCount() > 1 && groupByCheckBox.isChecked()) {
-                    groupAdapter.clear();
-                    Measure m = (Measure) measureSpinner.getSelectedItem();
-                    List<Measure> measures = dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
-                            exerciseSpinner.getSelectedItemId(), m.getId());
-                    groupAdapter.addAll(measures);
-                    Measure m_g = (Measure) groupSpinner.getSelectedItem();
-                    if (m_g != null) {
-                        List<Double> list = getGroups(dbHelper, m_g.getId(),
-                                exerciseSpinner.getSelectedItemId());
-                        if (list != null) {
-                            groupValueAdapter.clear();
-                            groupValueAdapter.addAll(list);
-                        } else {
-                            Log.e(Consts.LOG_TAG, "groups is null");
-                        }
-                    }
+                    fillGroupByMeasureSection(groupAdapter, measureSpinner, dbHelper, exerciseSpinner, groupSpinner, groupValueAdapter, groupsButton, groupListView);
                 }
             }
 
@@ -233,7 +203,7 @@ public class DialogProvider {
                                 exerciseSpinner.getSelectedItemId());
                         if (list != null) {
                             groupValueAdapter.clear();
-                            groupValueAdapter.addAll(list);
+                            addAll(groupValueAdapter, list);
                         } else {
                             Log.e(Consts.LOG_TAG, "groups is null");
                         }
@@ -253,11 +223,19 @@ public class DialogProvider {
                 if (exerciseSpinner.getSelectedItemId() != AdapterView.INVALID_ROW_ID) {
                     Long measureId = (measureSpinner.getSelectedItem() != null) ? ((Measure) measureSpinner.getSelectedItem()).getId() : null;
                     Long groupId = (groupSpinner.getSelectedItem() != null) ? ((Measure) groupSpinner.getSelectedItem()).getId() : null;
-                    List<Double> list = getChosenObjects(groupValueAdapter, groupListView.getCheckedItemPositions());
-                    StatisticSettingsEvent event = new StatisticSettingsEvent(exerciseSpinner.getSelectedItemId(),
-                            measureId,
-                            groupId,
-                            list);
+                    StatisticSettingsEvent event = null;
+                    if (groupByCheckBox.isChecked()) {
+                        List<Double> list = getChosenObjects(groupListView, groupListView.getCheckedItemPositions());
+                        event = new StatisticSettingsEvent(exerciseSpinner.getSelectedItemId(),
+                                measureId,
+                                groupId,
+                                list);
+                    } else {
+                        event = new StatisticSettingsEvent(exerciseSpinner.getSelectedItemId(),
+                                measureId,
+                                null,
+                                null);
+                    }
                     listener.onPositiveClick(event);
                 } else {
                     Toast.makeText(activity, R.string.exercise_not_chosen, Toast.LENGTH_SHORT);
@@ -276,11 +254,43 @@ public class DialogProvider {
         return builder.create();
     }
 
-    private static List<Double> getChosenObjects(ArrayAdapter adapter, SparseBooleanArray checkedItemPositions) {
+    public static void addAll(ArrayAdapter adapter, Collection collection) {
+        for (Object o : collection) {
+            adapter.add(o);
+        }
+    }
+
+    public static void fillGroupByMeasureSection(EntityArrayAdapter groupAdapter, Spinner measureSpinner, DBHelper dbHelper, Spinner exerciseSpinner, Spinner groupSpinner, ArrayAdapter groupValueAdapter, Button groupsButton, ListView groupListView) {
+        groupAdapter.clear();
+        Measure m = (Measure) measureSpinner.getSelectedItem();
+        addAll(groupAdapter, dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
+                exerciseSpinner.getSelectedItemId(), m.getId()));
+        Measure m_g = (Measure) groupSpinner.getSelectedItem();
+        groupsButton.setText("");
+        Log.d(Consts.LOG_TAG, "groupListView.dispatchSetSelected(false)");
+        for (int i = 0; i < groupListView.getCount(); i++) {
+            groupListView.setItemChecked(i, false);
+        }
+
+        groupListView.dispatchSetSelected(false);
+        if (m_g != null) {
+            List<Double> list = getGroups(dbHelper, m_g.getId(),
+                    exerciseSpinner.getSelectedItemId());
+            if (list != null) {
+                groupValueAdapter.clear();
+                addAll(groupValueAdapter, list);
+            } else {
+                Log.e(Consts.LOG_TAG, "groups is null");
+            }
+        }
+    }
+
+    private static List<Double> getChosenObjects(ListView listView, SparseBooleanArray checkedItemPositions) {
         List<Double> list = new ArrayList<Double>();
-        for (int i = 0; i < checkedItemPositions.size(); i++) {
-            if (checkedItemPositions.get(i)) {
-                list.add((Double) adapter.getItem(i));
+        for (int i = 0; i < listView.getCount(); i++) {
+            int key = checkedItemPositions.keyAt(i);
+            if (checkedItemPositions.get(key)) {
+                list.add((Double) listView.getItemAtPosition(key));
             }
         }
         return list;

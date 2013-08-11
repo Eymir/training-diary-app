@@ -3,6 +3,7 @@ package myApp.trainingdiary.statistic;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -22,6 +23,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import myApp.trainingdiary.utils.Consts;
+
 /**
  * Created by Lenovo on 28.07.13.
  */
@@ -37,15 +40,12 @@ public class StatisticGraph {
     /**
      * The main renderer that includes all the renderers customizing a chart.
      */
-    private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+    private XYMultipleSeriesRenderer mRenderer;
     /**
      * The most recently added series.
      */
     private XYSeries mCurrentSeries;
-    /**
-     * The most recently created renderer, customizing the current series.
-     */
-    private XYSeriesRenderer mCurrentRenderer;
+
     /**
      * The chart view that displays the data.
      */
@@ -55,6 +55,13 @@ public class StatisticGraph {
     public StatisticGraph(Context context) {
         //set some properties on the main renderer
         this.context = context;
+        createRender();
+//        mRenderer.setShowCustomTextGrid(true);
+        createGraphView();
+    }
+
+    private void createRender() {
+        mRenderer = new XYMultipleSeriesRenderer();
         mRenderer.setApplyBackgroundColor(true);
         mRenderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
         mRenderer.setGridColor(Color.GRAY);
@@ -62,16 +69,16 @@ public class StatisticGraph {
         mRenderer.setAxesColor(Color.LTGRAY);
         mRenderer.setShowGrid(true);
         mRenderer.setClickEnabled(false);
-        mRenderer.setAxisTitleTextSize(24);
+        mRenderer.setAxisTitleTextSize(32);
         mRenderer.setAntialiasing(true);
-        mRenderer.setChartTitleTextSize(30);
-        mRenderer.setLabelsTextSize(12);
-        mRenderer.setLegendTextSize(16);
+        mRenderer.setChartTitleTextSize(38);
+        mRenderer.setLabelsTextSize(18);
+        mRenderer.setLegendTextSize(22);
         mRenderer.setMargins(new int[]{20, 40, 15, 0});
         mRenderer.setZoomButtonsVisible(true);
-        mRenderer.setPointSize(3);
-//        mRenderer.setShowCustomTextGrid(true);
-        createGraphView();
+        mRenderer.setPointSize(4);
+        mRenderer.addYTextLabel(0, "0");
+//        mRenderer.setPanEnabled(false, false);
     }
 
     public void addMonthAndYear(Date a, Date b) {
@@ -102,6 +109,7 @@ public class StatisticGraph {
 
         if (mChartView == null) {
             mChartView = ChartFactory.getTimeChartView(context, mDataset, mRenderer, null);
+
             // enable the chart click events
             mRenderer.setClickEnabled(true);
             mRenderer.setSelectableBuffer(10);
@@ -132,7 +140,6 @@ public class StatisticGraph {
         outState.putSerializable("dataset", mDataset);
         outState.putSerializable("renderer", mRenderer);
         outState.putSerializable("current_series", mCurrentSeries);
-        outState.putSerializable("current_renderer", mCurrentRenderer);
 
     }
 
@@ -140,11 +147,11 @@ public class StatisticGraph {
         mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("dataset");
         mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("renderer");
         mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
-        mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
 
     }
 
     public void addSeries(String name) {
+        Log.d(Consts.LOG_TAG, "addSeries: " + name);
         // create a new series of data
         TimeSeries series = new TimeSeries(name);
         mCurrentSeries = series;
@@ -155,17 +162,16 @@ public class StatisticGraph {
         renderer.setPointStyle(PointStyle.CIRCLE);
         renderer.setFillPoints(true);
         renderer.setDisplayChartValues(true);
-        renderer.setDisplayChartValuesDistance(20);
+        renderer.setDisplayChartValuesDistance(30);
         renderer.setColor(getColor(mDataset.getSeriesCount()));
-        renderer.setLineWidth(2);
-        renderer.setChartValuesTextSize(14);
+        renderer.setLineWidth(4);
+        renderer.setChartValuesTextSize(16);
         mDataset.addSeries(series);
-        mCurrentRenderer = renderer;
         mChartView.repaint();
     }
 
     private int getColor(int seriesCount) {
-
+        Log.d(Consts.LOG_TAG, "seriesCount: " + seriesCount);
         switch (seriesCount) {
             case 0:
                 return Color.GREEN;
@@ -203,6 +209,36 @@ public class StatisticGraph {
     }
 
     public void clear() {
-        if (mDataset.getSeriesCount() > 0) mDataset.clear();
+        if (mDataset.getSeriesCount() > 0) {
+            mDataset.clear();
+            mRenderer.removeAllRenderers();
+        }
+    }
+
+    public void matchSeries() {
+        double x1 = new Date().getTime();
+        double x2 = 0;
+        double y1 = new Date().getTime();
+        double y2 = 0;
+        for (int i = 0; i < mDataset.getSeries().length; i++) {
+            XYSeries xySeries = mDataset.getSeries()[i];
+            if (x1 > xySeries.getMinX()) x1 = xySeries.getMinX();
+            if (x2 < xySeries.getMaxX()) x2 = xySeries.getMaxX();
+
+            if (y1 > xySeries.getMinY()) y1 = xySeries.getMinY();
+            if (y2 < xySeries.getMaxY()) y2 = xySeries.getMaxY();
+        }
+        Log.i(Consts.LOG_TAG, "x1: " + x1 + "x2: " + x2 + "y1: " + y1 + "y2: " + y2);
+        double diff = x2 - x1;
+
+        mRenderer.setPanLimits(new double[]{x1 - diff,
+                x2 + diff,
+                (y1 - y1 / 10 < 0) ? 0 : y1 - y1 / 10,
+                y2 + y2 / 10});
+        mRenderer.setXAxisMin(x1 - diff / 10);
+        mRenderer.setXAxisMax(x2 + diff / 10);
+        mRenderer.setYAxisMin(y1);
+        mRenderer.setYAxisMax(y2);
+
     }
 }
