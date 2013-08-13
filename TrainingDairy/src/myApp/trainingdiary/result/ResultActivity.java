@@ -196,7 +196,7 @@ public class ResultActivity extends Activity implements OnClickListener {
             result += measureWheels.getStringValue() + "x";
         }
         result = result.substring(0, result.length() - 1);
-        if (result != null && !result.isEmpty()) {
+        if (result != null && !(result.length() == 0)) {
             List<TrainingStat> list = dbHelper.READ.getTrainingStatForLastPeriod(Consts.THREE_HOURS);
             Date trainingDate = (list.isEmpty()) ? new Date() : list.get(0).getTrainingDate();
             dbHelper.WRITE.insertTrainingStat(ex_id, tr_id, System.currentTimeMillis(), trainingDate.getTime(), result);

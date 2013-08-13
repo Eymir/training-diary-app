@@ -14,7 +14,7 @@ public class MeasureFormatter {
     public static String toStatValue(String... measureValues) {
         String value = "";
         for (String m_v : measureValues) {
-            if (value.isEmpty()) {
+            if (value.length() == 0) {
                 value += m_v;
             } else {
                 value += "x" + m_v;

@@ -216,7 +216,7 @@ public class AddExerciseActivity extends Activity {
     private boolean validateCreateForm() {
         if (name_edit.getText() == null
                 || name_edit.getText().toString() == null
-                || name_edit.getText().toString().isEmpty()) {
+                || name_edit.getText().toString().length() == 0) {
             Toast.makeText(this, R.string.input_exercise_name_notification,
                     Toast.LENGTH_SHORT).show();
             return false;
