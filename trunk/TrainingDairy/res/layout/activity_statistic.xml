@@ -42,11 +42,20 @@
 
         </LinearLayout>
 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/stat_coming_soon"
+                android:id="@+id/stat_coming_soon_textview"
+                android:layout_gravity="center"/>
+
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/graph">
+
         </LinearLayout>
 
     </LinearLayout>

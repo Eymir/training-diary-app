@@ -126,4 +126,7 @@
 
     <string name="baseExType_power">Силовой тип</string>
     <string name="baseExType_cycle">Циклический тип</string>
+    <string name="stat_coming_soon">Подробная статистика появится в следующей версии, пока что
+        только простой график
+    </string>
 </resources>
