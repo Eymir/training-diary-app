@@ -78,6 +78,8 @@ public class StatisticGraph {
         mRenderer.setZoomButtonsVisible(true);
         mRenderer.setPointSize(4);
         mRenderer.addYTextLabel(0, "0");
+        mRenderer.setZoomEnabled(true, false);
+
 //        mRenderer.setPanEnabled(false, false);
     }
 
