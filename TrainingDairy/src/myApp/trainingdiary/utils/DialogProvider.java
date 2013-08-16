@@ -127,7 +127,7 @@ public class DialogProvider {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Log.d(Consts.LOG_TAG, "getCheckedItemPositions.size: " + groupListView.getCheckedItemPositions().size());
-                List<Double> list = getChosenObjects(groupListView, groupListView.getCheckedItemPositions());
+                List<Double> list = getChosenObjects(groupListView);
                 groupsButton.setText(list.toString());
 
                 dialogInterface.dismiss();
@@ -225,7 +225,7 @@ public class DialogProvider {
                     Long groupId = (groupSpinner.getSelectedItem() != null) ? ((Measure) groupSpinner.getSelectedItem()).getId() : null;
                     StatisticSettingsEvent event = null;
                     if (groupByCheckBox.isChecked()) {
-                        List<Double> list = getChosenObjects(groupListView, groupListView.getCheckedItemPositions());
+                        List<Double> list = getChosenObjects(groupListView);
                         event = new StatisticSettingsEvent(exerciseSpinner.getSelectedItemId(),
                                 measureId,
                                 groupId,
@@ -285,14 +285,14 @@ public class DialogProvider {
         }
     }
 
-    private static List<Double> getChosenObjects(ListView listView, SparseBooleanArray checkedItemPositions) {
+    private static List<Double> getChosenObjects(ListView listView) {
         List<Double> list = new ArrayList<Double>();
         for (int i = 0; i < listView.getCount(); i++) {
-            int key = checkedItemPositions.keyAt(i);
-            if (checkedItemPositions.get(key)) {
-                list.add((Double) listView.getItemAtPosition(key));
+            if (listView.isItemChecked(i)) {
+                list.add((Double) listView.getItemAtPosition(i));
             }
         }
+
         return list;
     }
 

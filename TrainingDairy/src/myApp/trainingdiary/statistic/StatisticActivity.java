@@ -59,6 +59,8 @@ public class StatisticActivity extends Activity {
 
         if (ex_id != null) {
             drawExerciseProgress(ex_id, null, null, null);
+        } else {
+            findViewById(R.id.stat_coming_soon_textview).setVisibility(View.VISIBLE);
         }
         createSettingDialog();
 
@@ -96,6 +98,7 @@ public class StatisticActivity extends Activity {
     }
 
     private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, List<Double> groups) {
+        findViewById(R.id.stat_coming_soon_textview).setVisibility(View.GONE);
         Log.d(Consts.LOG_TAG, "ex_id: " + ex_id + " measure_id: " + measure_id + " group_measure_id: " + group_measure_id + " groups: " + groups);
         graph.clear();
         Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
