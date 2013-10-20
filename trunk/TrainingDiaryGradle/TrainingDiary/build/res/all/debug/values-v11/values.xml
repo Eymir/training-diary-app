@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/C:/Users/Lenovo/ANDROID/trunk/TrainingDiaryProject/TrainingDiary/src/main/res/values-v11/styles.xml -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo">
+        <!-- API 11 theme customizations can go here. -->
+    </style>
+    <!-- From: file:/C:/Users/Lenovo/ANDROID/trunk/TrainingDiaryProject/TrainingDiary/src/main/res/values-v11/styles_black_orange_holo.xml -->
+    <style name="Buttonblack_orange_holo" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+    </style>
+
+    <style name="ImageButtonblack_orange_holo" parent="android:Widget.Holo.Light.ImageButton">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+    </style>
+
+    <style name="ProgressBarblack_orange_holo" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo_light</item>
+    </style>
+
+    <style name="SeekBarblack_orange_holo" parent="android:Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+        <item name="android:thumb">@drawable/scrubber_control_selector_holo_light</item>
+    </style>
+
+    <style name="Spinnerblack_orange_holo" parent="android:Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_holo_light</item>
+        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+    </style>
+    <!-- From: file:/C:/Users/Lenovo/ANDROID/trunk/TrainingDiaryProject/TrainingDiary/build/exploded-bundles/ComAndroidSupportAppcompatV71800.aar/res/values-v11/values.xml -->
+    <style name="Theme.Base" parent="android:Theme.Holo">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+
+        <!-- Attributes populated from the framework to be read by apps -->
+        <item name="buttonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="buttonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+        <item name="selectableItemBackground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Theme.Base.Light" parent="android:Theme.Holo.Light">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+
+        <!-- Attributes populated from the framework to be read by apps -->
+        <item name="buttonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="buttonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+        <item name="selectableItemBackground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.AppCompat.Base.AutoCompleteTextView" parent="android:Widget.Holo.AutoCompleteTextView" />
+
+    <style name="Widget.AppCompat.Base.ProgressBar" parent="android:Widget.Holo.ProgressBar" />
+
+    <style name="Widget.AppCompat.Base.ProgressBar.Horizontal" parent="android:Widget.Holo.ProgressBar.Horizontal" />
+
+    <style name="Widget.AppCompat.Light.Base.AutoCompleteTextView" parent="android:Widget.Holo.Light.AutoCompleteTextView" />
+    <!-- From: file:/C:/Users/Lenovo/ANDROID/trunk/TrainingDiaryProject/TrainingDiary/src/main/res/values-v11/themes_black_orange_holo.xml -->
+    <style name="black_orange_holo" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_holo_light</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+        <item name="android:buttonStyle">@style/Buttonblack_orange_holo</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonblack_orange_holo</item>
+        <item name="android:dropDownSpinnerStyle">@style/Spinnerblack_orange_holo</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarblack_orange_holo</item>
+        <item name="android:seekBarStyle">@style/SeekBarblack_orange_holo</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+    </style>
+
+</resources>

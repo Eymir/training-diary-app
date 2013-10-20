@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="black_orange_holo" parent="android:Theme.Light">
+
+    <item name="android:editTextStyle">@style/EditTextblack_orange_holo</item>
+
+    <item name="android:checkboxStyle">@style/CheckBoxblack_orange_holo</item>
+
+    <item name="android:radioButtonStyle">@style/RadioButtonblack_orange_holo</item>
+
+    <item name="android:buttonStyle">@style/Buttonblack_orange_holo</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonblack_orange_holo</item>
+
+    <item name="android:spinnerStyle">@style/Spinnerblack_orange_holo</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/Spinnerblack_orange_holo.DropDown</item>
+
+    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemblack_orange_holo</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarblack_orange_holo</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarblack_orange_holo</item>
+
+    <item name="android:listViewStyle">@style/ListViewblack_orange_holo</item>
+
+    <item name="android:listViewWhiteStyle">@style/ListViewblack_orange_holo.White</item>
+
+    <item name="android:spinnerItemStyle">@style/SpinnerItemblack_orange_holo</item>
+
+  </style>
+
+</resources>
