@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res" >
+            <file
+                name="disappear"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\disappear.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="grow_from_bottom"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\grow_from_bottom.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="grow_from_bottomleft_to_topright"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\grow_from_bottomleft_to_topright.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="grow_from_bottomright_to_topleft"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\grow_from_bottomright_to_topleft.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="grow_from_top"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\grow_from_top.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="grow_from_topleft_to_bottomright"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\grow_from_topleft_to_bottomright.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="grow_from_topright_to_bottomleft"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\grow_from_topright_to_bottomleft.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="pump_bottom"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\pump_bottom.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="pump_top"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\pump_top.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="rail"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\rail.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shrink_from_bottom"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\shrink_from_bottom.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shrink_from_bottomleft_to_topright"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\shrink_from_bottomleft_to_topright.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shrink_from_bottomright_to_topleft"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\shrink_from_bottomright_to_topleft.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shrink_from_top"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\shrink_from_top.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shrink_from_topleft_to_bottomright"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\shrink_from_topleft_to_bottomright.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="shrink_from_topright_to_bottomleft"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\anim\shrink_from_topright_to_bottomleft.xml"
+                qualifiers=""
+                type="anim" />
+            <file
+                name="action_item_btn"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\action_item_btn.xml"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="action_item_selected"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\action_item_selected.9.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="arrow_down"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\arrow_down.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="arrow_up"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\arrow_up.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="icon"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\icon.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_cancel"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_cancel.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_down_arrow"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_down_arrow.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_eraser"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_eraser.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_info"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_info.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_ok"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_ok.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_search"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_search.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="menu_up_arrow"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\menu_up_arrow.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="popup"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable\popup.9.png"
+                qualifiers=""
+                type="drawable" />
+            <file
+                name="icon"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable-hdpi\icon.png"
+                qualifiers="hdpi"
+                type="drawable" />
+            <file
+                name="icon"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable-ldpi\icon.png"
+                qualifiers="ldpi"
+                type="drawable" />
+            <file
+                name="icon"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\drawable-mdpi\icon.png"
+                qualifiers="mdpi"
+                type="drawable" />
+            <file
+                name="action_item_horizontal"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\layout\action_item_horizontal.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="action_item_vertical"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\layout\action_item_vertical.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="horiz_separator"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\layout\horiz_separator.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="main"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\layout\main.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="popup_horizontal"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\layout\popup_horizontal.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="popup_vertical"
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\layout\popup_vertical.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\values\strings.xml"
+                qualifiers="" >
+                <string name="app_name" >Gallery3D Like QuickAction Demo
+                </string>
+                <string name="hello" >Hello World, NewQA!
+                </string>
+            </file>
+            <file
+                path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\res\values\styles.xml"
+                qualifiers="" >
+
+                <style name="Animations.PopUpMenu.Reflect" >
+                    <item name="@android:windowEnterAnimation">
+@anim/pump_bottom
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/disappear
+                    </item>
+                </style>
+
+                <style name="Animations.PopUpMenu.Center" >
+                    <item name="@android:windowEnterAnimation">
+@anim/grow_from_bottom
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/shrink_from_top
+                    </item>
+                </style>
+
+                <style name="Animations.PopUpMenu" />
+
+                <style name="Animations" />
+
+                <style name="Animations.PopDownMenu" />
+
+                <style name="Animations.PopUpMenu.Left" >
+                    <item name="@android:windowEnterAnimation">
+@anim/grow_from_bottomleft_to_topright
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/shrink_from_topright_to_bottomleft
+                    </item>
+                </style>
+
+                <style name="Animations.PopDownMenu.Left" >
+                    <item name="@android:windowEnterAnimation">
+@anim/grow_from_topleft_to_bottomright
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/shrink_from_bottomright_to_topleft
+                    </item>
+                </style>
+
+                <style name="Animations.PopDownMenu.Center" >
+                    <item name="@android:windowEnterAnimation">
+@anim/grow_from_top
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/shrink_from_bottom
+                    </item>
+                </style>
+
+                <style name="Animations.PopUpMenu.Right" >
+                    <item name="@android:windowEnterAnimation">
+@anim/grow_from_bottomright_to_topleft
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/shrink_from_topleft_to_bottomright
+                    </item>
+                </style>
+
+                <style name="Animations.PopDownMenu.Right" >
+                    <item name="@android:windowEnterAnimation">
+@anim/grow_from_topright_to_bottomleft
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/shrink_from_bottomleft_to_topright
+                    </item>
+                </style>
+
+                <style name="Animations.PopDownMenu.Reflect" >
+                    <item name="@android:windowEnterAnimation">
+@anim/pump_top
+                    </item>
+                    <item name="@android:windowExitAnimation">
+@anim/disappear
+                    </item>
+                </style>
+            </file>
+        </source>
+        <source path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\build\res\rs\release" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="C:\Users\Lenovo\ANDROID\trunk\TrainingDiaryProject\TrainingDiary\libraries\ExampleActivity\build-types\release\res" />
+    </dataSet>
+
+</merger>

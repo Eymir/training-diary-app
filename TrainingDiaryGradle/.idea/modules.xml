@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/TrainingDiary/libraries/ExampleActivity/ExampleActivity.iml" filepath="$PROJECT_DIR$/TrainingDiary/libraries/ExampleActivity/ExampleActivity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrainingDiary/TrainingDiary.iml" filepath="$PROJECT_DIR$/TrainingDiary/TrainingDiary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrainingDiaryProject.iml" filepath="$PROJECT_DIR$/TrainingDiaryProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gradle/wrapper/libraries/libraries.iml" filepath="$PROJECT_DIR$/gradle/wrapper/libraries/libraries.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrainingDiary/libraries/library/library.iml" filepath="$PROJECT_DIR$/TrainingDiary/libraries/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrainingDiary/libraries/wheel/wheel.iml" filepath="$PROJECT_DIR$/TrainingDiary/libraries/wheel/wheel.iml" />
+    </modules>
+  </component>
+</project>
+

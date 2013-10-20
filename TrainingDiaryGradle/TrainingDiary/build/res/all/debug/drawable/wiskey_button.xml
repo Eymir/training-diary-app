@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@drawable/btn_default_pressed_holo_light">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dip"/>
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dip"/>
+            <solid android:color="#B87333"/>
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#B87333"/>
+            <corners android:radius="3dip"/>
+            <stroke android:color="#00000000" android:width="8dp"/>
+            <!--<gradient  android:angle="-90"  android:startColor="#e9ac6d" android:endColor="#ad7940" />-->
+        </shape>
+    </item>
+</selector><!-- From: file:/C:/Users/Lenovo/ANDROID/trunk/TrainingDiaryProject/TrainingDiary/src/main/res/drawable/wiskey_button.xml -->
