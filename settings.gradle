@@ -1,4 +1,0 @@
-include ':TrainingDiary'
-include ':TrainingDiary:libraries:library'
-include ':TrainingDiary:libraries:wheel'
-include ':TrainingDiary:libraries:ExampleActivity'
