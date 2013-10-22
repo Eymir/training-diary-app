@@ -20,4 +20,5 @@ public class Consts {
     public static final int EXERCISE_TYPE = 1;
 
     public static final String STATISTIC_TYPE = "STATISTIC_TYPE";
+    public static final String CHOSEN_STATISTIC = "CHOSEN_STATISTIC";
 }

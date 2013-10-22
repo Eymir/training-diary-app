@@ -380,6 +380,15 @@ public class DbReader {
         return count;
     }
 
+    public int getTrainingsCount() {
+        String sqlQuery = "select count(tr.id) as _count from Training tr";
+        Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
+        c.moveToFirst();
+        int count = c.getInt(c.getColumnIndex("_count"));
+        c.close();
+        return count;
+    }
+
     public int getExerciseCount() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         int count = getExerciseCount(db);
