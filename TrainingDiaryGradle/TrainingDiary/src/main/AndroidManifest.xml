@@ -12,7 +12,8 @@
             android:allowBackup="false"
             android:icon="@drawable/ic_dairy"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Black_orange">
+            android:theme="@style/Theme.Black_orange"
+            android:name="myApp.trainingdiary.AndroidApplication">
         <activity
                 android:name="myApp.trainingdiary.training.TrainingActivity"
                 android:label="@string/trainings">

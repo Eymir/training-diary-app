@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -30,6 +31,7 @@ import java.util.List;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.customview.CustomCursorAdapter;
 import myApp.trainingdiary.customview.EntityArrayAdapter;
+import myApp.trainingdiary.customview.stat.StatisticEnum;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
@@ -489,6 +491,38 @@ public class DialogProvider {
         builder.setView(view);
         return builder.create();
     }
+
+    public static AlertDialog createStatListDialog(final Activity activity, final OkClickListener listener) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.stat_list_dialog_title);
+        final SharedPreferences sp = activity.getSharedPreferences(Consts.CHOSEN_STATISTIC, activity.MODE_PRIVATE);
+        final StatisticEnum[] stats = StatisticEnum.values();
+        boolean[] checked = new boolean[stats.length];
+        for (int i = 0; i < StatisticEnum.values().length; i++) {
+            if (sp.getBoolean(stats[i].name(), false)) {
+                checked[i] = sp.getBoolean(stats[i].name(), false);
+            }
+        }
+        final String[] strings = StatisticEnum.getDescNames();
+        builder.setMultiChoiceItems(strings, checked, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                sp.edit().putBoolean(stats[which].name(), isChecked);
+                sp.edit().commit();
+            }
+        });
+
+        builder.setPositiveButton(R.string.btn_txt_OK, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                listener.onPositiveClick();
+            }
+        });
+
+        return builder.create();
+    }
+
 
     public static boolean validateCreateForm(Activity activity, EditText name_edit, Spinner type_spinner) {
         if (name_edit.getText() == null

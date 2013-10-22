@@ -139,4 +139,7 @@
     <string name="browse">Просмотреть</string>
     <string name="view_exercise_dialog_title">Просмотр упражнения</string>
     <string name="delete_not_succesful">Не удалось удалить</string>
+    <string name="tr_count_stat">Всего тренировок</string>
+    <string name="last_tr_date_stat">Дата последней тренировки</string>
+    <string name="stat_list_dialog_title">Выбирете подходящие пункты</string>
 </resources>
