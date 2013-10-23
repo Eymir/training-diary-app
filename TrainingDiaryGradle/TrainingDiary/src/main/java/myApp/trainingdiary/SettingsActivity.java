@@ -1,20 +1,11 @@
 package myApp.trainingdiary;
 
-import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.List;
 
 import myApp.trainingdiary.db.DBHelper;
-import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.utils.Consts;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
@@ -36,7 +27,7 @@ public class SettingsActivity extends PreferenceActivity {
         TextView tvCountHist = (TextView) findViewById(R.id.tvCountHist);
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        int cTr = dbHelper.READ.getTrainingsCount(db);
+        int cTr = dbHelper.READ.getTrainingDayCount(db);
         String messTr = getResources().getString(R.string.count_tr);
         messTr = messTr + ": " + cTr;
         tvCountTr.setText(messTr);

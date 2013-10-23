@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
@@ -60,7 +62,7 @@ public class ExerciseActivity extends ActionBarActivity {
     private QuickAction exerciseActionTools;
     private long cur_ex_id;
     private ImageView cur_drag_handler;
-    private Dialog renameExerciseDialog;
+    private EditDialog renameExerciseDialog;
     private AlertDialog removeExerciseDialog;
 
     @Override
@@ -264,9 +266,12 @@ public class ExerciseActivity extends ActionBarActivity {
                         ActionItem actionItem = quickAction.getActionItem(pos);
 
                         switch (actionId) {
-                            case ID_RENAME_EXERCISE:
-                                renameExerciseDialog.show();
+                            case ID_RENAME_EXERCISE: {
+                                String ex_name = dbHelper
+                                        .READ.getExerciseNameById(cur_ex_id);
+                                renameExerciseDialog.show(ex_name);
                                 break;
+                            }
                             case ID_REMOVE_EXERCISE:
                                 String ex_name = dbHelper
                                         .READ.getExerciseNameById(cur_ex_id);
@@ -339,13 +344,13 @@ public class ExerciseActivity extends ActionBarActivity {
         });
     }
 
-@Override
-public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.actadd_actsettings_menu, menu);
-    return super.onCreateOptionsMenu(menu);
-}
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actadd_actsettings_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

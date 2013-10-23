@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.dialog.DialogProvider;
+import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.dialog.ViewExerciseDialog;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
@@ -55,7 +57,7 @@ public class AddExerciseActivity extends ActionBarActivity {
     private DBHelper dbHelper;
 
     private Dialog createExerciseDialog;
-    private Dialog renameExerciseDialog;
+    private EditDialog renameExerciseDialog;
     private AlertDialog removeExerciseDialog;
 
     private QuickAction exerciseActionTools;
@@ -73,6 +75,7 @@ public class AddExerciseActivity extends ActionBarActivity {
         createExcerciseTools();
         createRenameExDialog();
         createDeletionDialog();
+
         try {
             tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
         } catch (NullPointerException e) {
@@ -83,7 +86,6 @@ public class AddExerciseActivity extends ActionBarActivity {
 
         if (tr_id > 0)
             trainingName = dbHelper.READ.getTrainingNameById(tr_id);
-
 
         exerciseList = (ListView) findViewById(R.id.exercise_list);
 
@@ -339,9 +341,12 @@ public class AddExerciseActivity extends ActionBarActivity {
                         ActionItem actionItem = quickAction.getActionItem(pos);
 
                         switch (actionId) {
-                            case ID_RENAME_EXERCISE:
-                                renameExerciseDialog.show();
-                                break;
+                            case ID_RENAME_EXERCISE: {
+                                String ex_name = dbHelper
+                                        .READ.getExerciseNameById(cur_ex_id);
+                                renameExerciseDialog.show(ex_name);
+                            }
+                            break;
                             case ID_REMOVE_EXERCISE:
                                 String ex_name = dbHelper
                                         .READ.getExerciseNameById(cur_ex_id);

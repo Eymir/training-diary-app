@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,7 +36,6 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
     private DBHelper dbHelper;
     private AlertDialog editStatListDialog;
-    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +67,17 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
     private void initStatPref() {
         SharedPreferences sp = getSharedPreferences(Consts.CHOSEN_STATISTIC, MODE_PRIVATE);
+
         if (sp.getAll().size() < StatisticEnum.values().length) {
+            SharedPreferences.Editor editor = sp.edit();
             int i = 0;
             for (StatisticEnum stat : StatisticEnum.values()) {
-                sp.edit().putBoolean(stat.name(), (i < 5) ? true : false);
+                editor.putBoolean(stat.name(), (i < 5) ? true : false);
                 i++;
             }
+            editor.commit();
         }
-        sp.edit().commit();
+        Log.d(Consts.LOG_TAG, "SharedPreferences." + Consts.CHOSEN_STATISTIC + ".count: " + sp.getAll().size());
     }
 
     private void createEditStatListDialog() {
@@ -93,6 +96,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         for (StatisticEnum stat : StatisticEnum.values()) {
             if (sp.getBoolean(stat.name(), false)) {
                 list.add(StatisticValueFactory.create(stat));
+                Log.d(Consts.LOG_TAG, "stat.name() is true:  " + stat.name());
             }
         }
         ListView listView = (ListView) findViewById(R.id.statListView);
