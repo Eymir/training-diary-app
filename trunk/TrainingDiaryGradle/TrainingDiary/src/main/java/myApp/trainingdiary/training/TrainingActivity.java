@@ -33,6 +33,7 @@ import java.util.List;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.excercise.ExerciseActivity;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.dialog.DialogProvider;
@@ -52,8 +53,8 @@ public class TrainingActivity extends ActionBarActivity {
     private DBHelper dbHelper;
     private DragSortListView trainingList;
     private SimpleDragSortCursorAdapter trainingDragAdapter;
-    private Dialog createInputTextDialog;
-    private Dialog renameTrainingDialog;
+    private EditDialog createInputTextDialog;
+    private EditDialog renameTrainingDialog;
     private AlertDialog deleteTrainingDialog;
 
     private QuickAction trainingActionTools;
@@ -104,7 +105,7 @@ public class TrainingActivity extends ActionBarActivity {
         DialogProvider.InputTextDialogClickListener listener = new DialogProvider.InputTextDialogClickListener() {
             @Override
             public void onPositiveClick(String text) {
-                dbHelper.WRITE.createTraining(text, dbHelper.READ.getTrainingsCount(dbHelper.getReadableDatabase()));
+                dbHelper.WRITE.createTraining(text, dbHelper.READ.getTrainingDayCount(dbHelper.getReadableDatabase()));
 //                createInputTextDialog.cancel();
                 Toast.makeText(TrainingActivity.this,
                         R.string.create_success, Toast.LENGTH_SHORT).show();
@@ -157,9 +158,12 @@ public class TrainingActivity extends ActionBarActivity {
                         ActionItem actionItem = quickAction.getActionItem(pos);
 
                         switch (actionId) {
-                            case ID_RENAME_TRAINING:
-                                renameTrainingDialog.show();
+                            case ID_RENAME_TRAINING: {
+                                String tr_name = dbHelper
+                                        .READ.getTrainingNameById(cur_tr_id);
+                                renameTrainingDialog.show(tr_name);
                                 break;
+                            }
                             case ID_DELETE_TRAINING:
                                 String tr_name = dbHelper
                                         .READ.getTrainingNameById(cur_tr_id);

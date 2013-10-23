@@ -49,7 +49,7 @@ public class DialogProvider {
         this.context = context;
     }
 
-    public static AlertDialog createInputTextDialog(final Activity activity, String title, String positiveTitle, String negativeTitle, final Validator validator, final InputTextDialogClickListener listener) {
+    public static EditDialog createInputTextDialog(final Activity activity, String title, String positiveTitle, String negativeTitle, final Validator validator, final InputTextDialogClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -57,6 +57,8 @@ public class DialogProvider {
 
         final EditText editText = (EditText) view.findViewById(R.id.name_input);
         builder.setView(view);
+
+
 
         builder.setPositiveButton(positiveTitle, new DialogInterface.OnClickListener() {
             @Override
@@ -74,7 +76,7 @@ public class DialogProvider {
             }
         });
 
-        return builder.create();
+        return new EditDialog(builder.create());
     }
 
     public static AlertDialog createSimpleDialog(final Activity activity, String title, String positiveTitle, String negativeTitle, final SimpleDialogClickListener listener) {
@@ -507,8 +509,9 @@ public class DialogProvider {
         builder.setMultiChoiceItems(strings, checked, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                sp.edit().putBoolean(stats[which].name(), isChecked);
-                sp.edit().commit();
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putBoolean(stats[which].name(), isChecked);
+                editor.commit();
             }
         });
 

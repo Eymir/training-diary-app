@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMediumInverse"
                     android:text="@string/statistic_main"
-                    android:gravity="left"
+                    android:gravity="left|center_vertical"
                     android:layout_weight="1"
                     />
 
@@ -96,6 +96,7 @@
         <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/statListView"/>
+                android:id="@+id/statListView"
+                android:layout_margin="5dp"/>
     </LinearLayout>
 </LinearLayout>

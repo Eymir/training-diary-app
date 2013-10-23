@@ -371,7 +371,7 @@ public class DbReader {
         return c;
     }
 
-    public int getTrainingsCount(SQLiteDatabase db) {
+    public int getTrainingDayCount(SQLiteDatabase db) {
         String sqlQuery = "select count(tr.id) as _count from Training tr";
         Cursor c = db.rawQuery(sqlQuery, null);
         c.moveToFirst();
@@ -380,7 +380,7 @@ public class DbReader {
         return count;
     }
 
-    public int getTrainingsCount() {
+    public int getTrainingDayCount() {
         String sqlQuery = "select count(tr.id) as _count from Training tr";
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
@@ -438,7 +438,7 @@ public class DbReader {
      */
     public String getStatistics(SQLiteDatabase db) {
         String result = "";
-        result += "Training: " + getTrainingsCount(db) + "\n";
+        result += "Training: " + getTrainingDayCount(db) + "\n";
         result += "Exercise: " + getExerciseCount(db) + "\n";
         result += "ExerciseInTraining: " + getExerciseInTrainingCount(db)
                 + "\n";
@@ -533,5 +533,38 @@ public class DbReader {
         }
         c.close();
         return measures;
+    }
+
+    public TrainingStat getLastTrainingStat() {
+        String sqlQuery = "select * from TrainingStat tr_stat " +
+                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStat)";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                String value = c.getString(c.getColumnIndex("value"));
+                return new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value);
+            } else {
+                return null;
+            }
+        } finally {
+            c.close();
+        }
+
+    }
+
+    public int getTrainingCount() {
+        String sqlQuery = "select count(distinct stat.training_date) as _count from TrainingStat stat";
+        Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
+        c.moveToFirst();
+        int count = c.getInt(c.getColumnIndex("_count"));
+        c.close();
+        return count;
     }
 }
