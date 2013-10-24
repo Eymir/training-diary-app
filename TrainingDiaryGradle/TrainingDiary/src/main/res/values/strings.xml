@@ -142,4 +142,11 @@
     <string name="tr_count_stat">Всего тренировок</string>
     <string name="last_tr_date_stat">Дата последней тренировки</string>
     <string name="stat_list_dialog_title">Выбирете подходящие пункты</string>
+    <string name="favorite_ex_stat">Любимое упражнение</string>
+    <string name="no">нет</string>
+    <string name="tr_dur_sum">Проведено в зале</string>
+    <string name="day_short">д.</string>
+    <string name="hour_short">ч.</string>
+    <string name="min_short">м.</string>
+    <string name="last_tr_time_passed">С последней тренировки прошло</string>
 </resources>
