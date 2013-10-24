@@ -567,4 +567,46 @@ public class DbReader {
         c.close();
         return count;
     }
+
+
+    public long getTrainingDurationSumm() {
+        String sqlQuery = "select sum(dur_sum1) as dur_sum from(select (max(date) - min(date)) as dur_sum1 " +
+                "from TrainingStat stat " +
+                "group by training_date)";
+        Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
+        c.moveToFirst();
+        long dur_sum = c.getInt(c.getColumnIndex("dur_sum"));
+        c.close();
+        return dur_sum;
+    }
+
+    public Exercise getFavoriteExercise() {
+        String sqlQuery = "select ex.id ex_id, ex.name ex_name, " +
+                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
+                "from Exercise ex, ExerciseType ex_type, (" +
+                "select exercise_id, max(ex_count) from (" +
+                "select exercise_id, count(exercise_id) ex_count from TrainingStat group by exercise_id )) sel " +
+                "where ex.type_id = ex_type.id AND ex.id = sel.exercise_id";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long ex_id = c.getLong(c.getColumnIndex("ex_id"));
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                String ex_name = c.getString(c.getColumnIndex("ex_name"));
+                String type_name = c.getString(c.getColumnIndex("type_name"));
+                String type_icon = c.getString(c.getColumnIndex("type_icon"));
+                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
+            } else {
+                return null;
+            }
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            c.close();
+        }
+
+    }
 }

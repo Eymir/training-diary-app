@@ -27,5 +27,4 @@
         dslv:sort_enabled="true"
         dslv:track_drag_sort="false"
         dslv:use_default_controller="true" />
-
 </RelativeLayout>
