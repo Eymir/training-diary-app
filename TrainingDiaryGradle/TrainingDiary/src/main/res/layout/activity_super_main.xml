@@ -56,6 +56,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="@string/start_training"
+                android:textAppearance="?android:attr/textAppearanceLargeInverse"
+                android:textStyle="bold"
                 android:id="@+id/start_training_button"
                 android:padding="26dp"
                 />

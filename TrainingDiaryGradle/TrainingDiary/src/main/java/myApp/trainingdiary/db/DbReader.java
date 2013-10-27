@@ -233,6 +233,27 @@ public class DbReader {
         return measures;
     }
 
+    public List<Measure> getMeasuresInExerciseType(SQLiteDatabase db, Long ex_type_id) {
+        List<Measure> measures = new ArrayList<Measure>();
+        if (ex_type_id != null) {
+            String sqlQuery = "select m.* from Measure m, MeasureExType m_ex " +
+                    "where  m_ex.ex_type_id = ? AND m.id = m_ex.measure_id " +
+                    "order by m_ex.position ";
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(ex_type_id)});
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                Integer max = c.getInt(c.getColumnIndex("max"));
+                Double step = c.getDouble(c.getColumnIndex("step"));
+                Integer type = c.getInt(c.getColumnIndex("type"));
+                measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+            }
+            c.close();
+        }
+        return measures;
+    }
+
     public List<Measure> getMeasuresInExerciseExceptParticularMeasure(Long ex_id, Long m_id) {
         List<Measure> measures = new ArrayList<Measure>();
         if (ex_id != null) {
@@ -255,7 +276,7 @@ public class DbReader {
         return measures;
     }
 
-    public List<TrainingStat> getTrainingStatForLastPeriodByExercise(long ex_id, int period) {
+    public List<TrainingStat> getTrainingStatForLastPeriodByExercise(long ex_id, long period) {
         List<TrainingStat> stats = new ArrayList<TrainingStat>();
         long since = System.currentTimeMillis() - period;
         String sqlQuery = "select * from TrainingStat tr_stat " +
@@ -590,6 +611,33 @@ public class DbReader {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long ex_id = c.getLong(c.getColumnIndex("ex_id"));
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                String ex_name = c.getString(c.getColumnIndex("ex_name"));
+                String type_name = c.getString(c.getColumnIndex("type_name"));
+                String type_icon = c.getString(c.getColumnIndex("type_icon"));
+                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
+            } else {
+                return null;
+            }
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            c.close();
+        }
+
+    }
+
+    public Exercise getExerciseByName(SQLiteDatabase db, String name) {
+        String sqlQuery = "select ex.id ex_id, ex.name ex_name, " +
+                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
+                "from Exercise ex, ExerciseType ex_type " +
+                "where ex.name = ? AND ex.type_id = ex_type.id ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
         try {
             if (c.moveToFirst()) {
                 Long ex_id = c.getLong(c.getColumnIndex("ex_id"));

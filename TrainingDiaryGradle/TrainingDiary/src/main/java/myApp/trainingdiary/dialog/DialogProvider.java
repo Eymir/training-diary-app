@@ -58,8 +58,6 @@ public class DialogProvider {
         final EditText editText = (EditText) view.findViewById(R.id.name_input);
         builder.setView(view);
 
-
-
         builder.setPositiveButton(positiveTitle, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

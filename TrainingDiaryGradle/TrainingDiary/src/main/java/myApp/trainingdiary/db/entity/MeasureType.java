@@ -5,11 +5,13 @@ package myApp.trainingdiary.db.entity;
  */
 public enum MeasureType {
     Numeric(0), Temporal(1);
-    int code;
+    public int code;
 
     private MeasureType(int code) {
         this.code = code;
     }
+
+
 
     static public MeasureType valueOf(int code) {
         for (MeasureType type : MeasureType.values()) {

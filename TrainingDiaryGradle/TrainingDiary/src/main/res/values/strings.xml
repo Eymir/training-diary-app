@@ -94,7 +94,7 @@
     <string name="stat_main_button">Статистика</string>
     <string name="settings_main_button">Настройки</string>
     <string name="exit_main_button">Выход</string>
-    <string name="last_result">Последний результат: %1$s</string>
+    <string name="last_result">Последний результат:\n%1$s</string>
     <string name="write_button_text">Записать</string>
     <string name="last_training_empty">-</string>
     <string name="sum_approach">Всего подходов:</string>
@@ -104,12 +104,13 @@
     <string name="exercises_radio_button">Упражнения</string>
     <string name="empty_training_section">Вне тренировок</string>
     <string name="empty">Пусто</string>
-    <string name="trainings">Группы упражнений</string>
+    <string name="trainings">Тренировки</string>
     <string name="coming_soon">Появится в следующей версии</string>
     <string name="exercise_not_chosen">Упражнение не выбрано</string>
     <string name="backup_button_text">Сохранить бэкап</string>
     <string name="bitceps_ex_name_base">Штанга на бицепс стоя</string>
-    <string name="french_ex_name_base">Французкий жим</string>
+    <string name="french_ex_name_base">Французский жим</string>
+    <string name="french_ex_name_base_wrong">Французкий жим</string>
     <string name="run_ex_name_base">Бег (км)</string>
     <string name="pushups_ex_name_base">Отжимания от пола</string>
     <string name="podtyagivaniya_ex_name_base">Подтягивания</string>
@@ -149,4 +150,8 @@
     <string name="hour_short">ч.</string>
     <string name="min_short">м.</string>
     <string name="last_tr_time_passed">С последней тренировки прошло</string>
+    <string name="max_res_in_favorite_ex">Лучший результат</string>
+    <string name="error">ОШИБКА</string>
+    <string name="not_found">не найдено</string>
+    <string name="Size">Размер(см)</string>
 </resources>
