@@ -30,6 +30,7 @@ import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
+import myApp.trainingdiary.db.entity.MeasureType;
 import myApp.trainingdiary.db.entity.TrainingStat;
 import myApp.trainingdiary.dialog.StatisticSettingsEvent;
 import myApp.trainingdiary.utils.Consts;
@@ -140,7 +141,11 @@ public class StatisticActivity extends ActionBarActivity {
             if (group_measure_id == null) {
                 graph.addSeries(measure.getName());
                 for (TrainingStat stat : progress) {
-                    graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                    if (measure.getType() == MeasureType.Numeric)
+                        graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                    else if (measure.getType() == MeasureType.Temporal)
+                        graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getTimeValueByPos(stat.getValue(), pos));
+
                 }
             } else {
                 int m_g_pos = getPosByMeasureId(group_measure_id, exercise.getType());
@@ -148,7 +153,10 @@ public class StatisticActivity extends ActionBarActivity {
                 if (m_g_pos == pos) {
                     graph.addSeries(measure.getName());
                     for (TrainingStat stat : progress) {
-                        graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                        if (measure.getType() == MeasureType.Numeric)
+                            graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
+                        else if (measure.getType() == MeasureType.Temporal)
+                            graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getTimeValueByPos(stat.getValue(), pos));
                     }
                 } else {
                     if (groups == null || groups.size() == 0) {

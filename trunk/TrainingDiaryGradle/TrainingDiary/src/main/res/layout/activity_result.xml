@@ -30,14 +30,17 @@
                 android:id="@+id/write_button"
                 style="@style/btnStyleWhiskey"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLargeInverse"
+                android:textStyle="bold"
+                android:layout_height="70dp"
                 android:text="@string/write_button_text"
                 android:layout_weight="1"/>
 
         <ImageButton
                 android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_weight="0"
                 style="@style/btnStyleWhiskey"
-                android:layout_height="fill_parent"
                 android:id="@+id/undo_button"
                 android:src="@drawable/undo_white_big"/>
     </LinearLayout>

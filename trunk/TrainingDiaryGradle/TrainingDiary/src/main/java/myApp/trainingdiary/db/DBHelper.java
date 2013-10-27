@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.entity.EntityManager;
@@ -21,10 +23,9 @@ import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.utils.MeasureFormatter;
 
 public class DBHelper extends SQLiteOpenHelper {
-
     private static DBHelper mInstance = null;
 
-    private final static int DB_VERSION = 4;
+    private final static int DB_VERSION = 5;
 
     public DbReader READ;
     public DbWriter WRITE;
@@ -49,7 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        Log.d(Consts.LOG_TAG, "onDowngrade. oldVer: " + oldVersion + " newVer: " + newVersion);
     }
 
     @Override
@@ -85,6 +86,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 upgradeFrom_2_To_3(db);
             case 3:
                 upgradeFrom_3_To_4(db);
+            case 4:
+                upgradeFrom_4_To_5(db);
         }
 
     }
@@ -309,7 +312,7 @@ public class DBHelper extends SQLiteOpenHelper {
         size_type.getMeasures()
                 .add(new Measure(null,
                         CONTEXT.getString(R.string.size_measure_base),
-                        99, 0.1, MeasureType.Numeric));
+                        299, 0.1, MeasureType.Numeric));
         EM.persist(db, size_type);
     }
 
@@ -405,6 +408,50 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void upgradeFrom_4_To_5(SQLiteDatabase db) {
+        try {
+            db.beginTransaction();
+            Log.i(Consts.LOG_TAG, "extendTypes_ver_5 start");
+            extendTypes_ver_5(db);
+            db.setTransactionSuccessful();
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, "extendTypes_ver_5 problem", e);
+        } finally {
+            db.endTransaction();
+        }
+        try {
+            Log.i(Consts.LOG_TAG, "renameExercise_ver_5 start");
+            renameExercise_ver_5(db);
+            db.setTransactionSuccessful();
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, "renameExercise_ver_5 problem", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private void renameExercise_ver_5(SQLiteDatabase db) {
+        Exercise exercise = null;
+        exercise = READ.getExerciseByName(db, CONTEXT.getString(R.string.french_ex_name_base_wrong));
+        Log.i(Consts.LOG_TAG, "renameExercise_ver_5 looking for " + CONTEXT.getString(R.string.french_ex_name_base_wrong) + ": " + exercise);
+        if (exercise != null)
+            WRITE.renameExercise(db, exercise.getId(), CONTEXT.getString(R.string.french_ex_name_base));
+
+    }
+
+    private void extendTypes_ver_5(SQLiteDatabase db) {
+        ExerciseType ex_type = READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.size_ex_type_base));
+        Log.i(Consts.LOG_TAG, "extendTypes_ver_5 looking for " + CONTEXT.getString(R.string.size_ex_type_base) + ": " + ex_type);
+        if (ex_type != null) {
+            List<Measure> measures = READ.getMeasuresInExerciseType(db, ex_type.getId());
+            if (measures != null && !measures.isEmpty()) {
+                Measure m = measures.get(0);
+                m.setMax(299);
+                WRITE.updateMeasure(db, m);
+            }
+        }
+    }
+
     private void renameTypes_ver_4(SQLiteDatabase db) {
         ExerciseType ex_type = READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.baseExType_power));
         if (ex_type != null)
@@ -453,7 +500,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     CONTEXT.getString(R.string.bitceps_ex_name_base));
             EM.persist(db, bar_bitceps);
         }
-        //Французкий жим
+        //Французский жим
         if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.french_ex_name_base))) {
             Exercise french_jim = new Exercise(null,
                     READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
@@ -697,4 +744,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS TrainingStatOld");
     }
 
+    public int getVersion() {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            return db.getVersion();
+        } finally {
+            db.close();
+        }
+    }
 }

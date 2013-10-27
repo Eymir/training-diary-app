@@ -12,6 +12,7 @@ import myApp.trainingdiary.R;
 public enum StatisticEnum {
     TRAINING_COUNT(AndroidApplication.getInstance().getString(R.string.tr_count_stat)),
     FAVORITE_EXERCISE(AndroidApplication.getInstance().getString(R.string.favorite_ex_stat)),
+    MAX_RESULT_IN_FAVORTE_EX(AndroidApplication.getInstance().getString(R.string.max_res_in_favorite_ex)),
     TRAINING_DURATION_SUMM(AndroidApplication.getInstance().getString(R.string.tr_dur_sum)),
     LAST_TRAINING_DAY_COUNT(AndroidApplication.getInstance().getString(R.string.last_tr_time_passed)),
     LAST_TRAINING_DATE(AndroidApplication.getInstance().getString(R.string.last_tr_date_stat));

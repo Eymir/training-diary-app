@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.utils.Consts;
 
 /**
@@ -149,7 +150,7 @@ public class DbWriter {
         db.close();
     }
 
-    private void renameExercise(SQLiteDatabase db, long ex_id, String name) {
+    public void renameExercise(SQLiteDatabase db, long ex_id, String name) {
         ContentValues cv = new ContentValues();
         cv.put("name", name);
         db.update("Exercise", cv, "id = ? ",
@@ -236,4 +237,16 @@ public class DbWriter {
             db.endTransaction();
         }
     }
+
+    public void updateMeasure(SQLiteDatabase db, Measure m) {
+        ContentValues cv = new ContentValues();
+        cv.put("name", m.getName());
+        cv.put("max", m.getMax());
+        cv.put("step", m.getStep());
+        cv.put("type", m.getType().code);
+        Log.d(Consts.LOG_TAG, "Measure: " + m);
+        db.update("Measure", cv, "id = ? ",
+                new String[]{String.valueOf(m.getId())});
+    }
+
 }

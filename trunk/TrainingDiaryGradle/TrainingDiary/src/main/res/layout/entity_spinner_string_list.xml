@@ -11,5 +11,6 @@
             android:height="30dp"
             android:text="@string/empty"
             android:maxLines="4"
-            android:textAppearance="?android:attr/textAppearanceLargeInverse"/>
+            android:textColor="#FF222222"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 </LinearLayout>

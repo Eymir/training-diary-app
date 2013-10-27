@@ -29,6 +29,12 @@ public class MeasureFormatter {
         return Arrays.asList(values);
     }
 
+    /**
+     * Возвращает значение по позиции (нумерация с 0) из строки формата ААхББхСС
+     * @param statValue
+     * @param pos позиция элемента, нумерация с 0
+     * @return
+     */
     public static double getValueByPos(String statValue, int pos) {
         List<String> values = toMeasureValues(statValue);
         String value = values.get(pos);
@@ -36,4 +42,10 @@ public class MeasureFormatter {
         return Double.valueOf(value);
     }
 
+    public static double getTimeValueByPos(String statValue, int pos) {
+        List<String> values = toMeasureValues(statValue);
+        String value = values.get(pos);
+        value = value.replaceAll(":", ".");
+        return Double.valueOf(value);
+    }
 }
