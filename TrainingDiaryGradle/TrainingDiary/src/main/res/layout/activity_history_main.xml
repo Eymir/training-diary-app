@@ -14,6 +14,7 @@
                 android:id="@+id/training_history_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:cacheColorHint="#00000000"
                 android:background="@drawable/background_blue">
 
         </ListView>
@@ -23,6 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/background_blue"
+                android:cacheColorHint="#00000000"
                 android:visibility="gone"/>
 
         <TextView
