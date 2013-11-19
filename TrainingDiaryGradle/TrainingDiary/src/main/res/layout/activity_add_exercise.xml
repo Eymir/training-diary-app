@@ -3,7 +3,7 @@
               android:id="@+id/linearLayout1"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/background_blue"
+              style="?backgroundRef"
               android:orientation="vertical">
 
         <LinearLayout
@@ -19,7 +19,7 @@
                     android:divider="?android:listDivider"
                     android:cacheColorHint="#00000000"
                     android:dividerHeight="1px"
-                    >
+                    android:background="@android:color/transparent">
             </ListView>
 
             <TextView

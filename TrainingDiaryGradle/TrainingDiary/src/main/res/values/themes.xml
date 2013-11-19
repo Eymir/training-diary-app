@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="TrTheme" parent="@style/Theme.AppCompat">
+		<item name="android:windowTitleSize">20dip</item>
+	</style>
+
+	<style name="TrTheme.Blue_black_orange" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="backgroundRef">@style/layout_background_blor</item>
+        <item name="mainActButtonBarRef">@style/mainActButtonBar_blor</item>
+        <item name="mainActButtonBarButtonRef">@style/mainActButtonBarButton_blor</item>
+        <item name="hugeSpecificButtonRef">@style/hugeSpecificButton_blor</item>
+        <!--<item name="midHeaderTextViewRef">@style/midHeaderTextView_blor</item>-->
+        <item name="borderlessActionButtonRef">@style/borderlessActionButton_blor</item>
+        <!--<item name="statListItemKeyTextViewRef">@style/statListItemKeyTextView_blor</item>-->
+        <!--<item name="statListItemValueTextViewRef">@style/statListItemValueTextView_blor</item>-->
+        <!--<item name="exListItemTextViewRef">@style/exListItemTextView_blor</item>-->
+        <!--<item name="actionToolListItemTextViewRef">@style/actionToolListItemTextView_blor</item>-->
+        <!--<item name="histTrListItemTextViewRef">@style/histTrListItemTextView_blor</item>-->
+        <!--<item name="smallHeaderTextViewRef">@style/smallHeaderTextView_blor</item>-->
+        <!--<item name="bigHeaderTextViewRef">@style/bigHeaderTextView_blor</item>-->
+
+        <!--<item name="dialogMiniTitleTextViewRef">@style/dialogMiniTitleTextView_blor</item>-->
+        <!--<item name="dialogTextEditRef">@style/dialogTextEdit_blor</item>-->
+        <!--<item name="dialogSpinnerTextRef">@style/dialogSpinnerText_blor</item>-->
+
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Black_orange</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Black_orange</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Black_orange</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Black_orange</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Black_orange</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Black_orange</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Black_orange</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_black_orange</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_black_orange</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Black_orange</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_black_orange</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_black_orange</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Black_orange</item>
+        <!-- Light.DarkActionBar specific -->
+        <item name="android:actionBarWidgetTheme">@style/Theme.Black_orange.Widget</item>
+
+
+    </style>
+
+</resources>

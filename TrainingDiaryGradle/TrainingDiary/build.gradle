@@ -1,25 +1,15 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
-    }
-}
 apply plugin: 'android'
 
 repositories {
     mavenCentral()
 }
-
 dependencies {
-    compile 'com.android.support:support-v4:18.0.+'
+    compile 'com.android.support:support-v4:18.0.0'
     compile 'com.android.support:appcompat-v7:18.0.+'
     compile files('libraries/achartengine-1.1.0.jar')
     compile project('libraries:library')
     compile project('libraries:ExampleActivity')
     compile project('libraries:wheel')
-
 }
 
 android {

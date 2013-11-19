@@ -35,12 +35,7 @@
 
     </style>
 
-    <style name="ActionBar.Solid.Black_orange" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="background">@drawable/ab_solid_black_orange</item>
-        <item name="backgroundStacked">@drawable/ab_stacked_solid_black_orange</item>
-        <item name="backgroundSplit">@drawable/ab_bottom_solid_black_orange</item>
-        <item name="progressBarStyle">@style/ProgressBar.Black_orange</item>
-    </style>
+
 
     <style name="ActionBar.Transparent.Black_orange" parent="@style/Widget.AppCompat.ActionBar">
         <item name="background">@drawable/ab_transparent_black_orange</item>
@@ -55,9 +50,7 @@
         <item name="android:listSelector">@drawable/selectable_background_black_orange</item>
     </style>
 
-    <style name="ActionBarTabStyle.Black_orange" parent="@style/Widget.AppCompat.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_indicator_ab_black_orange</item>
-    </style>
+
 	
     <style name="DropDownNav.Black_orange" parent="@style/Widget.AppCompat.Spinner.DropDown.ActionBar">
         <item name="android:background">@drawable/spinner_background_ab_black_orange</item>

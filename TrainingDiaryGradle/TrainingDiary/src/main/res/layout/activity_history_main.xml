@@ -2,7 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/background_blue"
+                style="?backgroundRef"
                 tools:context=".HistoryMainAcrivity">
 
     <LinearLayout
@@ -15,7 +15,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cacheColorHint="#00000000"
-                android:background="@drawable/background_blue">
+                android:background="@android:color/transparent"
+                >
 
         </ListView>
 
@@ -23,7 +24,7 @@
                 android:id="@+id/exercise_history_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/background_blue"
+                android:background="@android:color/transparent"
                 android:cacheColorHint="#00000000"
                 android:visibility="gone"/>
 
