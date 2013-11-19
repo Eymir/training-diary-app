@@ -136,7 +136,7 @@
     <string name="statistic_main">Общая статистика:</string>
     <string name="action_settings">Настройки</string>
     <string name="sound_switcher_title">Отключить звук</string>
-    <string name="sound_switcher_summary">Божественный звук крутящихся барабанов</string>
+    <string name="sound_switcher_summary">Звук крутящихся барабанов</string>
     <string name="browse">Просмотреть</string>
     <string name="view_exercise_dialog_title">Просмотр упражнения</string>
     <string name="delete_not_succesful">Не удалось удалить</string>

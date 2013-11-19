@@ -42,7 +42,11 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super_main);
         dbHelper = DBHelper.getInstance(this);
-        Log.i(Consts.LOG_TAG, "DB version: " + String.valueOf(dbHelper.getVersion()));
+        try {
+            Log.i(Consts.LOG_TAG, "DB version: " + String.valueOf(dbHelper.getVersion()));
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage());
+        }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
         initStatPref();

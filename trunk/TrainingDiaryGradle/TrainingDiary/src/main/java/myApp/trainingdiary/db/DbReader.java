@@ -602,11 +602,10 @@ public class DbReader {
     }
 
     public Exercise getFavoriteExercise() {
-        String sqlQuery = "select ex.id ex_id, ex.name ex_name, " +
-                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon " +
-                "from Exercise ex, ExerciseType ex_type, (" +
-                "select exercise_id, max(ex_count) from (" +
-                "select exercise_id, count(exercise_id) ex_count from TrainingStat group by exercise_id )) sel " +
+        String sqlQuery = "select ex.id ex_id, ex.name ex_name,  " +
+                "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon  " +
+                "from Exercise ex, ExerciseType ex_type, ( " +
+                "select exercise_id, count(id) ex_count from TrainingStat group by exercise_id order by count(id) desc limit 1) sel  " +
                 "where ex.type_id = ex_type.id AND ex.id = sel.exercise_id";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db

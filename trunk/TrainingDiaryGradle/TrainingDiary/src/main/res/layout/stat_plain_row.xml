@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+    android:weightSum="2">
 
 
     <TextView
@@ -13,18 +14,20 @@
             android:gravity="left"
             android:layout_weight="1"
             android:text="@string/empty"
-            android:textAppearance="?android:attr/textAppearanceSmallInverse"
-            />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white"
+        />
 
     <TextView
             android:id="@+id/text_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="4"
-            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/white"
             android:gravity="right"
             android:text="@string/empty"
-            android:layout_weight="0"
+            android:layout_weight="1"
             />
 
 </LinearLayout>

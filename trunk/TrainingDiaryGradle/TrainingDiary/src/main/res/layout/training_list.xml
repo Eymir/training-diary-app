@@ -2,12 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_blue"
+    style="?backgroundRef"
     tools:context=".MainActivity" >
 
     <com.mobeta.android.dslv.DragSortListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:dslv="http://schemas.android.com/apk/res/myApp.trainingdiary"
+        android:background="@android:color/transparent"
         android:id="@+id/training_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

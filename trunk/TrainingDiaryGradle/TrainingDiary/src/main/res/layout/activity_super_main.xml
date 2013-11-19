@@ -1,107 +1,112 @@
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/background_blue"
-        >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    style="?backgroundRef">
 
     <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:fillViewport="true"
-            android:layout_height="wrap_content"
-            >
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="wrap_content">
 
         <LinearLayout
-                android:id="@+id/footer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                style="@style/ButtonBar"
-                >
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="?mainActButtonBarRef">
 
             <Button
-                    android:id="@+id/exercise_main_button"
-                    style="@style/ButtonBarButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:text="@string/exercise_main_button"/>
+                android:id="@+id/exercise_main_button"
+                style="?mainActButtonBarButtonRef"
+                android:layout_width="wrap_content"
+                android:text="@string/exercise_main_button" />
+
+            <View
+                android:id="@+id/VerticalLine"
+                android:layout_width="1dip"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="12dip"
+                android:layout_marginTop="12dip"
+                android:background="#aaa" />
 
             <Button
-                    android:id="@+id/history_main_button"
-                    style="@style/ButtonBarButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:text="@string/history_main_button"/>
+                android:id="@+id/history_main_button"
+                style="?mainActButtonBarButtonRef"
+                android:layout_width="wrap_content"
+                android:text="@string/history_main_button" />
+
+            <View
+                android:id="@+id/VerticalLine"
+                android:layout_width="1dip"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="12dip"
+                android:layout_marginTop="12dip"
+                android:background="#aaa" />
 
             <Button
-                    android:id="@+id/stat_main_button"
-                    style="@style/ButtonBarButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:text="@string/stat_main_button"/>
+                android:id="@+id/stat_main_button"
+                style="?mainActButtonBarButtonRef"
+                android:layout_width="wrap_content"
+                android:text="@string/stat_main_button" />
         </LinearLayout>
     </HorizontalScrollView>
 
-
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="20dp">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="20dp">
 
         <Button
-                style="@style/btnStyleWhiskey"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:text="@string/start_training"
-                android:textAppearance="?android:attr/textAppearanceLargeInverse"
-                android:textStyle="bold"
-                android:id="@+id/start_training_button"
-                android:padding="26dp"
-                />
+            style="?hugeSpecificButtonRef"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/start_training"
+            android:textStyle="bold"
+            android:id="@+id/start_training_button"
+            android:padding="26dp" />
     </LinearLayout>
 
     <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="5dp">
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="5dp">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="#50000000"
-                >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#50000000">
 
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                    android:text="@string/statistic_main"
-                    android:gravity="left|center_vertical"
-                    android:layout_weight="1"
-                    />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                android:text="@string/statistic_main"
+                android:gravity="left|center"
+                android:layout_weight="1" />
 
             <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edit_user_activity"
-                    android:src="@drawable/content_edit_white"
-                    android:gravity="right"
-                    android:layout_weight="0"
-                    />
+                android:background="@android:color/transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_user_activity"
+                android:src="@drawable/content_edit_white"
+                android:gravity="right"
+                android:layout_weight="0" />
         </LinearLayout>
 
         <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/statListView"
-                android:layout_margin="5dp"
-                android:divider="?android:listDivider"
-                android:cacheColorHint="#00000000"
-                android:dividerHeight="1px"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/statListView"
+            android:background="@android:color/transparent"
+            android:layout_margin="5dp"
+            android:divider="?android:listDivider"
+            android:cacheColorHint="#00000000"
+            android:dividerHeight="1px" />
     </LinearLayout>
 </LinearLayout>

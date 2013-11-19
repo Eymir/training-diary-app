@@ -1,7 +1,10 @@
 apply plugin: 'android-library'
 
 dependencies {
-    compile 'com.android.support:support-v4:18.0.+'
+    repositories {
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
+    compile 'com.android.support:support-v4:18.0.0'
 }
 
 android {
