@@ -126,8 +126,9 @@ public class DbReader {
             Log.e(Consts.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
+
     }
 
     public boolean isExerciseInDB(String name) {
@@ -135,7 +136,8 @@ public class DbReader {
         try {
             return isExerciseInDB(db, name);
         } finally {
-            db.close();
+            if (db != null)
+                db.close();
         }
     }
 
@@ -146,7 +148,7 @@ public class DbReader {
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
         int count = c.getCount();
-        c.close();
+        if (c != null) c.close();
         return count > 0;
     }
 
@@ -158,7 +160,7 @@ public class DbReader {
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(name)});
         int count = c.getCount();
-        c.close();
+        if (c != null) c.close();
         return count > 0;
     }
 
@@ -183,7 +185,7 @@ public class DbReader {
             }
             return stats;
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
     }
 
@@ -207,7 +209,7 @@ public class DbReader {
                 return null;
             }
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
     }
 
@@ -228,7 +230,7 @@ public class DbReader {
                 Integer type = c.getInt(c.getColumnIndex("type"));
                 measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
             }
-            c.close();
+            if (c != null) c.close();
         }
         return measures;
     }
@@ -249,7 +251,7 @@ public class DbReader {
                 Integer type = c.getInt(c.getColumnIndex("type"));
                 measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
             }
-            c.close();
+            if (c != null) c.close();
         }
         return measures;
     }
@@ -263,15 +265,19 @@ public class DbReader {
             SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor c = db
                     .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(m_id)});
-            while (c.moveToNext()) {
-                Long id = c.getLong(c.getColumnIndex("id"));
-                String name = c.getString(c.getColumnIndex("name"));
-                Integer max = c.getInt(c.getColumnIndex("max"));
-                Double step = c.getDouble(c.getColumnIndex("step"));
-                Integer type = c.getInt(c.getColumnIndex("type"));
-                measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+            try {
+                while (c.moveToNext()) {
+                    Long id = c.getLong(c.getColumnIndex("id"));
+                    String name = c.getString(c.getColumnIndex("name"));
+                    Integer max = c.getInt(c.getColumnIndex("max"));
+                    Double step = c.getDouble(c.getColumnIndex("step"));
+                    Integer type = c.getInt(c.getColumnIndex("type"));
+                    measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+                }
+            } finally {
+                if (c != null) c.close();
+                if (db != null) db.close();
             }
-            c.close();
         }
         return measures;
     }
@@ -297,25 +303,32 @@ public class DbReader {
             }
             return stats;
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
     }
 
     public String getExerciseNameById(long ex_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String name = getExerciseNameById(db, ex_id);
-        db.close();
-        return name;
+        try {
+            String name = getExerciseNameById(db, ex_id);
+            return name;
+        } finally {
+            if (db != null)
+                db.close();
+        }
     }
 
     private String getExerciseNameById(SQLiteDatabase db, long ex_id) {
         String sqlQuery = "select ex.name from Exercise ex where ex.id = ?";
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        c.moveToFirst();
-        String name = c.getString(c.getColumnIndex("name"));
-        c.close();
-        return name;
+        try {
+            c.moveToFirst();
+            String name = c.getString(c.getColumnIndex("name"));
+            return name;
+        } finally {
+            if (c != null) c.close();
+        }
     }
 
     public Cursor getExercisesExceptExInTr(long tr_id) {
@@ -325,9 +338,13 @@ public class DbReader {
 
     public String getTrainingNameById(long tr_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String name = getTrainingNameById(db, tr_id);
-        db.close();
-        return name;
+        try {
+            String name = getTrainingNameById(db, tr_id);
+            return name;
+        } finally {
+            if (db != null)
+                db.close();
+        }
     }
 
     public Cursor getTrainings() {
@@ -397,7 +414,7 @@ public class DbReader {
         Cursor c = db.rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
+        if (c != null) c.close();
         return count;
     }
 
@@ -406,15 +423,19 @@ public class DbReader {
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
+        if (c != null) c.close();
         return count;
     }
 
     public int getExerciseCount() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        int count = getExerciseCount(db);
-        db.close();
-        return count;
+        try {
+            int count = getExerciseCount(db);
+            return count;
+        } finally {
+            if (db != null)
+                db.close();
+        }
     }
 
     public int getExerciseCount(SQLiteDatabase db) {
@@ -431,7 +452,7 @@ public class DbReader {
         Cursor c = db.rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
+        if (c != null) c.close();
         return count;
     }
 
@@ -440,7 +461,7 @@ public class DbReader {
         Cursor c = db.rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
+        if (c != null) c.close();
         return count;
     }
 
@@ -450,7 +471,7 @@ public class DbReader {
                 .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
         c.moveToFirst();
         String name = c.getString(c.getColumnIndex("name"));
-        c.close();
+        if (c != null) c.close();
         return name;
     }
 
@@ -471,7 +492,7 @@ public class DbReader {
         Cursor c = db.rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
+        if (c != null) c.close();
         return count;
     }
 
@@ -496,8 +517,9 @@ public class DbReader {
             }
             return stats;
         } finally {
-            c.close();
-            db.close();
+            if (c != null) c.close();
+            if (db != null)
+                db.close();
         }
     }
 
@@ -512,7 +534,7 @@ public class DbReader {
                 Long id = c.getLong(c.getColumnIndex("pos"));
                 return id;
             }
-            c.close();
+            if (c != null) c.close();
         }
         return null;
     }
@@ -532,7 +554,7 @@ public class DbReader {
                 Integer type = c.getInt(c.getColumnIndex("type"));
                 return new Measure(id, name, max, step, MeasureType.valueOf(type));
             }
-            c.close();
+            if (c != null) c.close();
         }
         throw new RuntimeException("Measure with id: " + m_id + " not found in DB.");
     }
@@ -552,7 +574,7 @@ public class DbReader {
             Integer type = c.getInt(c.getColumnIndex("type"));
             measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
         }
-        c.close();
+        if (c != null) c.close();
         return measures;
     }
 
@@ -575,7 +597,7 @@ public class DbReader {
                 return null;
             }
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
 
     }
@@ -585,7 +607,7 @@ public class DbReader {
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
+        if (c != null) c.close();
         return count;
     }
 
@@ -597,7 +619,7 @@ public class DbReader {
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         long dur_sum = c.getInt(c.getColumnIndex("dur_sum"));
-        c.close();
+        if (c != null) c.close();
         return dur_sum;
     }
 
@@ -625,7 +647,7 @@ public class DbReader {
             Log.e(Consts.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
 
     }
@@ -652,7 +674,7 @@ public class DbReader {
             Log.e(Consts.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
-            c.close();
+            if (c != null) c.close();
         }
 
     }

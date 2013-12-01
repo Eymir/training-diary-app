@@ -237,6 +237,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             Date trainingDate = (list.isEmpty()) ? new Date() : list.get(0).getTrainingDate();
             dbHelper.WRITE.insertTrainingStat(ex_id, tr_id, System.currentTimeMillis(), trainingDate.getTime(), result);
         }
+
     }
 
     private class MeasureWheel {

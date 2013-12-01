@@ -270,6 +270,7 @@ public class DialogProvider {
     public static void fillGroupByMeasureSection(EntityArrayAdapter groupAdapter, Spinner measureSpinner, DBHelper dbHelper, Spinner exerciseSpinner, Spinner groupSpinner, ArrayAdapter groupValueAdapter, Button groupsButton, ListView groupListView) {
         groupAdapter.clear();
         Measure m = (Measure) measureSpinner.getSelectedItem();
+        if (m == null) return;
         addAll(groupAdapter, dbHelper.READ.getMeasuresInExerciseExceptParticularMeasure(
                 exerciseSpinner.getSelectedItemId(), m.getId()));
         Measure m_g = (Measure) groupSpinner.getSelectedItem();
