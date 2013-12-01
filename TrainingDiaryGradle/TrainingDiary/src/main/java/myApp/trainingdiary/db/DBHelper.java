@@ -36,6 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if (mInstance == null) {
             mInstance = new DBHelper(ctx.getApplicationContext());
         }
+
         return mInstance;
     }
 
