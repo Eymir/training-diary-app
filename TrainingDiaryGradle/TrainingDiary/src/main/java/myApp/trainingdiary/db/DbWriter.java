@@ -93,61 +93,82 @@ public class DbWriter {
         String sqlQuery = "select count(ex_tr.exercise_id) as _count from ExerciseInTraining ex_tr where training_id = ?";
         Cursor c = db.rawQuery(sqlQuery,
                 new String[]{String.valueOf(training_id)});
-        c.moveToFirst();
-        int count = c.getInt(c.getColumnIndex("_count"));
-        c.close();
-        return count;
+        try {
+            c.moveToFirst();
+            int count = c.getInt(c.getColumnIndex("_count"));
+            return count;
+        } finally {
+            if (c != null) c.close();
+
+        }
     }
 
     public void changeTrainingPositions(List<Long> list) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        for (int i = 0; i < list.size(); i++) {
-            ContentValues cv = new ContentValues();
-            cv.put("position", i);
-            // Log.d(Consts.LOG_TAG, "new_pos: " + newNumEX +
-            // " old_pos: "+old_pos+" ex_name: " + strNameEx
-            // + " trainingname: " + strNameTr);
-            db.update("Training", cv, "id = ? ",
-                    new String[]{String.valueOf(list.get(i))});
+        try {
+            for (int i = 0; i < list.size(); i++) {
+                ContentValues cv = new ContentValues();
+                cv.put("position", i);
+                // Log.d(Consts.LOG_TAG, "new_pos: " + newNumEX +
+                // " old_pos: "+old_pos+" ex_name: " + strNameEx
+                // + " trainingname: " + strNameTr);
+                db.update("Training", cv, "id = ? ",
+                        new String[]{String.valueOf(list.get(i))});
+            }
+        } finally {
+            if (db != null) db.close();
         }
-        db.close();
+
     }
 
     public int deleteLastTrainingStatInCurrentTraining(long ex_id, long tr_id, long tr_period) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long since = System.currentTimeMillis() - tr_period;
-        int deleted = db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat " +
-                "WHERE training_id = ? AND exercise_id = ? AND date > ? ) ",
-                new String[]{String.valueOf(tr_id), String.valueOf(ex_id), String.valueOf(since)});
-        db.close();
-        return deleted;
+        try {
+            long since = System.currentTimeMillis() - tr_period;
+            int deleted = db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat " +
+                    "WHERE training_id = ? AND exercise_id = ? AND date > ? ) ",
+                    new String[]{String.valueOf(tr_id), String.valueOf(ex_id), String.valueOf(since)});
+            return deleted;
+        } finally {
+            if (db != null) db.close();
+        }
     }
 
     public void deleteExerciseFromTraining(long tr_id, long ex_id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete("ExerciseInTraining", "training_id = ? AND exercise_id = ?",
-                new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
-        db.close();
+        try {
+            db.delete("ExerciseInTraining", "training_id = ? AND exercise_id = ?",
+                    new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
+        } finally {
+            if (db != null) db.close();
+        }
     }
 
     public void changeExercisePositions(long tr_id, List<Long> list) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        for (int i = 0; i < list.size(); i++) {
-            ContentValues cv = new ContentValues();
-            cv.put("position", i);
-            Log.d(Consts.LOG_TAG, "new_pos: " + i +
-                    "  ex_id: " + list.get(i)
-                    + " training_id: " + tr_id);
-            db.update("ExerciseInTraining", cv, "training_id = ? AND exercise_id = ? ",
-                    new String[]{String.valueOf(tr_id), String.valueOf(list.get(i))});
+        try {
+            for (int i = 0; i < list.size(); i++) {
+                ContentValues cv = new ContentValues();
+                cv.put("position", i);
+                Log.d(Consts.LOG_TAG, "new_pos: " + i +
+                        "  ex_id: " + list.get(i)
+                        + " training_id: " + tr_id);
+                db.update("ExerciseInTraining", cv, "training_id = ? AND exercise_id = ? ",
+                        new String[]{String.valueOf(tr_id), String.valueOf(list.get(i))});
+            }
+        } finally {
+            if (db != null) db.close();
         }
-        db.close();
     }
 
     public void renameExercise(long ex_id, String name) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        renameExercise(db, ex_id, name);
-        db.close();
+        try {
+            renameExercise(db, ex_id, name);
+        } finally {
+            if (db != null) db.close();
+        }
+
     }
 
     public void renameExercise(SQLiteDatabase db, long ex_id, String name) {
@@ -157,16 +178,23 @@ public class DbWriter {
                 new String[]{String.valueOf(ex_id)});
     }
 
+
     public void deleteTraining(long tr_id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        deleteTraining(db, tr_id);
-        db.close();
+        try {
+            deleteTraining(db, tr_id);
+        } finally {
+            if (db != null) db.close();
+        }
     }
 
     public void renameTraining(long tr_id, String name) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        renameTraining(db, tr_id, name);
-        db.close();
+        try {
+            renameTraining(db, tr_id, name);
+        } finally {
+            if (db != null) db.close();
+        }
     }
 
     public void renameTraining(SQLiteDatabase db, long cur_tr_id, String name) {
@@ -190,9 +218,12 @@ public class DbWriter {
     public long insertTrainingStat(long exercise_id, long training_id,
                                    long date, long trainingDate, String value) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long id = insertTrainingStat(db, exercise_id, training_id, date, trainingDate, value);
-        db.close();
-        return id;
+        try {
+            long id = insertTrainingStat(db, exercise_id, training_id, date, trainingDate, value);
+            return id;
+        } finally {
+            if (db != null) db.close();
+        }
     }
 
     public long insertTrainingStat(SQLiteDatabase db, long exercise_id, long training_id,
