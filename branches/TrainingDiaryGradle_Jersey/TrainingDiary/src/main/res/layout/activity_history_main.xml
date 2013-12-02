@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                style="?backgroundRef"
+                tools:context=".HistoryMainAcrivity">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <ListView
+                android:id="@+id/training_history_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cacheColorHint="#00000000"
+                android:background="@android:color/transparent"
+                >
+
+        </ListView>
+
+        <ListView
+                android:id="@+id/exercise_history_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:cacheColorHint="#00000000"
+                android:visibility="gone"/>
+
+        <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:height="40dp"
+                android:text="@string/empty"
+                android:textColor="#F8F8FF"
+                android:textSize="30sp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

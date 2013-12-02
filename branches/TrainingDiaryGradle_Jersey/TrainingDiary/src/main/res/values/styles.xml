@@ -1,0 +1,65 @@
+<resources>
+
+    <style name="black_orange_button" parent="android:Widget.Button">
+        <item name="android:background">@drawable/btn_default_holo_light</item>
+        <item name="android:minHeight">48dip</item>
+        <item name="android:minWidth">64dip</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="btnStyleWhiskey" parent="@android:style/Widget.Button">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/wiskey_button</item>
+    </style>
+
+    <!--   blor theme part start      -->
+    <style name="layout_background_blor">
+        <item name="android:background">@drawable/background_blue</item>
+    </style>
+
+    <style name="mainActButtonBar_blor" parent="android:Holo.ButtonBar">
+        <item name="android:background">@drawable/ab_stacked_solid_black_orange</item>
+        <item name="android:dividerHeight">2px</item>
+        <item name="divider">@color/white</item>
+    </style>
+
+    <style name="mainActButtonBarButton_blor" parent="ActionBarTabStyle.Black_orange">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_height">50dp</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Black_orange" parent="@style/Widget.AppCompat.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_black_orange</item>
+        <item name="background">@drawable/tab_indicator_ab_black_orange</item>
+    </style>
+
+    <style name="hugeSpecificButton_blor" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/wiskey_button</item>
+        <item name="android:textSize">22dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+    <style name="ActionBar.Solid.Black_orange" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@drawable/ab_solid_black_orange</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_black_orange</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_black_orange</item>
+        <item name="progressBarStyle">@style/ProgressBar.Black_orange</item>
+
+    </style>
+
+    <style name="borderlessActionButton_blor" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+
+    <!--   blor theme part end     -->
+</resources>
