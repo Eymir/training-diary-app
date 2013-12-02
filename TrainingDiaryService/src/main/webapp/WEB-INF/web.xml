@@ -5,11 +5,18 @@
                  "http://java.sun.com/xml/ns/j2ee
     http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
+
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
     <!-- Spring context -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/app-context.xml
+            /WEB-INF/dispatcher-servlet.xml
         </param-value>
     </context-param>
 
@@ -17,18 +24,35 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+
+    <!--For MVC-->
     <servlet>
-        <servlet-name>Jersey REST Service</servlet-name>
-        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>ru.vkoba.scripts.scripts</param-value>
-        </init-param>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>Jersey REST Service</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+
+    <!--Jersey-->
+    <!--<servlet>-->
+        <!--<servlet-name>Jersey REST Service</servlet-name>-->
+        <!--<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>-->
+        <!--<init-param>-->
+            <!--<param-name>com.sun.jersey.config.property.packages</param-name>-->
+            <!--<param-value>ru.vkoba.ts.service</param-value>-->
+        <!--</init-param>-->
+        <!--<load-on-startup>1</load-on-startup>-->
+    <!--</servlet>-->
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>Jersey REST Service</servlet-name>-->
+        <!--<url-pattern>/rest/*</url-pattern>-->
+    <!--</servlet-mapping>-->
 
 </web-app>
