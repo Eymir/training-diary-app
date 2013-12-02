@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd   http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--Подключаем репозитории-->
+
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
@@ -16,6 +17,9 @@
     </bean>
 
 
+
+
+    <!--Базы-->
     <bean id="trainingJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="trainingDataSource"></property>
     </bean>
@@ -37,13 +41,14 @@
     </bean>
 
 
-
-
-
     <!--Конфигурация дао-->
 
     <bean id="trainingService" class="ru.vkoba.ts.service.TrainingService">
-        <property name="trainingServiceDao" ref="trainingJdbcTemplate"/>
+        <property name="jdbcTemplate" ref="trainingJdbcTemplate"/>
+    </bean>
+
+    <bean id="reportService" class="ru.vkoba.ts.service.ReportService">
+        <property name="jdbcTemplate" ref="trainingJdbcTemplate"/>
     </bean>
 
 
