@@ -17,13 +17,13 @@ public class ReportService {
     JdbcTemplate jdbcTemplate;
 
     public long getTotal() {
-        String query = "select count(*) from TrainingStatistic";
+        String query = "select count(*) from training_statistic";
         return jdbcTemplate.queryForInt(query);
     }
 
     public Map<String, Integer> getDeviceIdCountMap() {
         Map<String, Integer> result = new HashMap<String, Integer>();
-        String query = "select user_device_uid, count(user_device_uid) c from TrainingStatistic group by user_device_uid";
+        String query = "select user_device_uid, count(user_device_uid) c from training_statistic group by user_device_uid";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
         for (Map<String, Object> row : rows) {
             result.put((String) row.get("user_device_uid"), (Integer) row.get("c")) ;
