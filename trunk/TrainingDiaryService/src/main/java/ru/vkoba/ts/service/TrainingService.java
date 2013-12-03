@@ -6,8 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vkoba.ts.domain.StatisticElement;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,8 +27,8 @@ public class TrainingService {
     JdbcTemplate jdbcTemplate;
 
     @POST
-    //@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-    @Path("/print")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Path("/add")
     @Transactional
     public Response addStatistic(StatisticElement element) {
         String query = "insert into TrainingStatistic (user_device_uid, trainingstamp_start, trainingstamp_end) values(?,?,?)";
