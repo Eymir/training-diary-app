@@ -19,7 +19,7 @@ public class RestTestClient {
 
     public static void main(String[] argv) {
 
-        String uri = "http://adhocdev.j.rsnx.ru/TrainingDiaryService/rest/tds/add123";
+        String uri = "http://adhocdev.j.rsnx.ru:80/TrainingDiaryService/rest/tds/add";
         StatisticElement element = new StatisticElement();
         element.setDeviceId("Trololo");
         element.setTrainingStart(new Date());

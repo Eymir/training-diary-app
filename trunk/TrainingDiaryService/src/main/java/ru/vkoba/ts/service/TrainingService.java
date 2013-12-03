@@ -36,13 +36,6 @@ public class TrainingService {
         return Response.status(200).entity("OK").build();
     }
 
-    public Map<String, Long> getStatisticByDevicesForPeriod(Date from, Date to) {
-        Map<String, Long> result = new HashMap<String, Long>();
-        return result;
-    }
-
-
-
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }

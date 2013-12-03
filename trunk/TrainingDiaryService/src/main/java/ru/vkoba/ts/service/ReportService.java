@@ -21,12 +21,12 @@ public class ReportService {
         return jdbcTemplate.queryForInt(query);
     }
 
-    public Map<String, Integer> getDeviceIdCountMap() {
-        Map<String, Integer> result = new HashMap<String, Integer>();
+    public Map<String, Long> getDeviceIdCountMap() {
+        Map<String, Long> result = new HashMap<String, Long>();
         String query = "select user_device_uid, count(user_device_uid) c from training_statistic group by user_device_uid";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(query);
         for (Map<String, Object> row : rows) {
-            result.put((String) row.get("user_device_uid"), (Integer) row.get("c")) ;
+            result.put((String) row.get("user_device_uid"), (Long) row.get("c")) ;
         }
         return result;
     }
