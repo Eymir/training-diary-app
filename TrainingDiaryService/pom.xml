@@ -159,6 +159,12 @@
             <version>1.8</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>1.14</version>
+        </dependency>
+
         <!-- standard.jar -->
         <dependency>
             <groupId>taglibs</groupId>
