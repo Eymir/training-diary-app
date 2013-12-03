@@ -31,7 +31,7 @@ public class TrainingService {
     @Path("/add")
     @Transactional
     public Response addStatistic(StatisticElement element) {
-        String query = "insert into TrainingStatistic (user_device_uid, trainingstamp_start, trainingstamp_end) values(?,?,?)";
+        String query = "insert into training_statistic (user_device_uid, trainingstamp_start, trainingstamp_end) values(?,?,?)";
         jdbcTemplate.update(query, new Object[]{element.getDeviceId(), element.getTrainingStart(), element.getTrainingEnd()});
         return Response.status(200).entity("OK").build();
     }
@@ -41,9 +41,7 @@ public class TrainingService {
         return result;
     }
 
-    public long getTotal() {
-        return -1;
-    }
+
 
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
