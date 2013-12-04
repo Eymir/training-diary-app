@@ -6,6 +6,8 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.sun.jersey:jersey-client:1.14'
+    compile 'com.sun.jersey:jersey-core:1.8'
     compile files('libraries/achartengine-1.1.0.jar')
     compile project('libraries:library')
     compile project('libraries:ExampleActivity')

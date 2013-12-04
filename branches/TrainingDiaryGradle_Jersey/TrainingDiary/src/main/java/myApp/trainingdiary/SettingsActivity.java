@@ -1,12 +1,22 @@
 package myApp.trainingdiary;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
+
+import java.util.Date;
+
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.service.IServiceListener;
+import myApp.trainingdiary.service.TrainingDiaryService;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
@@ -20,12 +30,28 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        Preference sendStatistic = findPreference("sendStatistic");
+        assert sendStatistic != null;
+        sendStatistic.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wInfo = wifiManager.getConnectionInfo();
+            String macAddress = wInfo.getMacAddress();
+
+            public boolean onPreferenceClick(Preference arg0) {
+                new TrainingDiaryService().sendTrainingStamp(new IServiceListener() {
+                    @Override
+                    public void sendTrainingStampResponse(String result) {
+                        Toast.makeText(getApplication().getApplicationContext(), result, Toast.LENGTH_LONG);
+                    }
+                }, macAddress, new Date(System.currentTimeMillis() - 5 * 60 * 1000), new Date());
+                return false;
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(android.R.id.home ==  item.getItemId() ){
+        if (android.R.id.home == item.getItemId()) {
             onBackPressed();
             return true;
         }
@@ -34,29 +60,5 @@ public class SettingsActivity extends PreferenceActivity {
 
     }
 
-
-    protected void refreshTextViews() {
-        TextView tvCountTr = (TextView) findViewById(R.id.tvCountTr);
-        TextView tvCountEx = (TextView) findViewById(R.id.tvCountEx);
-        TextView tvCountHist = (TextView) findViewById(R.id.tvCountHist);
-
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        int cTr = dbHelper.READ.getTrainingDayCount(db);
-        String messTr = getResources().getString(R.string.count_tr);
-        messTr = messTr + ": " + cTr;
-        tvCountTr.setText(messTr);
-
-        int cEx = dbHelper.READ.getExerciseCount(db);
-        String messEx = getResources().getString(R.string.count_ex);
-        messEx = messEx + ": " + cEx;
-        tvCountEx.setText(messEx);
-
-        int cHs = dbHelper.READ.getTrainingStatCount(db);
-        String messHist = getResources().getString(R.string.count_tr_stat);
-        messHist = messHist + ": " + cHs;
-        tvCountHist.setText(messHist);
-
-        dbHelper.close();
-    }
 
 }
