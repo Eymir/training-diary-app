@@ -154,4 +154,6 @@
     <string name="error">ОШИБКА</string>
     <string name="not_found">не найдено</string>
     <string name="Size">Размер(см)</string>
+    <string name="send_stat_title">Отправить</string>
+    <string name="send_stat_sum">Отправить тестовые данные на сервер</string>
 </resources>

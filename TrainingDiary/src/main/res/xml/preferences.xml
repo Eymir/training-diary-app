@@ -6,5 +6,9 @@
         android:title="@string/sound_switcher_title"
         android:summary="@string/sound_switcher_summary"
         android:defaultValue="false" />
-
+    <Preference
+        android:key="sendStatistic"
+        android:summary="@string/send_stat_sum"
+        android:title="@string/send_stat_title">
+    </Preference>
 </PreferenceScreen>
