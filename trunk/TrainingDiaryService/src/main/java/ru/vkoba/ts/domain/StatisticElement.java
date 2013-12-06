@@ -47,4 +47,13 @@ public class StatisticElement {
     public void setTrainingEnd(Date trainingEnd) {
         this.trainingEnd = trainingEnd;
     }
+
+    @Override
+    public String toString() {
+        return "StatisticElement{" +
+                "deviceId='" + deviceId + '\'' +
+                ", trainingStart=" + trainingStart +
+                ", trainingEnd=" + trainingEnd +
+                '}';
+    }
 }
