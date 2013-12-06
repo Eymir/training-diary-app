@@ -27,12 +27,18 @@ public class TrainingService {
     JdbcTemplate jdbcTemplate;
 
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/add")
     @Transactional
     public Response addStatistic(StatisticElement element) {
-        String query = "insert into training_statistic (user_device_uid, trainingstamp_start, trainingstamp_end) values(?,?,?)";
-        jdbcTemplate.update(query, new Object[]{element.getDeviceId(), element.getTrainingStart(), element.getTrainingEnd()});
+        System.out.println("element: " + element);
+        try {
+            String query = "insert into training_statistic (user_device_uid, trainingstamp_start, trainingstamp_end) values(?,?,?)";
+            jdbcTemplate.update(query, new Object[]{element.getDeviceId(), element.getTrainingStart(), element.getTrainingEnd()});
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(888).entity("ERROR: " + e.getMessage()).build();
+        }
         return Response.status(200).entity("OK").build();
     }
 

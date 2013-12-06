@@ -81,7 +81,11 @@
             <artifactId>aspectjrt</artifactId>
             <version>1.7.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.8</version>
+        </dependency>
         <!-- Jersey + Spring -->
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
@@ -110,6 +114,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <!--Spring data-->
 
 
