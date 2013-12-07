@@ -154,4 +154,12 @@
     <string name="error">ОШИБКА</string>
     <string name="not_found">не найдено</string>
     <string name="Size">Размер(см)</string>
+    <string name="about_title">О программе</string>
+    <string name="about_summary">Дневник тренировок v.%1$s</string>
+    <string name="about_detail">\tБудем рады предложениям и замечаниям на нашем форуме:\n\n
+http://adhocapp.mybb.ru\n\n
+\tА так же не забывайте ставить оценки и оставлять отзывы, нам это очень помогает.</string>
+    <string name="help_developers">Помочь разработчикам</string>
+    <string name="rate_app_title">Поставить оценку</string>
+    <string name="rate_app_summ">Оценить приложиние на маркете</string>
 </resources>
