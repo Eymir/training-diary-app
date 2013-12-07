@@ -6,8 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -547,5 +552,27 @@ public class DialogProvider {
         return true;
     }
 
+    public static AlertDialog createAboutDialog(Context context, String version) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.about_title));
+        final TextView message = new TextView(context);
+        final SpannableString s =
+                new SpannableString("\t\t" + context.getString(R.string.about_summary,version) + "\n\n" + context.getString(R.string.about_detail));
+        Linkify.addLinks(s, Linkify.WEB_URLS);
+//        builder.setIcon(R.drawable.ic_dairy);
+        message.setPadding(10, 10, 10, 10);
+        message.setText(s);
+        message.setMovementMethod(LinkMovementMethod.getInstance());
+        message.setTextColor(Color.BLACK);
+        builder.setView(message);
+        builder.setPositiveButton(R.string.btn_txt_OK, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+
+        return builder.create();
+    }
 
 }

@@ -1,12 +1,21 @@
 package myApp.trainingdiary;
 
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.support.v7.app.ActionBar;
+
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.dialog.DialogProvider;
+import myApp.trainingdiary.utils.Consts;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
@@ -20,12 +29,52 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Preference about = findPreference("about");
+        String version = null;
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+        }
+        assert about != null;
+        if (version != null) {
+            about.setSummary(getString(R.string.about_summary, version));
+        } else {
+            about.setSummary(getString(R.string.about_summary));
+
+        }
+
+        final String finalVersion = version;
+        about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                DialogProvider.createAboutDialog(SettingsActivity.this, finalVersion).show();
+                return false;
+            }
+        });
+        Preference review = findPreference("rate_app");
+
+        assert review != null;
+        review.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("market://details?id=ru.adhoc.truealarm"));
+                    startActivity(intent);
+                } catch (Throwable e) {
+                    Log.e(Consts.LOG_TAG, e.getMessage());
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=ru.adhoc.truealarm"));
+                    startActivity(intent);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(android.R.id.home ==  item.getItemId() ){
+        if (android.R.id.home == item.getItemId()) {
             onBackPressed();
             return true;
         }
@@ -34,29 +83,5 @@ public class SettingsActivity extends PreferenceActivity {
 
     }
 
-
-    protected void refreshTextViews() {
-        TextView tvCountTr = (TextView) findViewById(R.id.tvCountTr);
-        TextView tvCountEx = (TextView) findViewById(R.id.tvCountEx);
-        TextView tvCountHist = (TextView) findViewById(R.id.tvCountHist);
-
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        int cTr = dbHelper.READ.getTrainingDayCount(db);
-        String messTr = getResources().getString(R.string.count_tr);
-        messTr = messTr + ": " + cTr;
-        tvCountTr.setText(messTr);
-
-        int cEx = dbHelper.READ.getExerciseCount(db);
-        String messEx = getResources().getString(R.string.count_ex);
-        messEx = messEx + ": " + cEx;
-        tvCountEx.setText(messEx);
-
-        int cHs = dbHelper.READ.getTrainingStatCount(db);
-        String messHist = getResources().getString(R.string.count_tr_stat);
-        messHist = messHist + ": " + cHs;
-        tvCountHist.setText(messHist);
-
-        dbHelper.close();
-    }
 
 }
