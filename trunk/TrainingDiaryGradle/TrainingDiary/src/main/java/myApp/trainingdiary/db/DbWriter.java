@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import myApp.trainingdiary.db.entity.ExerciseTypeIcon;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.utils.Consts;
 
@@ -280,4 +281,10 @@ public class DbWriter {
                 new String[]{String.valueOf(m.getId())});
     }
 
+    public void changeExerciseTypeIconRes(SQLiteDatabase db, Long id, String icon_res) {
+        ContentValues cv = new ContentValues();
+        cv.put("icon_res", icon_res);
+        db.update("ExerciseType", cv, "id = ? ",
+                new String[]{String.valueOf(id)});
+    }
 }

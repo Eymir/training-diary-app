@@ -20,7 +20,7 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:src="@drawable/gant" >
+            android:src="@drawable/icon_tr_gant" >
         </ImageView>
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:src="@drawable/action_overflow" >
+            android:src="@drawable/icon_action_overflow" >
         </ImageView>
 
         <ImageView
@@ -54,7 +54,7 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:src="@drawable/content_import_export_white"
+            android:src="@drawable/icon_content_import_export_white"
             android:visibility="gone" >
         </ImageView>
     </LinearLayout>

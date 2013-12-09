@@ -9,7 +9,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:src="@drawable/ico_train">
+            android:src="@drawable/icon_train">
     </ImageView>
 
     <TextView

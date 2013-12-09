@@ -4,12 +4,12 @@
       xmlns:trainingdiary="http://schemas.android.com/apk/res-auto">
     <item
             android:id="@+id/action_add"
-            android:icon="@drawable/content_new_white"
+            android:icon="@drawable/icon_content_new_white"
             android:title="@string/add_action"
             trainingdiary:showAsAction="ifRoom"/>
     <item
             android:id="@+id/action_settings"
-            android:icon="@drawable/action_settings_white"
+            android:icon="@drawable/icon_action_settings_white"
             android:title="@string/action_settings"
             trainingdiary:showAsAction="ifRoom"/>
 </menu>

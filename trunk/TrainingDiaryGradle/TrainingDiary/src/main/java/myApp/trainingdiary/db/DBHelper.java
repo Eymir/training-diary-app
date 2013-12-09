@@ -6,17 +6,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.entity.EntityManager;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
+import myApp.trainingdiary.db.entity.ExerciseTypeIcon;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
 import myApp.trainingdiary.utils.Consts;
@@ -25,7 +27,7 @@ import myApp.trainingdiary.utils.MeasureFormatter;
 public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper mInstance = null;
 
-    private final static int DB_VERSION = 5;
+    private final static int DB_VERSION = 6;
 
     public DbReader READ;
     public DbWriter WRITE;
@@ -89,8 +91,38 @@ public class DBHelper extends SQLiteOpenHelper {
                 upgradeFrom_3_To_4(db);
             case 4:
                 upgradeFrom_4_To_5(db);
+            case 5:
+                upgradeFrom_5_To_6(db);
         }
 
+    }
+
+    private void upgradeFrom_5_To_6(SQLiteDatabase db) {
+        try {
+            db.beginTransaction();
+            Log.i(Consts.LOG_TAG, "upgradeFrom_5_To_6 start");
+            renameExerciseTypeIcon_ver_6(db);
+            db.setTransactionSuccessful();
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, "upgradeFrom_5_To_6 problem", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private void renameExerciseTypeIcon_ver_6(SQLiteDatabase db) {
+        Map<String, ExerciseTypeIcon> map = new HashMap<String, ExerciseTypeIcon>();
+        map.put("myApp.trainingdiary:drawable/power", ExerciseTypeIcon.icon_ex_power);
+        map.put("myApp.trainingdiary:drawable/dumbbell", ExerciseTypeIcon.icon_ex_dumbbell);
+        map.put("myApp.trainingdiary:drawable/cycle", ExerciseTypeIcon.icon_ex_cycle);
+        map.put("myApp.trainingdiary:drawable/count", ExerciseTypeIcon.icon_ex_count);
+        map.put("myApp.trainingdiary:drawable/weight", ExerciseTypeIcon.icon_ex_weight);
+        map.put("myApp.trainingdiary:drawable/size", ExerciseTypeIcon.icon_ex_size);
+        for (String key : map.keySet()) {
+            Long id = READ.getExerciseTypeIdByIconRes(db, key);
+            if (id != null)
+                WRITE.changeExerciseTypeIconRes(db, id, map.get(key).getIconResName());
+        }
     }
 
 
@@ -250,9 +282,9 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d(Consts.LOG_TAG, "--- onCreate createInitialTypes ---");
 
         ExerciseType power_weight_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.power),
+                ExerciseTypeIcon.icon_ex_power,
                 CONTEXT.getString(R.string.bar_ex_type_base));
-        Log.d(Consts.LOG_TAG, "icon_res power: " + CONTEXT.getResources().getResourceName(R.drawable.power));
+        Log.d(Consts.LOG_TAG, "icon_res power: " + CONTEXT.getResources().getResourceName(R.drawable.icon_ex_power));
         power_weight_type.getMeasures()
                 .add(new Measure(null,
                         CONTEXT.getString(R.string.power_weight_measure_base),
@@ -264,7 +296,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, power_weight_type);
 
         ExerciseType dumbbells_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.dumbbell),
+                ExerciseTypeIcon.icon_ex_dumbbell,
                 CONTEXT.getString(R.string.dumbbell_ex_type_base));
         dumbbells_type.getMeasures()
                 .add(new Measure(null,
@@ -277,7 +309,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, dumbbells_type);
 
         ExerciseType long_dist_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.cycle),
+                ExerciseTypeIcon.icon_ex_cycle,
                 CONTEXT.getString(R.string.long_dist_ex_type_base));
         long_dist_type.getMeasures()
                 .add(new Measure(null,
@@ -290,7 +322,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, long_dist_type);
 
         ExerciseType count_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.count),
+                ExerciseTypeIcon.icon_ex_count,
                 CONTEXT.getString(R.string.count_ex_type_base));
         count_type.getMeasures()
                 .add(new Measure(null,
@@ -299,7 +331,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, count_type);
 
         ExerciseType weight_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.weight),
+                ExerciseTypeIcon.icon_ex_weight,
                 CONTEXT.getString(R.string.weight_ex_type_base));
         weight_type.getMeasures()
                 .add(new Measure(null,
@@ -308,7 +340,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, weight_type);
 
         ExerciseType size_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.size),
+                ExerciseTypeIcon.icon_ex_size,
                 CONTEXT.getString(R.string.size_ex_type_base));
         size_type.getMeasures()
                 .add(new Measure(null,
@@ -326,11 +358,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         long power_id = WRITE.insertExerciseType(db,
                 CONTEXT.getString(R.string.bar_ex_type_base), CONTEXT
-                .getResources().getResourceName(R.drawable.power));
+                .getResources().getResourceName(R.drawable.icon_ex_power));
 
         long cycle_id = WRITE.insertExerciseType(db,
                 CONTEXT.getString(R.string.long_dist_ex_type_base), CONTEXT
-                .getResources().getResourceName(R.drawable.cycle));
+                .getResources().getResourceName(R.drawable.icon_ex_cycle));
 
         WRITE.insertMeasureExType(db, power_id, bw_m_id, 0);
         WRITE.insertMeasureExType(db, power_id, r_m_id, 1);
@@ -348,7 +380,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private void createTypes_ver_4(SQLiteDatabase db) {
         Log.d(Consts.LOG_TAG, "--- createTypes_ver_4 ---");
         ExerciseType dumbbells_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.dumbbell),
+                ExerciseTypeIcon.icon_ex_dumbbell,
                 CONTEXT.getString(R.string.dumbbell_ex_type_base));
         dumbbells_type.getMeasures()
                 .add(new Measure(null,
@@ -360,7 +392,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         99, 1.0, MeasureType.Numeric));
         EM.persist(db, dumbbells_type);
         ExerciseType count_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.count),
+                ExerciseTypeIcon.icon_ex_count,
                 CONTEXT.getString(R.string.count_ex_type_base));
         count_type.getMeasures()
                 .add(new Measure(null,
@@ -369,7 +401,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, count_type);
 
         ExerciseType weight_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.weight),
+                ExerciseTypeIcon.icon_ex_weight,
                 CONTEXT.getString(R.string.weight_ex_type_base));
         weight_type.getMeasures()
                 .add(new Measure(null,
@@ -378,7 +410,7 @@ public class DBHelper extends SQLiteOpenHelper {
         EM.persist(db, weight_type);
 
         ExerciseType size_type = new ExerciseType(null,
-                CONTEXT.getResources().getResourceName(R.drawable.size),
+                ExerciseTypeIcon.icon_ex_size,
                 CONTEXT.getString(R.string.size_ex_type_base));
         size_type.getMeasures()
                 .add(new Measure(null,

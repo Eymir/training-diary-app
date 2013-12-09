@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -311,19 +310,19 @@ public class AddExerciseActivity extends ActionBarActivity {
     private void createExcerciseTools() {
         ActionItem renameItem = new ActionItem(ID_RENAME_EXERCISE,
                 getResources().getString(R.string.rename_action),
-                getResources().getDrawable(R.drawable.content_edit_white));
+                getResources().getDrawable(R.drawable.icon_content_edit_white));
         ActionItem statItem = new ActionItem(ID_STAT_EXERCISE,
                 getResources().getString(R.string.stat_action),
-                getResources().getDrawable(R.drawable.action_statistic_white));
+                getResources().getDrawable(R.drawable.icon_action_graph_white));
         ActionItem historyItem = new ActionItem(ID_HISTORY_EXERCISE,
                 getResources().getString(R.string.history_action),
-                getResources().getDrawable(R.drawable.action_history_white));
+                getResources().getDrawable(R.drawable.icon_action_history_white));
         ActionItem viewItem = new ActionItem(ID_VIEW_EXERCISE, getResources()
                 .getString(R.string.browse), getResources().getDrawable(
-                R.drawable.action_browse));
+                R.drawable.icon_action_info));
         ActionItem removeItem = new ActionItem(ID_REMOVE_EXERCISE,
                 getResources().getString(R.string.delete_action),
-                getResources().getDrawable(R.drawable.content_remove_white));
+                getResources().getDrawable(R.drawable.icon_content_remove_white));
 
         exerciseActionTools = new QuickAction(this);
         exerciseActionTools.addActionItem(viewItem);

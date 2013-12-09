@@ -59,12 +59,12 @@ public class SettingsActivity extends PreferenceActivity {
             public boolean onPreferenceClick(Preference arg0) {
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("market://details?id=ru.adhoc.truealarm"));
+                    intent.setData(Uri.parse("market://details?id=myApp.trainingdiary"));
                     startActivity(intent);
                 } catch (Throwable e) {
                     Log.e(Consts.LOG_TAG, e.getMessage());
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=ru.adhoc.truealarm"));
+                    intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=myApp.trainingdiary"));
                     startActivity(intent);
                 }
                 return false;

@@ -27,7 +27,7 @@ public class EntityManager {
             return ex_type;
         }
         long type_id = dBHelper.WRITE.insertExerciseType(db,
-                ex_type.getName(), ex_type.getIcon());
+                ex_type.getName(), ex_type.getIcon().getIconResName());
         ex_type.setId(type_id);
         int i = 0;
         for (Measure m : ex_type.getMeasures()) {
