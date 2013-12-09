@@ -34,7 +34,7 @@ public class TrainingService {
         System.out.println("element: " + element);
         try {
             String query = "insert into training_statistic (user_device_uid, trainingstamp_start, trainingstamp_end) values(?,?,?)";
-            jdbcTemplate.update(query, new Object[]{element.getDeviceId(), element.getTrainingStart(), element.getTrainingEnd()});
+            jdbcTemplate.update(query, new Object[]{element.getDeviceId(), element.getTrainingStartDate(), element.getTrainingEndDate()});
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(888).entity("ERROR: " + e.getMessage()).build();
