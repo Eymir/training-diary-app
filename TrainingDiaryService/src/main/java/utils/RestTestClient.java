@@ -22,13 +22,13 @@ public class RestTestClient {
         String uri = "http://adhocdev.j.rsnx.ru:80/trainingdiary/rest/tds/add";
         StatisticElement element = new StatisticElement();
         element.setDeviceId("Java-Java");
-        element.setTrainingStart(new Date(System.currentTimeMillis() - 5 * 60 * 1000));
-        element.setTrainingEnd(new Date());
+        element.setTrainingStartDate(new Date(System.currentTimeMillis() - 5 * 60 * 1000));
+        element.setTrainingEndDate(new Date());
 
         try {
             Client client = Client.create();
             WebResource r = client.resource(uri);
-            ClientResponse response = r.type(MediaType.APPLICATION_XML).post(ClientResponse.class, element);
+            ClientResponse response = r.type(MediaType.APPLICATION_JSON).post(ClientResponse.class, element);
             System.out.println(response.getEntity(String.class));
         } catch (Exception e) {
             e.printStackTrace();

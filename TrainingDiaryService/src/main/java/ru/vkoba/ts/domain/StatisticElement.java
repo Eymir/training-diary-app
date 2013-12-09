@@ -12,16 +12,16 @@ import java.util.Date;
 @XmlRootElement
 public class StatisticElement {
     String deviceId;
-    Date trainingStart;
-    Date trainingEnd;
+    Long trainingStart;
+    Long trainingEnd;
 
     public StatisticElement() {
     }
 
     public StatisticElement(String deviceId, Date trainingStart, Date trainingEnd) {
         this.deviceId = deviceId;
-        this.trainingStart = trainingStart;
-        this.trainingEnd = trainingEnd;
+        this.trainingStart = (trainingStart != null) ? trainingStart.getTime() : null;
+        this.trainingEnd = (trainingEnd != null) ? trainingEnd.getTime() : null;
     }
 
     public String getDeviceId() {
@@ -32,28 +32,45 @@ public class StatisticElement {
         this.deviceId = deviceId;
     }
 
-    public Date getTrainingStart() {
-        return trainingStart;
-    }
-
-    public void setTrainingStart(Date trainingStart) {
-        this.trainingStart = trainingStart;
-    }
-
-    public Date getTrainingEnd() {
+    public Long getTrainingEnd() {
         return trainingEnd;
     }
 
-    public void setTrainingEnd(Date trainingEnd) {
+    public void setTrainingEnd(Long trainingEnd) {
         this.trainingEnd = trainingEnd;
     }
+
+    public Long getTrainingStart() {
+        return trainingStart;
+    }
+
+    public void setTrainingStart(Long trainingStart) {
+        this.trainingStart = trainingStart;
+    }
+
+    public Date getTrainingEndDate() {
+        return new Date(trainingEnd);
+    }
+
+    public void setTrainingEndDate(Date trainingEnd) {
+        this.trainingEnd = (trainingEnd != null) ? trainingEnd.getTime() : null;
+    }
+
+    public Date getTrainingStartDate() {
+        return new Date(trainingStart);
+    }
+
+    public void setTrainingStartDate(Date trainingStart) {
+        this.trainingStart = (trainingStart != null) ? trainingStart.getTime() : null;
+    }
+
 
     @Override
     public String toString() {
         return "StatisticElement{" +
                 "deviceId='" + deviceId + '\'' +
-                ", trainingStart=" + trainingStart +
-                ", trainingEnd=" + trainingEnd +
+                ", trainingStart=" + getTrainingStartDate() +
+                ", trainingEnd=" + getTrainingEndDate() +
                 '}';
     }
 }
