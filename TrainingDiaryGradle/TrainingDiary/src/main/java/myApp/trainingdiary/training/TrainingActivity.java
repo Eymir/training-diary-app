@@ -1,7 +1,6 @@
 package myApp.trainingdiary.training;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -135,13 +134,13 @@ public class TrainingActivity extends ActionBarActivity {
     private void createTrainingTools() {
         ActionItem renameItem = new ActionItem(ID_RENAME_TRAINING,
                 getResources().getString(R.string.rename_action),
-                getResources().getDrawable(R.drawable.content_edit_white));
+                getResources().getDrawable(R.drawable.icon_content_edit_white));
         ActionItem moveItem = new ActionItem(ID_MOVE_TRAINING, getResources()
                 .getString(R.string.move_action), getResources().getDrawable(
-                R.drawable.content_import_export_white));
+                R.drawable.icon_content_import_export_white));
         ActionItem deleteItem = new ActionItem(ID_DELETE_TRAINING,
                 getResources().getString(R.string.delete_action),
-                getResources().getDrawable(R.drawable.content_remove_white));
+                getResources().getDrawable(R.drawable.icon_content_remove_white));
 
         trainingActionTools = new QuickAction(this);
 

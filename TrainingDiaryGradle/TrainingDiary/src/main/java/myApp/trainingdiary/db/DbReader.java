@@ -10,6 +10,7 @@ import java.util.List;
 
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
+import myApp.trainingdiary.db.entity.ExerciseTypeIcon;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
 import myApp.trainingdiary.db.entity.TrainingStat;
@@ -94,7 +95,7 @@ public class DbReader {
                 Long type_id = c.getLong(c.getColumnIndex("type_id"));
                 String type_name = c.getString(c.getColumnIndex("type_name"));
                 String type_icon = c.getString(c.getColumnIndex("type_icon"));
-                return new ExerciseType(type_id, type_icon, type_name);
+                return new ExerciseType(type_id, ExerciseTypeIcon.getByIconResName(type_icon), type_name);
             } else {
                 return null;
             }
@@ -118,7 +119,7 @@ public class DbReader {
                 String ex_name = c.getString(c.getColumnIndex("ex_name"));
                 String type_name = c.getString(c.getColumnIndex("type_name"));
                 String type_icon = c.getString(c.getColumnIndex("type_icon"));
-                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
+                return new Exercise(ex_id, new ExerciseType(type_id, ExerciseTypeIcon.getByIconResName(type_icon), type_name), ex_name);
             } else {
                 return null;
             }
@@ -639,7 +640,7 @@ public class DbReader {
                 String ex_name = c.getString(c.getColumnIndex("ex_name"));
                 String type_name = c.getString(c.getColumnIndex("type_name"));
                 String type_icon = c.getString(c.getColumnIndex("type_icon"));
-                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
+                return new Exercise(ex_id, new ExerciseType(type_id, ExerciseTypeIcon.getByIconResName(type_icon), type_name), ex_name);
             } else {
                 return null;
             }
@@ -666,7 +667,7 @@ public class DbReader {
                 String ex_name = c.getString(c.getColumnIndex("ex_name"));
                 String type_name = c.getString(c.getColumnIndex("type_name"));
                 String type_icon = c.getString(c.getColumnIndex("type_icon"));
-                return new Exercise(ex_id, new ExerciseType(type_id, type_icon, type_name), ex_name);
+                return new Exercise(ex_id, new ExerciseType(type_id, ExerciseTypeIcon.getByIconResName(type_icon), type_name), ex_name);
             } else {
                 return null;
             }
@@ -677,5 +678,26 @@ public class DbReader {
             if (c != null) c.close();
         }
 
+    }
+
+    public Long getExerciseTypeIdByIconRes(SQLiteDatabase db, String key) {
+        String sqlQuery = "select ex_type.id type_id " +
+                "from ExerciseType ex_type " +
+                "where ex_type.icon_res = ? ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(key)});
+        try {
+            if (c.moveToFirst()) {
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                return type_id;
+            } else {
+                return null;
+            }
+        } catch (Throwable e) {
+            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            if (c != null) c.close();
+        }
     }
 }

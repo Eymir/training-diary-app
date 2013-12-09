@@ -71,7 +71,7 @@ public class CustomItemAdapter extends ArrayAdapter {
                 if (title != null)
                     title.setText(dateItem.getTitle());
 
-                icon.setImageResource(R.drawable.ico_train);
+                icon.setImageResource(R.drawable.icon_train);
                 break;
             }
             case EXERCISE: {

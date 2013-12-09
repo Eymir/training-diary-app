@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class ExerciseType {
     private Long id;
-    private String icon;
+    private ExerciseTypeIcon icon;
     private String name;
 
     private ArrayList<Measure> measures;
@@ -27,11 +27,11 @@ public class ExerciseType {
         this.id = id;
     }
 
-    public String getIcon() {
+    public ExerciseTypeIcon getIcon() {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(ExerciseTypeIcon icon) {
         this.icon = icon;
     }
 
@@ -43,7 +43,7 @@ public class ExerciseType {
         this.name = name;
     }
 
-    public ExerciseType(Long id, String icon, String name) {
+    public ExerciseType(Long id, ExerciseTypeIcon icon, String name) {
         this.id = id;
         this.icon = icon;
         this.name = name;

@@ -1,7 +1,6 @@
 package myApp.trainingdiary.excercise;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -236,19 +234,19 @@ public class ExerciseActivity extends ActionBarActivity {
     private void createExcerciseTools() {
         ActionItem renameItem = new ActionItem(ID_RENAME_EXERCISE,
                 getResources().getString(R.string.rename_action),
-                getResources().getDrawable(R.drawable.content_edit_white));
+                getResources().getDrawable(R.drawable.icon_content_edit_white));
         ActionItem statItem = new ActionItem(ID_STAT_EXERCISE,
                 getResources().getString(R.string.stat_action),
-                getResources().getDrawable(R.drawable.action_statistic_white));
+                getResources().getDrawable(R.drawable.icon_action_graph_white));
         ActionItem historyItem = new ActionItem(ID_HISTORY_EXERCISE,
                 getResources().getString(R.string.history_action),
-                getResources().getDrawable(R.drawable.action_history_white));
+                getResources().getDrawable(R.drawable.icon_action_history_white));
         ActionItem moveItem = new ActionItem(ID_MOVE_EXERCISE, getResources()
                 .getString(R.string.move_action), getResources().getDrawable(
-                R.drawable.content_import_export_white));
+                R.drawable.icon_content_import_export_white));
         ActionItem removeItem = new ActionItem(ID_REMOVE_EXERCISE,
                 getResources().getString(R.string.delete_action),
-                getResources().getDrawable(R.drawable.content_remove_white));
+                getResources().getDrawable(R.drawable.icon_content_remove_white));
 
         exerciseActionTools = new QuickAction(this);
         exerciseActionTools.addActionItem(renameItem);
