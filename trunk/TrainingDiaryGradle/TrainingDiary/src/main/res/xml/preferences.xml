@@ -8,23 +8,34 @@
         android:defaultValue="false" />
 
     <PreferenceCategory
+        android:key="backup_category"
+        android:summary="Description of category 3"
+        android:title="@string/backup_restore_category">
+        <Preference
+            android:key="backup"
+            android:title="@string/backup_title"
+            android:summary="@string/backup_summary"
+            android:icon="@drawable/action_backup_db"/>
+        <Preference
+            android:key="restore"
+            android:title="@string/restore_title"
+            android:summary="@string/restore_summary"
+            android:icon="@drawable/action_restore_db"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="prefRate"
         android:summary="Description of category 2"
         android:title="@string/help_developers">
-
         <Preference
             android:key="rate_app"
             android:title="@string/rate_app_title"
             android:summary="@string/rate_app_summ"
-            android:icon="@drawable/play4">
-        </Preference>
+            android:icon="@drawable/play4"/>
         <Preference
             android:key="about"
             android:title="@string/about_title"
-            android:summary="@string/about_summary">
-        </Preference>
-
+            android:summary="@string/about_summary"/>
     </PreferenceCategory>
-
 
 </PreferenceScreen>
