@@ -162,4 +162,16 @@ http://adhocapp.mybb.ru\n\n
     <string name="help_developers">Помочь разработчикам</string>
     <string name="rate_app_title">Поставить оценку</string>
     <string name="rate_app_summ">Оценить приложиние на маркете</string>
+    <string name="backup_problem">Проблема при попытке создать бекап</string>
+    <string name="restore_problem">Проблема при восстановлении БД из бекапа</string>
+    <string name="backup_restore_category">Резервное копирование</string>
+    <string name="backup_title">Сохранить бекап</string>
+    <string name="backup_summary">Резервное копирование базы данных на SD карту</string>
+    <string name="restore_title">Восстановить бекап</string>
+    <string name="restore_summary">Заменить текущую базу данных на базу из резервной копии с SD</string>
+    <string name="backup_success">База данных успешно сохранена на SD. Путь: /</string>
+    <string name="restore_success">Восстановление базы данных прошло успешно</string>
+    <string name="restoration_data_base">Восстановление базы данных</string>
+    <string name="restoration_ask_for_continue">При востановлении текущая база будет заменена на базу из бекапа, продолжить?</string>
+    <string name="Operation_cancelation">Отмена операции</string>
 </resources>

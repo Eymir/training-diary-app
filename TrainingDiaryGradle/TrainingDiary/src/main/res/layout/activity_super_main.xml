@@ -87,7 +87,8 @@
                 android:textAppearance="?android:attr/textAppearanceMediumInverse"
                 android:text="@string/statistic_main"
                 android:gravity="left|center"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:padding="5dp" />
 
             <ImageButton
                 android:background="@android:color/transparent"
@@ -96,7 +97,8 @@
                 android:id="@+id/edit_user_activity"
                 android:src="@drawable/icon_content_edit_white"
                 android:gravity="right"
-                android:layout_weight="0" />
+                android:layout_weight="0"
+                android:padding="5dp" />
         </LinearLayout>
 
         <ListView

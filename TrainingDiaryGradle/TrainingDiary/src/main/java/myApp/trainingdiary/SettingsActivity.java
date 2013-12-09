@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.support.v7.app.ActionBar;
+import android.widget.Toast;
 
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
+import myApp.trainingdiary.utils.BackupManager;
 import myApp.trainingdiary.utils.Consts;
 
 /*
@@ -70,6 +72,60 @@ public class SettingsActivity extends PreferenceActivity {
                 return false;
             }
         });
+        Preference backup = findPreference("backup");
+
+        assert backup != null;
+        backup.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+                    BackupManager.backupToSD(SettingsActivity.this);
+                    Toast.makeText(SettingsActivity.this,
+                            getString(R.string.backup_success) +
+                                    BackupManager.BACKUP_FOLDER + "/" +
+                                    DBHelper.DATABASE_NAME, Toast.LENGTH_LONG).show();
+                } catch (Throwable e) {
+                    Log.e(Consts.LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(SettingsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+                return false;
+            }
+        });
+        final AlertDialog restoreDialog = DialogProvider.createSimpleDialog(SettingsActivity.this,
+                getString(R.string.restoration_data_base),getString(R.string.restoration_ask_for_continue),
+                getResources().getString(R.string.YES),getResources().getString(R.string.NO),  new DialogProvider.SimpleDialogClickListener(){
+
+            @Override
+            public void onPositiveClick() {
+                try {
+                    BackupManager.restoreFromSD(SettingsActivity.this);
+                    Toast.makeText(SettingsActivity.this,
+                            getString(R.string.restore_success),
+                            Toast.LENGTH_SHORT).show();
+                } catch (Throwable e) {
+                    Log.e(Consts.LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(SettingsActivity.this,
+                            e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNegativeClick() {
+                Toast.makeText(SettingsActivity.this,
+                        getString(R.string.Operation_cancelation),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        Preference restore = findPreference("restore");
+
+        assert restore != null;
+        restore.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                restoreDialog.show();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -80,7 +136,6 @@ public class SettingsActivity extends PreferenceActivity {
         }
 
         return super.onOptionsItemSelected(item);
-
     }
 
 

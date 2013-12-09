@@ -266,7 +266,7 @@ public class TrainingActivity extends ActionBarActivity {
         String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        deleteTrainingDialog = DialogProvider.createSimpleDialog(this, title, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+        deleteTrainingDialog = DialogProvider.createSimpleDialog(this, title,null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
                 dbHelper.WRITE.deleteTraining(cur_tr_id);

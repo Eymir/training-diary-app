@@ -326,7 +326,7 @@ public class ExerciseActivity extends ActionBarActivity {
         String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title,null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
                 dbHelper.WRITE.deleteExerciseFromTraining(tr_id, cur_ex_id);

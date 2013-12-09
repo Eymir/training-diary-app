@@ -155,7 +155,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         String cancelButton = getResources().getString(R.string.cancel_button);
         String deleteButton = getResources().getString(R.string.delete_button);
 
-        undoDialog = DialogProvider.createSimpleDialog(this, title, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+        undoDialog = DialogProvider.createSimpleDialog(this, title, null, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
                 int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);

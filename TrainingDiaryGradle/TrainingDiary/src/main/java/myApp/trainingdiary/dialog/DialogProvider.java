@@ -82,9 +82,10 @@ public class DialogProvider {
         return new EditDialog(builder.create());
     }
 
-    public static AlertDialog createSimpleDialog(final Activity activity, String title, String positiveTitle, String negativeTitle, final SimpleDialogClickListener listener) {
+    public static AlertDialog createSimpleDialog(final Activity activity, String title, String message, String positiveTitle, String negativeTitle, final SimpleDialogClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);
+        if (message != null) builder.setMessage(message);
         builder.setPositiveButton(positiveTitle, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -558,7 +559,7 @@ public class DialogProvider {
         builder.setTitle(context.getString(R.string.about_title));
         final TextView message = new TextView(context);
         final SpannableString s =
-                new SpannableString("\t\t" + context.getString(R.string.about_summary,version) + "\n\n" + context.getString(R.string.about_detail));
+                new SpannableString("\t\t" + context.getString(R.string.about_summary, version) + "\n\n" + context.getString(R.string.about_detail));
         Linkify.addLinks(s, Linkify.WEB_URLS);
 //        builder.setIcon(R.drawable.ic_dairy);
         message.setPadding(10, 10, 10, 10);

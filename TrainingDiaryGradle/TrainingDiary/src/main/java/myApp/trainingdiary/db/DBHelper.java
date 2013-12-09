@@ -28,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper mInstance = null;
 
     private final static int DB_VERSION = 6;
+    public final static String DATABASE_NAME = "TrainingDiaryDB";
 
     public DbReader READ;
     public DbWriter WRITE;
