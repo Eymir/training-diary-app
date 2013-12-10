@@ -4,15 +4,6 @@
     android:orientation="vertical"
     style="?backgroundRef">
 
-    <TextView
-        android:id="@+id/last_result_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/last_result"
-        android:textColor="@color/white"
-        />
-
     <LinearLayout
         android:id="@+id/measure_layout"
         android:padding="10dp"
@@ -47,7 +38,20 @@
         android:id="@+id/cur_training_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="30sp"
         android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/history_result_button"
+        style="?hugeSpecificButtonRef"
+        android:layout_gravity="center_horizontal"
+        android:paddingLeft="7dp"
+        android:layout_weight="0"
+        android:src="@drawable/icon_action_history_white"
+        />
+
 </LinearLayout>

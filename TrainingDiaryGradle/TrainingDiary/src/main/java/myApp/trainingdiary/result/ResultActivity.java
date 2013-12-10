@@ -39,6 +39,7 @@ import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.TrainingStat;
+import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.utils.Consts;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.MeasureFormatter;
@@ -98,6 +99,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         writeButton.setOnClickListener(this);
         ImageButton undoButton = (ImageButton) findViewById(R.id.undo_button);
         undoButton.setOnClickListener(this);
+        ImageButton historyButton = (ImageButton) findViewById(R.id.history_result_button);
+        historyButton.setOnClickListener(this);
 
         String last_result_text = resources.getString(R.string.last_result);
         TrainingStat tr_stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
@@ -210,6 +213,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 writeToDB();
                 printCurrentTrainingProgress();
                 break;
+            case R.id.history_result_button:
+                openHistoryDetailActivity(ex_id);
+                break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
                 TrainingStat stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
@@ -224,6 +230,13 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             default:
                 break;
         }
+    }
+
+    protected void openHistoryDetailActivity(long ex_id) {
+        Intent intentOpenAct = new Intent(this, HistoryDetailActivity.class);
+        intentOpenAct.putExtra(Consts.EXERCISE_ID, ex_id);
+        intentOpenAct.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
+        startActivity(intentOpenAct);
     }
 
     private void writeToDB() {
