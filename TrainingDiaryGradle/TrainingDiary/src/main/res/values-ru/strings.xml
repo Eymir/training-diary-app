@@ -16,7 +16,7 @@
     <string name="title_activity_history_main_acrivity">Тренировочные дни</string>
     <string name="title_activity_history_details">HistoryDetails</string>
     <string name="title_activity_super_main">Дневник тренировок</string>
-    <string name="title_activity_history_detail">Проделанная работа</string>
+    <string name="title_activity_history_detail">История</string>
     <string name="start_training">Начать тренировку</string>
     <string name="title_activity_sort_ex_in_training_day">Установка последовательности</string>
     <string name="btnSortExInTr">Применить</string>

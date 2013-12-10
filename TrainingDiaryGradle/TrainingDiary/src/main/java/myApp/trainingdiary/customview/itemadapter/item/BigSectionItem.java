@@ -24,4 +24,11 @@ public class BigSectionItem implements Item {
         return ItemType.BIG_SECTION;
     }
 
+    @Override
+    public String toString() {
+        return "BigSectionItem{" +
+                "title='" + title + '\'' +
+                ", icon='" + icon + '\'' +
+                '}';
+    }
 }
