@@ -85,12 +85,13 @@ public class SettingsActivity extends PreferenceActivity {
                                     DBHelper.DATABASE_NAME, Toast.LENGTH_LONG).show();
                 } catch (Throwable e) {
                     Log.e(Consts.LOG_TAG, e.getMessage(), e);
-                    Toast.makeText(SettingsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                 }
                 return false;
             }
         });
+
         final AlertDialog restoreDialog = DialogProvider.createSimpleDialog(SettingsActivity.this,
                 getString(R.string.restoration_data_base),getString(R.string.restoration_ask_for_continue),
                 getResources().getString(R.string.YES),getResources().getString(R.string.NO),  new DialogProvider.SimpleDialogClickListener(){
@@ -101,12 +102,12 @@ public class SettingsActivity extends PreferenceActivity {
                     BackupManager.restoreFromSD(SettingsActivity.this);
                     Toast.makeText(SettingsActivity.this,
                             getString(R.string.restore_success),
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                 } catch (Throwable e) {
                     Log.e(Consts.LOG_TAG, e.getMessage(), e);
                     Toast.makeText(SettingsActivity.this,
                             e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -114,7 +115,7 @@ public class SettingsActivity extends PreferenceActivity {
             public void onNegativeClick() {
                 Toast.makeText(SettingsActivity.this,
                         getString(R.string.Operation_cancelation),
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_LONG).show();
             }
         });
         Preference restore = findPreference("restore");
