@@ -75,7 +75,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         resources = getResources();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        TextView lastResultView = (TextView) findViewById(R.id.last_result_text);
         training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
         dbHelper = dbHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
@@ -102,16 +101,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         ImageButton historyButton = (ImageButton) findViewById(R.id.history_result_button);
         historyButton.setOnClickListener(this);
 
-        String last_result_text = resources.getString(R.string.last_result);
         TrainingStat tr_stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
-        String last_result_info;
-        if (tr_stat != null) {
-            last_result_info = tr_stat.getValue()
-                    + " [" + sdf.format(tr_stat.getTrainingDate()) + "]";
-        } else {
-            last_result_info = getString(R.string.last_training_empty);
-        }
-        lastResultView.setText(String.format(last_result_text, last_result_info));
         if (tr_stat != null)
             setLastTrainingStatOnWheels(tr_stat);
         createUndoDialog();

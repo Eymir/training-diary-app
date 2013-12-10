@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -57,6 +59,7 @@ public class HistoryDetailActivity extends ActionBarActivity {
                 CustomItemAdapter trainingHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, trItemArrayList);
                 listView.setAdapter(trainingHistoryAdapter);
                 break;
+
             case Consts.EXERCISE_TYPE:
                 ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
                 Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
@@ -81,7 +84,10 @@ public class HistoryDetailActivity extends ActionBarActivity {
                 Long training_date = exerciseCursor.getLong(exerciseCursor.getColumnIndex("training_date"));
                 if (!training_date.equals(prevTrDate)) {
                     prevTrDate = training_date;
-                    items.add(new BigSectionItem(SDF_DATETIME.format(new Date(training_date)), "ico_train"));
+                    String icon = getResources().getResourceName(R.drawable.icon_train);
+                    BigSectionItem item = new BigSectionItem(SDF_DATETIME.format(new Date(training_date)), icon);
+                    items.add(item);
+                    Log.d(Consts.LOG_TAG, "BigSectionItem: " + item);
                     i = 1;
                 }
                 items.add(new StatisticItem(i, value));

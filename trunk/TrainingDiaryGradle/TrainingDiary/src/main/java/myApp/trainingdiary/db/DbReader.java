@@ -76,7 +76,7 @@ public class DbReader {
         String sqlQuery = "select stat.value, stat.training_date " +
                 "from TrainingStat stat " +
                 "where stat.exercise_id = ? " +
-                "order by training_date, date asc ";
+                "order by training_date desc, date asc";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});

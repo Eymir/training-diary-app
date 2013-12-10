@@ -43,7 +43,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return mInstance;
     }
 
-
     private DBHelper(Context context) {
         super(context, "TrainingDiaryDB", null, DB_VERSION);
         READ = new DbReader(this);
