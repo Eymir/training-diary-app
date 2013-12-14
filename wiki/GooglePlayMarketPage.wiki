@@ -1,0 +1,40 @@
+#Google play title and transtations
+
+= На русском =
+==Название==
+Дневник тренировок
+
+==Описание==
+Максимально простой дневник силовых тренировок.
+Программа рассчитана на тех кто приходит в зал и знает что ему делать, призвана заменить тетрадку и ручку для ведения дневника. Ведь как известно без дневника тренировок сложно рассчитывать на серьёзный прогресс. 
+- Возможность самостоятельно создавать любые упражнения и тренировочные программы
+- Записывать результаты 
+- Просматривать историю
+В ближайшее время будет добавлена возможность просматривать статистические данные по упражнениям.
+Для русскоязычных пользователей приложение никогда не станет платным и не будет содержать рекламу.
+
+Так же буду рад видеть конструктивные замечания в отзывах, на почте или на нашем форуме:
+http://adhocapp.mybb.ru/
+
+==Текст рекламного сообщения==
+Максимально простой дневник силовых тренировок.
+
+=English=
+==App name==
+GT-Track Gym Training Tracker
+
+==Description==
+
+Easy-to-use gym workout tracker
+	
+Best for fitness-lovers and experienced gym-users to keep track of all possible gym training types in a smart way.
+
+Features:
+
+* fast and easy data input
+* create your individual training course and your own exercises
+* detailed history
+* progress monitoring via graphs and stats.
+
+==Short ad title==
+???
