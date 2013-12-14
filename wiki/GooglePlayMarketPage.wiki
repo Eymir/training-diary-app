@@ -34,7 +34,7 @@ Features:
  * fast and easy data input
  * create your individual training course and your own exercises
  * detailed history
- * progress monitoring via graphs and stats.
+ * progress monitoring via graphs and stats
 
 ==Short ad title==
 
