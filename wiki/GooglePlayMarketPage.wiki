@@ -25,16 +25,16 @@ GT-Track Gym Training Tracker
 
 ==Description==
 
-Easy-to-use gym workout tracker
+    Easy-to-use gym workout tracker
 	
-Best for fitness-lovers and experienced gym-users to keep track of all possible gym training types in a smart way.
+    Best for fitness-lovers and experienced gym-users to keep track of all possible gym training types in a smart way.
 
 Features:
 
-* fast and easy data input
-* create your individual training course and your own exercises
-* detailed history
-* progress monitoring via graphs and stats.
+ * fast and easy data input
+ * create your individual training course and your own exercises
+ * detailed history
+ * progress monitoring via graphs and stats.
 
 ==Short ad title==
 ???
