@@ -37,4 +37,5 @@ Features:
  * progress monitoring via graphs and stats.
 
 ==Short ad title==
-???
+
+Easy-to-use gym workout tracker
