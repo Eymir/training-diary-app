@@ -1,4 +1,5 @@
 <%@page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
@@ -24,20 +25,25 @@
     <div class="jumbotron">
         <h1>Дневник тренировок</h1>
         <p class="lead">Версия 0.1.0a</p>
-        <form action="#" method="post" class="form">
+
+        <form action="<c:url value='j_spring_security_check'/>" method="post" class="form">
             <div class="get-in-touch">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="login" placeholder="Имя пользователя" required/>
+                    <input type="text" class="form-control" name="j_username" placeholder="Имя пользователя" required/>
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-control" id="password" placeholder="Пароль" required/>
+                    <input type="password" class="form-control" name="j_password" placeholder="Пароль" required/>
                 </div>
-                <a class="btn btn-large btn-success" href="#">Войти</a>
+                <input class="btn btn-large btn-success" type="submit" value="Войти">
+                <c:if test="${not empty error}">
+                <div class="alert alert-error">
+                    <strong>Ошибка!</strong> Неправильное имя пользователя, или пароль
+                </div>
+                </c:if>
             </div>
         </form>
-
-
     </div>
+
     <hr>
     <div class="row-fluid marketing">
         <div class="span6">
