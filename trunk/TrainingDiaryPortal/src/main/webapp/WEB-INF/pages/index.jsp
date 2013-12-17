@@ -29,10 +29,10 @@
         <form action="<c:url value='j_spring_security_check'/>" method="post" class="form">
             <div class="get-in-touch">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="j_username" placeholder="Имя пользователя" required/>
+                    <input type="text" class="form-control" name="j_username" placeholder="Имя пользователя" oninvalid="setCustomValidity('Введите имя пользователя')" required/>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" name="j_password" placeholder="Пароль" required/>
+                    <input type="password" class="form-control" name="j_password" placeholder="Пароль"   required/>
                 </div>
                 <input class="btn btn-large btn-success" type="submit" value="Войти">
                 <c:if test="${not empty error}">
