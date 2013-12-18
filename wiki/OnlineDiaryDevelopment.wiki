@@ -1,0 +1,11 @@
+#summary One-sentence summary of this page.
+
+= Структура БД=
+
+http://www.gliffy.com/go/publish/image/4345592/L.png
+
+==Описание полей==
+
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
