@@ -21,6 +21,7 @@
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/spring/spring-security.xml</file>
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml</file>
           <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/spring/app-context.xml</file>
+          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/spring/db-context.xml</file>
         </fileset>
       </configuration>
     </facet>
@@ -61,8 +62,14 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
+    <orderEntry type="library" name="Maven: org.hsqldb:hsqldb:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-jpa:1.4.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:1.6.2.RELEASE" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.slf4j:jcl-over-slf4j:1.7.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-orm:3.1.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:3.1.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.2" level="project" />
   </component>
