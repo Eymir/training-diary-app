@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ru.td.portal.domain.Man;
 
 import static org.junit.Assert.assertTrue;
 
@@ -20,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations =
-        "classpath:spring/db-context.xml")
+        "classpath:spring/test-db-context.xml")
 public class DatabaseTest {
 
 
