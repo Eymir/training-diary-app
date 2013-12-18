@@ -43,15 +43,14 @@
         android:textStyle="bold"
         android:layout_weight="1" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        android:layout_width="170dp"
+        android:layout_height="55dp"
         android:id="@+id/history_result_button"
+        android:text="@string/history_action"
         style="?hugeSpecificButtonRef"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="right"
         android:paddingLeft="7dp"
-        android:layout_weight="0"
-        android:src="@drawable/icon_action_history_white"
         />
 
 </LinearLayout>

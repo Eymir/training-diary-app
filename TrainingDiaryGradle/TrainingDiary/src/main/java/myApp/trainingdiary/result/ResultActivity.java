@@ -1,6 +1,5 @@
 package myApp.trainingdiary.result;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -98,7 +97,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         writeButton.setOnClickListener(this);
         ImageButton undoButton = (ImageButton) findViewById(R.id.undo_button);
         undoButton.setOnClickListener(this);
-        ImageButton historyButton = (ImageButton) findViewById(R.id.history_result_button);
+        Button historyButton = (Button) findViewById(R.id.history_result_button);
         historyButton.setOnClickListener(this);
 
         TrainingStat tr_stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
@@ -151,7 +150,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         undoDialog = DialogProvider.createSimpleDialog(this, title, null, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
-                int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
+                int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id);
                 if (deleted > 0) {
                     printCurrentTrainingProgress();
                     Toast.makeText(ResultActivity.this, R.string.deleted,
@@ -435,9 +434,5 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     break;
             }
         }
-
-
     }
-
-
 }
