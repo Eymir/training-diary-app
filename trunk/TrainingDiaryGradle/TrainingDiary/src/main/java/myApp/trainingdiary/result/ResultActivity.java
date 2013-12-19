@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,6 +69,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private Resources resources;
     private TextView training_stat_text;
 
+    private Chronometer mChrono;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +78,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         resources = getResources();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
         training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
+        mChrono = (Chronometer)findViewById(R.id.mChrono);
+
         dbHelper = dbHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
         tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
@@ -106,6 +113,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         createUndoDialog();
         printCurrentTrainingProgress();
         setTitle(dbHelper.READ.getExerciseNameById(ex_id));
+
+        List<TrainingStat> tr_stats = dbHelper.READ.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
+        if(!tr_stats.isEmpty())
+            restartChronograph();
     }
 
     private void setLastTrainingStatOnWheels(TrainingStat tr_stat) {
@@ -150,7 +161,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         undoDialog = DialogProvider.createSimpleDialog(this, title, null, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
-                int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id);
+                int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
                 if (deleted > 0) {
                     printCurrentTrainingProgress();
                     Toast.makeText(ResultActivity.this, R.string.deleted,
@@ -201,6 +212,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             case R.id.write_button:
                 writeToDB();
                 printCurrentTrainingProgress();
+                restartChronograph();
                 break;
             case R.id.history_result_button:
                 openHistoryDetailActivity(ex_id);
@@ -434,5 +446,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     break;
             }
         }
+    }
+
+    private void restartChronograph(){
+        mChrono.stop();
+        mChrono.setBase(SystemClock.elapsedRealtime());
+        mChrono.start();
     }
 }
