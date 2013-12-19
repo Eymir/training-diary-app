@@ -4,8 +4,12 @@
 
 http://www.gliffy.com/go/publish/image/4345592/L.png
 
-==Описание полей==
+==Описание полей таблиц==
 
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+ * *Training* - Шаблон тренировки, группа упражнений
+|| name || Имя тренировки ||
+|| position|| Позиция в списке на экране ||
+
+ * *ExerciseInTraining* - Шаблон тренировки, группа упражнений
+|| training_id || Имя тренировки ||
+|| position|| Позиция в списке на экране ||
