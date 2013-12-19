@@ -23,6 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +59,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     final int MENU_DEL_LAST_SET = 1;
     final int MENU_SHOW_LAST_RESULT = 2;
 
+    private static final int ID_STOP = 1;
+    private static final int ID_START = 2;
+    private static final int ID_RESET = 3;
+
     // forms
     private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
@@ -70,6 +77,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private TextView training_stat_text;
 
     private Chronometer mChrono;
+    private QuickAction exerciseActionTools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +89,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
         mChrono = (Chronometer)findViewById(R.id.mChrono);
+
+        createExcerciseTools();
 
         dbHelper = dbHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
@@ -453,4 +463,53 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         mChrono.setBase(SystemClock.elapsedRealtime());
         mChrono.start();
     }
+
+    private void createExcerciseTools() {
+
+        ActionItem startItem = new ActionItem(ID_START,
+                getResources().getString(R.string.timerStart),
+                getResources().getDrawable(R.drawable.icon_content_edit_white));
+        ActionItem stopItem = new ActionItem(ID_STOP,
+                getResources().getString(R.string.timerStop),
+                getResources().getDrawable(R.drawable.icon_action_graph_white));
+        ActionItem resetItem = new ActionItem(ID_RESET,
+                getResources().getString(R.string.timerReset),
+                getResources().getDrawable(R.drawable.icon_action_history_white));
+
+
+        exerciseActionTools = new QuickAction(this);
+        exerciseActionTools.addActionItem(startItem);
+        exerciseActionTools.addActionItem(stopItem);
+        exerciseActionTools.addActionItem(resetItem);
+
+        // setup the action item click listener
+        exerciseActionTools
+                .setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+                    @Override
+                    public void onItemClick(QuickAction quickAction, int pos,
+                                            int actionId) {
+                        ActionItem actionItem = quickAction.getActionItem(pos);
+
+                        switch (actionId) {
+                            case ID_START: {
+
+                                break;
+                            }
+                            case ID_STOP:
+
+                                break;
+                            case ID_RESET:
+
+                                break;
+                        }
+                    }
+                });
+    }
+
+    public void onClickTimer(View view){
+
+        exerciseActionTools.show(view);
+
+    }
+
 }

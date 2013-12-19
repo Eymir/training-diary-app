@@ -174,4 +174,8 @@ http://adhocapp.mybb.ru\n\n
     <string name="restoration_data_base">Восстановление базы данных</string>
     <string name="restoration_ask_for_continue">При востановлении текущая база будет заменена на базу из бекапа, продолжить?</string>
     <string name="Operation_cancelation">Отмена операции</string>
+    <string name="timerStart">Старт</string>
+    <string name="timerStop">Стоп</string>
+    <string name="timerReset">Сброс</string>
+
 </resources>
