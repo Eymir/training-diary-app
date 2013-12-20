@@ -29,6 +29,7 @@ import net.londatiga.android.QuickAction;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -79,6 +80,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private Chronometer mChrono;
     private QuickAction exerciseActionTools;
 
+    private long elapsedTime=0;
+    private String currentTime="";
+    private long startTime=SystemClock.elapsedRealtime();
+    private Boolean resume=false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +95,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
+
         mChrono = (Chronometer)findViewById(R.id.mChrono);
+        setChronoTickListener();
 
         createExcerciseTools();
 
@@ -468,14 +477,13 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         ActionItem startItem = new ActionItem(ID_START,
                 getResources().getString(R.string.timerStart),
-                getResources().getDrawable(R.drawable.icon_content_edit_white));
+                getResources().getDrawable(R.drawable.icon_play));
         ActionItem stopItem = new ActionItem(ID_STOP,
                 getResources().getString(R.string.timerStop),
-                getResources().getDrawable(R.drawable.icon_action_graph_white));
+                getResources().getDrawable(R.drawable.icon_stop));
         ActionItem resetItem = new ActionItem(ID_RESET,
                 getResources().getString(R.string.timerReset),
-                getResources().getDrawable(R.drawable.icon_action_history_white));
-
+                getResources().getDrawable(R.drawable.icon_replay));
 
         exerciseActionTools = new QuickAction(this);
         exerciseActionTools.addActionItem(startItem);
@@ -488,22 +496,72 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     @Override
                     public void onItemClick(QuickAction quickAction, int pos,
                                             int actionId) {
-                        ActionItem actionItem = quickAction.getActionItem(pos);
-
+                        //ActionItem actionItem = quickAction.getActionItem(pos);
                         switch (actionId) {
                             case ID_START: {
-
+                                if(!resume){
+                                    mChrono.setBase(SystemClock.elapsedRealtime());
+                                    mChrono.start();
+                                }
+                                else {
+                                    mChrono.start();
+                                }
                                 break;
                             }
                             case ID_STOP:
-
+                                mChrono.stop();
+                                resume = true;
+                                mChrono.setText(currentTime);
                                 break;
                             case ID_RESET:
-
+                                mChrono.stop();
+                                mChrono.setText("00:00");
+                                resume=false;
                                 break;
                         }
                     }
                 });
+    }
+
+    private void setChronoTickListener(){
+        mChrono.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener(){
+            public void onChronometerTick(Chronometer arg0) {
+                if(!resume){
+                    long minutes=((SystemClock.elapsedRealtime()-mChrono.getBase())/1000)/60;
+                    long seconds=((SystemClock.elapsedRealtime()-mChrono.getBase())/1000)%60;
+                    String min = "";
+                    String sec = "";
+                    if(minutes < 10)
+                       min = "0"+minutes;
+                    else
+                       min = ""+minutes;
+                    if(seconds < 10)
+                        sec = "0"+seconds;
+                    else
+                        sec =""+ seconds;
+                    currentTime=min+":"+sec;
+                    arg0.setText(currentTime);
+                    elapsedTime=SystemClock.elapsedRealtime();
+                }
+                else{
+                    long minutes=((elapsedTime-mChrono.getBase())/1000)/60;
+                    long seconds=((elapsedTime-mChrono.getBase())/1000)%60;
+                    String min = "";
+                    String sec = "";
+                    if(minutes < 10)
+                        min = "0"+minutes;
+                    else
+                        min = ""+minutes;
+                    if(seconds < 10)
+                        sec = "0"+seconds;
+                    else
+                        sec =""+ seconds;
+                    currentTime=min+":"+sec;
+                    arg0.setText(currentTime);
+                    elapsedTime=elapsedTime+1000;
+                }
+            }
+        });
     }
 
     public void onClickTimer(View view){
