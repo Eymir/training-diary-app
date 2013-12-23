@@ -1,1 +1,13 @@
-CREATE TABLE JBT_MEM(ID VARCHAR(5),PAN_NUMBER  VARCHAR(10),ADDRESS VARCHAR(40),CITY VARCHAR(35),STATE VARCHAR(2),PINCODE integer);
+CREATE TABLE Training (id identity   ,name varchar(200),position integer);
+
+CREATE TABLE Measure (id identity  ,name varchar(200),maxValue integer,step float,type integer);
+
+CREATE TABLE ExerciseType (id identity ,name varchar(200),icon_res varchar(200) );
+
+CREATE TABLE Exercise (id identity   ,name varchar(200), type_id integer, FOREIGN KEY(type_id) REFERENCES ExerciseType(id));
+
+CREATE TABLE ExerciseInTraining (training_id integer,exercise_id integer,position integer,FOREIGN KEY(training_id) REFERENCES Training(id),FOREIGN KEY(exercise_id) REFERENCES Exercise(id), PRIMARY KEY (training_id, exercise_id));
+
+CREATE TABLE MeasureExType (ex_type_id integer,measure_id integer,position integer,FOREIGN KEY(ex_type_id) REFERENCES ExerciseType(id),FOREIGN KEY(measure_id) REFERENCES Measure(id),PRIMARY KEY (ex_type_id, measure_id));
+
+CREATE TABLE TrainingStat (id identity  ,date datetime,training_date datetime,exercise_id integer,value varchar(200),training_id integer,FOREIGN KEY(exercise_id) REFERENCES Exercise(id));
