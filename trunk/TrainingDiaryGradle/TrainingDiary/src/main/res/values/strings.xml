@@ -177,5 +177,8 @@ http://adhocapp.mybb.ru\n\n
     <string name="timerStart">Старт</string>
     <string name="timerStop">Стоп</string>
     <string name="timerReset">Сброс</string>
+    <!--Диалог новое в версии-->
+    <string name="newInVersionTitle">Новое в версии</string>
+    <string name="newInVersionMessage">Текст сообщения\n\n -Новая фишка 1\n -Новая фишка 2\n -Новая фишка 3</string>
 
 </resources>

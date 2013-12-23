@@ -1,11 +1,18 @@
 package myApp.trainingdiary;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +22,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +74,14 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
         ImageButton editStat = (ImageButton) findViewById(R.id.edit_user_activity);
         editStat.setOnClickListener(this);
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean firstStart = sp.getBoolean("about",true);
+
+        if(firstStart){
+            showWhatNewsDialog();
+            changeFirsStartPreference();
+        }
 
         createEditStatListDialog();
         showCommonStatisticList();
@@ -153,6 +170,40 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
         }
         return true;
+    }
+
+    private  void showWhatNewsDialog(){
+        String version = "";
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.newInVersionTitle)+" "+ version);
+        final TextView message = new TextView(this);
+        final SpannableString s = new SpannableString(getResources()
+                .getString(R.string.newInVersionMessage));
+        Linkify.addLinks(s, Linkify.WEB_URLS);
+        message.setText(s);
+        message.setMovementMethod(LinkMovementMethod.getInstance());
+        message.setTextColor(Color.BLACK);
+        builder.setView(message);
+        builder.setPositiveButton(R.string.btn_txt_OK, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        AlertDialog AD = builder.create();
+        AD.show();
+    }
+
+    private void changeFirsStartPreference(){
+        //SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("about",false);
+        editor.commit();
     }
 
 }
