@@ -158,6 +158,15 @@
     <string name="about_summary">Дневник тренировок v.%1$s</string>
     <string name="about_detail">\tБудем рады предложениям и замечаниям на нашем форуме:\n\n
 http://adhocapp.mybb.ru\n\n
+\t или на любой его страничке:\n\n
+google+\n
+https://plus.google.com/u/0/109868287433035819799/posts\n
+группа в ВК\n
+http://vk.com/trainingdiary\n
+facebook\n
+https://www.facebook.com/gymtrainingdiary\n
+twitter\n
+https://twitter.com/TrainingDiaryGT\n
 \tА так же не забывайте ставить оценки и оставлять отзывы, нам это очень помогает.</string>
     <string name="help_developers">Помочь разработчикам</string>
     <string name="rate_app_title">Поставить оценку</string>
