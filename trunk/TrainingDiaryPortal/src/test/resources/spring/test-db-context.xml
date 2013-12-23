@@ -16,7 +16,5 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
-    <bean id="man" class="ru.td.portal.domain.Man">
-        <property name="name" value="Vasya"/>
-    </bean>
+
 </beans>
