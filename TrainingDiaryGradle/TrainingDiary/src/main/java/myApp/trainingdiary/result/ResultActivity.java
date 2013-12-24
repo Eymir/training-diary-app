@@ -60,9 +60,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     final int MENU_DEL_LAST_SET = 1;
     final int MENU_SHOW_LAST_RESULT = 2;
 
-    private static final int ID_STOP = 1;
-    private static final int ID_START = 2;
-    private static final int ID_RESET = 3;
+    private final int ID_STOP = 1;
+    private final int ID_START = 2;
+    private final int ID_RESET = 3;
 
     // forms
     private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
@@ -83,7 +83,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private long elapsedTime=0;
     private String currentTime="";
     private long startTime=SystemClock.elapsedRealtime();
-    private Boolean resume=false;
+    private boolean resume=false;
+    private boolean reset = false;
 
 
     @Override
@@ -134,8 +135,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         setTitle(dbHelper.READ.getExerciseNameById(ex_id));
 
         List<TrainingStat> tr_stats = dbHelper.READ.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
-        if(!tr_stats.isEmpty())
-            restartChronograph();
+        if(!tr_stats.isEmpty()){
+            chronometerReset();
+            chronometerStart();
+        }
+
     }
 
     private void setLastTrainingStatOnWheels(TrainingStat tr_stat) {
@@ -231,7 +235,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             case R.id.write_button:
                 writeToDB();
                 printCurrentTrainingProgress();
-                restartChronograph();
+                chronometerReset();
+                chronometerStart();
                 break;
             case R.id.history_result_button:
                 openHistoryDetailActivity(ex_id);
@@ -467,11 +472,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         }
     }
 
-    private void restartChronograph(){
-        mChrono.stop();
-        mChrono.setBase(SystemClock.elapsedRealtime());
-        mChrono.start();
-    }
 
     private void createExcerciseTools() {
 
@@ -499,28 +499,49 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                         //ActionItem actionItem = quickAction.getActionItem(pos);
                         switch (actionId) {
                             case ID_START: {
-                                if(!resume){
-                                    mChrono.setBase(SystemClock.elapsedRealtime());
-                                    mChrono.start();
-                                }
-                                else {
-                                    mChrono.start();
-                                }
+                                chronometerStart();
                                 break;
                             }
                             case ID_STOP:
-                                mChrono.stop();
-                                resume = true;
-                                mChrono.setText(currentTime);
+                                chronometerStop();
                                 break;
                             case ID_RESET:
-                                mChrono.stop();
-                                mChrono.setText("00:00");
-                                resume=false;
+                                chronometerReset();
                                 break;
                         }
                     }
                 });
+    }
+
+    private void chronometerStart(){
+        reset = false;
+        if(!resume){
+            mChrono.setBase(SystemClock.elapsedRealtime());
+            mChrono.start();
+        }
+        else {
+            mChrono.start();
+        }
+
+    }
+
+    private void chronometerStop(){
+        mChrono.stop();
+        if(reset){
+            mChrono.setText("00:00");
+            resume = false;
+        }
+        else{
+            mChrono.setText(currentTime);
+            resume = true;
+        }
+    }
+
+    private void chronometerReset(){
+        mChrono.stop();
+        mChrono.setText("00:00");
+        resume=false;
+        reset = true;
     }
 
     private void setChronoTickListener(){
@@ -565,9 +586,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     public void onClickTimer(View view){
-
         exerciseActionTools.show(view);
-
     }
-
 }
