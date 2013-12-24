@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jd="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/jdbc
+      http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+
+    <!-- Below configuration has been added to enable in memory DB HSQLDB  -->
+    <jd:embedded-database id="dataSource" type="HSQL">
+        <jd:script location="classpath:db/schema.sql"/>
+        <jd:script location="classpath:db/test-data.sql"/>
+    </jd:embedded-database>
+
+    <bean id="classificatorJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+
+</beans>
