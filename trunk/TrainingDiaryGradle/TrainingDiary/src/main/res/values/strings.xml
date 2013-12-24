@@ -187,7 +187,11 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="timerStop">Стоп</string>
     <string name="timerReset">Сброс</string>
     <!--Диалог новое в версии-->
-    <string name="newInVersionTitle">Новое в версии</string>
-    <string name="newInVersionMessage">Текст сообщения\n\n -Новая фишка 1\n -Новая фишка 2\n -Новая фишка 3</string>
+    <string name="newInVersionTitle">Дневник тренировок</string>
+    <string name="newInVersionMessage">В этой версии:\n\n
+-Добавлен секундомер на экране записи подходов, активизируется автоматически при нажатии клавиши записать или через меню которое появляется
+при нажатии на сам секундомер\n
+-Добавлен данный диалог в которм мы будм информировать о изменениях в новых версиях\n
+-А так же небольшие изменения которые не заметны глазу, но направлены на дальнейшее расширение функционала</string>
 
 </resources>
