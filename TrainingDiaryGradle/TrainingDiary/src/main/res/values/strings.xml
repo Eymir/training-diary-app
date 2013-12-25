@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Дневник тренировок</string>
     <string name="menu_settings">Настройки</string>
     <string name="title_create_training">Создание новой тренировки</string>
@@ -8,45 +7,29 @@
     <string name="title_rename_exercise">Переименовать упражнение</string>
     <string name="title_activity_add_exercise">Все упражнения</string>
     <string name="title_activity_settings">Настройки:</string>
-    <string name="title_activity_edit_ex">Создание и удаление упражнений</string>
     <string name="create_ex_dialog_title">Новое упражнение</string>
-    <string name="title_activity_select_ex_to_add_in_tr">Выберите упражнение:</string>
     <string name="title_activity_result">Выполнение упражнения</string>
     <string name="title_activity_exercise_in_training">Упражнение</string>
     <string name="title_activity_statistic">Статистика</string>
     <string name="title_activity_history_main_acrivity">Тренировочные дни</string>
-    <string name="title_activity_history_details">HistoryDetails</string>
     <string name="title_activity_super_main">Дневник тренировок</string>
     <string name="title_activity_history_detail">Проделанная работа</string>
     <string name="start_training">Начать тренировку</string>
-    <string name="title_activity_sort_ex_in_training_day">Установка последовательности</string>
-    <string name="btnSortExInTr">Применить</string>
     <string name="jim_ex_name_base">Жим лежа</string>
     <string name="prised_ex_name_base">Присед</string>
     <string name="stanovaya_ex_name_base">Становая тяга</string>
-    <string name="BaseExPodtyag">Подтягивания</string>
-    <string name="BaseExBrus">Брусья</string>
-    <string name="title_activity_set_sort_ex">Назначте номер упражнения</string>
-    <string name="AddExAct_SortEx">Изменить порядок</string>
-    <string name="AddExAct_addEx">Добавить упражнение</string>
     <string name="btn_txt_OK">OK</string>
-    <string name="btn_txt_plus">+</string>
-    <string name="btn_txt_minus">-</string>
     <string name="dialog_del_tr_title">Удалить тренировку</string>
     <string name="dialog_del_approach_title">Удалить подход</string>
     <string name="Dialog_del_ex_title">Удалить упражнение</string>
     <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку \'%1$s\'?</string>
     <string name="Dialog_del_ex_msg">Вы действительно хотите убрать упражнение \'%1$s\' из тренировки
-        \'%2$s\'?</string>
+        \'%2$s\'?
+    </string>
     <string name="Dialog_delete_completely_txt">Вы действительно хотите безвозвратно удалить упражнение
-        \'%1$s\' и всю историю по этому упражнению?</string>
+        \'%1$s\' и всю историю по этому упражнению?
+    </string>
     <string name="dialog_del_approach_msg">Вы действительно хотите удалить подход %1$s?</string>
-    <string name="Dialog_del_tr_btn_del">Удалить</string>
-    <string name="Dialog_del_tr_btn_rename">Переименовать</string>
-    <string name="Dialog_del_tr_btn_cancel">Отмена</string>
-    <string name="count_tr">Всего тренировок</string>
-    <string name="count_ex">Всего упражнений</string>
-    <string name="count_tr_stat">Всего записей в истории</string>
     <string name="YES">Да</string>
     <string name="NO">Нет</string>
     <string name="create_button">Создать</string>
@@ -80,32 +63,22 @@
     <string name="choose_exercise">Выберите упражнение</string>
     <string name="ex_name">Название</string>
     <string name="ex_type">Тип</string>
-    <string name="ex_create">Создать новое</string>
-    <string name="ex_choose">Выбрать существующее</string>
     <string name="create_exercise_add_in_tr_success">Упражнение %1$s создано и добавленно в
-        тренировку %2$s.</string>
+        тренировку %2$s.
+    </string>
     <string name="add_exercise_success">Упражнение %1$s добавленно в тренировку %2$s.</string>
     <string name="input_exercise_name_notification">Введите название упражнения</string>
     <string name="input_exercise_type_notification">Выберите тип упражнения</string>
     <string name="exercise_main_button">Упражнения</string>
     <string name="history_main_button">История</string>
     <string name="stat_main_button">Статистика</string>
-    <string name="settings_main_button">Настройки</string>
-    <string name="exit_main_button">Выход</string>
-    <string name="last_result">Последний результат:\n%1$s</string>
     <string name="write_button_text">Записать</string>
-    <string name="last_training_empty">-</string>
     <string name="sum_approach">Всего подходов:</string>
-    <string name="empty_ex_list">Нет упражнений</string>
     <string name="create_exercise_success">Упражнение %1$s создано</string>
     <string name="training_radio_button">Тренировки</string>
     <string name="exercises_radio_button">Упражнения</string>
-    <string name="empty_training_section">Вне тренировок</string>
     <string name="empty">Пусто</string>
-    <string name="trainings">Тренировки</string>
-    <string name="coming_soon">Появится в следующей версии</string>
     <string name="exercise_not_chosen">Упражнение не выбрано</string>
-    <string name="backup_button_text">Сохранить бэкап</string>
     <string name="bitceps_ex_name_base">Штанга на бицепс стоя</string>
     <string name="french_ex_name_base">Французский жим</string>
     <string name="french_ex_name_base_wrong">Французкий жим</string>
@@ -127,8 +100,7 @@
     <string name="group_values_dialog_title">Выберите группы</string>
     <string name="baseExType_power">Силовой тип</string>
     <string name="baseExType_cycle">Циклический тип</string>
-    <string name="stat_coming_soon">Подробная статистика появится в следующей версии, пока что
-        только простой график</string>
+
     <string name="statistic_main">Общая статистика:</string>
     <string name="action_settings">Настройки</string>
     <string name="sound_switcher_title">Отключить звук</string>
@@ -182,13 +154,6 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="timerStart">Старт</string>
     <string name="timerStop">Стоп</string>
     <string name="timerReset">Сброс</string>
-    <!-- Диалог новое в версии -->
-    <string name="newInVersionTitle">Дневник тренировок</string>
-    <string name="newInVersionMessage">В этой версии:\n\n
--Добавлен секундомер на экране записи подходов, активизируется автоматически при нажатии клавиши записать или через меню которое появляется
-при нажатии на сам секундомер\n
--Добавлен данный диалог в которм мы будм информировать о изменениях в новых версиях\n
--А так же небольшие изменения которые не заметны глазу, но направлены на дальнейшее расширение функционала</string>
     <!-- Раздел утилиты из меню настроек -->
     <string name="utilCategoryTitle">Утилиты</string>
     <string name="utilScreenSummary">Вспомогательные программы для различных рассчетов</string>
@@ -203,5 +168,9 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
     <string name="title_activity_max_weight_calculator">Максимальный вес</string>
 
+    <string name="my_programm">Моя программа</string>
+    <!--Диалог новое в версии-->
+    <string name="newInVersionTitle">Новое в версии</string>
+    <string name="newInVersionMessage">Текст сообщения\n\n -Новая фишка 1\n -Новая фишка 2\n -Новая фишка 3</string>
 
 </resources>
