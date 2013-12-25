@@ -168,7 +168,7 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
     <string name="title_activity_max_weight_calculator">Максимальный вес</string>
 
-    <string name="my_programm">Моя программа</string>
+    <string name="my_program">Моя программа</string>
     <!--Диалог новое в версии-->
     <string name="newInVersionTitle">Новое в версии</string>
     <string name="newInVersionMessage">Текст сообщения\n\n -Новая фишка 1\n -Новая фишка 2\n -Новая фишка 3</string>
