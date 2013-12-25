@@ -8,6 +8,37 @@
         android:defaultValue="false" />
 
     <PreferenceCategory
+        android:key="utils"
+        android:summary="Description of category 3"
+        android:title="@string/utilCategoryTitle">
+        <PreferenceScreen
+            android:key="util_Screen"
+            android:summary="@string/utilScreenSummary"
+            android:title="@string/utilScreenTitle">
+            <Preference
+                android:key="max_Weight"
+                android:title="@string/utilMaxWeightTitle"
+                android:summary="@string/utilMaxWeightSummary">
+            </Preference>
+            <Preference
+                android:key="max_Repeat"
+                android:title="@string/utilMaxRepTitle"
+                android:summary="@string/utilMaxRepSummary">
+            </Preference>
+            <Preference
+                android:key="work_Weight"
+                android:title="@string/utilWorkWeightTitle"
+                android:summary="@string/utilWorkWeightSummary">
+            </Preference>
+            <Preference
+                android:key="percent"
+                android:title="@string/utilPercentTitle"
+                android:summary="@string/utilPercentSummary">
+            </Preference>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="backup_category"
         android:summary="Description of category 3"
         android:title="@string/backup_restore_category">

@@ -190,4 +190,17 @@ https://twitter.com/TrainingDiaryGT\n
 при нажатии на сам секундомер\n
 -Добавлен данный диалог в которм мы будм информировать о изменениях в новых версиях\n
 -А так же небольшие изменения которые не заметны глазу, но направлены на дальнейшее расширение функционала</string>
+    <!--Раздел утилиты из меню настроек-->
+    <string name="utilCategoryTitle">Утилиты</string>
+    <string name="utilScreenSummary">Вспомогательные программы для различных рассчетов</string>
+    <string name="utilScreenTitle">Калькуляторы</string>
+    <string name="utilMaxWeightTitle">Максимальный вес</string>
+    <string name="utilMaxWeightSummary">Вес, который Вы теоретически можете поднять в одном повторении</string>
+    <string name="utilMaxRepTitle">Количество повторений</string>
+    <string name="utilMaxRepSummary">Количество повторений, которые Вы теоретически можете сделать</string>
+    <string name="utilWorkWeightTitle">Рабочий вес</string>
+    <string name="utilWorkWeightSummary">C каким весом Вы можете сделать заданное количество повторений</string>
+    <string name="utilPercentTitle">Процент от веса</string>
+    <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
+
 </resources>
