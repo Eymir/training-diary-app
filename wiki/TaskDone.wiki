@@ -1,13 +1,6 @@
-#summary One-sentence summary of this page.
 
-= Introduction =
+==Текущий скоуп 0.11==
 
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+|| *Тип* || *Описание* || *Приор.* || *Сложн.* || *Статус* ||
+|| Задача || Нужно вложить training_stat_text в list вьюху, у меня наприемр на эмуляторе больше 9 подходов уже не умещается, а прокрутки нет || 0 || Легко || Сделано ||
+|| Задача || Добавить Секундомер|| 0 || Легко || Сделано  ||
