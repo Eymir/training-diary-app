@@ -19,7 +19,7 @@
         android:theme="@style/TrTheme.Blue_black_orange" >
         <activity
             android:name="myApp.trainingdiary.training.TrainingActivity"
-            android:label="@string/trainings" >
+            android:label="@string/my_program" >
         </activity>
         <activity
             android:name="myApp.trainingdiary.excercise.AddExerciseActivity"
