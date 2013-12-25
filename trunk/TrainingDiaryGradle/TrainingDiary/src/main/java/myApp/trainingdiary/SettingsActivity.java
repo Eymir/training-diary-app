@@ -1,6 +1,7 @@
 package myApp.trainingdiary;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.support.v7.app.ActionBar;
 import android.widget.Toast;
 
+import myApp.trainingdiary.calculators.MaxWeightCalculatorActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.BackupManager;
@@ -26,11 +28,13 @@ import myApp.trainingdiary.utils.Consts;
 public class SettingsActivity extends PreferenceActivity {
 
     private DBHelper dbHelper;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        context = this.getApplicationContext();
 
         Preference about = findPreference("about");
         String version = null;
@@ -132,7 +136,8 @@ public class SettingsActivity extends PreferenceActivity {
         assert max_Weight !=null;
         max_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
-
+                Intent MaxWeightCalculatorActivity = new Intent(context, MaxWeightCalculatorActivity.class);
+                startActivity(MaxWeightCalculatorActivity);
                 return false;
             }
         });
