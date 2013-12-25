@@ -1,62 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="myApp.trainingdiary"
-          android:versionCode="18"
-          android:versionName="0.11.1b">
+    package="myApp.trainingdiary"
+    android:versionCode="18"
+    android:versionName="0.11.1b" >
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
-            android:minSdkVersion="7"
-            android:targetSdkVersion="17"/>
+        android:minSdkVersion="7"
+        android:targetSdkVersion="17" />
 
     <application
-            android:debuggable="false"
-            android:allowBackup="false"
-            android:icon="@drawable/ic_dairy"
-            android:label="@string/app_name"
-            android:theme="@style/TrTheme.Blue_black_orange"
-            android:name="myApp.trainingdiary.AndroidApplication">
+        android:name="myApp.trainingdiary.AndroidApplication"
+        android:allowBackup="false"
+        android:debuggable="false"
+        android:icon="@drawable/ic_dairy"
+        android:label="@string/app_name"
+        android:theme="@style/TrTheme.Blue_black_orange" >
         <activity
-                android:name="myApp.trainingdiary.training.TrainingActivity"
-                android:label="@string/trainings">
+            android:name="myApp.trainingdiary.training.TrainingActivity"
+            android:label="@string/trainings" >
         </activity>
         <activity
-                android:name="myApp.trainingdiary.excercise.AddExerciseActivity"
-                android:label="@string/title_activity_add_exercise">
+            android:name="myApp.trainingdiary.excercise.AddExerciseActivity"
+            android:label="@string/title_activity_add_exercise" >
         </activity>
         <activity
-                android:name="myApp.trainingdiary.SettingsActivity"
-                android:label="@string/title_activity_settings">
+            android:name="myApp.trainingdiary.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
         <activity
-                android:name=".result.ResultActivity"
-                android:label="@string/title_activity_result">
+            android:name="myApp.trainingdiary.result.ResultActivity"
+            android:label="@string/title_activity_result" >
         </activity>
         <activity
-                android:name="myApp.trainingdiary.excercise.ExerciseActivity"
-                android:label="@string/title_activity_exercise_in_training">
+            android:name="myApp.trainingdiary.excercise.ExerciseActivity"
+            android:label="@string/title_activity_exercise_in_training" >
         </activity>
         <activity
-                android:name=".statistic.StatisticActivity"
-                android:label="@string/title_activity_statistic">
+            android:name="myApp.trainingdiary.statistic.StatisticActivity"
+            android:label="@string/title_activity_statistic" >
         </activity>
         <activity
-                android:name=".history.HistoryMainActivity"
-                android:label="@string/title_activity_history_main_acrivity">
+            android:name="myApp.trainingdiary.history.HistoryMainActivity"
+            android:label="@string/title_activity_history_main_acrivity" >
         </activity>
         <activity
-                android:name="myApp.trainingdiary.SuperMainActivity"
-                android:label="@string/title_activity_super_main"
-                >
+            android:name="myApp.trainingdiary.SuperMainActivity"
+            android:label="@string/title_activity_super_main" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-                android:name="myApp.trainingdiary.history.HistoryDetailActivity"
-                android:label="@string/title_activity_history_detail">
+            android:name="myApp.trainingdiary.history.HistoryDetailActivity"
+            android:label="@string/title_activity_history_detail" >
+        </activity>
+        <activity
+            android:name="myApp.trainingdiary.calculators.MaxWeightCalculatorActivity"
+            android:label="@string/title_activity_max_weight_calculator" >
         </activity>
     </application>
 

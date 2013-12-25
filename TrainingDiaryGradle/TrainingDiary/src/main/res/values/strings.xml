@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Дневник тренировок</string>
     <string name="menu_settings">Настройки</string>
     <string name="title_create_training">Создание новой тренировки</string>
@@ -36,11 +37,9 @@
     <string name="Dialog_del_ex_title">Удалить упражнение</string>
     <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку \'%1$s\'?</string>
     <string name="Dialog_del_ex_msg">Вы действительно хотите убрать упражнение \'%1$s\' из тренировки
-        \'%2$s\'?
-    </string>
+        \'%2$s\'?</string>
     <string name="Dialog_delete_completely_txt">Вы действительно хотите безвозвратно удалить упражнение
-        \'%1$s\' и всю историю по этому упражнению?
-    </string>
+        \'%1$s\' и всю историю по этому упражнению?</string>
     <string name="dialog_del_approach_msg">Вы действительно хотите удалить подход %1$s?</string>
     <string name="Dialog_del_tr_btn_del">Удалить</string>
     <string name="Dialog_del_tr_btn_rename">Переименовать</string>
@@ -84,8 +83,7 @@
     <string name="ex_create">Создать новое</string>
     <string name="ex_choose">Выбрать существующее</string>
     <string name="create_exercise_add_in_tr_success">Упражнение %1$s создано и добавленно в
-        тренировку %2$s.
-    </string>
+        тренировку %2$s.</string>
     <string name="add_exercise_success">Упражнение %1$s добавленно в тренировку %2$s.</string>
     <string name="input_exercise_name_notification">Введите название упражнения</string>
     <string name="input_exercise_type_notification">Выберите тип упражнения</string>
@@ -127,12 +125,10 @@
     <string name="build_button">Построить</string>
     <string name="group_by_checkbox_name">Группировать:</string>
     <string name="group_values_dialog_title">Выберите группы</string>
-
     <string name="baseExType_power">Силовой тип</string>
     <string name="baseExType_cycle">Циклический тип</string>
     <string name="stat_coming_soon">Подробная статистика появится в следующей версии, пока что
-        только простой график
-    </string>
+        только простой график</string>
     <string name="statistic_main">Общая статистика:</string>
     <string name="action_settings">Настройки</string>
     <string name="sound_switcher_title">Отключить звук</string>
@@ -186,14 +182,14 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="timerStart">Старт</string>
     <string name="timerStop">Стоп</string>
     <string name="timerReset">Сброс</string>
-    <!--Диалог новое в версии-->
+    <!-- Диалог новое в версии -->
     <string name="newInVersionTitle">Дневник тренировок</string>
     <string name="newInVersionMessage">В этой версии:\n\n
 -Добавлен секундомер на экране записи подходов, активизируется автоматически при нажатии клавиши записать или через меню которое появляется
 при нажатии на сам секундомер\n
 -Добавлен данный диалог в которм мы будм информировать о изменениях в новых версиях\n
 -А так же небольшие изменения которые не заметны глазу, но направлены на дальнейшее расширение функционала</string>
-    <!--Раздел утилиты из меню настроек-->
+    <!-- Раздел утилиты из меню настроек -->
     <string name="utilCategoryTitle">Утилиты</string>
     <string name="utilScreenSummary">Вспомогательные программы для различных рассчетов</string>
     <string name="utilScreenTitle">Калькуляторы</string>
@@ -205,5 +201,7 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="utilWorkWeightSummary">C каким весом Вы можете сделать заданное количество повторений</string>
     <string name="utilPercentTitle">Процент от веса</string>
     <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
+    <string name="title_activity_max_weight_calculator">Максимальный вес</string>
+
 
 </resources>
