@@ -1,0 +1,26 @@
+apply plugin: 'android'
+
+dependencies {
+    compile "com.android.support:support-v4:${theSupportLibraryVersion}"
+
+	compile project(':library')
+}
+
+android {
+    compileSdkVersion theCompileSdkVersion
+    buildToolsVersion "${theBuildToolsVersion}"
+
+	sourceSets {
+		main {
+			manifest.srcFile 'AndroidManifest.xml'
+			java.srcDirs = ['src']
+			resources.srcDirs = ['src']
+			aidl.srcDirs = ['src']
+			renderscript.srcDirs = ['src']
+			res.srcDirs = ['res']
+			assets.srcDirs = ['assets']
+		}
+		
+		instrumentTest.setRoot('tests')
+	}
+}
