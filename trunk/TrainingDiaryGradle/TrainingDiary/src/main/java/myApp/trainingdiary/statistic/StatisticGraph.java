@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 
 /**
  * Created by Lenovo on 28.07.13.
@@ -152,7 +152,7 @@ public class StatisticGraph {
     }
 
     public void addSeries(String name) {
-        Log.d(Consts.LOG_TAG, "addSeries: " + name);
+        Log.d(Const.LOG_TAG, "addSeries: " + name);
         // create a new series of data
         TimeSeries series = new TimeSeries(name);
         mCurrentSeries = series;
@@ -172,7 +172,7 @@ public class StatisticGraph {
     }
 
     private int getColor(int seriesCount) {
-        Log.d(Consts.LOG_TAG, "seriesCount: " + seriesCount);
+        Log.d(Const.LOG_TAG, "seriesCount: " + seriesCount);
         switch (seriesCount) {
             case 0:
                 return Color.GREEN;
@@ -229,7 +229,7 @@ public class StatisticGraph {
             if (y1 > xySeries.getMinY()) y1 = xySeries.getMinY();
             if (y2 < xySeries.getMaxY()) y2 = xySeries.getMaxY();
         }
-        Log.i(Consts.LOG_TAG, "x1: " + x1 + "x2: " + x2 + "y1: " + y1 + "y2: " + y2);
+        Log.i(Const.LOG_TAG, "x1: " + x1 + "x2: " + x2 + "y1: " + y1 + "y2: " + y2);
         double diff = x2 - x1;
 
         mRenderer.setPanLimits(new double[]{x1 - diff,

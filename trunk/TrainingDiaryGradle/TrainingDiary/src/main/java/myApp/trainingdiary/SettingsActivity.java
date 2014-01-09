@@ -3,23 +3,19 @@ package myApp.trainingdiary;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.support.v7.app.ActionBar;
 import android.widget.Toast;
 
 import myApp.trainingdiary.calculators.MaxWeightCalculatorActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.BackupManager;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
@@ -41,7 +37,7 @@ public class SettingsActivity extends PreferenceActivity {
         try {
             version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
         }
         assert about != null;
         if (version != null) {
@@ -68,7 +64,7 @@ public class SettingsActivity extends PreferenceActivity {
                     intent.setData(Uri.parse("market://details?id=myApp.trainingdiary"));
                     startActivity(intent);
                 } catch (Throwable e) {
-                    Log.e(Consts.LOG_TAG, e.getMessage());
+                    Log.e(Const.LOG_TAG, e.getMessage());
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("http://play.google.com/store/apps/details?id=myApp.trainingdiary"));
                     startActivity(intent);
@@ -88,7 +84,7 @@ public class SettingsActivity extends PreferenceActivity {
                                     BackupManager.BACKUP_FOLDER + "/" +
                                     DBHelper.DATABASE_NAME, Toast.LENGTH_LONG).show();
                 } catch (Throwable e) {
-                    Log.e(Consts.LOG_TAG, e.getMessage(), e);
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
                     Toast.makeText(SettingsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 
                 }
@@ -108,7 +104,7 @@ public class SettingsActivity extends PreferenceActivity {
                             getString(R.string.restore_success),
                             Toast.LENGTH_LONG).show();
                 } catch (Throwable e) {
-                    Log.e(Consts.LOG_TAG, e.getMessage(), e);
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
                     Toast.makeText(SettingsActivity.this,
                             e.getMessage(),
                             Toast.LENGTH_LONG).show();

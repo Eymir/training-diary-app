@@ -1,6 +1,5 @@
 package myApp.trainingdiary.statistic;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +10,8 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,11 +27,12 @@ import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
-import myApp.trainingdiary.db.entity.TrainingStat;
-import myApp.trainingdiary.dialog.StatisticSettingsEvent;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.db.entity.TrainingSet;
+import myApp.trainingdiary.db.entity.TrainingStamp;
 import myApp.trainingdiary.dialog.DialogProvider;
-import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.dialog.StatisticSettingsEvent;
+import myApp.trainingdiary.utils.Const;
+import myApp.trainingdiary.utils.StatisticUtils;
 
 public class StatisticActivity extends ActionBarActivity {
 
@@ -59,7 +56,7 @@ public class StatisticActivity extends ActionBarActivity {
         dbHelper = DBHelper.getInstance(this);
         createGraph();
         try {
-            ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
+            ex_id = getIntent().getExtras().getLong(Const.EXERCISE_ID);
         } catch (NullPointerException e) {
         }
 
@@ -123,11 +120,11 @@ public class StatisticActivity extends ActionBarActivity {
     }
 
     private void drawExerciseProgress(Long ex_id, Long measure_id, Long group_measure_id, List<Double> groups) {
-        Log.d(Consts.LOG_TAG, "ex_id: " + ex_id + " measure_id: " + measure_id + " group_measure_id: " + group_measure_id + " groups: " + groups);
+        Log.d(Const.LOG_TAG, "ex_id: " + ex_id + " measure_id: " + measure_id + " group_measure_id: " + group_measure_id + " groups: " + groups);
         graph.clear();
         Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
         exercise.getType().getMeasures().addAll(dbHelper.READ.getMeasuresInExercise(ex_id));
-        List<TrainingStat> progress = dbHelper.READ.getExerciseProgress(ex_id);
+        List<TrainingStamp> progress = dbHelper.READ.getTrainingStampWithExactExerciseAsc(ex_id);
         if (!progress.isEmpty()) {
             setTitle(exercise.getName());
             Measure measure = null;
@@ -139,40 +136,59 @@ public class StatisticActivity extends ActionBarActivity {
                 measure = exercise.getType().getMeasures().get(0);
             }
             if (group_measure_id == null) {
-                graph.addSeries(measure.getName());
-                for (TrainingStat stat : progress) {
-                    if (measure.getType() == MeasureType.Numeric)
-                        graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
-                    else if (measure.getType() == MeasureType.Temporal)
-                        graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getTimeValueByPos(stat.getValue(), pos));
+                graph.addSeries(measure.getName() + "(" + getString(R.string.stat_max) + ")");
+                graph.addSeries(measure.getName() + "(" + getString(R.string.stat_min) + ")");
+                graph.addSeries(measure.getName() + "(" + getString(R.string.stat_avg) + ")");
+                for (TrainingStamp stamp : progress) {
+                    if (measure.getType() == MeasureType.Numeric) {
+                        graph.getSeries(measure.getName() + "(" + getString(R.string.stat_max) + ")")
+                                .add(stamp.getStartDate(), StatisticUtils.maxResult(stamp, (long) pos));
+                        graph.getSeries(measure.getName() + "(" + getString(R.string.stat_min) + ")")
+                                .add(stamp.getStartDate(), StatisticUtils.minResult(stamp, (long) pos));
+                        graph.getSeries(measure.getName() + "(" + getString(R.string.stat_avg) + ")")
+                                .add(stamp.getStartDate(), StatisticUtils.avgResult(stamp, (long) pos));
 
+                    } else if (measure.getType() == MeasureType.Temporal) {
+//                        graph.getSeries(measure.getName()).add(stamp.getStartDate(), MeasureFormatter.getTimeValueByPos(stat.getValue(), pos));
+                    }
                 }
+
             } else {
                 int m_g_pos = getPosByMeasureId(group_measure_id, exercise.getType());
                 Measure group_measure = getMeasureById(group_measure_id, exercise.getType());
                 if (m_g_pos == pos) {
-                    graph.addSeries(measure.getName());
-                    for (TrainingStat stat : progress) {
-                        if (measure.getType() == MeasureType.Numeric)
-                            graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getValueByPos(stat.getValue(), pos));
-                        else if (measure.getType() == MeasureType.Temporal)
-                            graph.getSeries(measure.getName()).add(stat.getDate(), MeasureFormatter.getTimeValueByPos(stat.getValue(), pos));
+                    graph.addSeries(measure.getName() + "(" + getString(R.string.stat_max) + ")");
+                    graph.addSeries(measure.getName() + "(" + getString(R.string.stat_min) + ")");
+                    graph.addSeries(measure.getName() + "(" + getString(R.string.stat_avg) + ")");
+                    for (TrainingStamp stamp : progress) {
+                        if (measure.getType() == MeasureType.Numeric) {
+                            graph.getSeries(measure.getName() + "(" + getString(R.string.stat_max) + ")")
+                                    .add(stamp.getStartDate(), StatisticUtils.maxResult(stamp, (long) pos));
+                            graph.getSeries(measure.getName() + "(" + getString(R.string.stat_min) + ")")
+                                    .add(stamp.getStartDate(), StatisticUtils.minResult(stamp, (long) pos));
+                            graph.getSeries(measure.getName() + "(" + getString(R.string.stat_avg) + ")")
+                                    .add(stamp.getStartDate(), StatisticUtils.avgResult(stamp, (long) pos));
+
+                        } else if (measure.getType() == MeasureType.Temporal) {
+//                        graph.getSeries(measure.getName()).add(stamp.getStartDate(), MeasureFormatter.getTimeValueByPos(stat.getValue(), pos));
+                        }
                     }
                 } else {
                     if (groups == null || groups.size() == 0) {
 //                        groups = 1L;
                     }
                     Map<String, List<Pair>> map = new HashMap<String, List<Pair>>();
-                    for (TrainingStat stat : progress) {
-                        String groupValue = MeasureFormatter.toMeasureValues(stat.getValue()).get(m_g_pos);
-                        if (groups.contains(Double.valueOf(groupValue))) {
-                            Double value = MeasureFormatter.getValueByPos(stat.getValue(), pos);
-                            if (map.containsKey(groupValue)) {
-                                map.get(groupValue).add(new Pair(stat.getDate(), value));
-                            } else {
-                                List list = new ArrayList<Pair>();
-                                list.add(new Pair(stat.getDate(), value));
-                                map.put(groupValue, list);
+                    for (TrainingStamp stat : progress) {
+                        for (Double g : groups) {
+                            TrainingSet set = StatisticUtils.maxTrainingSetByGroupMeasure(stat, (long) pos, g, (long) m_g_pos);
+                            if (set != null) {
+                                Double groupValue = g;
+                                Double value = set.getValueByPos((long) pos).getValue();
+                                if (!map.containsKey(String.valueOf(groupValue))) {
+                                    List list = new ArrayList<Pair>();
+                                    map.put(String.valueOf(groupValue), list);
+                                }
+                                map.get(String.valueOf(groupValue)).add(new Pair(stat.getStartDate(), value));
                             }
                         }
                     }

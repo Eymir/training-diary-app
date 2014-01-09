@@ -37,7 +37,7 @@ import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.EmptyStringValidator;
 import myApp.trainingdiary.utils.ExerciseExistValidator;
@@ -73,7 +73,7 @@ public class ExerciseActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         dbHelper = DBHelper.getInstance(this);
-        tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
+        tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
 
         trainingName = dbHelper.READ.getTrainingNameById(tr_id);
         setTitle(getTitle() + ": " + trainingName);
@@ -87,7 +87,7 @@ public class ExerciseActivity extends ActionBarActivity {
         exerciseList.setDropListener(new DragSortListView.DropListener() {
             @Override
             public void drop(int from, int to) {
-                Log.i(Consts.LOG_TAG, "drop exercise");
+                Log.i(Const.LOG_TAG, "drop exercise");
                 exerciseAdapter.drop(from, to);
                 dbHelper.WRITE.changeExercisePositions(tr_id, getNewExIdOrder());
 
@@ -107,21 +107,21 @@ public class ExerciseActivity extends ActionBarActivity {
 
     private void openResultActivity(long ex_id) {
         Intent intentOpenResultAct = new Intent(this, ResultActivity.class);
-        intentOpenResultAct.putExtra(Consts.EXERCISE_ID, ex_id);
-        intentOpenResultAct.putExtra(Consts.TRAINING_ID, tr_id);
+        intentOpenResultAct.putExtra(Const.EXERCISE_ID, ex_id);
+        intentOpenResultAct.putExtra(Const.TRAINING_ID, tr_id);
         startActivity(intentOpenResultAct);
     }
 
     private void openStatActivity(long ex_id) {
         Intent activity = new Intent(this, StatisticActivity.class);
-        activity.putExtra(Consts.EXERCISE_ID, ex_id);
+        activity.putExtra(Const.EXERCISE_ID, ex_id);
         startActivity(activity);
     }
 
     private void printLogExInTr() {
         Cursor c = dbHelper.READ.getExercisesInTraining(tr_id);
         while (c.moveToNext()) {
-            Log.i(Consts.LOG_TAG, "exercise_id: " + c.getLong(c.getColumnIndex("_id")) + " pos: " + c.getLong(c.getColumnIndex("position")));
+            Log.i(Const.LOG_TAG, "exercise_id: " + c.getLong(c.getColumnIndex("_id")) + " pos: " + c.getLong(c.getColumnIndex("position")));
         }
         c.close();
 
@@ -129,12 +129,12 @@ public class ExerciseActivity extends ActionBarActivity {
 
     private List<Long> getNewExIdOrder() {
         List<Long> list = new ArrayList<Long>();
-        Log.d(Consts.LOG_TAG,
+        Log.d(Const.LOG_TAG,
                 "getCursorPositions" + exerciseAdapter.getCursorPositions());
         for (Integer i = 0; i < exerciseAdapter.getCount(); i++) {
             list.add(exerciseAdapter.getItemId(i));
         }
-        Log.d(Consts.LOG_TAG, "getNewIdOrder" + list);
+        Log.d(Const.LOG_TAG, "getNewIdOrder" + list);
         return list;
     }
 
@@ -151,7 +151,7 @@ public class ExerciseActivity extends ActionBarActivity {
 
     private void fetchExercises() {
         Cursor ex_cursor = dbHelper.READ.getExercisesInTraining(tr_id);
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
+        Log.d(Const.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res", "_id"};
         int[] to = {R.id.label, R.id.icon, id.ex_tools};
         exerciseAdapter = new SimpleDragSortCursorAdapter(
@@ -178,7 +178,7 @@ public class ExerciseActivity extends ActionBarActivity {
                     view.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Log.d(Consts.LOG_TAG, "ex tool click");
+                            Log.d(Const.LOG_TAG, "ex tool click");
                             exerciseActionTools.show(v);
                             cur_ex_id = ex_id;
                             cur_drag_handler = (ImageView) ((View) v
@@ -220,14 +220,14 @@ public class ExerciseActivity extends ActionBarActivity {
 
     protected void openAddExerciseActivity(long tr_id) {
         Intent intentOpenAddEx = new Intent(this, AddExerciseActivity.class);
-        intentOpenAddEx.putExtra(Consts.TRAINING_ID, tr_id);
+        intentOpenAddEx.putExtra(Const.TRAINING_ID, tr_id);
         startActivity(intentOpenAddEx);
     }
 
     protected void openHistoryDetailActivity(long ex_id) {
         Intent intentOpenAct = new Intent(this, HistoryDetailActivity.class);
-        intentOpenAct.putExtra(Consts.EXERCISE_ID, ex_id);
-        intentOpenAct.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
+        intentOpenAct.putExtra(Const.EXERCISE_ID, ex_id);
+        intentOpenAct.putExtra(Const.HISTORY_TYPE, Const.EXERCISE_TYPE);
         startActivity(intentOpenAct);
     }
 
@@ -295,7 +295,7 @@ public class ExerciseActivity extends ActionBarActivity {
 
     private void initChoosePanel() {
         Cursor ex_cursor = dbHelper.READ.getExercisesExceptExInTr(tr_id);
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
+        Log.d(Const.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res"};
         int[] to = {R.id.label, R.id.icon};
         SimpleCursorAdapter exerciseAdapter = new SimpleCursorAdapter(

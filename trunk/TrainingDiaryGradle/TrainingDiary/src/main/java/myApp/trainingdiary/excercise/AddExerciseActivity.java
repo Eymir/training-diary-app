@@ -35,7 +35,7 @@ import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.dialog.ViewExerciseDialog;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.EmptyStringValidator;
 import myApp.trainingdiary.utils.ExerciseExistValidator;
 
@@ -76,7 +76,7 @@ public class AddExerciseActivity extends ActionBarActivity {
         createDeletionDialog();
 
         try {
-            tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
+            tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
         } catch (NullPointerException e) {
         }
 
@@ -216,7 +216,7 @@ public class AddExerciseActivity extends ActionBarActivity {
         try {
             dbHelper.WRITE.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
         } catch (SQLException e) {
-            Log.e(Consts.LOG_TAG, "Error while adding exercise", e);
+            Log.e(Const.LOG_TAG, "Error while adding exercise", e);
         } finally {
             db.close();
         }
@@ -255,8 +255,8 @@ public class AddExerciseActivity extends ActionBarActivity {
 
     private void initExerciseList() {
         Cursor ex_cursor = dbHelper.READ.getExercisesExceptExInTr(tr_id);
-        Log.d(Consts.LOG_TAG, "Exercise.count: " + dbHelper.READ.getExerciseCount(dbHelper.getWritableDatabase()));
-        Log.d(Consts.LOG_TAG, "Cursor.count: " + ex_cursor.getCount());
+        Log.d(Const.LOG_TAG, "Exercise.count: " + dbHelper.READ.getExerciseCount(dbHelper.getWritableDatabase()));
+        Log.d(Const.LOG_TAG, "Cursor.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res", "_id"};
         int[] to = {R.id.label, R.id.icon, R.id.ex_tools};
         exerciseAdapter = new SimpleCursorAdapter(
@@ -277,7 +277,7 @@ public class AddExerciseActivity extends ActionBarActivity {
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Log.d(Consts.LOG_TAG, "ex tool click");
+                            Log.d(Const.LOG_TAG, "ex tool click");
                             exerciseActionTools.show(v);
                             cur_ex_id = ex_id;
                         }
@@ -301,7 +301,7 @@ public class AddExerciseActivity extends ActionBarActivity {
             if (tr_id > 0)
                 dbHelper.WRITE.insertExerciseInTrainingAtEnd(db, tr_id, ex_id);
         } catch (SQLException e) {
-            Log.e(Consts.LOG_TAG, "Error while adding exercise", e);
+            Log.e(Const.LOG_TAG, "Error while adding exercise", e);
         } finally {
             db.close();
         }
@@ -372,14 +372,14 @@ public class AddExerciseActivity extends ActionBarActivity {
 
     private void openHistoryDetailActivity(long ex_id) {
         Intent intentOpenAct = new Intent(this, HistoryDetailActivity.class);
-        intentOpenAct.putExtra(Consts.EXERCISE_ID, ex_id);
-        intentOpenAct.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
+        intentOpenAct.putExtra(Const.EXERCISE_ID, ex_id);
+        intentOpenAct.putExtra(Const.HISTORY_TYPE, Const.EXERCISE_TYPE);
         startActivity(intentOpenAct);
     }
 
     private void openStatActivity(long ex_id) {
         Intent activity = new Intent(this, StatisticActivity.class);
-        activity.putExtra(Consts.EXERCISE_ID, ex_id);
+        activity.putExtra(Const.EXERCISE_ID, ex_id);
         startActivity(activity);
     }
 }

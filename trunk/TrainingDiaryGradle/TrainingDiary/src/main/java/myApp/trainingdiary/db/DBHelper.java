@@ -21,25 +21,27 @@ import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.ExerciseTypeIcon;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.db.entity.TrainingSet;
+import myApp.trainingdiary.db.entity.TrainingStampStatus;
+import myApp.trainingdiary.db.entity.TrainingStat;
+import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.MeasureFormatter;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper mInstance = null;
 
-    private final static int DB_VERSION = 6;
+    private final static int DB_VERSION = 7;
     public final static String DATABASE_NAME = "TrainingDiaryDB";
 
     public DbReader READ;
     public DbWriter WRITE;
     public Context CONTEXT;
-    private EntityManager EM;
+    public EntityManager EM;
 
     public static DBHelper getInstance(Context ctx) {
         if (mInstance == null) {
             mInstance = new DBHelper(ctx.getApplicationContext());
         }
-
         return mInstance;
     }
 
@@ -53,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(Consts.LOG_TAG, "onDowngrade. oldVer: " + oldVersion + " newVer: " + newVersion);
+        Log.d(Const.LOG_TAG, "onDowngrade. oldVer: " + oldVersion + " newVer: " + newVersion);
     }
 
     @Override
@@ -64,23 +66,27 @@ public class DBHelper extends SQLiteOpenHelper {
         createExerciseInTrainingTable(db);
         createMeasureTable(db);
         createMeasureExTypeTable(db);
-        createTrainingStatTable(db);
 
-        Log.d(Consts.LOG_TAG, "before - createInitialTypes count: "
+        createTrainingSetTable(db);
+        createTrainingStampTable(db);
+        createTrainingSetValueTable(db);
+
+        Log.d(Const.LOG_TAG, "before - createInitialTypes count: "
                 + READ.getExerciseTypeCount(db));
         createInitialTypes(db);
-        Log.d(Consts.LOG_TAG, "after - createInitialTypes count: "
+        Log.d(Const.LOG_TAG, "after - createInitialTypes count: "
                 + READ.getExerciseTypeCount(db));
-        Log.d(Consts.LOG_TAG, "before - createInitialExercises count: "
+        Log.d(Const.LOG_TAG, "before - createInitialExercises count: "
                 + READ.getExerciseCount(db));
         createInitialExercises(db);
-        Log.d(Consts.LOG_TAG, "after - createInitialExercises count: "
+        Log.d(Const.LOG_TAG, "after - createInitialExercises count: "
                 + READ.getExerciseCount(db));
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(Consts.LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
+        Log.d(Const.LOG_TAG, "onUpgrade. oldVer: " + oldVersion + " newVer: "
                 + newVersion);
         switch (oldVersion) {
             case 1:
@@ -93,19 +99,94 @@ public class DBHelper extends SQLiteOpenHelper {
                 upgradeFrom_4_To_5(db);
             case 5:
                 upgradeFrom_5_To_6(db);
+            case 6:
+                upgradeFrom_6_To_7(db);
         }
+    }
+
+    private void upgradeFrom_6_To_7(SQLiteDatabase db) {
+        try {
+            db.beginTransaction();
+            Log.i(Const.LOG_TAG, "upgradeFrom_6_To_7 start");
+            alterDeleted_6_7(db);
+            alterPresetUid_6_7(db);
+            createTrainingStampTable(db);
+            createTrainingSetTable(db);
+            createTrainingSetValueTable(db);
+            transferTrainingStatDataToSetStampValue_6_7(db);
+            db.setTransactionSuccessful();
+        } catch (Throwable e) {
+            Log.e(Const.LOG_TAG, "upgradeFrom_6_To_7 problem", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private void transferTrainingStatDataToSetStampValue_6_7(SQLiteDatabase db) {
+        List<TrainingStat> trainingStats = READ.getAllTrainingStat(db);
+        Date trainingDate = new Date(0L);
+        Long tr_stamp_id = null;
+        for (TrainingStat stat : trainingStats) {
+            if (!trainingDate.equals(stat.getTrainingDate())) {
+                if (tr_stamp_id != null) {
+                    TrainingSet trainingSet = READ.getTrainingSetWithMaxIdFromTrainingStamp(db, tr_stamp_id);
+                    WRITE.closeTrainingStamp(db, tr_stamp_id, trainingSet.getDate());
+                }
+                tr_stamp_id = WRITE.insertTrainingStamp(db, stat.getTrainingDate(), null, null, TrainingStampStatus.OPEN.name());
+                trainingDate = stat.getTrainingDate();
+            }
+            long tr_set_id = WRITE.insertTrainingSet(db, tr_stamp_id, stat.getExerciseId(), stat.getTrainingId(), stat.getDate());
+            createTrainingValuesByString(db, tr_set_id, stat.getValue());
+        }
+    }
+
+    private void createTrainingValuesByString(SQLiteDatabase db, long tr_set_id, String value) {
+        List<String> str_values = MeasureFormatter.toMeasureValues(value);
+        for (int i = 0; i < str_values.size(); i++) {
+            Double d_v = 0D;
+            try {
+                String str_v = str_values.get(i);
+                if (str_v.contains(":")) {
+                    String[] time_list = str_v.split(":");
+                    int min = Integer.valueOf(time_list[0]);
+                    int sec = Integer.valueOf(time_list[1]);
+                    d_v = Integer.valueOf((min * 60 + sec) * 1000).doubleValue();
+                } else {
+                    d_v = Double.valueOf(str_v);
+                }
+            } catch (Throwable e) {
+                Log.e(Const.LOG_TAG, e.getMessage(), e);
+            }
+            WRITE.insertTrainingSetValue(db, tr_set_id, i, d_v);
+        }
+
 
     }
 
+    private void alterPresetUid_6_7(SQLiteDatabase db) {
+        Log.i(Const.LOG_TAG, "alterPresetUid_6_7 start");
+        db.execSQL("alter table Exercise add column deleted integer;");
+        db.execSQL("alter table ExerciseType add column deleted integer;");
+        db.execSQL("alter table Measure add column deleted integer;");
+    }
+
+    private void alterDeleted_6_7(SQLiteDatabase db) {
+        Log.i(Const.LOG_TAG, "alterDeleted_6_7 start");
+        db.execSQL("alter table Exercise add column preset_uid text;");
+        db.execSQL("alter table ExerciseType add column preset_uid text;");
+        db.execSQL("alter table Measure add column preset_uid text;");
+    }
+
     private void upgradeFrom_5_To_6(SQLiteDatabase db) {
+        db.beginTransaction();
         try {
-            db.beginTransaction();
-            Log.i(Consts.LOG_TAG, "upgradeFrom_5_To_6 start");
+            Log.i(Const.LOG_TAG, "upgradeFrom_5_To_6 start");
             renameExerciseTypeIcon_ver_6(db);
             db.setTransactionSuccessful();
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, "upgradeFrom_5_To_6 problem", e);
+            Log.e(Const.LOG_TAG, "upgradeFrom_5_To_6 problem", e);
         } finally {
+
             db.endTransaction();
         }
     }
@@ -140,7 +221,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "training_id integer,"
                 + "FOREIGN KEY(exercise_id) REFERENCES Exercise(id)" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate BD TrainingStat ---");
+        Log.d(Const.LOG_TAG, "--- onCreate BD TrainingStat ---");
     }
 
     private void createMeasureExTypeTable(SQLiteDatabase db) {
@@ -148,9 +229,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "measure_id integer," + "position integer,"
                 + "FOREIGN KEY(ex_type_id) REFERENCES ExerciseType(id),"
                 + "FOREIGN KEY(measure_id) REFERENCES Measure(id),"
-                + "PRIMARY KEY (ex_type_id, measure_id)" + ");");
+                + "PRIMARY KEY(ex_type_id, measure_id)" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table MeasureExType ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table MeasureExType ---");
     }
 
     /**
@@ -159,10 +240,15 @@ public class DBHelper extends SQLiteOpenHelper {
     private void createMeasureTable(SQLiteDatabase db) {
 
         db.execSQL("create table Measure ("
-                + "id integer primary key autoincrement," + "name text,"
-                + "max integer," + "step float," + "type integer" + ");");
+                + "id integer primary key autoincrement,"
+                + "name text,"
+                + "preset_uid text,"
+                + "deleted integer,"
+                + "max integer,"
+                + "step float,"
+                + "type integer" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table Measure ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table Measure ---");
     }
 
     /**
@@ -178,7 +264,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(exercise_id) REFERENCES Exercise(id),"
                 + "PRIMARY KEY (training_id, exercise_id)" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table ExerciseInTraining ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table ExerciseInTraining ---");
     }
 
     /**
@@ -190,9 +276,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table Exercise ("
                 + "id integer primary key autoincrement," + "name text,"
                 + "type_id integer,"
+                + "deleted integer,"
+                + "preset_uid text,"
                 + "FOREIGN KEY(type_id) REFERENCES ExerciseType(id)" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table Exercise ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table Exercise ---");
     }
 
     /**
@@ -201,10 +289,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private void createExerciseTypeTable(SQLiteDatabase db) {
 
         db.execSQL("create table ExerciseType ("
-                + "id integer primary key autoincrement," + "name text,"
+                + "id integer primary key autoincrement,"
+                + "name text,"
+                + "deleted integer,"
+                + "preset_uid text,"
                 + "icon_res text" + ");");
 
-        Log.d(Consts.LOG_TAG, "--- onCreate table ExerciseType ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table ExerciseType ---");
     }
 
     /**
@@ -215,12 +306,41 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table Training ("
                 + "id integer primary key autoincrement," + "name text,"
                 + "position integer" + ");");
-        Log.d(Consts.LOG_TAG, "--- onCreate table Training  ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table Training  ---");
+    }
+
+    private void createTrainingSetValueTable(SQLiteDatabase db) {
+        db.execSQL("create table TrainingSetValue ("
+                + "id integer primary key autoincrement,"
+                + "training_set_id integer,"
+                + "position integer,"
+                + "value double,"
+                + "FOREIGN KEY(training_set_id) REFERENCES TrainingSet(id));");
+    }
+
+    private void createTrainingStampTable(SQLiteDatabase db) {
+        db.execSQL("create table TrainingStamp ("
+                + "id integer primary key autoincrement,"
+                + "start_date datetime,"
+                + "end_date datetime,"
+                + "comment text,"
+                + "status text);");
+    }
+
+    private void createTrainingSetTable(SQLiteDatabase db) {
+        db.execSQL("create table TrainingSet ("
+                + "id integer primary key autoincrement,"
+                + "date datetime,"
+                + "training_stamp_id integer,"
+                + "exercise_id integer,"
+                + "training_id integer,"
+                + "FOREIGN KEY(exercise_id) REFERENCES Exercise(id),"
+                + "FOREIGN KEY(training_stamp_id) REFERENCES TrainingStamp(id)" + ");");
     }
 
 
     private void createInitialExercises(SQLiteDatabase db) {
-        Log.d(Consts.LOG_TAG, "--- onCreate createInitialExercises ---");
+        Log.d(Const.LOG_TAG, "--- onCreate createInitialExercises ---");
         //Jim
         Exercise jim = new Exercise(null,
                 READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.bar_ex_type_base)),
@@ -279,12 +399,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createInitialTypes(SQLiteDatabase db) {
-        Log.d(Consts.LOG_TAG, "--- onCreate createInitialTypes ---");
+        Log.d(Const.LOG_TAG, "--- onCreate createInitialTypes ---");
 
         ExerciseType power_weight_type = new ExerciseType(null,
                 ExerciseTypeIcon.icon_ex_power,
                 CONTEXT.getString(R.string.bar_ex_type_base));
-        Log.d(Consts.LOG_TAG, "icon_res power: " + CONTEXT.getResources().getResourceName(R.drawable.icon_ex_power));
+        Log.d(Const.LOG_TAG, "icon_res power: " + CONTEXT.getResources().getResourceName(R.drawable.icon_ex_power));
         power_weight_type.getMeasures()
                 .add(new Measure(null,
                         CONTEXT.getString(R.string.power_weight_measure_base),
@@ -378,7 +498,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createTypes_ver_4(SQLiteDatabase db) {
-        Log.d(Consts.LOG_TAG, "--- createTypes_ver_4 ---");
+        Log.d(Const.LOG_TAG, "--- createTypes_ver_4 ---");
         ExerciseType dumbbells_type = new ExerciseType(null,
                 ExerciseTypeIcon.icon_ex_dumbbell,
                 CONTEXT.getString(R.string.dumbbell_ex_type_base));
@@ -423,17 +543,17 @@ public class DBHelper extends SQLiteOpenHelper {
     private void upgradeFrom_3_To_4(SQLiteDatabase db) {
         try {
             db.beginTransaction();
-            Log.d(Consts.LOG_TAG, "before - createTypes_ver_4 count: "
+            Log.d(Const.LOG_TAG, "before - createTypes_ver_4 count: "
                     + READ.getExerciseTypeCount(db));
             renameTypes_ver_4(db);
             createTypes_ver_4(db);
-            Log.d(Consts.LOG_TAG, "after - createTypes_ver_4 count: "
+            Log.d(Const.LOG_TAG, "after - createTypes_ver_4 count: "
                     + READ.getExerciseTypeCount(db));
 
-            Log.d(Consts.LOG_TAG, "before - createExercise_ver_4 count: "
+            Log.d(Const.LOG_TAG, "before - createExercise_ver_4 count: "
                     + READ.getExerciseCount(db));
             createExercise_ver_4(db);
-            Log.d(Consts.LOG_TAG, "after - createExercise_ver_4 count: "
+            Log.d(Const.LOG_TAG, "after - createExercise_ver_4 count: "
                     + READ.getExerciseCount(db));
             db.setTransactionSuccessful();
         } finally {
@@ -444,20 +564,20 @@ public class DBHelper extends SQLiteOpenHelper {
     private void upgradeFrom_4_To_5(SQLiteDatabase db) {
         try {
             db.beginTransaction();
-            Log.i(Consts.LOG_TAG, "extendTypes_ver_5 start");
+            Log.i(Const.LOG_TAG, "extendTypes_ver_5 start");
             extendTypes_ver_5(db);
             db.setTransactionSuccessful();
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, "extendTypes_ver_5 problem", e);
+            Log.e(Const.LOG_TAG, "extendTypes_ver_5 problem", e);
         } finally {
             db.endTransaction();
         }
         try {
-            Log.i(Consts.LOG_TAG, "renameExercise_ver_5 start");
+            Log.i(Const.LOG_TAG, "renameExercise_ver_5 start");
             renameExercise_ver_5(db);
             db.setTransactionSuccessful();
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, "renameExercise_ver_5 problem", e);
+            Log.e(Const.LOG_TAG, "renameExercise_ver_5 problem", e);
         } finally {
             db.endTransaction();
         }
@@ -466,7 +586,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private void renameExercise_ver_5(SQLiteDatabase db) {
         Exercise exercise = null;
         exercise = READ.getExerciseByName(db, CONTEXT.getString(R.string.french_ex_name_base_wrong));
-        Log.i(Consts.LOG_TAG, "renameExercise_ver_5 looking for " + CONTEXT.getString(R.string.french_ex_name_base_wrong) + ": " + exercise);
+        Log.i(Const.LOG_TAG, "renameExercise_ver_5 looking for " + CONTEXT.getString(R.string.french_ex_name_base_wrong) + ": " + exercise);
         if (exercise != null)
             WRITE.renameExercise(db, exercise.getId(), CONTEXT.getString(R.string.french_ex_name_base));
 
@@ -474,7 +594,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private void extendTypes_ver_5(SQLiteDatabase db) {
         ExerciseType ex_type = READ.getExerciseTypeByName(db, CONTEXT.getString(R.string.size_ex_type_base));
-        Log.i(Consts.LOG_TAG, "extendTypes_ver_5 looking for " + CONTEXT.getString(R.string.size_ex_type_base) + ": " + ex_type);
+        Log.i(Const.LOG_TAG, "extendTypes_ver_5 looking for " + CONTEXT.getString(R.string.size_ex_type_base) + ": " + ex_type);
         if (ex_type != null) {
             List<Measure> measures = READ.getMeasuresInExerciseType(db, ex_type.getId());
             if (measures != null && !measures.isEmpty()) {
@@ -496,7 +616,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createExercise_ver_4(SQLiteDatabase db) {
-        Log.d(Consts.LOG_TAG, "--- createExercise_ver_4 ---");
+        Log.d(Const.LOG_TAG, "--- createExercise_ver_4 ---");
 
         //Jim
         if (!READ.isExerciseInDB(db, CONTEXT.getString(R.string.jim_ex_name_base))) {
@@ -582,7 +702,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("alter table TrainingProgTable add column exidintr integer;");
             db.setTransactionSuccessful();
-            Log.d(Consts.LOG_TAG, "--- add column sucsessful ---");
+            Log.d(Const.LOG_TAG, "--- add column sucsessful ---");
         } finally {
             db.endTransaction();
         }
@@ -620,7 +740,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
             dropAllTablesVer2(db);
 
-            Log.d(Consts.LOG_TAG, "--- upgradeFrom_2_To_3 done ---");
+            Log.d(Const.LOG_TAG, "--- upgradeFrom_2_To_3 done ---");
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -662,7 +782,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     if (ex_id > 0 && date != null) {
                         WRITE.insertTrainingStat(db, ex_id, 0, date.getTime(), date.getTime(), value);
                     } else {
-                        Log.e(Consts.LOG_TAG,
+                        Log.e(Const.LOG_TAG,
                                 "Cannot insert TrainingStat cause - ex_id: "
                                         + ex_id + " date: " + date);
                     }
@@ -684,7 +804,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     if (ex_id > 0 && tr_id > 0)
                         WRITE.insertExerciseInTraining(db, tr_id, ex_id, position);
                     else {
-                        Log.e(Consts.LOG_TAG,
+                        Log.e(Const.LOG_TAG,
                                 "Cannot insert ExerciseInTraining cause - ex_id: "
                                         + ex_id + "tr_id: " + tr_id);
                     }
@@ -725,8 +845,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     CONTEXT.getString(R.string.bar_ex_type_base));
             long cycle_id = findExTypeByName(db,
                     CONTEXT.getString(R.string.long_dist_ex_type_base));
-            Log.i(Consts.LOG_TAG, "findPowerExType: " + power_id);
-            Log.i(Consts.LOG_TAG, "findCycleExType: " + cycle_id);
+            Log.i(Const.LOG_TAG, "findPowerExType: " + power_id);
+            Log.i(Const.LOG_TAG, "findCycleExType: " + cycle_id);
             if (c.moveToFirst()) {
                 do {
                     String name = c.getString(c.getColumnIndex("exercise"));

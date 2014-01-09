@@ -43,11 +43,13 @@ import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
 import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.db.entity.TrainingStat;
-import myApp.trainingdiary.history.HistoryDetailActivity;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.db.entity.TrainingSet;
+import myApp.trainingdiary.db.entity.TrainingSetValue;
 import myApp.trainingdiary.dialog.DialogProvider;
+import myApp.trainingdiary.history.HistoryDetailActivity;
+import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.utils.TrainingDurationManger;
 
 /*
  * ��������� ��� ������ ���������� ������� ���������� 
@@ -80,10 +82,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private Chronometer mChrono;
     private QuickAction exerciseActionTools;
 
-    private long elapsedTime=0;
-    private String currentTime="";
-    private long startTime=SystemClock.elapsedRealtime();
-    private boolean resume=false;
+    private long elapsedTime = 0;
+    private String currentTime = "";
+    private long startTime = SystemClock.elapsedRealtime();
+    private boolean resume = false;
     private boolean reset = false;
 
 
@@ -97,15 +99,15 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
 
-        mChrono = (Chronometer)findViewById(R.id.mChrono);
+        mChrono = (Chronometer) findViewById(R.id.mChrono);
         setChronoTickListener();
 
         createExcerciseTools();
 
         dbHelper = dbHelper.getInstance(this);
-        ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
-        tr_id = getIntent().getExtras().getLong(Consts.TRAINING_ID);
-        Log.d(Consts.LOG_TAG, "ex_id:" + ex_id + " tr_id:" + tr_id);
+        ex_id = getIntent().getExtras().getLong(Const.EXERCISE_ID);
+        tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
+        Log.d(Const.LOG_TAG, "ex_id:" + ex_id + " tr_id:" + tr_id);
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.measure_layout);
 
@@ -127,29 +129,27 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         Button historyButton = (Button) findViewById(R.id.history_result_button);
         historyButton.setOnClickListener(this);
 
-        TrainingStat tr_stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
+        TrainingSet tr_stat = dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id);
         if (tr_stat != null)
             setLastTrainingStatOnWheels(tr_stat);
         createUndoDialog();
-        printCurrentTrainingProgress();
         setTitle(dbHelper.READ.getExerciseNameById(ex_id));
-
-        List<TrainingStat> tr_stats = dbHelper.READ.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
-        if(!tr_stats.isEmpty()){
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        TrainingSet last_set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp_id);
+        if (last_set != null) {
             chronometerReset();
             chronometerStart();
         }
-
+        printCurrentTrainingProgress();
     }
 
-    private void setLastTrainingStatOnWheels(TrainingStat tr_stat) {
-        String value = tr_stat.getValue();
-        Log.d(Consts.LOG_TAG, "setLastTrainingStatOnWheels:" + value);
-        List<String> measureValues = MeasureFormatter.toMeasureValues(value);
+    private void setLastTrainingStatOnWheels(TrainingSet tr_stat) {
+        List<TrainingSetValue> values = tr_stat.getValues();
+        Log.d(Const.LOG_TAG, "setLastTrainingStatOnWheels:" + values);
         for (int i = 0; i < measureWheelsList.size(); i++) {
             MeasureWheels measureWheels = measureWheelsList.get(i);
-            String measureValue = measureValues.get(i);
-            measureWheels.setValue(measureValue);
+            TrainingSetValue measureValue = values.get(i);
+            measureWheels.setValue(measureValue.getValue());
         }
     }
 
@@ -176,7 +176,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void createUndoDialog() {
-
         String title = getResources().getString(R.string.dialog_del_approach_title);
         String cancelButton = getResources().getString(R.string.cancel_button);
         String deleteButton = getResources().getString(R.string.delete_button);
@@ -184,7 +183,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         undoDialog = DialogProvider.createSimpleDialog(this, title, null, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
-                int deleted = dbHelper.WRITE.deleteLastTrainingStatInCurrentTraining(ex_id, tr_id, Consts.THREE_HOURS);
+                //TODO: иногда не пашет
+                Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+                int deleted = dbHelper.WRITE.deleteLastTrainingSetInCurrentTrainingStamp(ex_id);
                 if (deleted > 0) {
                     printCurrentTrainingProgress();
                     Toast.makeText(ResultActivity.this, R.string.deleted,
@@ -203,17 +204,19 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void printCurrentTrainingProgress() {
-        List<TrainingStat> tr_stats = dbHelper.READ.getTrainingStatForLastPeriodByExercise(ex_id, Consts.THREE_HOURS);
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        List<TrainingSet> tr_stats = dbHelper.READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
+        Log.d(Const.LOG_TAG, "tr_stats:" + tr_stats);
         String stats = formTrainingStats(tr_stats);
         training_stat_text.setText(stats);
     }
 
-    private String formTrainingStats(List<TrainingStat> stats) {
+    private String formTrainingStats(List<TrainingSet> sets) {
         String result = "";
-        for (TrainingStat stat : stats) {
-            result = stat.getValue() + "; " + result;
+        for (TrainingSet set : sets) {
+            result = MeasureFormatter.valueFormat(set) + "; " + result;
         }
-        result += "\n" + getString(R.string.sum_approach) + " " + stats.size();
+        result += "\n" + getString(R.string.sum_approach) + " " + sets.size();
         return result;
     }
 
@@ -230,7 +233,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
     @Override
     public void onClick(View arg0) {
-
         switch (arg0.getId()) {
             case R.id.write_button:
                 writeToDB();
@@ -243,13 +245,19 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
-                TrainingStat stat = dbHelper.READ.getLastTrainingStatByExerciseInTraining(ex_id, tr_id);
-                if (stat != null) {
-                    Log.d(Consts.LOG_TAG, "undo value:" + stat.getValue());
-                    String value = stat.getValue();
+                TrainingSet set = dbHelper.READ.getLastTrainingSetByExerciseInLastOpenTrainingStamp(ex_id, tr_id);
+                Log.d(Const.LOG_TAG, "undo TrainingStamp:" + dbHelper.READ.getLastTrainingStamp());
+                Log.d(Const.LOG_TAG, "undo ex_id:" + ex_id + " tr_id:" + tr_id);
+                Log.d(Const.LOG_TAG, "undo set:" + set);
+                if (set != null) {
+                    String value = MeasureFormatter.valueFormat(set);
+                    Log.d(Const.LOG_TAG, "undo value:" + value);
                     message = String.format(message, value);
                     undoDialog.setMessage(message);
                     undoDialog.show();
+                } else {
+                    Toast.makeText(ResultActivity.this, R.string.nothing_to_deleted,
+                            Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -259,23 +267,28 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
     protected void openHistoryDetailActivity(long ex_id) {
         Intent intentOpenAct = new Intent(this, HistoryDetailActivity.class);
-        intentOpenAct.putExtra(Consts.EXERCISE_ID, ex_id);
-        intentOpenAct.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
+        intentOpenAct.putExtra(Const.EXERCISE_ID, ex_id);
+        intentOpenAct.putExtra(Const.HISTORY_TYPE, Const.EXERCISE_TYPE);
         startActivity(intentOpenAct);
     }
 
     private void writeToDB() {
-        String result = "";
-        for (MeasureWheels measureWheels : measureWheelsList) {
-            result += measureWheels.getStringValue() + "x";
-        }
-        result = result.substring(0, result.length() - 1);
-        if (result != null && !(result.length() == 0)) {
-            List<TrainingStat> list = dbHelper.READ.getTrainingStatForLastPeriod(Consts.THREE_HOURS);
-            Date trainingDate = (list.isEmpty()) ? new Date() : list.get(0).getTrainingDate();
-            dbHelper.WRITE.insertTrainingStat(ex_id, tr_id, System.currentTimeMillis(), trainingDate.getTime(), result);
-        }
+        Long training_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        List<TrainingSetValue> values = getTrainingSetValues();
+        TrainingSet trainingSet = new TrainingSet(null, training_stamp_id, new Date(), ex_id, tr_id, values);
+        dbHelper.EM.persist(trainingSet);
+    }
 
+    private List<TrainingSetValue> getTrainingSetValues() {
+        List<TrainingSetValue> trainingSetValues = new ArrayList<TrainingSetValue>();
+        long i = 0;
+        for (MeasureWheels measureWheels : measureWheelsList) {
+            TrainingSetValue trainingSetValue = new TrainingSetValue(null, null,
+                    MeasureFormatter.getDoubleValue(measureWheels.getStringValue(), measureWheels.getMeasure()), i);
+            trainingSetValues.add(trainingSetValue);
+            i++;
+        }
+        return trainingSetValues;
     }
 
     private class MeasureWheel {
@@ -343,10 +356,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             MeasureWheel measureWheel = new MeasureWheel();
             List<String> tails = new ArrayList<String>();
             BigDecimal _step = BigDecimal.valueOf(0d);
-            Log.d(Consts.LOG_TAG, "step: " + step);
+            Log.d(Const.LOG_TAG, "step: " + step);
             while (_step.doubleValue() < 1) {
                 tails.add(String.valueOf(_step).substring(1));
-                Log.d(Consts.LOG_TAG, "_step: " + _step);
+                Log.d(Const.LOG_TAG, "_step: " + _step);
 
                 _step = _step.add(BigDecimal.valueOf(step));
 
@@ -440,28 +453,29 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         }
 
 
-        public void setValue(String measureValue) {
+        public void setValue(Double measureValue) {
             switch (measure.getType()) {
                 case Numeric:
                     for (MeasureWheel measureWheel : measureWheelList) {
                         if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-                            int intValue = new Double(measureValue).intValue();
-                            Log.d(Consts.LOG_TAG, measureValue + ": " + intValue);
+                            int intValue = measureValue.intValue();
+                            Log.d(Const.LOG_TAG, measureValue + ": " + intValue);
                             measureWheel.wheelView.setCurrentItem(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
                         } else if (measureWheel.wheelAdapter instanceof StringRightOrderWheelAdapter) {
-                            String intValue = measureValue.substring(measureValue.indexOf("."));
-                            Log.d(Consts.LOG_TAG, measureValue + ": " + intValue);
+                            String intValue = measureValue.toString().substring(measureValue.toString().indexOf("."));
+                            Log.d(Const.LOG_TAG, measureValue + ": " + intValue);
                             measureWheel.wheelView.setCurrentItem(((StringRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
                         }
                     }
                     break;
                 case Temporal:
-                    String[] mParts = measureValue.split(":");
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(new Date(measureValue.longValue()));
                     int i = 0;
                     for (MeasureWheel measureWheel : measureWheelList) {
                         if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-                            int intValue = new Double(mParts[i]).intValue();
-                            Log.d(Consts.LOG_TAG, measureValue + ": " + intValue);
+                            int intValue = (i == 0) ? c.get(Calendar.MINUTE) : c.get(Calendar.SECOND);
+                            Log.d(Const.LOG_TAG, measureValue + ": " + intValue);
                             measureWheel.wheelView.setCurrentItem(
                                     ((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
                             i++;
@@ -513,79 +527,76 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 });
     }
 
-    private void chronometerStart(){
+    private void chronometerStart() {
         reset = false;
-        if(!resume){
+        if (!resume) {
             mChrono.setBase(SystemClock.elapsedRealtime());
             mChrono.start();
-        }
-        else {
+        } else {
             mChrono.start();
         }
 
     }
 
-    private void chronometerStop(){
+    private void chronometerStop() {
         mChrono.stop();
-        if(reset){
+        if (reset) {
             mChrono.setText("00:00");
             resume = false;
-        }
-        else{
+        } else {
             mChrono.setText(currentTime);
             resume = true;
         }
     }
 
-    private void chronometerReset(){
+    private void chronometerReset() {
         mChrono.stop();
         mChrono.setText("00:00");
-        resume=false;
+        resume = false;
         reset = true;
     }
 
-    private void setChronoTickListener(){
-        mChrono.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener(){
+    private void setChronoTickListener() {
+        mChrono.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             public void onChronometerTick(Chronometer arg0) {
-                if(!resume){
-                    long minutes=((SystemClock.elapsedRealtime()-mChrono.getBase())/1000)/60;
-                    long seconds=((SystemClock.elapsedRealtime()-mChrono.getBase())/1000)%60;
+                if (!resume) {
+                    long minutes = ((SystemClock.elapsedRealtime() - mChrono.getBase()) / 1000) / 60;
+                    long seconds = ((SystemClock.elapsedRealtime() - mChrono.getBase()) / 1000) % 60;
                     String min = "";
                     String sec = "";
-                    if(minutes < 10)
-                       min = "0"+minutes;
+                    if (minutes < 10)
+                        min = "0" + minutes;
                     else
-                       min = ""+minutes;
-                    if(seconds < 10)
-                        sec = "0"+seconds;
+                        min = "" + minutes;
+                    if (seconds < 10)
+                        sec = "0" + seconds;
                     else
-                        sec =""+ seconds;
-                    currentTime=min+":"+sec;
+                        sec = "" + seconds;
+                    currentTime = min + ":" + sec;
                     arg0.setText(currentTime);
-                    elapsedTime=SystemClock.elapsedRealtime();
-                }
-                else{
-                    long minutes=((elapsedTime-mChrono.getBase())/1000)/60;
-                    long seconds=((elapsedTime-mChrono.getBase())/1000)%60;
+                    elapsedTime = SystemClock.elapsedRealtime();
+                } else {
+                    long minutes = ((elapsedTime - mChrono.getBase()) / 1000) / 60;
+                    long seconds = ((elapsedTime - mChrono.getBase()) / 1000) % 60;
                     String min = "";
                     String sec = "";
-                    if(minutes < 10)
-                        min = "0"+minutes;
+                    if (minutes < 10)
+                        min = "0" + minutes;
                     else
-                        min = ""+minutes;
-                    if(seconds < 10)
-                        sec = "0"+seconds;
+                        min = "" + minutes;
+                    if (seconds < 10)
+                        sec = "0" + seconds;
                     else
-                        sec =""+ seconds;
-                    currentTime=min+":"+sec;
+                        sec = "" + seconds;
+                    currentTime = min + ":" + sec;
                     arg0.setText(currentTime);
-                    elapsedTime=elapsedTime+1000;
+                    elapsedTime = elapsedTime + 1000;
                 }
             }
         });
     }
 
-    public void onClickTimer(View view){
+    public void onClickTimer(View view) {
         exerciseActionTools.show(view);
     }
 }

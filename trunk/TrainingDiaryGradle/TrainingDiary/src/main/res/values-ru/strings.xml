@@ -173,4 +173,7 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
 
     <string name="my_programm">Моя программа</string>
+    <string name="stat_max">макс.</string>
+    <string name="stat_min">мин.</string>
+    <string name="stat_avg">сред.</string>
 </resources>

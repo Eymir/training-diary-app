@@ -1,11 +1,13 @@
 apply plugin: 'android'
 
 repositories {
+    maven { url "http://dl.bintray.com/populov/maven" }
     mavenCentral()
 }
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.viewpagerindicator:library:2.4.1@aar'
     compile files('libraries/achartengine-1.1.0.jar')
     compile project('libraries:library')
     compile project('libraries:ExampleActivity')
