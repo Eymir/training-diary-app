@@ -41,10 +41,11 @@ import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.db.entity.TrainingStat;
+import myApp.trainingdiary.db.entity.TrainingSet;
+import myApp.trainingdiary.db.entity.TrainingSetValue;
+import myApp.trainingdiary.db.entity.TrainingStamp;
 import myApp.trainingdiary.statistic.StatisticActivity;
-import myApp.trainingdiary.utils.Consts;
-import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.Validator;
 
 public class DialogProvider {
@@ -139,7 +140,7 @@ public class DialogProvider {
         groupsDialogBuilder.setPositiveButton(R.string.btn_txt_OK, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d(Consts.LOG_TAG, "getCheckedItemPositions.size: " + groupListView.getCheckedItemPositions().size());
+                Log.d(Const.LOG_TAG, "getCheckedItemPositions.size: " + groupListView.getCheckedItemPositions().size());
                 List<Double> list = getChosenObjects(groupListView);
                 groupsButton.setText(list.toString());
 
@@ -203,11 +204,11 @@ public class DialogProvider {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (groupSpinner.getSelectedItem() != null) {
                     if (groupSpinner.getSelectedItemId() == AdapterView.INVALID_ROW_ID) {
-                        Log.e(Consts.LOG_TAG, "groupSpinner has invalid row");
+                        Log.e(Const.LOG_TAG, "groupSpinner has invalid row");
                         return;
                     }
                     if (exerciseSpinner.getSelectedItemId() == AdapterView.INVALID_ROW_ID) {
-                        Log.e(Consts.LOG_TAG, "exerciseSpinner has invalid row");
+                        Log.e(Const.LOG_TAG, "exerciseSpinner has invalid row");
                         return;
                     }
                     Measure m = (Measure) groupSpinner.getSelectedItem();
@@ -218,7 +219,7 @@ public class DialogProvider {
                             groupValueAdapter.clear();
                             addAll(groupValueAdapter, list);
                         } else {
-                            Log.e(Consts.LOG_TAG, "groups is null");
+                            Log.e(Const.LOG_TAG, "groups is null");
                         }
                     }
                 }
@@ -281,7 +282,7 @@ public class DialogProvider {
                 exerciseSpinner.getSelectedItemId(), m.getId()));
         Measure m_g = (Measure) groupSpinner.getSelectedItem();
         groupsButton.setText("");
-        Log.d(Consts.LOG_TAG, "groupListView.dispatchSetSelected(false)");
+        Log.d(Const.LOG_TAG, "groupListView.dispatchSetSelected(false)");
         for (int i = 0; i < groupListView.getCount(); i++) {
             groupListView.setItemChecked(i, false);
         }
@@ -294,7 +295,7 @@ public class DialogProvider {
                 groupValueAdapter.clear();
                 addAll(groupValueAdapter, list);
             } else {
-                Log.e(Consts.LOG_TAG, "groups is null");
+                Log.e(Const.LOG_TAG, "groups is null");
             }
         }
     }
@@ -311,18 +312,23 @@ public class DialogProvider {
     }
 
     private static List<Double> getGroups(DBHelper dbHelper, Long m_id, Long ex_id) {
-        Log.d(Consts.LOG_TAG, "getGroups m_id: " + m_id + " ex_id: " + ex_id);
+        Log.d(Const.LOG_TAG, "getGroups m_id: " + m_id + " ex_id: " + ex_id);
         Long pos = dbHelper.READ.getMeasurePosInExercise(ex_id, m_id);
         if (pos == null) {
-            Log.e(Consts.LOG_TAG, "pos is null");
+            Log.e(Const.LOG_TAG, "pos is null");
             return null;
         }
-        Log.d(Consts.LOG_TAG, "pos: " + pos);
-        List<TrainingStat> stats = dbHelper.READ.getExerciseProgress(ex_id);
+        Log.d(Const.LOG_TAG, "pos: " + pos);
+        List<TrainingStamp> stats = dbHelper.READ.getTrainingStampWithExactExerciseDesc(ex_id);
         List<Double> list = new ArrayList<Double>();
-        for (TrainingStat stat : stats) {
-            Double m_value = MeasureFormatter.getValueByPos(stat.getValue(), pos.intValue());
-            if (!list.contains(m_value)) list.add(m_value);
+        for (TrainingStamp stamp : stats) {
+            for (TrainingSet set : stamp.getTrainingSetList()) {
+                TrainingSetValue setValue = set.getValueByPos(pos);
+                if (setValue != null) {
+                    Double m_value = setValue.getValue();
+                    if (!list.contains(m_value)) list.add(m_value);
+                }
+            }
         }
         return list;
     }
@@ -346,7 +352,6 @@ public class DialogProvider {
     }
 
     private static SimpleCursorAdapter getExerciseAdapter(Activity activity, DBHelper dbHelper, final Context context) {
-
         Cursor ex_cursor = dbHelper.READ.getExercisesWithStat();
         String[] from = {"ex_name", "icon"};
         int[] to = {R.id.label, R.id.icon};
@@ -477,7 +482,7 @@ public class DialogProvider {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (validateCreateForm(activity, name_edit, type_spinner)) {
-                    Log.d(Consts.LOG_TAG, " name_edit: "
+                    Log.d(Const.LOG_TAG, " name_edit: "
                             + name_edit.getText().toString() + " type_spinner.id:"
                             + type_spinner.getSelectedItemId());
                     Exercise exercise = new Exercise(null,
@@ -502,7 +507,7 @@ public class DialogProvider {
     public static AlertDialog createStatListDialog(final Activity activity, final OkClickListener listener) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.stat_list_dialog_title);
-        final SharedPreferences sp = activity.getSharedPreferences(Consts.CHOSEN_STATISTIC, activity.MODE_PRIVATE);
+        final SharedPreferences sp = activity.getSharedPreferences(Const.CHOSEN_STATISTIC, activity.MODE_PRIVATE);
         final StatisticEnum[] stats = StatisticEnum.values();
         boolean[] checked = new boolean[stats.length];
         for (int i = 0; i < StatisticEnum.values().length; i++) {

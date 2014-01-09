@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 
 /**
  * Created by Lenovo on 29.07.13.
@@ -48,11 +48,11 @@ public class EntityArrayAdapter extends ArrayAdapter {
             if (title != null) {
                 title.setText(m.getName());
             } else {
-                Log.e(Consts.LOG_TAG, "title is null");
+                Log.e(Const.LOG_TAG, "title is null");
             }
 
         } else {
-            Log.e(Consts.LOG_TAG, "item is not measure");
+            Log.e(Const.LOG_TAG, "item is not measure");
         }
 
         return v;

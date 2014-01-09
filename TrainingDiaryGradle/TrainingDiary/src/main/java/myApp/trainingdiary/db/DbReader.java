@@ -13,8 +13,12 @@ import myApp.trainingdiary.db.entity.ExerciseType;
 import myApp.trainingdiary.db.entity.ExerciseTypeIcon;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.MeasureType;
+import myApp.trainingdiary.db.entity.TrainingSet;
+import myApp.trainingdiary.db.entity.TrainingSetValue;
+import myApp.trainingdiary.db.entity.TrainingStamp;
+import myApp.trainingdiary.db.entity.TrainingStampStatus;
 import myApp.trainingdiary.db.entity.TrainingStat;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 
 /**
  * Created by bshestakov on 11.06.13.
@@ -26,32 +30,61 @@ public class DbReader {
         this.dbHelper = dbHelper;
     }
 
-    public Cursor getTrainingMainHistory() {
-        String sqlQuery = "select * from TrainingStat " +
-                "group by training_date " +
-                "order by training_date asc ";
+    public List<TrainingStamp> getTrainingMainHistory() {
+        List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
+        String sqlQuery = "select * from TrainingStamp " +
+                "order by start_date desc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
         Cursor c = db
                 .rawQuery(sqlQuery, null);
-        return c;
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                stamps.add(new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status)));
+            }
+        } finally {
+            if (c != null && !c.isClosed())
+                c.close();
+            if (db != null && db.isOpen())
+                db.close();
+        }
+        return stamps;
+
     }
 
-    public Cursor getExercisesForHistory() {
-        String sqlQuery = "select ex.name ex_name, ex.id ex_id, ex_type.icon_res icon, max(stat.date) tr_date " +
-                "from Exercise ex, ExerciseType ex_type, TrainingStat stat " +
-                "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
+    public List<Exercise> getExercisesForHistory() {
+        List<Exercise> list = new ArrayList<Exercise>();
+        String sqlQuery = "select ex.name ex_name, ex.id ex_id, ex_type.icon_res type_icon, ex_type.name type_name, ex_type.id type_id " +
+                "from Exercise ex, ExerciseType ex_type, TrainingSet tr_set " +
+                "where tr_set.exercise_id = ex.id and ex.type_id = ex_type.id " +
                 "group by ex.id " +
-                "order by max(stat.date) desc ";
+                "order by max(tr_set.date) desc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, null);
-        return c;
+        try {
+            while (c.moveToNext()) {
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                Long ex_id = c.getLong(c.getColumnIndex("ex_id"));
+                String ex_name = c.getString(c.getColumnIndex("ex_name"));
+                String type_name = c.getString(c.getColumnIndex("type_name"));
+                String type_icon = c.getString(c.getColumnIndex("type_icon"));
+                list.add(new Exercise(ex_id, new ExerciseType(type_id, ExerciseTypeIcon.getByIconResName(type_icon), type_name), ex_name));
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null) db.close();
+        }
+        return list;
     }
 
     public Cursor getExercisesWithStat() {
         String sqlQuery = "select ex.name ex_name, ex.id _id, ex_type.icon_res icon, max(stat.date) tr_date " +
-                "from Exercise ex, ExerciseType ex_type, TrainingStat stat " +
+                "from Exercise ex, ExerciseType ex_type, TrainingSet stat " +
                 "where stat.exercise_id = ex.id and ex.type_id = ex_type.id " +
                 "group by ex.id " +
                 "order by ex_name asc ";
@@ -72,15 +105,82 @@ public class DbReader {
         return c;
     }
 
-    public Cursor getTrainingStatByExercise(long ex_id) {
-        String sqlQuery = "select stat.value, stat.training_date " +
-                "from TrainingStat stat " +
-                "where stat.exercise_id = ? " +
-                "order by training_date desc, date asc";
+    public List<TrainingStamp> getTrainingStampWithExactExerciseDesc(long ex_id) {
+        List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
+        String sqlQuery = "select DISTINCT tr_stamp.* " +
+                "from TrainingStamp tr_stamp, TrainingSet tr_set " +
+                "where tr_stamp.id = tr_set.training_stamp_id and tr_set.exercise_id = ? " +
+                "order by tr_stamp.id desc, tr_set.date asc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-        return c;
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                stamps.add(new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status), getTrainingSetsInTrainingStampByExercise(db, ex_id, id)));
+            }
+        } finally {
+            if (c != null && !c.isClosed())
+                c.close();
+            if (db != null && db.isOpen())
+                db.close();
+        }
+        return stamps;
+    }
+
+    public List<TrainingStamp> getTrainingStampWithExactExerciseAsc(long ex_id) {
+        List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
+        String sqlQuery = "select DISTINCT tr_stamp.* " +
+                "from TrainingStamp tr_stamp, TrainingSet tr_set " +
+                "where tr_stamp.id = tr_set.training_stamp_id and tr_set.exercise_id = ? " +
+                "order by tr_stamp.id asc, tr_set.date asc ";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                stamps.add(new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status), getTrainingSetsInTrainingStampByExercise(db, ex_id, id)));
+            }
+        } finally {
+            if (c != null && !c.isClosed())
+                c.close();
+            if (db != null && db.isOpen())
+                db.close();
+        }
+        return stamps;
+    }
+
+
+    private List<TrainingSet> getTrainingSetsInTrainingStampByExercise(SQLiteDatabase db, long ex_id, Long tr_stamp_id) {
+        List<TrainingSet> stats = new ArrayList<TrainingSet>();
+        String sqlQuery = "select tr_set.* from TrainingSet tr_set " +
+                "where tr_set.exercise_id = ? AND tr_set.training_stamp_id = ?" +
+                "order by tr_set.date asc ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_stamp_id)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("training_stamp_id"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                stats.add(new TrainingSet(id, training_stamp_id, new Date(date), exerciseId, trainingId, getTrainingSetValuesWithMeasure(db, id)));
+            }
+            return stats;
+        } finally {
+            if (c != null) c.close();
+        }
+
     }
 
     public ExerciseType getExerciseTypeByName(SQLiteDatabase db, String name) {
@@ -100,7 +200,7 @@ public class DbReader {
                 return null;
             }
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
             return null;
         }
     }
@@ -124,7 +224,7 @@ public class DbReader {
                 return null;
             }
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
             if (c != null) c.close();
@@ -190,27 +290,77 @@ public class DbReader {
         }
     }
 
-    public TrainingStat getLastTrainingStatByExerciseInTraining(long ex_id, long tr_id) {
+    public TrainingSet getLastTrainingSetByExerciseInLastOpenTrainingStamp(long ex_id, long tr_id) {
 
-        String sqlQuery = "select * from TrainingStat tr_stat " +
-                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStat WHERE training_id = ? AND exercise_id = ?)";
+        String sqlQuery = "select * from TrainingSet tr_set " +
+                "where tr_set.id = (SELECT MAX(t_set.id) FROM TrainingSet t_set, TrainingStamp t_stamp " +
+                "WHERE t_set.training_stamp_id = t_stamp.id AND t_set.exercise_id = ? AND t_set.training_id = ? AND t_stamp.status = 'OPEN')";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id), String.valueOf(ex_id)});
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_id)});
         try {
             if (c.moveToFirst()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
                 Long date = c.getLong(c.getColumnIndex("date"));
-                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("training_stamp_id"));
                 Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
                 Long trainingId = c.getLong(c.getColumnIndex("training_id"));
-                String value = c.getString(c.getColumnIndex("value"));
-                return new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value);
+                return new TrainingSet(id, training_stamp_id, new Date(date), exerciseId, trainingId, getTrainingSetValuesWithMeasure(db, id));
             } else {
                 return null;
             }
         } finally {
             if (c != null) c.close();
+            if (db != null) db.close();
+        }
+    }
+
+    public TrainingSet getLastTrainingSetTrainingStamp(long tr_stamp_id) {
+
+        String sqlQuery = "select * from TrainingSet tr_set " +
+                "where tr_set.id = (SELECT MAX(t_set.id) FROM TrainingSet t_set, TrainingStamp t_stamp " +
+                "WHERE t_set.training_stamp_id = t_stamp.id AND t_stamp.id = ?)";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_stamp_id)});
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("training_stamp_id"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                return new TrainingSet(id, training_stamp_id, new Date(date), exerciseId, trainingId);
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public TrainingSet getLastTrainingSetByExerciseInLastTrainingStamp(long ex_id, long tr_id) {
+
+        String sqlQuery = "select * from TrainingSet tr_set " +
+                "WHERE tr_set.id = (SELECT MAX(t_set.id) FROM TrainingSet t_set " +
+                "WHERE t_set.exercise_id = ? AND t_set.training_id = ?)";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_id)});
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("training_stamp_id"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                return new TrainingSet(id, training_stamp_id, new Date(date), exerciseId, trainingId, getTrainingSetValuesWithMeasure(db, id));
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+            if (db != null && db.isOpen()) c.close();
         }
     }
 
@@ -223,15 +373,21 @@ public class DbReader {
             SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor c = db
                     .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
-            while (c.moveToNext()) {
-                Long id = c.getLong(c.getColumnIndex("id"));
-                String name = c.getString(c.getColumnIndex("name"));
-                Integer max = c.getInt(c.getColumnIndex("max"));
-                Double step = c.getDouble(c.getColumnIndex("step"));
-                Integer type = c.getInt(c.getColumnIndex("type"));
-                measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+
+            try {
+                while (c.moveToNext()) {
+                    Long id = c.getLong(c.getColumnIndex("id"));
+                    String name = c.getString(c.getColumnIndex("name"));
+                    Integer max = c.getInt(c.getColumnIndex("max"));
+                    Double step = c.getDouble(c.getColumnIndex("step"));
+                    Integer type = c.getInt(c.getColumnIndex("type"));
+                    measures.add(new Measure(id, name, max, step, MeasureType.valueOf(type)));
+                }
+            } finally {
+                if (c != null && !c.isClosed()) c.close();
+                if (db != null && db.isOpen()) db.close();
+
             }
-            if (c != null) c.close();
         }
         return measures;
     }
@@ -283,24 +439,45 @@ public class DbReader {
         return measures;
     }
 
-    public List<TrainingStat> getTrainingStatForLastPeriodByExercise(long ex_id, long period) {
-        List<TrainingStat> stats = new ArrayList<TrainingStat>();
-        long since = System.currentTimeMillis() - period;
-        String sqlQuery = "select * from TrainingStat tr_stat " +
-                "where tr_stat.exercise_id = ? AND tr_stat.date > ? " +
-                "order by tr_stat.date desc ";
+    public List<TrainingSet> getTrainingSetListInTrainingStampByExercise(long ex_id, Long tr_stamp_id) {
+        List<TrainingSet> stats = new ArrayList<TrainingSet>();
+        String sqlQuery = "select tr_set.* from TrainingSet tr_set " +
+                "where tr_set.exercise_id = ? AND tr_set.training_stamp_id = ? " +
+                "order by tr_set.date desc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(since)});
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_stamp_id)});
         try {
             while (c.moveToNext()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
                 Long date = c.getLong(c.getColumnIndex("date"));
-                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("training_stamp_id"));
                 Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
                 Long trainingId = c.getLong(c.getColumnIndex("training_id"));
-                String value = c.getString(c.getColumnIndex("value"));
-                stats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
+                stats.add(new TrainingSet(id, training_stamp_id, new Date(date), exerciseId, trainingId, getTrainingSetValuesWithMeasure(db, id)));
+            }
+            return stats;
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public List<TrainingSet> getTrainingSetListInTrainingStamp(Long tr_stamp_id) {
+        List<TrainingSet> stats = new ArrayList<TrainingSet>();
+        String sqlQuery = "select tr_set.* from TrainingSet tr_set " +
+                "where tr_set.training_stamp_id = ? " +
+                "order by tr_set.exercise_id asc, tr_set.date desc ";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_stamp_id)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("training_stamp_id"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                stats.add(new TrainingSet(id, training_stamp_id, new Date(date), exerciseId, trainingId, getTrainingSetValuesWithMeasure(db, id)));
             }
             return stats;
         } finally {
@@ -560,6 +737,55 @@ public class DbReader {
         throw new RuntimeException("Measure with id: " + m_id + " not found in DB.");
     }
 
+    public List<TrainingSetValue> getTrainingSetValuesWithMeasure(SQLiteDatabase db, Long tr_set_id) {
+        if (tr_set_id != null) {
+            List<TrainingSetValue> trainingSetValues = new ArrayList<TrainingSetValue>();
+            String sqlQuery = "select tr_set_v.*, tr_set.exercise_id from TrainingSetValue tr_set_v, TrainingSet tr_set " +
+                    "where tr_set_v.training_set_id = tr_set.id and tr_set.id = ? order by tr_set_v.position asc ";
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(tr_set_id)});
+            try {
+                while (c.moveToNext()) {
+                    Long id = c.getLong(c.getColumnIndex("id"));
+                    Long training_set_id = c.getLong(c.getColumnIndex("training_set_id"));
+                    Long position = c.getLong(c.getColumnIndex("position"));
+                    Double value = c.getDouble(c.getColumnIndex("value"));
+                    Integer exercise_id = c.getInt(c.getColumnIndex("exercise_id"));
+                    trainingSetValues.add(new TrainingSetValue(id, training_set_id, value, position, getMeasureByExerciseAndPosition(db, exercise_id, position)));
+                }
+            } finally {
+                if (c != null && !c.isClosed())
+                    c.close();
+            }
+            return trainingSetValues;
+        }
+        throw new RuntimeException("Measure with id: " + tr_set_id + " not found in DB.");
+    }
+
+    private Measure getMeasureByExerciseAndPosition(SQLiteDatabase db, Integer exercise_id, Long position) {
+        if (exercise_id != null) {
+            String sqlQuery = "select m.* from Measure m, MeasureExType m_ex, Exercise ex " +
+                    "where ex.id = ? AND ex.type_id = m_ex.ex_type_id AND m.id = m_ex.measure_id and m_ex.position = ? " +
+                    "order by m_ex.position ";
+            Cursor c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(exercise_id), String.valueOf(position)});
+            try {
+                if (c.moveToFirst()) {
+                    Long id = c.getLong(c.getColumnIndex("id"));
+                    String name = c.getString(c.getColumnIndex("name"));
+                    Integer max = c.getInt(c.getColumnIndex("max"));
+                    Double step = c.getDouble(c.getColumnIndex("step"));
+                    Integer type = c.getInt(c.getColumnIndex("type"));
+                    return new Measure(id, name, max, step, MeasureType.valueOf(type));
+                }
+            } finally {
+                if (c != null && !c.isClosed()) c.close();
+
+            }
+        }
+        return null;
+    }
+
     public List<Measure> getAllMeasures() {
         List<Measure> measures = new ArrayList<Measure>();
         String sqlQuery = "select m.* from Measure m " +
@@ -580,7 +806,7 @@ public class DbReader {
     }
 
     public TrainingStat getLastTrainingStat() {
-        String sqlQuery = "select * from TrainingStat tr_stat " +
+        String sqlQuery = "select * from TrainingStamp tr_stat " +
                 "where tr_stat.id = (SELECT MAX(id) FROM TrainingStat)";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
@@ -603,8 +829,8 @@ public class DbReader {
 
     }
 
-    public int getTrainingCount() {
-        String sqlQuery = "select count(distinct stat.training_date) as _count from TrainingStat stat";
+    public int getTrainingStampCount() {
+        String sqlQuery = "select count(*) as _count from TrainingStamp ";
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
@@ -614,9 +840,8 @@ public class DbReader {
 
 
     public long getTrainingDurationSumm() {
-        String sqlQuery = "select sum(dur_sum1) as dur_sum from(select (max(date) - min(date)) as dur_sum1 " +
-                "from TrainingStat stat " +
-                "group by training_date)";
+        String sqlQuery = "select sum(dur_sum1) as dur_sum from (select (stat.end_date - stat.start_date) as dur_sum1 " +
+                "from TrainingStamp stat where stat.end_date not null and stat.end_date <> 0 and stat.status = 'CLOSED' and stat.end_date <> stat.start_date);";
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         long dur_sum = c.getInt(c.getColumnIndex("dur_sum"));
@@ -628,7 +853,7 @@ public class DbReader {
         String sqlQuery = "select ex.id ex_id, ex.name ex_name,  " +
                 "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon  " +
                 "from Exercise ex, ExerciseType ex_type, ( " +
-                "select exercise_id, count(id) ex_count from TrainingStat group by exercise_id order by count(id) desc limit 1) sel  " +
+                "select exercise_id, count(id) ex_count from TrainingSet group by exercise_id order by count(id) desc limit 1) sel  " +
                 "where ex.type_id = ex_type.id AND ex.id = sel.exercise_id";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
@@ -645,7 +870,7 @@ public class DbReader {
                 return null;
             }
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
             if (c != null) c.close();
@@ -672,7 +897,7 @@ public class DbReader {
                 return null;
             }
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
             if (c != null) c.close();
@@ -694,10 +919,245 @@ public class DbReader {
                 return null;
             }
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage(), e);
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
             return null;
         } finally {
             if (c != null) c.close();
         }
+    }
+
+    public Long getOpenTrainingStampId() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try {
+            return getOpenTrainingStampId(db);
+        } finally {
+            if (db != null && db.isOpen())
+                db.close();
+        }
+
+    }
+
+    public Long getOpenTrainingStampId(SQLiteDatabase db) {
+        String sqlQuery = "select max(tr_st.id) tr_st_id " +
+                "from TrainingStamp tr_st " +
+                "where tr_st.end_date is null ";
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("tr_st_id"));
+                return id;
+            } else {
+                return null;
+            }
+        } catch (Throwable e) {
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
+            return null;
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public List<Long> getExerciseTrainingSetIds(SQLiteDatabase db, Long tr_st_id, long ex_id) {
+        List<Long> list = new ArrayList<Long>();
+        String sqlQuery = "select tr_set.id tr_set_id " +
+                "from TrainingSet tr_set " +
+                "where tr_set.training_stamp_id = ? and tr_set.exercise_id = ? order by tr_set.id asc ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_st_id), String.valueOf(ex_id)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("tr_set_id"));
+                list.add(id);
+            }
+        } catch (Throwable e) {
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
+        } finally {
+            if (c != null) c.close();
+        }
+        return list;
+    }
+
+    public TrainingSet getTrainingSetWithMaxIdFromTrainingStamp(SQLiteDatabase db, Long tr_st_id) {
+        String sqlQuery = " select tra_set.id tr_set_id, tra_set.training_stamp_id tr_set_stamp_id, " +
+                "tra_set.date tr_set_date, tra_set.exercise_id tr_set_exercise_id, tra_set.training_id tr_set_training_id  " +
+                "from TrainingSet tra_set where id = (select max(tr_set.id) " +
+                "from TrainingSet tr_set " +
+                "where tr_set.training_stamp_id = ?) ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_st_id)});
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("tr_set_id"));
+                Long training_stamp_id = c.getLong(c.getColumnIndex("tr_set_stamp_id"));
+                Long date = c.getLong(c.getColumnIndex("tr_set_date"));
+                Long exercise_id = c.getLong(c.getColumnIndex("tr_set_exercise_id"));
+                Long training_id = c.getLong(c.getColumnIndex("tr_set_training_id"));
+                return new TrainingSet(id, training_stamp_id, new Date(date), exercise_id, training_id);
+            }
+        } catch (Throwable e) {
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
+        } finally {
+            if (c != null) c.close();
+        }
+        return null;
+    }
+
+    public List<TrainingStat> getAllTrainingStat(SQLiteDatabase db) {
+        List<TrainingStat> trainingStats = new ArrayList<TrainingStat>();
+        String sqlQuery = "select * from TrainingStat tr_stat " +
+                "order by tr_stat.id asc";
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long date = c.getLong(c.getColumnIndex("date"));
+                Long trainingDate = c.getLong(c.getColumnIndex("training_date"));
+                Long exerciseId = c.getLong(c.getColumnIndex("exercise_id"));
+                Long trainingId = c.getLong(c.getColumnIndex("training_id"));
+                String value = c.getString(c.getColumnIndex("value"));
+                trainingStats.add(new TrainingStat(id, new Date(date), new Date(trainingDate), exerciseId, trainingId, value));
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+        return trainingStats;
+    }
+
+    public TrainingStamp getLastTrainingStamp() {
+        String sqlQuery = "select * from TrainingStamp tr_stat " +
+                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStamp)";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                return new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status), getTrainingSetListInTrainingStamp(id));
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null && db.isOpen()) db.close();
+        }
+    }
+
+    public TrainingStamp getLastClosedTrainingStamp() {
+        String sqlQuery = "select * from TrainingStamp tr_stat " +
+                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStamp where status = 'CLOSED')";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                return new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status), getTrainingSetListInTrainingStamp(id));
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null && db.isOpen()) db.close();
+        }
+    }
+
+    public Double getMaxExerciseResultByPos(Long ex_id, int position) {
+        String sqlQuery = "select max(tr_set_value.value) max_value from TrainingSet tr_set, TrainingSetValue tr_set_value " +
+                "where tr_set.exercise_id = ? and  tr_set_value.training_set_id = tr_set.id and tr_set_value.position = ? ";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(position)});
+        try {
+            if (c.moveToFirst()) {
+                Double max_value = c.getDouble(c.getColumnIndex("max_value"));
+                return max_value;
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public TrainingStamp getOpenTrainingStamp() {
+        String sqlQuery = "select * from TrainingStamp tr_stat " +
+                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStamp where status = 'OPEN')";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                return new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status));
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null && db.isOpen()) db.close();
+        }
+
+    }
+
+
+    public List<TrainingStamp> getOpenTrainingStampList() {
+        List<TrainingStamp> list = new ArrayList<TrainingStamp>();
+        String sqlQuery = "select tr_stat.* from TrainingStamp tr_stat " +
+                "where tr_stat.status = 'OPEN' order by tr_stat.id asc";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, null);
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                list.add(new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status)));
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null && db.isOpen()) db.close();
+        }
+        return list;
+    }
+
+    public TrainingStamp getTrainingStampByStartDate(Date training_date) {
+        String sqlQuery = "select * from TrainingStamp tr_stat " +
+                "where tr_stat.start_date = ?";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(training_date.getTime())});
+        try {
+            if (c.moveToFirst()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                Long start_date = c.getLong(c.getColumnIndex("start_date"));
+                Long end_date = c.getLong(c.getColumnIndex("end_date"));
+                String comment = c.getString(c.getColumnIndex("comment"));
+                String status = c.getString(c.getColumnIndex("status"));
+                return new TrainingStamp(id, new Date(start_date), new Date(end_date), comment, TrainingStampStatus.valueOf(status), getTrainingSetListInTrainingStamp(id));
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null && db.isOpen()) db.close();
+        }
+
     }
 }

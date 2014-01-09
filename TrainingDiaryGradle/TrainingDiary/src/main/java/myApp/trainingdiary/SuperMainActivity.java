@@ -20,14 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import myApp.trainingdiary.customview.stat.StatItem;
 import myApp.trainingdiary.customview.stat.StatItemArrayAdapter;
@@ -39,7 +35,7 @@ import myApp.trainingdiary.excercise.AddExerciseActivity;
 import myApp.trainingdiary.history.HistoryMainActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.training.TrainingActivity;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 
 public class SuperMainActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -52,9 +48,10 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         setContentView(R.layout.activity_super_main);
         dbHelper = DBHelper.getInstance(this);
         try {
-            Log.i(Consts.LOG_TAG, "DB version: " + String.valueOf(dbHelper.getVersion()));
+            Log.i(Const.LOG_TAG, "DB version: " + String.valueOf(dbHelper.getVersion()));
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, e.getMessage());
+            if (e.getMessage() != null && !e.getMessage().equals(""))
+                Log.e(Const.LOG_TAG, e.getMessage(), e);
         }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
@@ -76,9 +73,9 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         editStat.setOnClickListener(this);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean firstStart = sp.getBoolean("about",true);
+        boolean firstStart = sp.getBoolean("about", true);
 
-        if(firstStart){
+        if (firstStart) {
             showWhatNewsDialog();
             changeFirsStartPreference();
         }
@@ -88,7 +85,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     }
 
     private void initStatPref() {
-        SharedPreferences sp = getSharedPreferences(Consts.CHOSEN_STATISTIC, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(Const.CHOSEN_STATISTIC, MODE_PRIVATE);
 
         if (sp.getAll().size() < StatisticEnum.values().length) {
             SharedPreferences.Editor editor = sp.edit();
@@ -99,7 +96,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
             }
             editor.commit();
         }
-        Log.d(Consts.LOG_TAG, "SharedPreferences." + Consts.CHOSEN_STATISTIC + ".count: " + sp.getAll().size());
+        Log.d(Const.LOG_TAG, "SharedPreferences." + Const.CHOSEN_STATISTIC + ".count: " + sp.getAll().size());
     }
 
     private void createEditStatListDialog() {
@@ -113,12 +110,12 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     }
 
     private void showCommonStatisticList() {
-        SharedPreferences sp = getSharedPreferences(Consts.CHOSEN_STATISTIC, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(Const.CHOSEN_STATISTIC, MODE_PRIVATE);
         ArrayList<StatItem> list = new ArrayList<StatItem>();
         for (StatisticEnum stat : StatisticEnum.values()) {
             if (sp.getBoolean(stat.name(), false)) {
                 list.add(StatisticValueFactory.create(stat));
-                Log.d(Consts.LOG_TAG, "stat.name() is true:  " + stat.name());
+                Log.d(Const.LOG_TAG, "stat.name() is true:  " + stat.name());
             }
         }
         ListView listView = (ListView) findViewById(R.id.statListView);
@@ -172,7 +169,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         return true;
     }
 
-    private  void showWhatNewsDialog(){
+    private void showWhatNewsDialog() {
         String version = "";
         try {
             version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
@@ -180,7 +177,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
             e.printStackTrace();
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.newInVersionTitle)+" "+ version);
+        builder.setTitle(getResources().getString(R.string.newInVersionTitle) + " " + version);
         final TextView message = new TextView(this);
         final SpannableString s = new SpannableString(getResources()
                 .getString(R.string.newInVersionMessage));
@@ -198,11 +195,11 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         AD.show();
     }
 
-    private void changeFirsStartPreference(){
+    private void changeFirsStartPreference() {
         //SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("about",false);
+        editor.putBoolean("about", false);
         editor.commit();
     }
 

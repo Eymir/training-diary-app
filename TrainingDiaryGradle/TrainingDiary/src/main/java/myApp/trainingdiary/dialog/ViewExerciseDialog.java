@@ -8,7 +8,7 @@ import android.widget.SpinnerAdapter;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.entity.Exercise;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 
 /**
  * Created by Lenovo on 29.09.13.
@@ -21,14 +21,14 @@ public class ViewExerciseDialog {
     }
 
     public void show(Exercise exercise) {
-        Log.i(Consts.LOG_TAG, "Ex: " + exercise);
+        Log.i(Const.LOG_TAG, "Ex: " + exercise);
         dialog.show();
         final EditText name_edit = (EditText) dialog.findViewById(R.id.name_edit);
 
         final Spinner type_spinner = (Spinner) dialog
                 .findViewById(R.id.type_spinner);
 
-        Log.i(Consts.LOG_TAG, "name_edit: " + name_edit + " type_spinner: " + type_spinner);
+        Log.i(Const.LOG_TAG, "name_edit: " + name_edit + " type_spinner: " + type_spinner);
         name_edit.setText(exercise.getName());
         selectSpinnerItemByValue(type_spinner, exercise.getType().getId());
         type_spinner.setEnabled(false);

@@ -34,7 +34,7 @@ import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.excercise.ExerciseActivity;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.EmptyStringValidator;
 import myApp.trainingdiary.utils.TrainingExistValidator;
@@ -89,7 +89,7 @@ public class TrainingActivity extends ActionBarActivity {
         trainingList.setDropListener(new DropListener() {
             @Override
             public void drop(int from, int to) {
-                Log.i(Consts.LOG_TAG, "drop training");
+                Log.i(Const.LOG_TAG, "drop training");
                 trainingDragAdapter.drop(from, to);
                 dbHelper.WRITE.changeTrainingPositions(getNewTrIdOrder());
                 cur_drag_handler.setVisibility(View.GONE);
@@ -182,7 +182,7 @@ public class TrainingActivity extends ActionBarActivity {
 
     protected void openExerciseActivity(long tr_id) {
         Intent intentOpenAddEx = new Intent(this, ExerciseActivity.class);
-        intentOpenAddEx.putExtra(Consts.TRAINING_ID, tr_id);
+        intentOpenAddEx.putExtra(Const.TRAINING_ID, tr_id);
         startActivity(intentOpenAddEx);
     }
 
@@ -211,12 +211,12 @@ public class TrainingActivity extends ActionBarActivity {
 
     private List<Long> getNewTrIdOrder() {
         List<Long> list = new ArrayList<Long>();
-        Log.d(Consts.LOG_TAG,
+        Log.d(Const.LOG_TAG,
                 "getCursorPositions" + trainingDragAdapter.getCursorPositions());
         for (Integer i = 0; i < trainingDragAdapter.getCount(); i++) {
             list.add(trainingDragAdapter.getItemId(i));
         }
-        Log.d(Consts.LOG_TAG, "getNewIdOrder" + list);
+        Log.d(Const.LOG_TAG, "getNewIdOrder" + list);
         return list;
     }
 

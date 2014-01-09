@@ -172,5 +172,8 @@ https://twitter.com/TrainingDiaryGT\n
     <!--Диалог новое в версии-->
     <string name="newInVersionTitle">Новое в версии</string>
     <string name="newInVersionMessage">Текст сообщения\n\n -Новая фишка 1\n -Новая фишка 2\n -Новая фишка 3</string>
+    <string name="stat_max">макс.</string>
+    <string name="stat_min">мин.</string>
+    <string name="stat_avg">сред.</string>
 
 </resources>

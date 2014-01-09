@@ -5,11 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.List;
 
-import myApp.trainingdiary.db.entity.ExerciseTypeIcon;
 import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.db.entity.TrainingStampStatus;
+import myApp.trainingdiary.utils.Const;
 
 /**
  * Created by bshestakov on 11.06.13.
@@ -84,7 +85,7 @@ public class DbWriter {
         cv.put("training_id", training_id);
         cv.put("exercise_id", exercise_id);
         cv.put("position", position);
-        Log.d(Consts.LOG_TAG, "insertExerciseInTrainingAtEnd.ContentValues: "
+        Log.d(Const.LOG_TAG, "insertExerciseInTrainingAtEnd.ContentValues: "
                 + cv);
         long id = db.insert("ExerciseInTraining", null, cv);
         return id;
@@ -110,7 +111,7 @@ public class DbWriter {
             for (int i = 0; i < list.size(); i++) {
                 ContentValues cv = new ContentValues();
                 cv.put("position", i);
-                // Log.d(Consts.LOG_TAG, "new_pos: " + newNumEX +
+                // Log.d(Const.LOG_TAG, "new_pos: " + newNumEX +
                 // " old_pos: "+old_pos+" ex_name: " + strNameEx
                 // + " trainingname: " + strNameTr);
                 db.update("Training", cv, "id = ? ",
@@ -122,16 +123,39 @@ public class DbWriter {
 
     }
 
-    public int deleteLastTrainingStatInCurrentTraining(long ex_id, long tr_id, long tr_period) {
+    public int deleteLastTrainingSetInCurrentTrainingStamp(long ex_id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-            long since = System.currentTimeMillis() - tr_period;
-            int deleted = db.delete("TrainingStat", " id = (SELECT MAX(id) FROM TrainingStat " +
-                    "WHERE training_id = ? AND exercise_id = ? AND date > ? ) ",
-                    new String[]{String.valueOf(tr_id), String.valueOf(ex_id), String.valueOf(since)});
-            return deleted;
+            return deleteLastTrainingSetInCurrentTrainingStamp(db, ex_id);
         } finally {
             if (db != null) db.close();
+        }
+    }
+
+
+    protected int deleteLastTrainingSetInCurrentTrainingStamp(SQLiteDatabase db, long ex_id) {
+
+        Long tr_st_id = dbHelper.READ.getOpenTrainingStampId(db);
+        if (tr_st_id != null) {
+            List<Long> exerciseTrainingSets = dbHelper.READ.getExerciseTrainingSetIds(db, tr_st_id, ex_id);
+            int count = exerciseTrainingSets.size();
+            int deleted = 0;
+            switch (count) {
+                case 1:
+                    deleted = db.delete("TrainingSet", " id = ? ",
+                            new String[]{String.valueOf(exerciseTrainingSets.get(0))});
+                case 0:
+                    db.delete("TrainingStamp", " id = ? ",
+                            new String[]{String.valueOf(tr_st_id)});
+                    break;
+                default:
+                    deleted = db.delete("TrainingSet", " id = ? ",
+                            new String[]{String.valueOf(exerciseTrainingSets.get(exerciseTrainingSets.size() - 1))});
+                    break;
+            }
+            return deleted;
+        } else {
+            return 0;
         }
     }
 
@@ -151,7 +175,7 @@ public class DbWriter {
             for (int i = 0; i < list.size(); i++) {
                 ContentValues cv = new ContentValues();
                 cv.put("position", i);
-                Log.d(Consts.LOG_TAG, "new_pos: " + i +
+                Log.d(Const.LOG_TAG, "new_pos: " + i +
                         "  ex_id: " + list.get(i)
                         + " training_id: " + tr_id);
                 db.update("ExerciseInTraining", cv, "training_id = ? AND exercise_id = ? ",
@@ -252,18 +276,18 @@ public class DbWriter {
         db.beginTransaction();
         try {
             int countExerciseInTraining = db.delete("ExerciseInTraining", "exercise_id=" + ex_id, null);
-            Log.d(Consts.LOG_TAG, "countExerciseInTraining: "
+            Log.d(Const.LOG_TAG, "countExerciseInTraining: "
                     + countExerciseInTraining);
             int countTrainingStat = db.delete("TrainingStat", "exercise_id=" + ex_id, null);
-            Log.d(Consts.LOG_TAG, "countTrainingStat: "
+            Log.d(Const.LOG_TAG, "countTrainingStat: "
                     + countTrainingStat);
             int countExercise = db.delete("Exercise", "id=" + ex_id, null);
-            Log.d(Consts.LOG_TAG, "countExercise: "
+            Log.d(Const.LOG_TAG, "countExercise: "
                     + countExercise);
             db.setTransactionSuccessful();
             return true;
         } catch (Exception e) {
-            Log.e(Consts.LOG_TAG, "deleteExerciseWithStat problem", e);
+            Log.e(Const.LOG_TAG, "deleteExerciseWithStat problem", e);
             return false;
         } finally {
             db.endTransaction();
@@ -276,7 +300,7 @@ public class DbWriter {
         cv.put("max", m.getMax());
         cv.put("step", m.getStep());
         cv.put("type", m.getType().code);
-        Log.d(Consts.LOG_TAG, "Measure: " + m);
+        Log.d(Const.LOG_TAG, "Measure: " + m);
         db.update("Measure", cv, "id = ? ",
                 new String[]{String.valueOf(m.getId())});
     }
@@ -285,6 +309,86 @@ public class DbWriter {
         ContentValues cv = new ContentValues();
         cv.put("icon_res", icon_res);
         db.update("ExerciseType", cv, "id = ? ",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void closeTrainingStamp(SQLiteDatabase db, Long tr_stamp_id, Date date) {
+        ContentValues cv = new ContentValues();
+        cv.put("end_date", date.getTime());
+        cv.put("status", TrainingStampStatus.CLOSED.name());
+        db.update("TrainingStamp", cv, "id = ? ",
+                new String[]{String.valueOf(tr_stamp_id)});
+    }
+
+    public void closeTrainingStamp(Long tr_stamp_id, Date date) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try {
+            closeTrainingStamp(db, tr_stamp_id, date);
+        } finally {
+            if (db != null && db.isOpen())
+                db.close();
+        }
+    }
+
+    public Long insertTrainingStamp(Date startDate, Date endDate, String comment,String status) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try {
+            return insertTrainingStamp(db, startDate, endDate, comment,status);
+        } finally {
+            if (db != null && db.isOpen())
+                db.close();
+        }
+    }
+
+    public Long insertTrainingStamp(SQLiteDatabase db, Date startDate, Date endDate, String comment,String status) {
+        ContentValues cv = new ContentValues();
+        if (startDate != null)
+            cv.put("start_date", startDate.getTime());
+        if (endDate != null)
+            cv.put("end_date", endDate.getTime());
+        if (comment != null)
+            cv.put("comment", comment);
+        if (status != null)
+            cv.put("status", status);
+        long id = db.insert("TrainingStamp", null, cv);
+        return id;
+    }
+
+    public long insertTrainingSet(SQLiteDatabase db, Long training_stamp_Id, Long exercise_id, Long training_id, Date date) {
+        ContentValues cv = new ContentValues();
+        if (training_stamp_Id != null)
+            cv.put("training_stamp_Id", training_stamp_Id);
+        if (date != null)
+            cv.put("date", date.getTime());
+        if (exercise_id != null)
+            cv.put("exercise_id ", exercise_id);
+        if (training_id != null)
+            cv.put("training_id ", training_id);
+        long id = db.insert("TrainingSet", null, cv);
+        return id;
+    }
+
+    public long insertTrainingSetValue(SQLiteDatabase db, long tr_set_id, int position, Double value) {
+        ContentValues cv = new ContentValues();
+        cv.put("training_set_id", tr_set_id);
+        if (value != null)
+            cv.put("value", value);
+        cv.put("position ", position);
+        long id = db.insert("TrainingSetValue", null, cv);
+        return id;
+    }
+
+    public void deleteTrainingStamp(Long id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try {
+            deleteTraininStamp(db, id);
+        } finally {
+            if (db != null) db.close();
+        }
+    }
+
+    public void deleteTraininStamp(SQLiteDatabase db, Long id) {
+        db.delete("TrainingStamp", "id = ? ",
                 new String[]{String.valueOf(id)});
     }
 }

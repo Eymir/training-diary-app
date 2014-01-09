@@ -172,5 +172,8 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="utilWorkWeightSummary">C каким весом Вы можете сделать заданное количество повторений</string>
     <string name="utilPercentTitle">Процент от веса</string>
     <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
+    <string name="stat_max">макс.</string>
+    <string name="stat_min">мин.</string>
+    <string name="stat_avg">сред.</string>
 
 </resources>

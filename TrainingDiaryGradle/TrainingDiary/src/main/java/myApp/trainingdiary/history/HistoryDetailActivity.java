@@ -1,11 +1,8 @@
 package myApp.trainingdiary.history;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -21,16 +18,19 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import myApp.trainingdiary.R;
-import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.customview.itemadapter.item.BigSectionItem;
 import myApp.trainingdiary.customview.itemadapter.item.CustomItemAdapter;
 import myApp.trainingdiary.customview.itemadapter.item.Item;
 import myApp.trainingdiary.customview.itemadapter.item.StatisticItem;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.db.entity.TrainingSet;
+import myApp.trainingdiary.db.entity.TrainingStamp;
+import myApp.trainingdiary.utils.Const;
+import myApp.trainingdiary.utils.MeasureFormatter;
 
 public class HistoryDetailActivity extends ActionBarActivity {
 
@@ -48,24 +48,26 @@ public class HistoryDetailActivity extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.listView);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        int type = getIntent().getExtras().getInt(Consts.HISTORY_TYPE);
+        int type = getIntent().getExtras().getInt(Const.HISTORY_TYPE);
 
         switch (type) {
-            case Consts.TRAINING_TYPE:
-                training_date = (Date) getIntent().getExtras().get(Consts.DATE_FIELD);
+            case Const.TRAINING_TYPE:
+                training_date = (Date) getIntent().getExtras().get(Const.DATE_FIELD);
                 setTitle(getTitle() + ": " + SDF_DATETIME.format(training_date));
-                Cursor trainingCursor = dbHelper.READ.getTrainingStatByTrainingDate(training_date);
-                ArrayList<?> trItemArrayList = trainingCursorToItemArray(trainingCursor);
+                TrainingStamp trainingStamp = dbHelper.READ.getTrainingStampByStartDate(training_date);
+                ArrayList<?> trItemArrayList = trainingCursorToItemArray(trainingStamp);
                 CustomItemAdapter trainingHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, trItemArrayList);
                 listView.setAdapter(trainingHistoryAdapter);
                 break;
 
-            case Consts.EXERCISE_TYPE:
-                ex_id = getIntent().getExtras().getLong(Consts.EXERCISE_ID);
+            case Const.EXERCISE_TYPE:
+                ex_id = getIntent().getExtras().getLong(Const.EXERCISE_ID);
                 Exercise exercise = dbHelper.READ.getExerciseById(ex_id);
                 setTitle(getTitle() + ": " + ((exercise == null) ? null : exercise.getName()));
-                Cursor exerciseCursor = dbHelper.READ.getTrainingStatByExercise(ex_id);
-                ArrayList<?> exItemArrayList = exerciseCursorToItemArray(exerciseCursor);
+
+                List<TrainingStamp> trainingStampList = dbHelper.READ.getTrainingStampWithExactExerciseDesc(ex_id);
+                Log.d(Const.LOG_TAG, "trainingStampList.count(): " + trainingStampList.size());
+                ArrayList<?> exItemArrayList = exerciseCursorToItemArray(trainingStampList);
                 CustomItemAdapter exerciseHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, exItemArrayList);
                 listView.setAdapter(exerciseHistoryAdapter);
                 break;
@@ -73,28 +75,18 @@ public class HistoryDetailActivity extends ActionBarActivity {
 
     }
 
-    private ArrayList<?> exerciseCursorToItemArray(Cursor exerciseCursor) {
+    private ArrayList<?> exerciseCursorToItemArray(List<TrainingStamp> trainingStampList) {
         ArrayList<Item> items = new ArrayList<Item>();
-        try {
-            // stat.value, stat.training_date from TrainingStat stat
-            Long prevTrDate = null;
-            Integer i = 1;
-            while (exerciseCursor.moveToNext()) {
-                String value = exerciseCursor.getString(exerciseCursor.getColumnIndex("value"));
-                Long training_date = exerciseCursor.getLong(exerciseCursor.getColumnIndex("training_date"));
-                if (!training_date.equals(prevTrDate)) {
-                    prevTrDate = training_date;
-                    String icon = getResources().getResourceName(R.drawable.icon_train);
-                    BigSectionItem item = new BigSectionItem(SDF_DATETIME.format(new Date(training_date)), icon);
-                    items.add(item);
-                    Log.d(Consts.LOG_TAG, "BigSectionItem: " + item);
-                    i = 1;
-                }
-                items.add(new StatisticItem(i, value));
-                i++;
+        for (TrainingStamp stamp : trainingStampList) {
+            String icon = getResources().getResourceName(R.drawable.icon_train);
+            BigSectionItem item = new BigSectionItem(SDF_DATETIME.format(stamp.getStartDate()), icon);
+            items.add(item);
+            Log.d(Const.LOG_TAG, "BigSectionItem: " + item);
+            for (int i = 0; i < stamp.getTrainingSetList().size(); i++) {
+                TrainingSet set = stamp.getTrainingSetList().get(i);
+                String value = MeasureFormatter.valueFormat(set);
+                items.add(new StatisticItem(i + 1, value));
             }
-        } finally {
-            exerciseCursor.close();
         }
         return items;
     }
@@ -108,26 +100,21 @@ public class HistoryDetailActivity extends ActionBarActivity {
         return true;
     }
 
-    private ArrayList<?> trainingCursorToItemArray(Cursor trainingCursor) {
+    private ArrayList<?> trainingCursorToItemArray(TrainingStamp stamp) {
         ArrayList<Item> items = new ArrayList<Item>();
-        try {
-            String prevExName = null;
-            Integer i = 1;
-            while (trainingCursor.moveToNext()) {
-                String name = trainingCursor.getString(trainingCursor.getColumnIndex("name"));
-                String value = trainingCursor.getString(trainingCursor.getColumnIndex("value"));
-                String icon = trainingCursor.getString(trainingCursor.getColumnIndex("icon"));
-                Long date = trainingCursor.getLong(trainingCursor.getColumnIndex("date"));
-                if (!name.equals(prevExName)) {
-                    prevExName = name;
-                    items.add(new BigSectionItem(name, icon));
-                    i = 1;
-                }
-                items.add(new StatisticItem(i, value));
-                i++;
+        Long prevExId = null;
+        Integer i = 1;
+        List<TrainingSet> setList = stamp.getTrainingSetList();
+        for (TrainingSet set : setList) {
+            String value = MeasureFormatter.valueFormat(set);
+            if (!set.getExerciseId().equals(prevExId)) {
+                prevExId = set.getExerciseId();
+                Exercise ex = dbHelper.READ.getExerciseById(set.getExerciseId());
+                items.add(new BigSectionItem(ex.getName(), ex.getType().getIcon().name()));
+                i = 1;
             }
-        } finally {
-            trainingCursor.close();
+            items.add(new StatisticItem(i, value));
+            i++;
         }
         return items;
     }

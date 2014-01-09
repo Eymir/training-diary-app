@@ -27,7 +27,7 @@ public class BackupManager {
                 File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
                 File backupDB = new File(sd + "/" + BACKUP_FOLDER, backupDBPath);
                 if (backupDB.getParentFile() != null) backupDB.getParentFile().mkdirs();
-                Log.d(Consts.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath() + " backupDB: " + backupDB.getAbsolutePath());
+                Log.d(Const.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath() + " backupDB: " + backupDB.getAbsolutePath());
                 if (currentDB.exists()) {
                     FileChannel src = new FileInputStream(currentDB).getChannel();
                     FileChannel dst = new FileOutputStream(backupDB).getChannel();
@@ -44,19 +44,22 @@ public class BackupManager {
     public static void restoreFromSD(Context context) throws BackupException {
         try {
             File sd = Environment.getExternalStorageDirectory();
-
             if (sd.canWrite()) {
                 String backupDBPath = DBHelper.DATABASE_NAME;
                 File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
                 File backupDB = new File(sd + "/" + BACKUP_FOLDER, backupDBPath);
                 if (backupDB.getParentFile() != null) backupDB.getParentFile().mkdirs();
-                Log.d(Consts.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath() + " backupDB: " + backupDB.getAbsolutePath());
+                Log.d(Const.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath() + " backupDB: " + backupDB.getAbsolutePath());
+                Log.d(Const.LOG_TAG, "currentDB.exists: " + currentDB.exists());
                 if (currentDB.exists()) {
+                    Log.d(Const.LOG_TAG, "DB.name: " + DBHelper.getInstance(null).getDatabaseName() + " DB.version: " + DBHelper.getInstance(null).getVersion());
+                    DBHelper.getInstance(null).close();
                     FileChannel src = new FileInputStream(backupDB).getChannel();
                     FileChannel dst = new FileOutputStream(currentDB).getChannel();
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
+                    Log.d(Const.LOG_TAG, "DB.name: " + DBHelper.getInstance(null).getDatabaseName() + " DB.version: " + DBHelper.getInstance(null).getVersion());
                 }
             }
         } catch (Exception e) {

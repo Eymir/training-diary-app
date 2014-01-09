@@ -1,7 +1,6 @@
 package myApp.trainingdiary.history;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -27,7 +26,9 @@ import myApp.trainingdiary.customview.itemadapter.item.DateItem;
 import myApp.trainingdiary.customview.itemadapter.item.ExerciseItem;
 import myApp.trainingdiary.customview.itemadapter.item.Item;
 import myApp.trainingdiary.db.DBHelper;
-import myApp.trainingdiary.utils.Consts;
+import myApp.trainingdiary.db.entity.Exercise;
+import myApp.trainingdiary.db.entity.TrainingStamp;
+import myApp.trainingdiary.utils.Const;
 
 /*
  * �������� �������� � �������� ����������, ���������� ������������� �� ����
@@ -150,42 +151,51 @@ public class HistoryMainActivity extends ActionBarActivity {
 
     private void openTrainingDetails(Date date) {
         Intent intentOpenHistoryDetails = new Intent(this, HistoryDetailActivity.class);
-        intentOpenHistoryDetails.putExtra(Consts.HISTORY_TYPE, Consts.TRAINING_TYPE);
-        intentOpenHistoryDetails.putExtra(Consts.DATE_FIELD, date);
+        intentOpenHistoryDetails.putExtra(Const.HISTORY_TYPE, Const.TRAINING_TYPE);
+        intentOpenHistoryDetails.putExtra(Const.DATE_FIELD, date);
         startActivity(intentOpenHistoryDetails);
     }
 
     private void loadTrainingList() {
-        Cursor tr_cursor = dbHelper.READ.getTrainingMainHistory();
-        Log.d(Consts.LOG_TAG, "trainings.count: " + tr_cursor.getCount());
-        ArrayList<DateItem> itemArrayList = trainingCursorToItemArray(tr_cursor);
+        List<TrainingStamp> tr_stamps = dbHelper.READ.getTrainingMainHistory();
+        Log.d(Const.LOG_TAG, "trainings.count: " + tr_stamps.size());
+        ArrayList<DateItem> itemArrayList = trainingCursorToItemArray(tr_stamps);
         trainingHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
         trainingHistoryList.setAdapter(trainingHistoryAdapter);
     }
 
-    private ArrayList<DateItem> trainingCursorToItemArray(Cursor cursor) {
+    private ArrayList<DateItem> trainingCursorToItemArray(List<TrainingStamp> tr_stamps) {
         ArrayList<DateItem> items = new ArrayList<DateItem>();
-        try {
-            List<Long> checkList = new ArrayList<Long>();
-            while (cursor.moveToNext()) {
-                Long tr_date_long = cursor.getLong(cursor.getColumnIndex("training_date"));
-                checkList.add(tr_date_long);
-            }
-            for (Long date : checkList) {
-                Date tr_date = new Date(date);
-                boolean isSameDayExist = isSameDay(tr_date, new ArrayList<Long>(checkList));
-                String title = (isSameDayExist) ? SDF_DATETIME.format(tr_date) : SDF_DATE.format(tr_date);
-                items.add(new DateItem(title, tr_date));
-            }
-        } finally {
-            cursor.close();
+        for (TrainingStamp stamp : tr_stamps) {
+            Date date = stamp.getStartDate();
+            boolean isSameDayExist = isSameDay(stamp, tr_stamps);
+            String title = (isSameDayExist) ? SDF_DATETIME.format(date) : SDF_DATE.format(date);
+            items.add(new DateItem(title, date));
         }
         return items;
     }
 
+    private boolean isSameDay(TrainingStamp stamp, List<TrainingStamp> tr_stamps) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(stamp.getStartDate());
+        int tr_day = calendar.get(Calendar.DAY_OF_YEAR);
+        int tr_year = calendar.get(Calendar.YEAR);
+        for (TrainingStamp s : tr_stamps) {
+            if (!s.getId().equals(stamp.getId())) {
+                calendar.setTime(s.getStartDate());
+                int cur_day = calendar.get(Calendar.DAY_OF_YEAR);
+                int cur_year = calendar.get(Calendar.YEAR);
+                if ((cur_day == tr_day) && (cur_year == tr_year)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean isSameDay(Date tr_date, List<Long> checkList) {
         Calendar calendarCurrent = Calendar.getInstance();
-        Log.d(Consts.LOG_TAG, "tr_date: " + SDF_DATETIME.format(tr_date));
+        Log.d(Const.LOG_TAG, "tr_date: " + SDF_DATETIME.format(tr_date));
         calendarCurrent.setTime(tr_date);
         int tr_day = calendarCurrent.get(Calendar.DAY_OF_YEAR);
         int tr_year = calendarCurrent.get(Calendar.YEAR);
@@ -203,33 +213,26 @@ public class HistoryMainActivity extends ActionBarActivity {
     }
 
     private void loadExerciseList() {
-        Cursor ex_cursor = dbHelper.READ.getExercisesForHistory();
-        Log.d(Consts.LOG_TAG, "Exercises.count: " + ex_cursor.getCount());
-        ArrayList<?> itemArrayList = exerciseCursorToItemArray(ex_cursor);
+        List<Exercise> exerciseList = dbHelper.READ.getExercisesForHistory();
+        Log.d(Const.LOG_TAG, "Exercises.count: " + exerciseList.size());
+        ArrayList<?> itemArrayList = exerciseCursorToItemArray(exerciseList);
         exerciseHistoryAdapter = new CustomItemAdapter(HistoryMainActivity.this, itemArrayList);
         exerciseHistoryList.setAdapter(exerciseHistoryAdapter);
     }
 
-    private ArrayList<Item> exerciseCursorToItemArray(Cursor cursor) {
+    private ArrayList<Item> exerciseCursorToItemArray(List<Exercise> exerciseList) {
         ArrayList<Item> items = new ArrayList<Item>();
-        try {
-            while (cursor.moveToNext()) {
-                String ex_name = cursor.getString(cursor.getColumnIndex("ex_name"));
-                String icon = cursor.getString(cursor.getColumnIndex("icon"));
-                Long ex_id = cursor.getLong(cursor.getColumnIndex("ex_id"));
-                Log.d(Consts.LOG_TAG, "ex_name: " + ex_name);
-                items.add(new ExerciseItem(ex_name, icon, ex_id));
-            }
-        } finally {
-            cursor.close();
+        for (Exercise ex : exerciseList) {
+            Log.d(Const.LOG_TAG, "ex: " + ex);
+            items.add(new ExerciseItem(ex.getName(), ex.getType().getIcon().name(), ex.getId()));
         }
         return items;
     }
 
     private void openExerciseHistoryDetails(long ex_id) {
         Intent intentOpenHistoryDetails = new Intent(this, HistoryDetailActivity.class);
-        intentOpenHistoryDetails.putExtra(Consts.EXERCISE_ID, ex_id);
-        intentOpenHistoryDetails.putExtra(Consts.HISTORY_TYPE, Consts.EXERCISE_TYPE);
+        intentOpenHistoryDetails.putExtra(Const.EXERCISE_ID, ex_id);
+        intentOpenHistoryDetails.putExtra(Const.HISTORY_TYPE, Const.EXERCISE_TYPE);
         startActivity(intentOpenHistoryDetails);
     }
 

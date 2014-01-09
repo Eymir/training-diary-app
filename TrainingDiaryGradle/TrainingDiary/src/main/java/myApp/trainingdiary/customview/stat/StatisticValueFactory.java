@@ -6,16 +6,13 @@ import android.util.Log;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import myApp.trainingdiary.AndroidApplication;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
-import myApp.trainingdiary.db.entity.Measure;
-import myApp.trainingdiary.db.entity.TrainingStat;
-import myApp.trainingdiary.utils.Consts;
-import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.db.entity.TrainingStamp;
+import myApp.trainingdiary.utils.Const;
 
 /**
  * Created by Lenovo on 22.10.13.
@@ -27,49 +24,44 @@ public class StatisticValueFactory {
             switch (stat) {
                 case LAST_TRAINING_DATE: {
                     DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-                    TrainingStat tr_stat = DBHelper.getInstance(null).READ.getLastTrainingStat();
+                    TrainingStamp tr_stamp = DBHelper.getInstance(null).READ.getLastClosedTrainingStamp();
                     String value;
-                    if (tr_stat != null)
-                        value = df.format(tr_stat.getTrainingDate());
+                    if (tr_stamp != null)
+                        value = df.format(tr_stamp.getEndDate());
                     else
                         value = AndroidApplication.getInstance().getResources().getString(R.string.empty);
                     return new StatItem(stat, value);
                 }
                 case LAST_TRAINING_DAY_COUNT: {
-                    TrainingStat tr_stat = DBHelper.getInstance(null).READ.getLastTrainingStat();
+                    TrainingStamp tr_stamp = DBHelper.getInstance(null).READ.getLastClosedTrainingStamp();
                     String value;
-                    if (tr_stat != null)
-                        value = toTimeString(System.currentTimeMillis() - tr_stat.getTrainingDate().getTime());
+                    if (tr_stamp != null)
+                        value = toTimeString(System.currentTimeMillis()
+                                - ((tr_stamp.getEndDate() != null) ? tr_stamp.getEndDate().getTime() : tr_stamp.getStartDate().getTime()));
                     else
                         value = AndroidApplication.getInstance().getResources().getString(R.string.empty);
                     return new StatItem(stat, value);
                 }
                 case TRAINING_COUNT:
-                    return new StatItem(stat, String.valueOf(DBHelper.getInstance(null).READ.getTrainingCount()));
+                    return new StatItem(stat, String.valueOf(DBHelper.getInstance(null).READ.getTrainingStampCount()));
                 case FAVORITE_EXERCISE: {
                     Exercise ex = DBHelper.getInstance(null).READ.getFavoriteExercise();
                     String name = (ex != null) ? ex.getName() : AndroidApplication.getInstance().getResources().getString(R.string.no);
                     return new StatItem(stat, name);
                 }
                 case TRAINING_DURATION_SUMM: {
+                    Log.i(Const.LOG_TAG, "TRAINING_DURATION_SUMM " );
                     long tr_dur_sum = DBHelper.getInstance(null).READ.getTrainingDurationSumm();
+                    Log.i(Const.LOG_TAG, "TRAINING_DURATION_SUMM/tr_dur_sum: " + tr_dur_sum);
                     String value = toTimeString(tr_dur_sum);
+                    Log.i(Const.LOG_TAG, "TRAINING_DURATION_SUMM/value: " + value);
                     return new StatItem(stat, value);
                 }
                 case MAX_RESULT_IN_FAVORTE_EX: {
                     Exercise exercise = DBHelper.getInstance(null).READ.getFavoriteExercise();
                     String value = null;
                     if (exercise != null) {
-                        List<TrainingStat> stats = DBHelper.getInstance(null).READ.getTrainingStatForLastPeriodByExercise(exercise.getId(), System.currentTimeMillis());
-                        double cur_max = 0;
-                        String result = "0";
-                        for (TrainingStat tr_stat : stats) {
-                            double firstValue = MeasureFormatter.getValueByPos(tr_stat.getValue(), 0);
-                            if (firstValue > cur_max) {
-                                cur_max = firstValue;
-                                result = tr_stat.getValue();
-                            }
-                        }
+                        Double result = DBHelper.getInstance(null).READ.getMaxExerciseResultByPos(exercise.getId(), 0);
                         value = exercise.getName() + "(" + result + ")";
                     } else {
                         value = AndroidApplication.getInstance().getResources().getString(R.string.empty);
@@ -80,7 +72,7 @@ public class StatisticValueFactory {
                     return new StatItem(stat, AndroidApplication.getInstance().getResources().getString(R.string.not_found));
             }
         } catch (Throwable e) {
-            Log.e(Consts.LOG_TAG, "Error while parse value for " + stat, e);
+            Log.e(Const.LOG_TAG, "Error while parse value for " + stat, e);
             return new StatItem(stat, AndroidApplication.getInstance().getResources().getString(R.string.error));
         }
     }

@@ -1,6 +1,6 @@
 package myApp.trainingdiary.utils;
 
-public class Consts {
+public class Const {
 
     //����� �����
     public final static String LOG_TAG = "adhoc";
