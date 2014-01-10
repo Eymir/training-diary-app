@@ -52,14 +52,14 @@ public class BackupManager {
                 Log.d(Const.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath() + " backupDB: " + backupDB.getAbsolutePath());
                 Log.d(Const.LOG_TAG, "currentDB.exists: " + currentDB.exists());
                 if (currentDB.exists()) {
-                    Log.d(Const.LOG_TAG, "DB.name: " + DBHelper.getInstance(null).getDatabaseName() + " DB.version: " + DBHelper.getInstance(null).getVersion());
+                    //Log.d(Const.LOG_TAG, "DB.name: " + DBHelper.getInstance(null).getDatabaseName() + " DB.version: " + DBHelper.getInstance(null).getVersion());
                     DBHelper.getInstance(null).close();
                     FileChannel src = new FileInputStream(backupDB).getChannel();
                     FileChannel dst = new FileOutputStream(currentDB).getChannel();
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
-                    Log.d(Const.LOG_TAG, "DB.name: " + DBHelper.getInstance(null).getDatabaseName() + " DB.version: " + DBHelper.getInstance(null).getVersion());
+                    //Log.d(Const.LOG_TAG, "DB.name: " + DBHelper.getInstance(null).getDatabaseName() + " DB.version: " + DBHelper.getInstance(null).getVersion());
                 }
             }
         } catch (Exception e) {
