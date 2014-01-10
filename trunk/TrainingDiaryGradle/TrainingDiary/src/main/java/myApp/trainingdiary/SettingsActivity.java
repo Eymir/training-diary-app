@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import myApp.trainingdiary.calculators.MaxWeightCalculatorActivity;
+import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.BackupManager;
@@ -161,6 +162,16 @@ public class SettingsActivity extends PreferenceActivity {
         percent.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
 
+                return false;
+            }
+        });
+
+        Preference cal = findPreference("cal");
+        assert cal !=null;
+        cal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                Intent calActivity = new Intent(context, CalendarActivity.class);
+                startActivity(calActivity);
                 return false;
             }
         });

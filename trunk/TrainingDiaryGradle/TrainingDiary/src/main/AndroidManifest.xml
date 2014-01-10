@@ -62,6 +62,10 @@
             android:name="myApp.trainingdiary.calculators.MaxWeightCalculatorActivity"
             android:label="@string/title_activity_max_weight_calculator" >
         </activity>
+        <activity
+            android:name="myApp.trainingdiary.calendar.CalendarActivity"
+            android:label="@string/title_activity_calendar" >
+        </activity>
     </application>
 
 </manifest>
