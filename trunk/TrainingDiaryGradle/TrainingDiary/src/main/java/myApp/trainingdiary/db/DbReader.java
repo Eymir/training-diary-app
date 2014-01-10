@@ -161,13 +161,21 @@ public class DbReader {
 
     public List<TrainingStamp> getTrainingStampInInterval(long startDate, long endDate) {
         List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
-        String sqlQuery = "select tr_stamp.* " +
-                "from TrainingStamp tr_stamp " +
-                "where tr_stamp.start_date >= ? and tr_stamp.start_date <= ? " +
-                "order by tr_stamp.id asc, tr_set.date asc ";
+
+//        String sqlQuery = "select tr_stamp.* " +
+//                "from TrainingStamp tr_stamp " +
+//                "where tr_stamp.start_date >= ? and tr_stamp.start_date <= ? " +
+//                "order by tr_stamp.id asc, tr_set.date asc ";
+//      SQLiteDatabase db = dbHelper.getReadableDatabase();
+//      Cursor c = db
+//                .rawQuery(sqlQuery, new String[]{String.valueOf(startDate), String.valueOf(endDate)});
+
+        String table = "TrainingStamp";
+        String selection = "start_date >= ? and start_date <= ? ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(startDate), String.valueOf(endDate)});
+        String[] selectionArgs = {String.valueOf(startDate), String.valueOf(endDate)};
+        Cursor c = db.query(table, null, selection, selectionArgs, null, null, null);
+
         try {
             while (c.moveToNext()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
@@ -194,13 +202,21 @@ public class DbReader {
      */
     public List<TrainingStamp> getTrainingStampInIntervalWithTrainingSet(long startDate, long endDate) {
         List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
-        String sqlQuery = "select tr_stamp.* " +
-                "from TrainingStamp tr_stamp " +
-                "where tr_stamp.start_date >= ? and tr_stamp.start_date <= ? " +
-                "order by tr_stamp.id asc, tr_set.date asc ";
+
+//        String sqlQuery = "select tr_stamp.* " +
+//                "from TrainingStamp tr_stamp " +
+//                "where tr_stamp.start_date >= ? and tr_stamp.start_date <= ? " +
+//                "order by tr_stamp.id asc, tr_set.date asc ";
+//        SQLiteDatabase db = dbHelper.getReadableDatabase();
+//        Cursor c = db
+//                .rawQuery(sqlQuery, new String[]{String.valueOf(startDate), String.valueOf(endDate)});
+
+        String table = "TrainingStamp";
+        String selection = "start_date >= ? and start_date <= ? ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(startDate), String.valueOf(endDate)});
+        String[] selectionArgs = {String.valueOf(startDate), String.valueOf(endDate)};
+        Cursor c = db.query(table, null, selection, selectionArgs, null, null, null);
+
         try {
             while (c.moveToNext()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
@@ -221,8 +237,8 @@ public class DbReader {
 
     /**
      * Возвращает список фактов тренировок за определенный интервал с подходами, коллекция может быть довольно тяжелая
-     * @param startDate начало интервала (абсолютное время в миллисекундах)
-     * @param endDate конец интервала (абсолютное время в миллисекундах)
+     //* @param startDate начало интервала (абсолютное время в миллисекундах)
+     //* @param endDate конец интервала (абсолютное время в миллисекундах)
      * @return список фактов тренировок с подходами
      */
     private List<TrainingSet> getTrainingSetsInTrainingStampByExercise(SQLiteDatabase db, long ex_id, Long tr_stamp_id) {
