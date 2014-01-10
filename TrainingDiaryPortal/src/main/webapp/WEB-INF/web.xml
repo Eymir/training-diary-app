@@ -45,7 +45,7 @@
             /WEB-INF/spring/app-context.xml,
             /WEB-INF/spring/spring-security.xml,
             /WEB-INF/mvc-dispatcher-servlet.xml
-            /spring/db-context.xml
+            <!--/spring/test-db-context.xml-->
 
         </param-value>
     </context-param>
