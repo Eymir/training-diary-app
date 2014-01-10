@@ -35,6 +35,10 @@
                 android:title="@string/utilPercentTitle"
                 android:summary="@string/utilPercentSummary">
             </Preference>
+            <Preference
+                android:key="cal"
+                android:title="calendar">
+            </Preference>
         </PreferenceScreen>
     </PreferenceCategory>
 
