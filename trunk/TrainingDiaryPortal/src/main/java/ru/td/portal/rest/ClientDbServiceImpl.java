@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import ru.td.portal.domain.UserData;
+import ru.td.portal.service.FolderGeneratorService;
 
 import java.io.*;
 
@@ -18,25 +19,35 @@ import java.io.*;
  * To change this template use File | Settings | File Templates.
  */
 public class ClientDbServiceImpl implements ClientDbService {
-    String basePath;
+    FolderGeneratorService folderGeneratorService;
 
     @Override
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public
     @ResponseBody
     String uploadClientDb(@RequestParam("userData") UserData userData, @RequestParam("file") byte[] file) {
-//        FileOutputStream fos = new FileOutputStream(new File(userData.getGoogleAuthToken()+"_db"));
-//            IOUtils.write(file,fos);
-        return "10";
+        String result = "";
+        String folderPath = folderGeneratorService.generateFolderPath(userData);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(new File(folderPath + "\\" + "sqlitedb"));
+            IOUtils.write(file, fos);
+            result = folderPath + "\\" + "sqlitedb";
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(fos);
+        }
+
+        return result;
 
     }
 
-
-    public String getBasePath() {
-        return basePath;
+    public FolderGeneratorService getFolderGeneratorService() {
+        return folderGeneratorService;
     }
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
+    public void setFolderGeneratorService(FolderGeneratorService folderGeneratorService) {
+        this.folderGeneratorService = folderGeneratorService;
     }
 }
