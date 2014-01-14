@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations =
-        "classpath:spring/test-db-context.xml")
+        "classpath:spring/test-context.xml")
 public class DatabaseTest {
 
 
