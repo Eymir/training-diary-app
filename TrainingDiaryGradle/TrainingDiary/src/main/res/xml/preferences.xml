@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     style="?backgroundRef">
-    <CheckBoxPreference
-        android:key="disable_sound"
-        android:title="@string/sound_switcher_title"
-        android:summary="@string/sound_switcher_summary"
-        android:defaultValue="false" />
+
+    <PreferenceCategory
+        android:key="settings"
+        android:title="@string/pref_cat_title_control">
+        <PreferenceScreen
+            android:key="app_settings_Screen"
+            android:summary="@string/pref_screen_settings_summary"
+            android:title="@string/pref_screen_settings_title">
+
+            <CheckBoxPreference
+                android:key="disable_sound"
+                android:title="@string/sound_switcher_title"
+                android:summary="@string/sound_switcher_summary"
+                android:defaultValue="false">
+            </CheckBoxPreference>
+
+            <CheckBoxPreference
+                android:key="keep_screen_on"
+                android:title="@string/pref_chb_keep_screen_title"
+                android:summary="@string/pref_chb_keep_screen_summ"
+                android:defaultValue="false">
+            </CheckBoxPreference>
+
+        </PreferenceScreen>
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="utils"
@@ -40,22 +60,22 @@
                 android:title="calendar">
             </Preference>
         </PreferenceScreen>
-    </PreferenceCategory>
 
-    <PreferenceCategory
-        android:key="backup_category"
-        android:summary="Description of category 3"
-        android:title="@string/backup_restore_category">
-        <Preference
-            android:key="backup"
-            android:title="@string/backup_title"
-            android:summary="@string/backup_summary"
-            android:icon="@drawable/action_backup_db" />
-        <Preference
-            android:key="restore"
-            android:title="@string/restore_title"
-            android:summary="@string/restore_summary"
-            android:icon="@drawable/action_restore_db" />
+        <PreferenceScreen
+            android:key="buckup_screen"
+            android:summary="@string/pref_screen_backup_title"
+            android:title="@string/pref_screen_backup_summary">
+            <Preference
+                android:key="backup"
+                android:title="@string/backup_title"
+                android:summary="@string/backup_summary"
+                android:icon="@drawable/action_backup_db" />
+            <Preference
+                android:key="restore"
+                android:title="@string/restore_title"
+                android:summary="@string/restore_summary"
+                android:icon="@drawable/action_restore_db" />
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory
