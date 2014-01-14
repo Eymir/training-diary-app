@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.customview.stat.StatItem;
 import myApp.trainingdiary.customview.stat.StatItemArrayAdapter;
 import myApp.trainingdiary.customview.stat.StatisticEnum;
@@ -135,9 +136,13 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
                 Intent intentAddEx = new Intent(SuperMainActivity.this, AddExerciseActivity.class);
                 startActivity(intentAddEx);
                 break;
+//            case R.id.history_main_button:
+//                Intent intentHist = new Intent(SuperMainActivity.this, HistoryMainActivity.class);
+//                startActivity(intentHist);
+//                break;
             case R.id.history_main_button:
-                Intent intentHist = new Intent(SuperMainActivity.this, HistoryMainActivity.class);
-                startActivity(intentHist);
+                Intent intentHistCalendar = new Intent(SuperMainActivity.this, CalendarActivity.class);
+                startActivity(intentHistCalendar);
                 break;
             case R.id.stat_main_button:
                 Intent intentStat = new Intent(SuperMainActivity.this, StatisticActivity.class);
