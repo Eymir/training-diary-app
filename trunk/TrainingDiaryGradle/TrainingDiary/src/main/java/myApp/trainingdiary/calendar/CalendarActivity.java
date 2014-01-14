@@ -12,6 +12,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.roomorama.caldroid.CaldroidFragment;
@@ -23,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import myApp.trainingdiary.R;
+import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.TrainingStamp;
 import myApp.trainingdiary.history.HistoryDetailActivity;
@@ -155,6 +159,27 @@ public class CalendarActivity extends ActionBarActivity {
             caldroidFragment.saveStatesToKey(outState, "CALDROID_SAVED_STATE");
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actsettings_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intentStat = new Intent(this, SettingsActivity.class);
+                startActivity(intentStat);
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return true;
     }
 
 }
