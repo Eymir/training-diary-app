@@ -41,10 +41,12 @@
             android:name="myApp.trainingdiary.statistic.StatisticActivity"
             android:label="@string/title_activity_statistic" >
         </activity>
+
         <activity
             android:name="myApp.trainingdiary.history.HistoryMainActivity"
             android:label="@string/title_activity_history_main_acrivity" >
         </activity>
+
         <activity
             android:name="myApp.trainingdiary.SuperMainActivity"
             android:label="@string/title_activity_super_main" >
@@ -64,7 +66,7 @@
         </activity>
         <activity
             android:name="myApp.trainingdiary.calendar.CalendarActivity"
-            android:label="@string/title_activity_calendar" >
+            android:label="@string/training_radio_button" >
         </activity>
     </application>
 
