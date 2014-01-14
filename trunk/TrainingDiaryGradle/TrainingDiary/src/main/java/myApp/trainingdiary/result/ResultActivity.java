@@ -2,6 +2,7 @@ package myApp.trainingdiary.result;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -94,7 +95,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("keep_screen_on", false))
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_result);
         resources = getResources();

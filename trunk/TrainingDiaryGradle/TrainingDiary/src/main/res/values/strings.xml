@@ -171,7 +171,19 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="stat_max">макс.</string>
     <string name="stat_min">мин.</string>
     <string name="stat_avg">сред.</string>
-    <string name="title_activity_calendar">CalendarActivity</string>
-
+    <!--Калькулятор максимальный вес-->
+    <string name="no_weight">Не указан вес</string>
+    <string name="no_repeat">Не указано количество повторов</string>
+    <string name="by_brizka">По формуле Брыжки:</string>
+    <string name="by_epli">По формуле Эйпли:</string>
+    <string name="by_lender">По формуле Лэндера:</string>
+    <!--Настройки из меню настроек-->
+    <string name="pref_cat_title_control">Управление</string>
+    <string name="pref_screen_settings_title">Настройки</string>
+    <string name="pref_screen_settings_summary">Изменение параметров приложения</string>
+    <string name="pref_chb_keep_screen_title">Удержание подсветки</string>
+    <string name="pref_chb_keep_screen_summ">Не даёт телефону выключить экран в режиме выполнения подходов</string>
+    <string name="pref_screen_backup_title">Резервное копирование</string>
+    <string name="pref_screen_backup_summary">Управление резервными копиями</string>
 
 </resources>

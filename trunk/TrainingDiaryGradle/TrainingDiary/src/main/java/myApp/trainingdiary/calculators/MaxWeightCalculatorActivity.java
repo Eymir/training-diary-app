@@ -28,16 +28,27 @@ public class MaxWeightCalculatorActivity extends ActionBarActivity {
     public void onPressCalculateButton(View view){
 
         EditText etWeight = (EditText)findViewById(R.id.et_maxweight_weight);
-        int weight = Integer.parseInt(etWeight.getText().toString());
         EditText etRepeat = (EditText)findViewById(R.id.et_maweight_repeat);
+
+        if(etWeight.getText().length() == 0){
+            Toast.makeText(this, R.string.no_weight, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(etRepeat.getText().length() == 0){
+            Toast.makeText(this, R.string.no_repeat, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int weight = Integer.parseInt(etWeight.getText().toString());
         int repeat = Integer.parseInt(etRepeat.getText().toString());
 
         if(weight <= 0){
-            Toast.makeText(this, "Не указан вес.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_weight, Toast.LENGTH_SHORT).show();
             return;
         }
         if(repeat <= 0){
-            Toast.makeText(this, "Не указано количество повторов.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_repeat, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -58,9 +69,9 @@ public class MaxWeightCalculatorActivity extends ActionBarActivity {
         int maxLender = (int) (weight/(1.013-0.0267123*repeat));
 
         TextView tvResult = (TextView)findViewById(R.id.tv_maxweight_result);
-        String result = "По формуле Брыжки: "+maxBrijka+"\n"+
-                "По формуле Эйпли: "+maxEpli+"\n"+
-                "По формуле Лэндера: "+maxLender;
+        String result = R.string.by_brizka+" "+maxBrijka+"\n"+
+                R.string.by_epli+" "+maxEpli+"\n"+
+                R.string.by_lender+" "+maxLender;
         tvResult.setText(result);
 
     }
