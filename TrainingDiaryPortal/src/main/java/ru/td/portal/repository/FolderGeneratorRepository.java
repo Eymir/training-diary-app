@@ -18,8 +18,7 @@ public class FolderGeneratorRepository {
 
     public void incrementCount() {
         String sql = "UPDATE FolderGenerator SET counter=?";
-        int newCount = getCount() + 1;
-        jdbcTemplate.update(sql, new Object[]{newCount});
+        jdbcTemplate.update(sql, new Object[]{getCount() + 1});
     }
 
     public JdbcTemplate getJdbcTemplate() {

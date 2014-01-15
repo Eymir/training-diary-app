@@ -9,7 +9,6 @@
     <mvc:annotation-driven/>
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-
     <bean id="folderGeneratorRepository" class="ru.td.portal.repository.FolderGeneratorRepository">
         <property name="jdbcTemplate" ref="centralDbJdbcTemplate"/>
     </bean>
@@ -17,5 +16,10 @@
         <property name="baseFolderPath" value="F:\tests\TDP"/>
         <property name="folderGeneratorRepository" ref="folderGeneratorRepository"/>
         <property name="maxFileInFolder" value="500"/>
+    </bean>
+
+    <bean id="clientDbService" class="ru.td.portal.controller.UploadDbRestController">
+        <property name="folderGeneratorService" ref="folderGeneratorService"/>
+        <property name="userDataRepository" ref="userDataRepository"/>
     </bean>
 </beans>
