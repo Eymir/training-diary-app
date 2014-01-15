@@ -1,1 +1,1 @@
-CREATE TABLE FolderGenerator (counter integer);
+INSERT INTO FolderGenerator VALUES(1);

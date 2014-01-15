@@ -15,6 +15,10 @@
         <property name="dataSource" ref="centralDbDataSource"></property>
     </bean>
 
+    <bean id="userDataRepository" class="ru.td.portal.repository.UserDataRepository">
+        <property name="jdbcTemplate" ref="centralDbJdbcTemplate"/>
+    </bean>
+
 
 
 

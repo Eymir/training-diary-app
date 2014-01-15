@@ -1,5 +1,6 @@
 package ru.td.portal.service;
 
+import org.apache.commons.io.IOUtils;
 import ru.td.portal.domain.UserData;
 import ru.td.portal.repository.FolderGeneratorRepository;
 
@@ -21,18 +22,18 @@ public class FolderGeneratorService {
 
     public String generateFolderPath(UserData userData) {
         int folderIndex = folderGeneratorRepository.getCount();
-        File dir = new File(baseFolderPath + "\\" + folderIndex);
+        File dir = new File(baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex);
         createFolderIfNotExist(dir);
 
         if (dir.listFiles().length < maxFileInFolder) {
-            createFolderIfNotExist(new File(baseFolderPath + "\\" + folderIndex + "\\" + userData.getGoogleAuthToken()));
-            return baseFolderPath + "\\" + folderIndex + "\\" + userData.getGoogleAuthToken();
+            createFolderIfNotExist(new File(baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId()));
+            return baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId();
         } else {
 
             folderGeneratorRepository.incrementCount();
             folderIndex = folderGeneratorRepository.getCount();
-            createFolderIfNotExist(new File(baseFolderPath + "\\" + folderIndex + "\\" + userData.getGoogleAuthToken()));
-            return baseFolderPath + "\\" + folderIndex + "\\" + userData.getGoogleAuthToken();
+            createFolderIfNotExist(new File(baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId()));
+            return baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId();
 
         }
     }
