@@ -18,7 +18,7 @@
         <property name="maxFileInFolder" value="500"/>
     </bean>
 
-    <bean id="clientDbService" class="ru.td.portal.controller.UploadDbRestController">
+    <bean id="uploadDbRestController" class="ru.td.portal.controller.UploadDbRestController">
         <property name="folderGeneratorService" ref="folderGeneratorService"/>
         <property name="userDataRepository" ref="userDataRepository"/>
     </bean>
