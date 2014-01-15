@@ -43,9 +43,10 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/spring/app-context.xml,
+            /WEB-INF/spring/db-context.xml
             /WEB-INF/spring/spring-security.xml,
             /WEB-INF/mvc-dispatcher-servlet.xml
-            <!--/spring/test-db-context.xml-->
+
 
         </param-value>
     </context-param>

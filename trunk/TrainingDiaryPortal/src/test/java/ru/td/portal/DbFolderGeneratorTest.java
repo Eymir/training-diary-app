@@ -44,15 +44,15 @@ public class DbFolderGeneratorTest {
 
      //Для теста в папке с номером может быть максимум две папки
      UserData userData = new UserData();
-     userData.setGoogleAuthToken("user1");
+     userData.setRegistrationId("user1");
      assertTrue(folderGeneratorService.generateFolderPath(userData).equals(folderGeneratorService.getBaseFolderPath()+"\\1\\user1"));
 
      userData = new UserData();
-     userData.setGoogleAuthToken("user2");
+     userData.setRegistrationId("user2");
      assertTrue(folderGeneratorService.generateFolderPath(userData).equals(folderGeneratorService.getBaseFolderPath()+"\\1\\user2"));
 
      userData = new UserData();
-     userData.setGoogleAuthToken("user3");
+     userData.setRegistrationId("user3");
      assertTrue(folderGeneratorService.generateFolderPath(userData).equals(folderGeneratorService.getBaseFolderPath()+"\\2\\user3"));
     }
 }

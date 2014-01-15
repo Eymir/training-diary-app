@@ -1,5 +1,7 @@
 package ru.td.portal.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Created with IntelliJ IDEA.
  * User: vkoba_000
@@ -9,13 +11,14 @@ package ru.td.portal.domain;
  */
 
 
-
+@XmlRootElement
 public class UserData {
     private int id;
-    String registrationId;
-    String registrationChannel;
-    String email;
-    String dbPath;
+    private byte[] db;
+    private String registrationId;
+    private String registrationChannel;
+    private String email;
+    private String dbPath;
 
     public int getId() {
         return id;
@@ -55,5 +58,13 @@ public class UserData {
 
     public void setDbPath(String dbPath) {
         this.dbPath = dbPath;
+    }
+
+    public byte[] getDb() {
+        return db;
+    }
+
+    public void setDb(byte[] db) {
+        this.db = db;
     }
 }
