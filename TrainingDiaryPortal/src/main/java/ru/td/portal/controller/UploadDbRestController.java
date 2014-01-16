@@ -5,18 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import ru.td.portal.domain.UserData;
 import ru.td.portal.repository.UserDataRepository;
 import ru.td.portal.service.FolderGeneratorService;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 
 import java.io.File;
@@ -46,7 +40,7 @@ public class UploadDbRestController {
         try {
             fos = new FileOutputStream(new File(dbPath));
             IOUtils.write(userData.getDb(), fos);
-            userDataRepository.addUserData(userData);
+            userDataRepository.saveUserData(userData);
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
             return "ERROR";
