@@ -1,17 +1,11 @@
 package myApp.trainingdiary.calendar;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +14,6 @@ import android.view.View;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +37,9 @@ public class CalendarActivity extends ActionBarActivity {
     private void setCustomResourceForDates(int month, int year){
 
         Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR);
+        int currentMonth = cal.get(Calendar.MONTH);
+        int currentDay = cal.get(Calendar.DAY_OF_MONTH);
         cal.clear();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month-1);
@@ -61,10 +57,20 @@ public class CalendarActivity extends ActionBarActivity {
         if (caldroidFragment != null) {
             for (TrainingStamp tr : stamps){
                 Date trainingDate = tr.getStartDate();
-                caldroidFragment.setBackgroundResourceForDate(R.color.green,
-                        trainingDate);
-                caldroidFragment.setTextColorForDate(R.color.white, trainingDate);
 
+                Calendar c = Calendar.getInstance();
+                c.setTime(trainingDate);
+
+                if(currentYear == c.get(Calendar.YEAR) && currentMonth == c.get(Calendar.MONTH)
+                        && currentDay == c.get(Calendar.DAY_OF_MONTH)){
+                    caldroidFragment.setBackgroundResourceForDate(R.drawable.calendar_cell_red_border,
+                            trainingDate);
+                    caldroidFragment.setTextColorForDate(R.color.white, trainingDate);
+                }
+                else {
+                caldroidFragment.setBackgroundResourceForDate(R.color.green,trainingDate);
+                caldroidFragment.setTextColorForDate(R.color.white, trainingDate);
+                }
             }
         }
     }
