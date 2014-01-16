@@ -21,6 +21,7 @@ import myApp.trainingdiary.utils.TrainingDurationManger;
 
 public final class ResultFragment extends Fragment {
     private Exercise exercise;
+    private static final String KEY_EXERCISE = "ResultFragment:exercise";
 
     public static ResultFragment newInstance(Exercise content) {
         ResultFragment fragment = new ResultFragment();
@@ -48,7 +49,10 @@ public final class ResultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if ((savedInstanceState != null)) {
+            if (savedInstanceState.containsKey(KEY_EXERCISE))
+                exercise = (Exercise) savedInstanceState.getSerializable(KEY_EXERCISE);
+        }
     }
 
     @Override
@@ -77,5 +81,6 @@ public final class ResultFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_EXERCISE, exercise);
     }
 }

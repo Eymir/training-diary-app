@@ -1267,12 +1267,12 @@ public class DbReader {
 
     }
 
-    public Long getExercisePositionInTraining(long ex_id) {
+    public Long getExercisePositionInTraining(long ex_id, long tr_id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sqlQuery = "select t.position as pos from ExerciseInTraining t where t.exercise_id = ?";
+        String sqlQuery = "select t.position as pos from ExerciseInTraining t where t.exercise_id = ? and t.training_id = ?";
         Cursor c = null;
         try {
-            c = db.rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+            c = db.rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_id)});
             c.moveToFirst();
             Long pos = c.getLong(c.getColumnIndex("pos"));
             return pos;

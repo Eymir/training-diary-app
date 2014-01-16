@@ -2,7 +2,6 @@ package myApp.trainingdiary.result;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -17,7 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -27,20 +25,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.roomorama.caldroid.CaldroidFragment;
 import com.viewpagerindicator.TitlePageIndicator;
 
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
@@ -96,7 +87,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("keep_screen_on", false))
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("keep_screen_on", false))
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_result);
@@ -119,8 +110,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         mPager.setAdapter(mAdapter);
         TitlePageIndicator mIndicator = (TitlePageIndicator) findViewById(R.id.result_indicator);
         mIndicator.setViewPager(mPager);
-        Long ex_pos = dbHelper.READ.getExercisePositionInTraining(ex_id);
+        Long ex_pos = dbHelper.READ.getExercisePositionInTraining(ex_id, tr_id);
         mPager.setCurrentItem(ex_pos.intValue());
+        Log.d(Const.LOG_TAG, "exercise.ex: " + dbHelper.READ.getExerciseById(ex_id).getName() + " ex_pos: " + ex_pos + " tr_id: " + tr_id);
         curResultFragment = (ResultFragment) mAdapter.getItem(ex_pos.intValue());
         WheelFragment wheelFragment = getWheelFragmentByExId(ex_id);
         attachWheelFragment(wheelFragment);
@@ -135,7 +127,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 attachWheelFragment(wheelFragment);
             }
         });
-
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
@@ -158,8 +149,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             //Log.d("My", "currentTime getted ok" );
             resume = true;
             chronometerStart();
-        }
-        else {
+        } else {
             if (last_set != null) {
                 chronometerReset();
                 chronometerStart();
@@ -360,12 +350,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         mChrono.stop();
         if (reset) {
             mChrono.setText("00:00");
-            if(timerText != null)
+            if (timerText != null)
                 timerText.setText("00:00");
             resume = false;
         } else {
             mChrono.setText(currentTime);
-            if(timerText != null)
+            if (timerText != null)
                 timerText.setText(currentTime);
             resume = true;
         }
@@ -374,7 +364,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private void chronometerReset() {
         mChrono.stop();
         mChrono.setText("00:00");
-        if(timerText != null)
+        if (timerText != null)
             timerText.setText("00:00");
         resume = false;
         reset = true;
@@ -398,7 +388,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                         sec = "" + seconds;
                     currentTime = min + ":" + sec;
                     arg0.setText(currentTime);
-                    if(timerText != null)
+                    if (timerText != null)
                         timerText.setText(currentTime);
                     elapsedTime = SystemClock.elapsedRealtime();
                 } else {
@@ -416,7 +406,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                         sec = "" + seconds;
                     currentTime = min + ":" + sec;
                     arg0.setText(currentTime);
-                    if(timerText != null)
+                    if (timerText != null)
                         timerText.setText(currentTime);
                     elapsedTime = elapsedTime + 1000;
                 }
@@ -427,7 +417,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-            outState.putString("currentTime", currentTime);
-            outState.putLong("elapsedTime",elapsedTime);
+        outState.putString("currentTime", currentTime);
+        outState.putLong("elapsedTime", elapsedTime);
     }
 }
