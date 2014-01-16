@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/scrollView">
+
+    <TextView
+        android:id="@+id/cur_training_stats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="28sp"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+</ScrollView>

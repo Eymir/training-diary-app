@@ -9,6 +9,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -21,30 +22,23 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.viewpagerindicator.TitlePageIndicator;
 
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import kankan.wheel.widget.OnWheelChangedListener;
-import kankan.wheel.widget.WheelView;
-import kankan.wheel.widget.adapters.ArrayWheelAdapter;
-import kankan.wheel.widget.adapters.WheelViewAdapter;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
-import myApp.trainingdiary.customview.NumericRightOrderWheelAdapter;
-import myApp.trainingdiary.customview.StringRightOrderWheelAdapter;
 import myApp.trainingdiary.db.DBHelper;
-import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.TrainingSet;
 import myApp.trainingdiary.db.entity.TrainingSetValue;
 import myApp.trainingdiary.dialog.DialogProvider;
@@ -76,10 +70,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private AudioManager audioManager;
     private long ex_id;
     private long tr_id;
-    private List<MeasureWheels> measureWheelsList = new ArrayList<MeasureWheels>();
+
     private AlertDialog undoDialog;
     private Resources resources;
-    private TextView training_stat_text;
 
     private Chronometer mChrono;
     private QuickAction exerciseActionTools;
@@ -89,7 +82,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private long startTime = SystemClock.elapsedRealtime();
     private boolean resume = false;
     private boolean reset = false;
-
+    private ResultFragmentAdapter mAdapter;
+    private ResultFragment curResultFragment;
+    private Map<Long, WheelFragment> wheelMap = new HashMap<Long, WheelFragment>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,31 +98,42 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
-
         mChrono = (Chronometer) findViewById(R.id.mChrono);
         setChronoTickListener();
 
         createExcerciseTools();
-
         dbHelper = dbHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Const.EXERCISE_ID);
         tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
         Log.d(Const.LOG_TAG, "ex_id:" + ex_id + " tr_id:" + tr_id);
 
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.measure_layout);
+        mAdapter = new ResultFragmentAdapter(getSupportFragmentManager(), tr_id);
+        ViewPager mPager = (ViewPager) findViewById(R.id.result_pager);
+        mPager.setAdapter(mAdapter);
+        TitlePageIndicator mIndicator = (TitlePageIndicator) findViewById(R.id.result_indicator);
+        mIndicator.setViewPager(mPager);
+        Long ex_pos = dbHelper.READ.getExercisePositionInTraining(ex_id);
+        mPager.setCurrentItem(ex_pos.intValue());
+        curResultFragment = (ResultFragment) mAdapter.getItem(ex_pos.intValue());
+        WheelFragment wheelFragment = getWheelFragmentByExId(ex_id);
+        attachWheelFragment(wheelFragment);
+        mIndicator.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                curResultFragment = (ResultFragment) mAdapter.getItem(position);
+                ex_id = curResultFragment.getExercise().getId();
+                Log.d(Const.LOG_TAG, "onPageSelected.ex: " + dbHelper.READ.getExerciseById(ex_id).getName());
+                WheelFragment wheelFragment = getWheelFragmentByExId(ex_id);
+                attachWheelFragment(wheelFragment);
+            }
+        });
 
-        List<Measure> measureList = dbHelper.READ.getMeasuresInExercise(ex_id);
-        for (Measure measure : measureList) {
-            MeasureWheels measureWheels = new MeasureWheels(measure);
-            linearLayout.addView(measureWheels.getView());
-            measureWheelsList.add(measureWheels);
-        }
+
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
         soundClick = soundPool.load(this, R.raw.click3, 1);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-
         Button writeButton = (Button) findViewById(R.id.write_button);
         writeButton.setOnClickListener(this);
         ImageButton undoButton = (ImageButton) findViewById(R.id.undo_button);
@@ -135,29 +141,33 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         Button historyButton = (Button) findViewById(R.id.history_result_button);
         historyButton.setOnClickListener(this);
 
-        TrainingSet tr_stat = dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id);
-        if (tr_stat != null)
-            setLastTrainingStatOnWheels(tr_stat);
         createUndoDialog();
-        setTitle(dbHelper.READ.getExerciseNameById(ex_id));
         Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
         TrainingSet last_set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp_id);
         if (last_set != null) {
             chronometerReset();
             chronometerStart();
         }
-        printCurrentTrainingProgress();
     }
 
-    private void setLastTrainingStatOnWheels(TrainingSet tr_stat) {
-        List<TrainingSetValue> values = tr_stat.getValues();
-        Log.d(Const.LOG_TAG, "setLastTrainingStatOnWheels:" + values);
-        for (int i = 0; i < measureWheelsList.size(); i++) {
-            MeasureWheels measureWheels = measureWheelsList.get(i);
-            TrainingSetValue measureValue = values.get(i);
-            measureWheels.setValue(measureValue.getValue());
-        }
+    private void attachWheelFragment(WheelFragment wheelFragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.measure_layout, wheelFragment)
+                .commit();
     }
+
+    private WheelFragment getWheelFragmentByExId(long ex_id) {
+        WheelFragment wheelFragment = null;
+        if (!wheelMap.containsKey(ex_id)) {
+            wheelFragment = WheelFragment.newInstance(dbHelper.READ.getExerciseById(ex_id), dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
+            wheelMap.put(ex_id, wheelFragment);
+        } else {
+            wheelFragment = wheelMap.get(ex_id);
+        }
+        return wheelFragment;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -176,7 +186,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
         }
         return true;
     }
@@ -189,11 +198,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         undoDialog = DialogProvider.createSimpleDialog(this, title, null, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
-                //TODO: иногда не пашет
                 Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
                 int deleted = dbHelper.WRITE.deleteLastTrainingSetInCurrentTrainingStamp(ex_id);
                 if (deleted > 0) {
-                    printCurrentTrainingProgress();
+                    curResultFragment.refreshView(ResultActivity.this);
+                    mAdapter.notifyDataSetChanged();
+                    wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
                     Toast.makeText(ResultActivity.this, R.string.deleted,
                             Toast.LENGTH_SHORT).show();
                 } else {
@@ -209,22 +219,24 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         });
     }
 
-    private void printCurrentTrainingProgress() {
-        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
-        List<TrainingSet> tr_stats = dbHelper.READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
-        Log.d(Const.LOG_TAG, "tr_stats:" + tr_stats);
-        String stats = formTrainingStats(tr_stats);
-        training_stat_text.setText(stats);
-    }
+//    private void printCurrentTrainingProgress() {
+//
+//        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+//        List<TrainingSet> tr_stats = dbHelper.READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
+//        Log.d(Const.LOG_TAG, "tr_stats:" + tr_stats);
+//        String stats = formTrainingStats(tr_stats);
+//        TextView training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
+//        training_stat_text.setText(stats);
+//    }
 
-    private String formTrainingStats(List<TrainingSet> sets) {
-        String result = "";
-        for (TrainingSet set : sets) {
-            result = MeasureFormatter.valueFormat(set) + "; " + result;
-        }
-        result += "\n" + getString(R.string.sum_approach) + " " + sets.size();
-        return result;
-    }
+//    private String formTrainingStats(List<TrainingSet> sets) {
+//        String result = "";
+//        for (TrainingSet set : sets) {
+//            result = MeasureFormatter.valueFormat(set) + "; " + result;
+//        }
+//        result += "\n" + getString(R.string.sum_approach) + " " + sets.size();
+//        return result;
+//    }
 
     private void playClick() {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("disable_sound", false)) {
@@ -242,7 +254,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         switch (arg0.getId()) {
             case R.id.write_button:
                 writeToDB();
-                printCurrentTrainingProgress();
+                curResultFragment.refreshView(ResultActivity.this);
+                mAdapter.notifyDataSetChanged();
+                wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
                 chronometerReset();
                 chronometerStart();
                 break;
@@ -288,208 +302,13 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private List<TrainingSetValue> getTrainingSetValues() {
         List<TrainingSetValue> trainingSetValues = new ArrayList<TrainingSetValue>();
         long i = 0;
-        for (MeasureWheels measureWheels : measureWheelsList) {
+        for (MeasureWheels measureWheels : wheelMap.get(ex_id).getMeasureWheelsList()) {
             TrainingSetValue trainingSetValue = new TrainingSetValue(null, null,
                     MeasureFormatter.getDoubleValue(measureWheels.getStringValue(), measureWheels.getMeasure()), i);
             trainingSetValues.add(trainingSetValue);
             i++;
         }
         return trainingSetValues;
-    }
-
-    private class MeasureWheel {
-        public WheelView wheelView;
-        public WheelViewAdapter wheelAdapter;
-    }
-
-    private class MeasureWheels {
-        private Measure measure;
-        private List<MeasureWheel> measureWheelList;
-        private LinearLayout mainLayout;
-
-        private MeasureWheels(Measure measure) {
-            this.measure = measure;
-            measureWheelList = new ArrayList<MeasureWheel>();
-            mainLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.wheel_column, null);
-            LinearLayout wheelLayout = (LinearLayout) mainLayout.findViewById(R.id.wheel_layout);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, 1F);
-            wheelLayout.setLayoutParams(params);
-            TextView textView = (TextView) mainLayout.findViewById(R.id.label);
-            textView.setText(measure.getName() + ":");
-            switch (measure.getType()) {
-                case Numeric:
-                    MeasureWheel measureWheel = createNumWheel(measure.getMax(), measure.getStep(), false);
-                    wheelLayout.addView(measureWheel.wheelView);
-                    measureWheelList.add(measureWheel);
-                    if (measure.getStep() < 1) {
-                        MeasureWheel measureTailWheel = createTailWheel(measure.getStep());
-                        measureWheelList.add(measureTailWheel);
-                        wheelLayout.addView(measureTailWheel.wheelView);
-                    }
-                    break;
-                case Temporal:
-                    for (int i = measure.getMax(); i >= measure.getStep().intValue(); i--) {
-                        MeasureWheel measureTimeWheel = null;
-                        switch (i) {
-                            case 0:
-                                measureTimeWheel = createNumWheel(999, 1d, true);
-                                break;
-                            case 1:
-                                measureTimeWheel = createNumWheel(59, 1d, true);
-                                break;
-                            case 2:
-                                measureTimeWheel = createNumWheel(59, 1d, true);
-                                break;
-                            case 3:
-                                measureTimeWheel = createNumWheel(23, 1d, true);
-                                break;
-
-                        }
-                        measureWheelList.add(measureTimeWheel);
-                        wheelLayout.addView(measureTimeWheel.wheelView);
-                    }
-                    break;
-            }
-            float weight = 1F / measureWheelList.size();
-            LinearLayout.LayoutParams main_params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, weight);
-            main_params.setMargins(10, 0, 10, 0);
-            mainLayout.setLayoutParams(main_params);
-        }
-
-        private MeasureWheel createTailWheel(Double step) {
-            MeasureWheel measureWheel = new MeasureWheel();
-            List<String> tails = new ArrayList<String>();
-            BigDecimal _step = BigDecimal.valueOf(0d);
-            Log.d(Const.LOG_TAG, "step: " + step);
-            while (_step.doubleValue() < 1) {
-                tails.add(String.valueOf(_step).substring(1));
-                Log.d(Const.LOG_TAG, "_step: " + _step);
-
-                _step = _step.add(BigDecimal.valueOf(step));
-
-            }
-            ArrayWheelAdapter<String> wheelAdapter = new StringRightOrderWheelAdapter<String>(ResultActivity.this,
-                    tails.toArray(new String[tails.size()]));
-
-            WheelView wheelView = (WheelView) getLayoutInflater().inflate(R.layout.wheel, null);
-            wheelView.setViewAdapter(wheelAdapter);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, 2F);
-            wheelView.setLayoutParams(params);
-            measureWheel.wheelAdapter = wheelAdapter;
-            measureWheel.wheelView = wheelView;
-            wheelView.setCurrentItem(tails.size() - 1);
-            wheelView.addChangingListener(new OnWheelChangedListener() {
-                public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                    playClick();
-                }
-            });
-            return measureWheel;
-        }
-
-        private MeasureWheel createNumWheel(Integer max, Double step, boolean withZeros) {
-            MeasureWheel measureWheel = new MeasureWheel();
-            int length = String.valueOf(max).length();
-            String zero = (withZeros) ? "0" : "";
-            NumericRightOrderWheelAdapter wheelAdapter = new NumericRightOrderWheelAdapter(ResultActivity.this, 0, max,
-                    "%" + zero + length + "d");
-
-            WheelView wheelView = (WheelView) getLayoutInflater().inflate(R.layout.wheel, null);
-            wheelView.setViewAdapter(wheelAdapter);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, 1F);
-            wheelView.setLayoutParams(params);
-            wheelView.setCyclic(true);
-            wheelView.setCurrentItem(max);
-            measureWheel.wheelAdapter = wheelAdapter;
-            measureWheel.wheelView = wheelView;
-            wheelView.addChangingListener(new OnWheelChangedListener() {
-                public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                    playClick();
-                }
-            });
-            return measureWheel;
-        }
-
-        private Measure getMeasure() {
-            return measure;
-        }
-
-        private void setMeasure(Measure measure) {
-            this.measure = measure;
-        }
-
-        public View getView() {
-            return mainLayout;
-        }
-
-        private List<MeasureWheel> getMeasureWheelList() {
-            return measureWheelList;
-        }
-
-
-        public String getStringValue() {
-            String result = "";
-
-            switch (measure.getType()) {
-                case Numeric:
-                    for (MeasureWheel measureWheel : measureWheelList) {
-                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-                            result += String.valueOf(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getItem(measureWheel.wheelView
-                                    .getCurrentItem()));
-                        } else if (measureWheel.wheelAdapter instanceof ArrayWheelAdapter) {
-                            result += String.valueOf(((ArrayWheelAdapter) measureWheel.wheelAdapter).getItemText(measureWheel.wheelView
-                                    .getCurrentItem()));
-                        }
-                    }
-                    break;
-                case Temporal:
-                    for (MeasureWheel measureWheel : measureWheelList) {
-                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-                            result += ":" + String.valueOf(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getItem(measureWheel.wheelView
-                                    .getCurrentItem()));
-                        }
-                    }
-                    result = result.substring(1);
-                    break;
-            }
-            return result;
-        }
-
-
-        public void setValue(Double measureValue) {
-            switch (measure.getType()) {
-                case Numeric:
-                    for (MeasureWheel measureWheel : measureWheelList) {
-                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-                            int intValue = measureValue.intValue();
-                            Log.d(Const.LOG_TAG, measureValue + ": " + intValue);
-                            measureWheel.wheelView.setCurrentItem(((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
-                        } else if (measureWheel.wheelAdapter instanceof StringRightOrderWheelAdapter) {
-                            String intValue = measureValue.toString().substring(measureValue.toString().indexOf("."));
-                            Log.d(Const.LOG_TAG, measureValue + ": " + intValue);
-                            measureWheel.wheelView.setCurrentItem(((StringRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
-                        }
-                    }
-                    break;
-                case Temporal:
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(new Date(measureValue.longValue()));
-                    int i = 0;
-                    for (MeasureWheel measureWheel : measureWheelList) {
-                        if (measureWheel.wheelAdapter instanceof NumericRightOrderWheelAdapter) {
-                            int intValue = (i == 0) ? c.get(Calendar.MINUTE) : c.get(Calendar.SECOND);
-                            Log.d(Const.LOG_TAG, measureValue + ": " + intValue);
-                            measureWheel.wheelView.setCurrentItem(
-                                    ((NumericRightOrderWheelAdapter) measureWheel.wheelAdapter).getIndexByValue(intValue));
-                            i++;
-                        }
-                    }
-                    break;
-            }
-        }
     }
 
 

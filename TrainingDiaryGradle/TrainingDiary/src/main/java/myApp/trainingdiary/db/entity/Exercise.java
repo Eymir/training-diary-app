@@ -1,9 +1,11 @@
 package myApp.trainingdiary.db.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by Boris on 04.06.13.
  */
-public class Exercise {
+public class Exercise implements Serializable {
     private Long id;
     private ExerciseType type;
     private String name;

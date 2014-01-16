@@ -1,12 +1,13 @@
 package myApp.trainingdiary.db.entity;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Lenovo on 27.12.13.
  */
-public class TrainingSetValue {
+public class TrainingSetValue implements Serializable {
     private Long id;
     private Long trainingSetId;
     private Double value;
@@ -70,6 +71,12 @@ public class TrainingSetValue {
 
     @Override
     public String toString() {
+        if (measure == null){
+            return "measure is null";
+        }
+        if (measure.getType() == null){
+            return "measure.getType() is null";
+        }
         switch (measure.getType()) {
             case Numeric:
                 if (measure.getStep() < 1) {
