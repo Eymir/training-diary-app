@@ -63,8 +63,8 @@
 
         <PreferenceScreen
             android:key="buckup_screen"
-            android:summary="@string/pref_screen_backup_title"
-            android:title="@string/pref_screen_backup_summary">
+            android:summary="@string/pref_screen_backup_summary"
+            android:title="@string/pref_screen_backup_title">
             <Preference
                 android:key="backup"
                 android:title="@string/backup_title"

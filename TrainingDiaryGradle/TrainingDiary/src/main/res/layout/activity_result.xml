@@ -67,23 +67,16 @@
         android:layout_gravity="top">
 
         <Chronometer
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/mChrono"
             android:layout_weight="1"
             android:textColor="@color/white"
             android:gravity="center"
-            android:textSize="27dp"
-            android:onClick="onClickTimer"
-            android:clickable="true" />
+            android:textSize="1dp"
+            android:clickable="false"
+            android:visibility="gone" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:id="@+id/history_result_button"
-            android:text="@string/history_action"
-            style="?hugeSpecificButtonRef"
-            android:layout_weight="1" />
     </LinearLayout>
 
 </LinearLayout>
