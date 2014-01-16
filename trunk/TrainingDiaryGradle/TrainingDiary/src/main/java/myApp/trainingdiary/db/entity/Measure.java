@@ -1,9 +1,11 @@
 package myApp.trainingdiary.db.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by Boris on 26.05.13.
  */
-public class Measure {
+public class Measure implements Serializable {
     private Long id;
     private String name;
     private Integer max;

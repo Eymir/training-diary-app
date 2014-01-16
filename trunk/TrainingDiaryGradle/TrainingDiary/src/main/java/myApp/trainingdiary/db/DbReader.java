@@ -196,8 +196,9 @@ public class DbReader {
 
     /**
      * Возвращает список фактов тренировок за определенный интервал (без подходов)
+     *
      * @param startDate начало интервала (абсолютное время в миллисекундах)
-     * @param endDate конец интервала (абсолютное время в миллисекундах)
+     * @param endDate   конец интервала (абсолютное время в миллисекундах)
      * @return список фактов тренировок
      */
     public List<TrainingStamp> getTrainingStampInIntervalWithTrainingSet(long startDate, long endDate) {
@@ -237,8 +238,9 @@ public class DbReader {
 
     /**
      * Возвращает список фактов тренировок за определенный интервал с подходами, коллекция может быть довольно тяжелая
-     //* @param startDate начало интервала (абсолютное время в миллисекундах)
-     //* @param endDate конец интервала (абсолютное время в миллисекундах)
+     * //* @param startDate начало интервала (абсолютное время в миллисекундах)
+     * //* @param endDate конец интервала (абсолютное время в миллисекундах)
+     *
      * @return список фактов тренировок с подходами
      */
     private List<TrainingSet> getTrainingSetsInTrainingStampByExercise(SQLiteDatabase db, long ex_id, Long tr_stamp_id) {
@@ -292,9 +294,10 @@ public class DbReader {
                 "from Exercise ex, ExerciseType ex_type " +
                 "where ex.id = ? AND ex.type_id = ex_type.id ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        Cursor c = null;
         try {
+            c = db
+                    .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
             if (c.moveToFirst()) {
                 Long type_id = c.getLong(c.getColumnIndex("type_id"));
                 String ex_name = c.getString(c.getColumnIndex("ex_name"));
@@ -309,6 +312,8 @@ public class DbReader {
             return null;
         } finally {
             if (c != null) c.close();
+            if (db != null) db.close();
+
         }
 
     }
@@ -524,7 +529,7 @@ public class DbReader {
         List<TrainingSet> stats = new ArrayList<TrainingSet>();
         String sqlQuery = "select tr_set.* from TrainingSet tr_set " +
                 "where tr_set.exercise_id = ? AND tr_set.training_stamp_id = ? " +
-                "order by tr_set.date desc ";
+                "order by tr_set.date asc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id), String.valueOf(tr_stamp_id)});
@@ -616,6 +621,26 @@ public class DbReader {
         return c;
     }
 
+    public List<Exercise> getExerciseListInTraining(long tr_id) {
+        List<Exercise> list = new ArrayList<Exercise>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = getExercisesInTraining(db, tr_id);
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("_id"));
+                Long type_id = c.getLong(c.getColumnIndex("type_id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                String icon_res = c.getString(c.getColumnIndex("icon_res"));
+                String type_name = c.getString(c.getColumnIndex("type_name"));
+                list.add(new Exercise(id, new ExerciseType(type_id, ExerciseTypeIcon.getByIconResName(icon_res), type_name), name));
+            }
+        } finally {
+            if (c != null) c.close();
+            if (db != null) db.close();
+        }
+        return list;
+    }
+
     public Cursor getExerciseTypes() {
         Cursor c = getExerciseTypes(dbHelper.getReadableDatabase());
         return c;
@@ -659,7 +684,7 @@ public class DbReader {
      * ������������ ��� _id
      */
     public Cursor getExercisesInTraining(SQLiteDatabase db, long tr_id) {
-        String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res "
+        String sqlQuery = "select ex_tr.exercise_id as _id, ex.name name, ex_tr.position position, ex_type.icon_res icon_res, ex_type.name type_name, ex_type.id type_id "
                 + "from ExerciseInTraining ex_tr, Exercise ex, ExerciseType ex_type "
                 + "where ex_tr.training_id = ? and ex_tr.exercise_id = ex.id and ex.type_id = ex_type.id "
                 + "order by ex_tr.position";
@@ -1238,6 +1263,22 @@ public class DbReader {
         } finally {
             if (c != null) c.close();
             if (db != null && db.isOpen()) db.close();
+        }
+
+    }
+
+    public Long getExercisePositionInTraining(long ex_id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sqlQuery = "select t.position as pos from ExerciseInTraining t where t.exercise_id = ?";
+        Cursor c = null;
+        try {
+            c = db.rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+            c.moveToFirst();
+            Long pos = c.getLong(c.getColumnIndex("pos"));
+            return pos;
+        } finally {
+            if (c != null) c.close();
+            if (db != null) db.close();
         }
 
     }

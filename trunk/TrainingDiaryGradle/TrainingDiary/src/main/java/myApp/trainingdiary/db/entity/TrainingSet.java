@@ -1,12 +1,13 @@
 package myApp.trainingdiary.db.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Lenovo on 27.12.13.
  */
-public class TrainingSet {
+public class TrainingSet implements Serializable {
     private Long id;
     private Long trainingStampId;
     private Date date;

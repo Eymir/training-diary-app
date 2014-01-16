@@ -1,11 +1,12 @@
 package myApp.trainingdiary.db.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Boris on 04.06.13.
  */
-public class ExerciseType {
+public class ExerciseType implements Serializable {
     private Long id;
     private ExerciseTypeIcon icon;
     private String name;
