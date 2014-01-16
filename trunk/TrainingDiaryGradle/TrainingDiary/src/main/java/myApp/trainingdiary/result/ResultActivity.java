@@ -9,6 +9,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -16,14 +17,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.roomorama.caldroid.CaldroidFragment;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import net.londatiga.android.ActionItem;
@@ -31,10 +35,12 @@ import net.londatiga.android.QuickAction;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
@@ -55,15 +61,15 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
 
     private DBHelper dbHelper;
-    final int MENU_DEL_LAST_SET = 1;
-    final int MENU_SHOW_LAST_RESULT = 2;
-
-    private final int ID_STOP = 1;
-    private final int ID_START = 2;
-    private final int ID_RESET = 3;
+//    final int MENU_DEL_LAST_SET = 1;
+//    final int MENU_SHOW_LAST_RESULT = 2;
+//
+//    private final int ID_STOP = 1;
+//    private final int ID_START = 2;
+//    private final int ID_RESET = 3;
 
     // forms
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+    //private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
     private SoundPool soundPool;
     private int soundClick;
@@ -75,16 +81,16 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private Resources resources;
 
     private Chronometer mChrono;
-    private QuickAction exerciseActionTools;
 
-    private long elapsedTime = 0;
+    private long elapsedTime = 0L;
     private String currentTime = "";
-    private long startTime = SystemClock.elapsedRealtime();
     private boolean resume = false;
     private boolean reset = false;
     private ResultFragmentAdapter mAdapter;
     private ResultFragment curResultFragment;
     private Map<Long, WheelFragment> wheelMap = new HashMap<Long, WheelFragment>();
+    private TextView timerText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +103,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         resources = getResources();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
 
         mChrono = (Chronometer) findViewById(R.id.mChrono);
         setChronoTickListener();
 
-        createExcerciseTools();
+        //createExcerciseTools();
         dbHelper = dbHelper.getInstance(this);
         ex_id = getIntent().getExtras().getLong(Const.EXERCISE_ID);
         tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
@@ -138,15 +145,25 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         writeButton.setOnClickListener(this);
         ImageButton undoButton = (ImageButton) findViewById(R.id.undo_button);
         undoButton.setOnClickListener(this);
-        Button historyButton = (Button) findViewById(R.id.history_result_button);
-        historyButton.setOnClickListener(this);
 
         createUndoDialog();
+
         Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
         TrainingSet last_set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp_id);
-        if (last_set != null) {
-            chronometerReset();
+
+        // If Activity is created after rotation
+        if (savedInstanceState != null) {
+            elapsedTime = savedInstanceState.getLong("elapsedTime");
+            currentTime = savedInstanceState.getString("currentTime");
+            //Log.d("My", "currentTime getted ok" );
+            resume = true;
             chronometerStart();
+        }
+        else {
+            if (last_set != null) {
+                chronometerReset();
+                chronometerStart();
+            }
         }
     }
 
@@ -173,18 +190,38 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actsettings_menu, menu);
+        inflater.inflate(R.menu.actresult_actsettings_menu, menu);
+        MenuItem timerItem = menu.findItem(R.id.actresult_timer);
+
+        timerText = (TextView) MenuItemCompat.getActionView(timerItem);
+        timerText.setOnClickListener(this);
+        timerText.setText("00:00");
+        timerText.setTextSize(25);
+        timerText.setPadding(10, 0, 5, 0);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.resultmenu_settings:
                 Intent intentStat = new Intent(this, SettingsActivity.class);
                 startActivity(intentStat);
                 return true;
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.resultmenu_history:
+                openHistoryDetailActivity(ex_id);
+                return true;
+            case R.id.resultmenu_play:
+                chronometerStart();
+                return true;
+            case R.id.resultmenu_stop:
+                chronometerStop();
+                return true;
+            case R.id.resultmenu_replay:
+                chronometerReset();
                 return true;
         }
         return true;
@@ -260,18 +297,15 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 chronometerReset();
                 chronometerStart();
                 break;
-            case R.id.history_result_button:
-                openHistoryDetailActivity(ex_id);
-                break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
                 TrainingSet set = dbHelper.READ.getLastTrainingSetByExerciseInLastOpenTrainingStamp(ex_id, tr_id);
-                Log.d(Const.LOG_TAG, "undo TrainingStamp:" + dbHelper.READ.getLastTrainingStamp());
-                Log.d(Const.LOG_TAG, "undo ex_id:" + ex_id + " tr_id:" + tr_id);
-                Log.d(Const.LOG_TAG, "undo set:" + set);
+//                Log.d(Const.LOG_TAG, "undo TrainingStamp:" + dbHelper.READ.getLastTrainingStamp());
+//                Log.d(Const.LOG_TAG, "undo ex_id:" + ex_id + " tr_id:" + tr_id);
+//                Log.d(Const.LOG_TAG, "undo set:" + set);
                 if (set != null) {
                     String value = MeasureFormatter.valueFormat(set);
-                    Log.d(Const.LOG_TAG, "undo value:" + value);
+//                    Log.d(Const.LOG_TAG, "undo value:" + value);
                     message = String.format(message, value);
                     undoDialog.setMessage(message);
                     undoDialog.show();
@@ -311,47 +345,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         return trainingSetValues;
     }
 
-
-    private void createExcerciseTools() {
-
-        ActionItem startItem = new ActionItem(ID_START,
-                getResources().getString(R.string.timerStart),
-                getResources().getDrawable(R.drawable.icon_play));
-        ActionItem stopItem = new ActionItem(ID_STOP,
-                getResources().getString(R.string.timerStop),
-                getResources().getDrawable(R.drawable.icon_stop));
-        ActionItem resetItem = new ActionItem(ID_RESET,
-                getResources().getString(R.string.timerReset),
-                getResources().getDrawable(R.drawable.icon_replay));
-
-        exerciseActionTools = new QuickAction(this);
-        exerciseActionTools.addActionItem(startItem);
-        exerciseActionTools.addActionItem(stopItem);
-        exerciseActionTools.addActionItem(resetItem);
-
-        // setup the action item click listener
-        exerciseActionTools
-                .setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
-                    @Override
-                    public void onItemClick(QuickAction quickAction, int pos,
-                                            int actionId) {
-                        //ActionItem actionItem = quickAction.getActionItem(pos);
-                        switch (actionId) {
-                            case ID_START: {
-                                chronometerStart();
-                                break;
-                            }
-                            case ID_STOP:
-                                chronometerStop();
-                                break;
-                            case ID_RESET:
-                                chronometerReset();
-                                break;
-                        }
-                    }
-                });
-    }
-
     private void chronometerStart() {
         reset = false;
         if (!resume) {
@@ -367,9 +360,13 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         mChrono.stop();
         if (reset) {
             mChrono.setText("00:00");
+            if(timerText != null)
+                timerText.setText("00:00");
             resume = false;
         } else {
             mChrono.setText(currentTime);
+            if(timerText != null)
+                timerText.setText(currentTime);
             resume = true;
         }
     }
@@ -377,6 +374,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private void chronometerReset() {
         mChrono.stop();
         mChrono.setText("00:00");
+        if(timerText != null)
+            timerText.setText("00:00");
         resume = false;
         reset = true;
     }
@@ -399,6 +398,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                         sec = "" + seconds;
                     currentTime = min + ":" + sec;
                     arg0.setText(currentTime);
+                    if(timerText != null)
+                        timerText.setText(currentTime);
                     elapsedTime = SystemClock.elapsedRealtime();
                 } else {
                     long minutes = ((elapsedTime - mChrono.getBase()) / 1000) / 60;
@@ -415,13 +416,18 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                         sec = "" + seconds;
                     currentTime = min + ":" + sec;
                     arg0.setText(currentTime);
+                    if(timerText != null)
+                        timerText.setText(currentTime);
                     elapsedTime = elapsedTime + 1000;
                 }
             }
         });
     }
 
-    public void onClickTimer(View view) {
-        exerciseActionTools.show(view);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+            outState.putString("currentTime", currentTime);
+            outState.putLong("elapsedTime",elapsedTime);
     }
 }
