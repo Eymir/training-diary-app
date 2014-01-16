@@ -12,7 +12,6 @@ import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.utils.Const;
 
 class ResultFragmentAdapter extends FragmentStatePagerAdapter {
-    protected static final String[] CONTENT = new String[]{"This", "Is", "A", "Test",};
     private List<Exercise> exerciseListInTraining;
 
 
@@ -34,6 +33,7 @@ class ResultFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
+
         return exerciseListInTraining.size();
     }
 
