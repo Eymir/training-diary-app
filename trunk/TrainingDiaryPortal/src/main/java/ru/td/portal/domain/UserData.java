@@ -1,6 +1,7 @@
 package ru.td.portal.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -66,5 +67,17 @@ public class UserData {
 
     public void setDb(byte[] db) {
         this.db = db;
+    }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "id=" + id +
+                ", db=" + Arrays.toString(db) +
+                ", registrationId='" + registrationId + '\'' +
+                ", registrationChannel='" + registrationChannel + '\'' +
+                ", email='" + email + '\'' +
+                ", dbPath='" + dbPath + '\'' +
+                '}';
     }
 }
