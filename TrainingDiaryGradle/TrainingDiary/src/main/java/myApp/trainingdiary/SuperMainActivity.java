@@ -73,13 +73,13 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         ImageButton editStat = (ImageButton) findViewById(R.id.edit_user_activity);
         editStat.setOnClickListener(this);
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean firstStart = sp.getBoolean("about", true);
-
-        if (firstStart) {
-            showWhatNewsDialog();
-            changeFirsStartPreference();
-        }
+//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+//        boolean firstStart = sp.getBoolean("about", true);
+//
+//        if (firstStart) {
+//            showWhatNewsDialog();
+//            changeFirsStartPreference();
+//        }
 
         createEditStatListDialog();
         showCommonStatisticList();
@@ -200,12 +200,12 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         AD.show();
     }
 
-    private void changeFirsStartPreference() {
-        //SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("about", false);
-        editor.commit();
-    }
+//    private void changeFirsStartPreference() {
+//        //SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
+//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//        SharedPreferences.Editor editor = settings.edit();
+//        editor.putBoolean("about", false);
+//        editor.commit();
+//    }
 
 }
