@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -41,14 +42,34 @@ public class UploadDbRestController {
         try {
             fos = new FileOutputStream(new File(dbPath));
             IOUtils.write(userData.getDb(), fos);
+            userData.setDbPath(dbPath);
             userDataRepository.saveUserData(userData);
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
-            return  Response.status(500).entity("Error").build();
+            return Response.status(500).entity("Error").build();
         } finally {
             IOUtils.closeQuietly(fos);
         }
         return Response.status(200).entity("OK").build();
+    }
+
+    @RequestMapping(value = "/downloadDb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
+    @ResponseBody
+    public Response downloadClientDb(@RequestParam("id")String id, @RequestParam("channel")String channel) {
+        UserData result = userDataRepository.getUserDataByRegIdAndChannel(id, channel);
+
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(new File(result.getDbPath()));
+            result.setDb(IOUtils.toByteArray(fis));
+            return Response.status(200).entity(result).build();
+        } catch (IOException e) {
+            log.error("Error upload database! Details:", e);
+            return Response.status(500).entity("Error").build();
+        } finally {
+            IOUtils.closeQuietly(fis);
+        }
+
     }
 
     public FolderGeneratorService getFolderGeneratorService() {

@@ -20,7 +20,7 @@ public class UserDataRepository {
     public void saveUserData(UserData userData) {
         String sqlInsert = "insert into UserData(registration_id,registration_channel,email,db_path) values (?,?,?,?)";
         String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=?";
-        UserData old = getUserDataByRegId(userData.getRegistrationId());
+        UserData old = getUserDataByRegIdAndChannel(userData.getRegistrationId(),userData.getRegistrationChannel());
         if (old == null) {
             jdbcTemplate.update(sqlInsert, new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
         } else {
@@ -34,11 +34,11 @@ public class UserDataRepository {
         return jdbcTemplate.query("select * from UserData", new UserDataMapper());
     }
 
-    public UserData getUserDataByRegId(String regId) {
-        String sql = "select * from UserData where registration_id=?";
+    public UserData getUserDataByRegIdAndChannel(String regId, String channel) {
+        String sql = "select * from UserData where registration_id=? and registration_channel=?";
 
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{regId}, new UserDataMapper());
+            return jdbcTemplate.queryForObject(sql, new Object[]{regId, channel}, new UserDataMapper());
         } catch (DataAccessException e) {
             System.out.println(e);
             return null;
