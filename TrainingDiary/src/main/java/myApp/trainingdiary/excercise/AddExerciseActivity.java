@@ -66,7 +66,7 @@ public class AddExerciseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_exercise);
+        setContentView(layout.activity_add_exercise);
         dbHelper = DBHelper.getInstance(this);
 
         createCreateExerciseDialog();

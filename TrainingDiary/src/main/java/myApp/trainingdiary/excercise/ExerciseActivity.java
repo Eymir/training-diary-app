@@ -78,7 +78,7 @@ public class ExerciseActivity extends ActionBarActivity {
         trainingName = dbHelper.READ.getTrainingNameById(tr_id);
         setTitle(getTitle() + ": " + trainingName);
 
-        exerciseList = (DragSortListView) findViewById(R.id.exercise_in_training_list);
+        exerciseList = (DragSortListView) findViewById(id.exercise_in_training_list);
 
         fetchExercises();
         createExcerciseTools();
@@ -153,14 +153,14 @@ public class ExerciseActivity extends ActionBarActivity {
         Cursor ex_cursor = dbHelper.READ.getExercisesInTraining(tr_id);
         Log.d(Const.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res", "_id"};
-        int[] to = {R.id.label, R.id.icon, id.ex_tools};
+        int[] to = {id.label, id.icon, id.ex_tools};
         exerciseAdapter = new SimpleDragSortCursorAdapter(
-                ExerciseActivity.this, R.layout.exercise_row, ex_cursor,
+                ExerciseActivity.this, layout.exercise_row, ex_cursor,
                 from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         exerciseAdapter.setViewBinder(new SimpleDragSortCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                if (view.getId() == R.id.icon) {
+                if (view.getId() == id.icon) {
                     ((ImageView) view).setImageResource(getResources()
                             .getIdentifier(cursor.getString(columnIndex),
                                     "drawable", getPackageName()));
@@ -173,7 +173,7 @@ public class ExerciseActivity extends ActionBarActivity {
 //                    textView.setClickable(true);
 //                    return true;
 //                }
-                if (view.getId() == R.id.ex_tools) {
+                if (view.getId() == id.ex_tools) {
                     final long ex_id = cursor.getLong(columnIndex);
                     view.setOnClickListener(new OnClickListener() {
                         @Override
@@ -183,7 +183,7 @@ public class ExerciseActivity extends ActionBarActivity {
                             cur_ex_id = ex_id;
                             cur_drag_handler = (ImageView) ((View) v
                                     .getParent())
-                                    .findViewById(R.id.drag_handler);
+                                    .findViewById(id.drag_handler);
                         }
                     });
                     return true;
@@ -297,15 +297,15 @@ public class ExerciseActivity extends ActionBarActivity {
         Cursor ex_cursor = dbHelper.READ.getExercisesExceptExInTr(tr_id);
         Log.d(Const.LOG_TAG, "Exercise.count: " + ex_cursor.getCount());
         String[] from = {"name", "icon_res"};
-        int[] to = {R.id.label, R.id.icon};
+        int[] to = {id.label, id.icon};
         SimpleCursorAdapter exerciseAdapter = new SimpleCursorAdapter(
-                ExerciseActivity.this, R.layout.exercise_row, ex_cursor,
+                ExerciseActivity.this, layout.exercise_row, ex_cursor,
                 from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         exerciseAdapter.setViewBinder(new ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor,
                                         int columnIndex) {
-                if (view.getId() == R.id.icon) {
+                if (view.getId() == id.icon) {
                     // �� ��������
                     ((ImageView) view).setImageResource(getResources()
                             .getIdentifier(cursor.getString(columnIndex),
@@ -352,11 +352,11 @@ public class ExerciseActivity extends ActionBarActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case id.action_settings:
                 Intent intentStat = new Intent(ExerciseActivity.this, SettingsActivity.class);
                 startActivity(intentStat);
                 return true;
-            case R.id.action_add:
+            case id.action_add:
                 openAddExerciseActivity(tr_id);
                 return true;
             case android.R.id.home:

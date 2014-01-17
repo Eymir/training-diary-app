@@ -175,5 +175,8 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="stat_max">макс.</string>
     <string name="stat_min">мин.</string>
     <string name="stat_avg">сред.</string>
+    <string name="backup_cloud_title">Сохранить в облако</string>
+    <string name="backup_cloud__summary">Бета версия облачного хранения ваших тренировок</string>
+    <string name="cloud_backup_success">База успешно соххранена в облако</string>
 
 </resources>
