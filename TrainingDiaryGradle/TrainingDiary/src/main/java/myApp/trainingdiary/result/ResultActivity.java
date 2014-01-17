@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,13 +75,17 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private Chronometer mChrono;
 
     private long elapsedTime = 0L;
+    private long base = 0L;
     private String currentTime = "";
     private boolean resume = false;
     private boolean reset = false;
+    private boolean timerOn = false;
     private ResultFragmentAdapter mAdapter;
     private ResultFragment curResultFragment;
     private Map<Long, WheelFragment> wheelMap = new HashMap<Long, WheelFragment>();
     private TextView timerText;
+    private boolean rotation = false;
+    private String textTime;
 
 
     @Override
@@ -144,11 +149,16 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         // If Activity is created after rotation
         if (savedInstanceState != null) {
+            rotation = true;
             elapsedTime = savedInstanceState.getLong("elapsedTime");
             currentTime = savedInstanceState.getString("currentTime");
-            //Log.d("My", "currentTime getted ok" );
-            resume = true;
-            chronometerStart();
+            textTime = savedInstanceState.getString("textTime");
+            timerOn = savedInstanceState.getBoolean("timerOn");
+            base = savedInstanceState.getLong("base");
+            resume = savedInstanceState.getBoolean("resume");
+            reset = savedInstanceState.getBoolean("reset");
+
+            chronometerReturn();
         } else {
             if (last_set != null) {
                 chronometerReset();
@@ -185,7 +195,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         timerText = (TextView) MenuItemCompat.getActionView(timerItem);
         timerText.setOnClickListener(this);
-        timerText.setText("00:00");
+
+        if(rotation && !reset)
+            timerText.setText(currentTime);
+        else
+            timerText.setText("00:00");
+
         timerText.setTextSize(25);
         timerText.setPadding(10, 0, 5, 0);
 
@@ -335,34 +350,51 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         return trainingSetValues;
     }
 
+    private void chronometerReturn(){
+        if(timerOn){
+            mChrono.setBase(base);
+            mChrono.start();
+        }
+        else {
+            mChrono.setBase(base);
+        }
+    }
+
     private void chronometerStart() {
         reset = false;
+        timerOn = true;
+        rotation = false;
         if (!resume) {
             mChrono.setBase(SystemClock.elapsedRealtime());
             mChrono.start();
         } else {
             mChrono.start();
         }
-
     }
 
     private void chronometerStop() {
         mChrono.stop();
+        timerOn = false;
+        rotation = false;
         if (reset) {
             mChrono.setText("00:00");
             if (timerText != null)
                 timerText.setText("00:00");
+                textTime = "00:00";
             resume = false;
         } else {
             mChrono.setText(currentTime);
-            if (timerText != null)
+            if (timerText != null){
                 timerText.setText(currentTime);
+                textTime = currentTime;
+            }
             resume = true;
         }
     }
 
     private void chronometerReset() {
         mChrono.stop();
+        timerOn = false;
         mChrono.setText("00:00");
         if (timerText != null)
             timerText.setText("00:00");
@@ -408,7 +440,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     arg0.setText(currentTime);
                     if (timerText != null)
                         timerText.setText(currentTime);
-                    elapsedTime = elapsedTime + 1000;
+                        elapsedTime = elapsedTime + 1000;
                 }
             }
         });
@@ -419,5 +451,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         super.onSaveInstanceState(outState);
         outState.putString("currentTime", currentTime);
         outState.putLong("elapsedTime", elapsedTime);
+        outState.putBoolean("timerOn", timerOn);
+        outState.putLong("base", mChrono.getBase());
+        outState.putString("textTime", textTime);
+        outState.putBoolean("resume", resume);
+        outState.putBoolean("reset", reset);
     }
 }
