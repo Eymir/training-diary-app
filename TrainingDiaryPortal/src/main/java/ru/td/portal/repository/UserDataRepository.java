@@ -10,11 +10,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
  * User: vkoba_000
  * Date: 1/15/14
  * Time: 11:39 AM
- * To change this template use File | Settings | File Templates.
  */
 public class UserDataRepository {
     JdbcTemplate jdbcTemplate;

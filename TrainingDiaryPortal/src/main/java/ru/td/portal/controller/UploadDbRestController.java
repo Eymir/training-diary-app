@@ -31,8 +31,8 @@ public class UploadDbRestController {
     UserDataRepository userDataRepository;
     FolderGeneratorService folderGeneratorService;
 
-     //TODO:Костыль с возвращаемым типом, бул почему-то вернуть не получается
-    @RequestMapping(value = "/uploadDb", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML)
+    //TODO:Костыль с возвращаемым типом, бул почему-то вернуть не получается
+    @RequestMapping(value = "/uploadDb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
     @ResponseBody
     public String uploadClientDb(@RequestBody UserData userData) {
         String dbPath = folderGeneratorService.generateFolderPath(userData) + IOUtils.DIR_SEPARATOR + "db.sqlite";
@@ -48,7 +48,6 @@ public class UploadDbRestController {
             IOUtils.closeQuietly(fos);
         }
         return "OK";
-
     }
 
     public FolderGeneratorService getFolderGeneratorService() {
