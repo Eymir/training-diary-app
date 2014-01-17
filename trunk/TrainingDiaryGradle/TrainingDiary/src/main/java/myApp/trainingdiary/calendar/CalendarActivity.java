@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.view.View;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +35,8 @@ public class CalendarActivity extends ActionBarActivity {
     //final SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
     private DBHelper dbHelper;
 
+    List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
+
 
     private void setCustomResourceForDates(int month, int year){
 
@@ -51,7 +55,8 @@ public class CalendarActivity extends ActionBarActivity {
         cal.set(Calendar.MONTH, month);
         Long timeEnd = cal.getTimeInMillis();
 
-        List< TrainingStamp > stamps  = dbHelper.
+        //List< TrainingStamp >
+                stamps  = dbHelper.
                    READ.getTrainingStampInInterval(timeStart, timeEnd);
 
         if (caldroidFragment != null) {
@@ -132,8 +137,18 @@ public class CalendarActivity extends ActionBarActivity {
 
             @Override
             public void onSelectDate(Date date, View view) {
-                showTrainingDayHistory(date);
-
+                for (TrainingStamp tr : stamps){
+                    Date trainingDate = tr.getStartDate();
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(trainingDate);
+                    int trDay = c.get(Calendar.DAY_OF_MONTH);
+                    c.setTime(date);
+                    int selDay = c.get(Calendar.DAY_OF_MONTH);
+                    if(trDay == selDay){
+                       showTrainingDayHistory(date);
+                       break;
+                    }
+                }
             }
 
             @Override

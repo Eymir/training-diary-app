@@ -440,6 +440,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     arg0.setText(currentTime);
                     if (timerText != null)
                         timerText.setText(currentTime);
+                    if(timerOn)
                         elapsedTime = elapsedTime + 1000;
                 }
             }
