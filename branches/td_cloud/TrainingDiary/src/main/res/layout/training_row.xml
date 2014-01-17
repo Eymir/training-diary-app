@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/myApp.trainingdiary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/expand_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="4px"
+            android:layout_marginRight="10px"
+            android:layout_marginTop="4px"
+            android:layout_weight="0.69"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_tr_gant" >
+        </ImageView>
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="9.98"
+            android:maxLines="4"
+            android:text="@+id/label"
+            android:textColor="#F8F8FF"
+            android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/tools"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="4px"
+            android:layout_marginRight="10px"
+            android:layout_marginTop="4px"
+            android:layout_weight="0.69"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_action_overflow" >
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/drag_handler"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="4px"
+            android:layout_marginRight="10px"
+            android:layout_marginTop="4px"
+            android:layout_weight="0.69"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_content_import_export_white"
+            android:visibility="gone" >
+        </ImageView>
+    </LinearLayout>
+
+</LinearLayout>

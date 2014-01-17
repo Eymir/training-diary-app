@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Дневник тренировок</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="title_create_training">Создание новой тренировки</string>
+    <string name="title_rename_training">Переименовать тренировку</string>
+    <string name="title_rename_exercise">Переименовать упражнение</string>
+    <string name="title_activity_add_exercise">Все упражнения</string>
+    <string name="title_activity_settings">Настройки:</string>
+    <string name="create_ex_dialog_title">Новое упражнение</string>
+    <string name="title_activity_result">Выполнение упражнения</string>
+    <string name="title_activity_exercise_in_training">Упражнение</string>
+    <string name="title_activity_statistic">Статистика</string>
+    <string name="title_activity_history_main_acrivity">Тренировочные дни</string>
+    <string name="title_activity_super_main">Дневник тренировок</string>
+    <string name="title_activity_history_detail">Проделанная работа</string>
+    <string name="start_training">Начать тренировку</string>
+    <string name="jim_ex_name_base">Жим лежа</string>
+    <string name="prised_ex_name_base">Присед</string>
+    <string name="stanovaya_ex_name_base">Становая тяга</string>
+    <string name="btn_txt_OK">OK</string>
+    <string name="dialog_del_tr_title">Удалить тренировку</string>
+    <string name="dialog_del_approach_title">Удалить подход</string>
+    <string name="Dialog_del_ex_title">Удалить упражнение</string>
+    <string name="Dialog_del_tr_msg">Вы действительно хотите удалить тренировку \'%1$s\'?</string>
+    <string name="Dialog_del_ex_msg">Вы действительно хотите убрать упражнение \'%1$s\' из тренировки
+        \'%2$s\'?</string>
+    <string name="Dialog_delete_completely_txt">Вы действительно хотите безвозвратно удалить упражнение
+        \'%1$s\' и всю историю по этому упражнению?</string>
+    <string name="dialog_del_approach_msg">Вы действительно хотите удалить подход %1$s?</string>
+    <string name="YES">Да</string>
+    <string name="NO">Нет</string>
+    <string name="create_button">Создать</string>
+    <string name="rename_button">Переименовать</string>
+    <string name="cancel_button">Отменить</string>
+    <string name="delete_button">Удалить</string>
+    <string name="zero_input_notif">Имя не может быть пустым</string>
+    <string name="training_exist_notif">Тренировка с таким именем уже существует</string>
+    <string name="exercise_exist_notif">Упражнение с таким именем уже существует</string>
+    <string name="deleted">Удалено</string>
+    <string name="nothing_to_deleted">Нечего удалять</string>
+    <string name="create_success">Тренировка успешно создана</string>
+    <string name="rename_success">Тренировка успешно переименована</string>
+    <string name="bar_ex_type_base">Штанга</string>
+    <string name="long_dist_ex_type_base">Длинная дистанция</string>
+    <string name="count_ex_type_base">Разы</string>
+    <string name="weight_ex_type_base">Вес</string>
+    <string name="size_ex_type_base">Замеры</string>
+    <string name="size_measure_base">Объем(см)</string>
+    <string name="weight_measure_base">Вес(кг)</string>
+    <string name="repeat_measure_base">Повторения</string>
+    <string name="power_weight_measure_base">Вес снаряда(кг)</string>
+    <string name="long_distance_measure_base">Расстояние(км)</string>
+    <string name="baseMeasure_time">Время(мин,сек)</string>
+    <string name="add_action">Добавить</string>
+    <string name="rename_action">Переименовать</string>
+    <string name="stat_action">Статистика</string>
+    <string name="history_action">История</string>
+    <string name="move_action">Переместить</string>
+    <string name="delete_action">Удалить</string>
+    <string name="choose_exercise">Выберите упражнение</string>
+    <string name="ex_name">Название</string>
+    <string name="ex_type">Тип</string>
+    <string name="create_exercise_add_in_tr_success">Упражнение %1$s создано и добавленно в
+        тренировку %2$s.</string>
+    <string name="add_exercise_success">Упражнение %1$s добавленно в тренировку %2$s.</string>
+    <string name="input_exercise_name_notification">Введите название упражнения</string>
+    <string name="input_exercise_type_notification">Выберите тип упражнения</string>
+    <string name="exercise_main_button">Упражнения</string>
+    <string name="history_main_button">История</string>
+    <string name="stat_main_button">Статистика</string>
+    <string name="write_button_text">Записать</string>
+    <string name="sum_approach">Всего подходов:</string>
+    <string name="create_exercise_success">Упражнение %1$s создано</string>
+    <string name="training_radio_button">Тренировки</string>
+    <string name="exercises_radio_button">Упражнения</string>
+    <string name="empty">Пусто</string>
+    <string name="exercise_not_chosen">Упражнение не выбрано</string>
+    <string name="bitceps_ex_name_base">Штанга на бицепс стоя</string>
+    <string name="french_ex_name_base">Французский жим</string>
+    <string name="french_ex_name_base_wrong">Французкий жим</string>
+    <string name="run_ex_name_base">Бег (км)</string>
+    <string name="pushups_ex_name_base">Отжимания от пола</string>
+    <string name="podtyagivaniya_ex_name_base">Подтягивания</string>
+    <string name="weight_ex_name_base">Вес</string>
+    <string name="dumbbell_ex_type_base">Гантели</string>
+    <string name="dumbbell_ex_name_base">Разводка гантелей</string>
+    <string name="bitceps_size_ex_name_base">Объем бицепса</string>
+    <string name="exercise_nothing_to_show">Не было ни одной тренировки</string>
+    <string name="dialog_statistic_setting_title">Настройки</string>
+    <string name="choose_exercise_stat">Упражнение:</string>
+    <string name="measure_stat">По измерению:</string>
+    <string name="group_by_stat">Сгрупировать по:</string>
+    <string name="groups_stat">Группы:</string>
+    <string name="build_button">Построить</string>
+    <string name="group_by_checkbox_name">Группировать:</string>
+    <string name="group_values_dialog_title">Выберите группы</string>
+    <string name="baseExType_power">Силовой тип</string>
+    <string name="baseExType_cycle">Циклический тип</string>
+    <string name="statistic_main">Общая статистика:</string>
+    <string name="action_settings">Настройки</string>
+    <string name="sound_switcher_title">Отключить звук</string>
+    <string name="sound_switcher_summary">Звук крутящихся барабанов</string>
+    <string name="browse">Просмотреть</string>
+    <string name="view_exercise_dialog_title">Просмотр упражнения</string>
+    <string name="delete_not_succesful">Не удалось удалить</string>
+    <string name="tr_count_stat">Всего тренировок</string>
+    <string name="last_tr_date_stat">Дата последней тренировки</string>
+    <string name="stat_list_dialog_title">Выбирете подходящие пункты</string>
+    <string name="favorite_ex_stat">Любимое упражнение</string>
+    <string name="no">нет</string>
+    <string name="tr_dur_sum">Проведено в зале</string>
+    <string name="day_short">д.</string>
+    <string name="hour_short">ч.</string>
+    <string name="min_short">м.</string>
+    <string name="last_tr_time_passed">С последней тренировки прошло</string>
+    <string name="max_res_in_favorite_ex">Лучший результат</string>
+    <string name="error">ОШИБКА</string>
+    <string name="not_found">не найдено</string>
+    <string name="Size">Размер(см)</string>
+    <string name="about_title">О программе</string>
+    <string name="about_summary">Дневник тренировок v.%1$s</string>
+    <string name="about_detail">\tБудем рады предложениям и замечаниям на нашем форуме:\n\n
+http://adhocapp.mybb.ru\n\n
+\t или на любой его страничке:\n\n
+google+\n
+https://plus.google.com/u/0/109868287433035819799/posts\n
+группа в ВК\n
+http://vk.com/trainingdiary\n
+facebook\n
+https://www.facebook.com/gymtrainingdiary\n
+twitter\n
+https://twitter.com/TrainingDiaryGT\n
+\tА так же не забывайте ставить оценки и оставлять отзывы, нам это очень помогает.</string>
+    <string name="help_developers">Помочь разработчикам</string>
+    <string name="rate_app_title">Поставить оценку</string>
+    <string name="rate_app_summ">Оценить приложиние на маркете</string>
+    <string name="backup_problem">Проблема при попытке создать бекап</string>
+    <string name="restore_problem">Проблема при восстановлении БД из бекапа</string>
+    <string name="backup_restore_category">Резервное копирование</string>
+    <string name="backup_title">Сохранить бекап</string>
+    <string name="backup_summary">Резервное копирование базы данных на SD карту</string>
+    <string name="restore_title">Восстановить бекап</string>
+    <string name="restore_summary">Заменить текущую базу данных на базу из резервной копии с SD</string>
+    <string name="backup_success">База данных успешно сохранена на SD. Путь: /</string>
+    <string name="restore_success">Восстановление базы данных прошло успешно</string>
+    <string name="restoration_data_base">Восстановление базы данных</string>
+    <string name="restoration_ask_for_continue">При востановлении текущая база будет заменена на базу из бекапа, продолжить?</string>
+    <string name="Operation_cancelation">Отмена операции</string>
+    <string name="timerStart">Старт</string>
+    <string name="timerStop">Стоп</string>
+    <string name="timerReset">Сброс</string>
+    <!-- Раздел утилиты из меню настроек -->
+    <string name="utilCategoryTitle">Утилиты</string>
+    <string name="utilScreenSummary">Вспомогательные программы для различных рассчетов</string>
+    <string name="utilScreenTitle">Калькуляторы</string>
+    <string name="utilMaxWeightTitle">Максимальный вес</string>
+    <string name="utilMaxWeightSummary">Вес, который Вы теоретически можете поднять в одном повторении</string>
+    <string name="utilMaxRepTitle">Количество повторений</string>
+    <string name="utilMaxRepSummary">Количество повторений, которые Вы теоретически можете сделать</string>
+    <string name="utilWorkWeightTitle">Рабочий вес</string>
+    <string name="utilWorkWeightSummary">C каким весом Вы можете сделать заданное количество повторений</string>
+    <string name="utilPercentTitle">Процент от веса</string>
+    <string name="utilPercentSummary">Рассчитывает % от указанного веса</string>
+    <string name="title_activity_max_weight_calculator">Максимальный вес</string>
+    <string name="my_program">Моя программа</string>
+    <!-- Диалог новое в версии -->
+    <string name="newInVersionTitle">Новое в версии</string>
+    <string name="newInVersionMessage">Текст сообщения\n\n -Новая фишка 1\n -Новая фишка 2\n -Новая фишка 3</string>
+    <string name="stat_max">макс.</string>
+    <string name="stat_min">мин.</string>
+    <string name="stat_avg">сред.</string>
+    <!--Калькулятор максимальный вес-->
+    <string name="no_weight">Не указан вес</string>
+    <string name="no_repeat">Не указано количество повторов</string>
+    <string name="by_brizka">По формуле Брыжки:</string>
+    <string name="by_epli">По формуле Эйпли:</string>
+    <string name="by_lender">По формуле Лэндера:</string>
+    <!--Настройки из меню настроек-->
+    <string name="pref_cat_title_control">Управление</string>
+    <string name="pref_screen_settings_title">Настройки</string>
+    <string name="pref_screen_settings_summary">Изменение параметров приложения</string>
+    <string name="pref_chb_keep_screen_title">Удержание подсветки</string>
+    <string name="pref_chb_keep_screen_summ">Не даёт телефону выключить экран в режиме выполнения подходов</string>
+    <string name="pref_screen_backup_title">Резервное копирование</string>
+    <string name="pref_screen_backup_summary">Управление резервными копиями</string>
+
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:trainingdiary="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/actresult_timer"
+        trainingdiary:showAsAction="always"
+        trainingdiary:actionViewClass="android.widget.TextView">
+    </item>
+
+    <item android:id="@+id/resultmenu_timer_control"
+        android:icon="@drawable/icon_alarm_tool"
+        trainingdiary:showAsAction="always">
+        <menu>
+            <item android:id="@+id/resultmenu_play"
+                android:icon="@drawable/icon_play"
+                android:title="@string/timerStart"/>
+            <item android:id="@+id/resultmenu_stop"
+                android:icon="@drawable/icon_stop"
+                android:title="@string/timerStop"/>
+            <item android:id="@+id/resultmenu_replay"
+                android:icon="@drawable/icon_replay"
+                android:title="@string/timerReset"/>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/resultmenu_settings_overflow"
+        android:icon="@drawable/icon_action_overflow"
+        android:title="@string/action_settings"
+        trainingdiary:showAsAction="always">
+        <menu>
+            <item android:id="@+id/resultmenu_history"
+                android:icon="@drawable/icon_action_history_white"
+                android:title="@string/history_main_button"/>
+            <item android:id="@+id/resultmenu_settings"
+                android:icon="@drawable/icon_action_settings_white"
+                android:title="@string/menu_settings"/>
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,14 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://repo1.maven.org/maven2' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.6+'
+    }
+}
+repositories {
+    mavenCentral()
+    maven { url "http://repo1.maven.org/maven2"}
+    maven { url "http://mirrors.ibiblio.org/maven2"}
+}
