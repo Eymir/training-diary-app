@@ -11,6 +11,7 @@ import ru.td.portal.repository.UserDataRepository;
 import ru.td.portal.service.FolderGeneratorService;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class UploadDbRestController {
     //TODO:Костыль с возвращаемым типом, бул почему-то вернуть не получается
     @RequestMapping(value = "/uploadDb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
     @ResponseBody
-    public String uploadClientDb(@RequestBody UserData userData) {
+    public Response uploadClientDb(@RequestBody UserData userData) {
         String dbPath = folderGeneratorService.generateFolderPath(userData) + IOUtils.DIR_SEPARATOR + "db.sqlite";
         FileOutputStream fos = null;
         try {
@@ -43,11 +44,11 @@ public class UploadDbRestController {
             userDataRepository.saveUserData(userData);
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
-            return "ERROR";
+            return  Response.status(500).entity("Error").build();
         } finally {
             IOUtils.closeQuietly(fos);
         }
-        return "OK";
+        return Response.status(200).entity("OK").build();
     }
 
     public FolderGeneratorService getFolderGeneratorService() {
