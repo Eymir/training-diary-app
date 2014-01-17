@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item type="id" name="drag_handler" />
-    <item type="id" name="click_remove" />
-    <item type="id" name="drag_list" />
-    <item type="id" name="lvEx" />
-</resources>
