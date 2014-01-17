@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>TrainingDiaryPortal</groupId>
-  <artifactId>TrainingDiaryPortal</artifactId>
-  <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>TrainingDiaryPortal Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>TrainingDiaryPortal</groupId>
+    <artifactId>TrainingDiaryPortal</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>TrainingDiaryPortal Maven Webapp</name>
+    <url>http://maven.apache.org</url>
 
 
     <properties>
@@ -141,13 +141,11 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
         </dependency>
-
 
 
         <!-- Apache Utils-->
@@ -186,12 +184,12 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.8.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-xc</artifactId>
             <version>1.8.0</version>
         </dependency>
-
 
 
     </dependencies>
