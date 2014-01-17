@@ -11,10 +11,19 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import myApp.trainingdiary.calculators.MaxWeightCalculatorActivity;
 import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
+import myApp.trainingdiary.service.CloudBackupUploadTask;
+import myApp.trainingdiary.service.UserData;
 import myApp.trainingdiary.utils.BackupManager;
 import myApp.trainingdiary.utils.Const;
 
@@ -94,8 +103,8 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         final AlertDialog restoreDialog = DialogProvider.createSimpleDialog(SettingsActivity.this,
-                getString(R.string.restoration_data_base),getString(R.string.restoration_ask_for_continue),
-                getResources().getString(R.string.YES),getResources().getString(R.string.NO),  new DialogProvider.SimpleDialogClickListener(){
+                getString(R.string.restoration_data_base), getString(R.string.restoration_ask_for_continue),
+                getResources().getString(R.string.YES), getResources().getString(R.string.NO), new DialogProvider.SimpleDialogClickListener() {
 
             @Override
             public void onPositiveClick() {
@@ -130,7 +139,7 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         Preference max_Weight = findPreference("max_Weight");
-        assert max_Weight !=null;
+        assert max_Weight != null;
         max_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
                 Intent MaxWeightCalculatorActivity = new Intent(context, MaxWeightCalculatorActivity.class);
@@ -140,7 +149,7 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         Preference max_Repeat = findPreference("max_Repeat");
-        assert max_Repeat !=null;
+        assert max_Repeat != null;
         max_Repeat.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
 
@@ -149,7 +158,7 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         Preference work_Weight = findPreference("work_Weight");
-        assert work_Weight !=null;
+        assert work_Weight != null;
         work_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
 
@@ -158,7 +167,7 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         Preference percent = findPreference("percent");
-        assert percent !=null;
+        assert percent != null;
         percent.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
 
@@ -167,11 +176,44 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         Preference cal = findPreference("cal");
-        assert cal !=null;
+        assert cal != null;
         cal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
                 Intent calActivity = new Intent(context, CalendarActivity.class);
                 startActivity(calActivity);
+                return false;
+            }
+        });
+
+        Preference backup_cloud = findPreference("backup_cloud");
+        assert backup_cloud != null;
+        backup_cloud.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+                    UserData userData = new UserData();
+                    File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
+                    userData.setDb(IOUtils.toByteArray(new FileInputStream(currentDB)));
+                    userData.setRegistrationId(String.valueOf(System.currentTimeMillis() % 100000));
+                    userData.setRegistrationChannel("GOOGLE-SHMOOGLE");
+                    CloudBackupUploadTask.start(SettingsActivity.this, new CloudBackupUploadTask.BaseCloudBackupUploadTaskCallback() {
+                        @Override
+                        protected void onUploadSuccess() {
+                            Toast.makeText(
+                                    SettingsActivity.this,
+                                    getResources().getString(
+                                            R.string.cloud_backup_success), Toast.LENGTH_SHORT).show();
+                        }
+                        @Override
+                        protected void onUploadError() {
+
+                        }
+                    }, userData);
+
+                } catch (FileNotFoundException e) {
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                } catch (IOException e) {
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                }
                 return false;
             }
         });

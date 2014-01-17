@@ -185,5 +185,8 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="pref_chb_keep_screen_summ">Не даёт телефону выключить экран в режиме выполнения подходов</string>
     <string name="pref_screen_backup_title">Резервное копирование</string>
     <string name="pref_screen_backup_summary">Управление резервными копиями</string>
+    <string name="backup_cloud_title">Сохранить в облако</string>
+    <string name="backup_cloud__summary">Бета версия облачного хранения ваших тренировок</string>
+    <string name="cloud_backup_success">База успешно соххранена в облако</string>
 
 </resources>

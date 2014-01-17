@@ -75,6 +75,11 @@
                 android:title="@string/restore_title"
                 android:summary="@string/restore_summary"
                 android:icon="@drawable/action_restore_db" />
+            <Preference
+                android:key="backup_cloud"
+                android:title="@string/backup_cloud_title"
+                android:summary="@string/backup_cloud__summary"
+                android:icon="@drawable/action_backup_db" />
         </PreferenceScreen>
     </PreferenceCategory>
 
