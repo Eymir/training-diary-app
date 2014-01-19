@@ -29,12 +29,18 @@ public class WheelFragment extends Fragment {
     private Exercise exercise;
     private TrainingSet trainingSet;
     private List<MeasureWheels> measureWheelsList = new ArrayList<MeasureWheels>();
+    private WheelTickListener listener;
 
-    public static WheelFragment newInstance(Exercise content, TrainingSet set) {
+    public static WheelFragment newInstance(Exercise content, TrainingSet set, WheelTickListener listener) {
         WheelFragment fragment = new WheelFragment();
         fragment.setExercise(content);
         fragment.setTrainingSet(set);
+        fragment.setTickListener(listener);
         return fragment;
+    }
+
+    private void setTickListener(WheelTickListener listener) {
+        this.listener = listener;
     }
 
     public TrainingSet getTrainingSet() {
@@ -80,7 +86,7 @@ public class WheelFragment extends Fragment {
         List<Measure> measureList = DBHelper.getInstance(null).READ.getMeasuresInExercise(exercise.getId());
         measureWheelsList.clear();
         for (Measure measure : measureList) {
-            MeasureWheels measureWheels = new MeasureWheels(inflater.getContext(), measure);
+            MeasureWheels measureWheels = new MeasureWheels(inflater.getContext(), measure,listener);
             linearLayout.addView(measureWheels.getView());
             measureWheelsList.add(measureWheels);
         }
