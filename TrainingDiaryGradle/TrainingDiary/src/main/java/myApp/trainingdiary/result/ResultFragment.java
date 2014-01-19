@@ -3,6 +3,11 @@ package myApp.trainingdiary.result;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.db.DBHelper;
@@ -33,9 +40,21 @@ public final class ResultFragment extends Fragment {
         String result = "";
         for (int i = 0; i < sets.size(); i++) {
             TrainingSet set = sets.get(i);
-            result += (i + 1) + "._" + MeasureFormatter.valueFormat(set) + ";  ";
+            result += MeasureFormatter.valueFormat(set) + ";  ";
         }
         return result;
+    }
+
+    private Spannable createWhite(String str) {
+        Spannable span1 = new SpannableString(str);
+        span1.setSpan(new ForegroundColorSpan(R.color.white), 0, span1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return span1;
+    }
+
+    private Spannable createTranparentWhite(String str) {
+        Spannable span1 = new SpannableString(str);
+        span1.setSpan(new ForegroundColorSpan(R.color.white), 0, span1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return span1;
     }
 
     public Exercise getExercise() {
@@ -72,10 +91,26 @@ public final class ResultFragment extends Fragment {
         List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(exercise.getId(), tr_stamp_id);
         Log.d(Const.LOG_TAG, "tr_stats: " + tr_stats);
         Log.d(Const.LOG_TAG, "exercise: " + exercise.getName());
-        String stats = formTrainingStats(tr_stats);
         TextView training_stat_text = (TextView) view.findViewById(R.id.cur_training_stats);
-        training_stat_text.setText(stats);
+        String s = formTrainingStats(tr_stats);
+        int color = view.getResources().getColor(R.color.white_little_transparent);
+        training_stat_text.setText(makeSeparatorsTransparent(s,color));
         view.invalidate();
+    }
+
+    private SpannableStringBuilder makeSeparatorsTransparent(String s,int color) {
+        final Pattern p1 = Pattern.compile("[x;]");
+        final Matcher matcher = p1.matcher(s);
+
+        final SpannableStringBuilder spannable = new SpannableStringBuilder(s);
+        while (matcher.find()) {
+
+            final ForegroundColorSpan span = new ForegroundColorSpan(color);
+            spannable.setSpan(
+                    span, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return spannable;
     }
 
     @Override
