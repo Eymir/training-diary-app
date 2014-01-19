@@ -8,7 +8,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="9.98"
-            style="?android:attr/listSeparatorTextViewStyle"
             android:text="@+id/label"
             android:textAppearance="?android:attr/textAppearanceSmall"
             />

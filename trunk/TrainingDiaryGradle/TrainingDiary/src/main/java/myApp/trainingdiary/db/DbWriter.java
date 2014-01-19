@@ -144,9 +144,6 @@ public class DbWriter {
                 case 1:
                     deleted = db.delete("TrainingSet", " id = ? ",
                             new String[]{String.valueOf(exerciseTrainingSets.get(0))});
-                case 0:
-                    db.delete("TrainingStamp", " id = ? ",
-                            new String[]{String.valueOf(tr_st_id)});
                     break;
                 default:
                     deleted = db.delete("TrainingSet", " id = ? ",
@@ -330,17 +327,17 @@ public class DbWriter {
         }
     }
 
-    public Long insertTrainingStamp(Date startDate, Date endDate, String comment,String status) {
+    public Long insertTrainingStamp(Date startDate, Date endDate, String comment, String status) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
-            return insertTrainingStamp(db, startDate, endDate, comment,status);
+            return insertTrainingStamp(db, startDate, endDate, comment, status);
         } finally {
             if (db != null && db.isOpen())
                 db.close();
         }
     }
 
-    public Long insertTrainingStamp(SQLiteDatabase db, Date startDate, Date endDate, String comment,String status) {
+    public Long insertTrainingStamp(SQLiteDatabase db, Date startDate, Date endDate, String comment, String status) {
         ContentValues cv = new ContentValues();
         if (startDate != null)
             cv.put("start_date", startDate.getTime());

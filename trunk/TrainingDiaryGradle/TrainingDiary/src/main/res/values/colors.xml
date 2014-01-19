@@ -19,6 +19,7 @@
 <resources>
     <color name="orange">#CCF4A460</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_little_transparent">#99FFFFFF</color>
     <color name="dialog_caption">#FFFFFFFF</color>
     <color name="disable_gray">#FF808080</color>
 
