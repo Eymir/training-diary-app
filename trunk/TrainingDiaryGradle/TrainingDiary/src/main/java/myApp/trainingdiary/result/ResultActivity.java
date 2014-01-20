@@ -28,7 +28,6 @@ import android.widget.Toast;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +176,13 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private WheelFragment getWheelFragmentByExId(long ex_id) {
         WheelFragment wheelFragment = null;
         if (!wheelMap.containsKey(ex_id)) {
-            wheelFragment = WheelFragment.newInstance(dbHelper.READ.getExerciseById(ex_id), dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
+            wheelFragment = WheelFragment.newInstance(dbHelper.READ.getExerciseById(ex_id),
+                    dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id), new WheelTickListener() {
+                @Override
+                public void tick(String value) {
+                    playClick();
+                }
+            });
             wheelMap.put(ex_id, wheelFragment);
         } else {
             wheelFragment = wheelMap.get(ex_id);
@@ -196,7 +201,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         timerText = (TextView) MenuItemCompat.getActionView(timerItem);
         timerText.setOnClickListener(this);
 
-        if(rotation && !reset)
+        if (rotation && !reset)
             timerText.setText(currentTime);
         else
             timerText.setText("00:00");
@@ -260,25 +265,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             }
         });
     }
-
-//    private void printCurrentTrainingProgress() {
-//
-//        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
-//        List<TrainingSet> tr_stats = dbHelper.READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
-//        Log.d(Const.LOG_TAG, "tr_stats:" + tr_stats);
-//        String stats = formTrainingStats(tr_stats);
-//        TextView training_stat_text = (TextView) findViewById(R.id.cur_training_stats);
-//        training_stat_text.setText(stats);
-//    }
-
-//    private String formTrainingStats(List<TrainingSet> sets) {
-//        String result = "";
-//        for (TrainingSet set : sets) {
-//            result = MeasureFormatter.valueFormat(set) + "; " + result;
-//        }
-//        result += "\n" + getString(R.string.sum_approach) + " " + sets.size();
-//        return result;
-//    }
 
     private void playClick() {
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("disable_sound", false)) {
@@ -350,12 +336,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         return trainingSetValues;
     }
 
-    private void chronometerReturn(){
-        if(timerOn){
+    private void chronometerReturn() {
+        if (timerOn) {
             mChrono.setBase(base);
             mChrono.start();
-        }
-        else {
+        } else {
             mChrono.setBase(base);
         }
     }
@@ -380,11 +365,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             mChrono.setText("00:00");
             if (timerText != null)
                 timerText.setText("00:00");
-                textTime = "00:00";
+            textTime = "00:00";
             resume = false;
         } else {
             mChrono.setText(currentTime);
-            if (timerText != null){
+            if (timerText != null) {
                 timerText.setText(currentTime);
                 textTime = currentTime;
             }
@@ -440,7 +425,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     arg0.setText(currentTime);
                     if (timerText != null)
                         timerText.setText(currentTime);
-                    if(timerOn)
+                    if (timerOn)
                         elapsedTime = elapsedTime + 1000;
                 }
             }
