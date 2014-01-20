@@ -9,7 +9,8 @@
         android:id="@+id/cur_training_stats"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textSize="28sp"
+        android:textSize="20dp"
         android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textIsSelectable="false" />
 </ScrollView>
