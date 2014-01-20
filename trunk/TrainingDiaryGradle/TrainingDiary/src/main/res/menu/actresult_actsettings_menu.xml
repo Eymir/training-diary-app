@@ -3,6 +3,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:trainingdiary="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/actresult_num_rep"
+        trainingdiary:showAsAction="always"
+        trainingdiary:actionViewClass="android.widget.TextView">
+    </item>
+
     <item android:id="@+id/actresult_timer"
         trainingdiary:showAsAction="always"
         trainingdiary:actionViewClass="android.widget.TextView">

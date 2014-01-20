@@ -143,9 +143,9 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="backup_problem">Проблема при попытке создать бекап</string>
     <string name="restore_problem">Проблема при восстановлении БД из бекапа</string>
     <string name="backup_restore_category">Резервное копирование</string>
-    <string name="backup_title">Сохранить бекап</string>
+    <string name="backup_title">Сохранить базу</string>
     <string name="backup_summary">Резервное копирование базы данных на SD карту</string>
-    <string name="restore_title">Восстановить бекап</string>
+    <string name="restore_title">Восстановить базу</string>
     <string name="restore_summary">Заменить текущую базу данных на базу из резервной копии с SD карты</string>
     <string name="backup_success">База данных успешно сохранена на SD. Путь: /</string>
     <string name="restore_success">Восстановление базы данных прошло успешно</string>

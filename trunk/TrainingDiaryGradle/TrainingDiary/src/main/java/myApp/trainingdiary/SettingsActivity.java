@@ -129,52 +129,53 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
 
-        Preference max_Weight = findPreference("max_Weight");
-        assert max_Weight !=null;
-        max_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference arg0) {
-                Intent MaxWeightCalculatorActivity = new Intent(context, MaxWeightCalculatorActivity.class);
-                startActivity(MaxWeightCalculatorActivity);
-                return false;
-            }
-        });
-
-        Preference max_Repeat = findPreference("max_Repeat");
-        assert max_Repeat !=null;
-        max_Repeat.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference arg0) {
-
-                return false;
-            }
-        });
-
-        Preference work_Weight = findPreference("work_Weight");
-        assert work_Weight !=null;
-        work_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference arg0) {
-
-                return false;
-            }
-        });
-
-        Preference percent = findPreference("percent");
-        assert percent !=null;
-        percent.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference arg0) {
-
-                return false;
-            }
-        });
-
-        Preference cal = findPreference("cal");
-        assert cal !=null;
-        cal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference arg0) {
-                Intent calActivity = new Intent(context, CalendarActivity.class);
-                startActivity(calActivity);
-                return false;
-            }
-        });
+//        Раздел PRO
+//        Preference max_Weight = findPreference("max_Weight");
+//        assert max_Weight !=null;
+//        max_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            public boolean onPreferenceClick(Preference arg0) {
+//                Intent MaxWeightCalculatorActivity = new Intent(context, MaxWeightCalculatorActivity.class);
+//                startActivity(MaxWeightCalculatorActivity);
+//                return false;
+//            }
+//        });
+//
+//        Preference max_Repeat = findPreference("max_Repeat");
+//        assert max_Repeat !=null;
+//        max_Repeat.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            public boolean onPreferenceClick(Preference arg0) {
+//
+//                return false;
+//            }
+//        });
+//
+//        Preference work_Weight = findPreference("work_Weight");
+//        assert work_Weight !=null;
+//        work_Weight.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            public boolean onPreferenceClick(Preference arg0) {
+//
+//                return false;
+//            }
+//        });
+//
+//        Preference percent = findPreference("percent");
+//        assert percent !=null;
+//        percent.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            public boolean onPreferenceClick(Preference arg0) {
+//
+//                return false;
+//            }
+//        });
+//
+//        Preference cal = findPreference("cal");
+//        assert cal !=null;
+//        cal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+//            public boolean onPreferenceClick(Preference arg0) {
+//                Intent calActivity = new Intent(context, CalendarActivity.class);
+//                startActivity(calActivity);
+//                return false;
+//            }
+//        });
     }
 
     @Override

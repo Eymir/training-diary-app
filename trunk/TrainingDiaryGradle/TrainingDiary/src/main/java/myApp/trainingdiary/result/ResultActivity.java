@@ -85,6 +85,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private TextView timerText;
     private boolean rotation = false;
     private String textTime;
+    private TextView numRep;
 
 
     @Override
@@ -129,6 +130,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 Log.d(Const.LOG_TAG, "onPageSelected.ex: " + dbHelper.READ.getExerciseById(ex_id).getName());
                 WheelFragment wheelFragment = getWheelFragmentByExId(ex_id);
                 attachWheelFragment(wheelFragment);
+                if(numRep != null)
+                    numRep.setText("["+getNumSets()+"]");
             }
         });
 
@@ -196,10 +199,13 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actresult_actsettings_menu, menu);
+
         MenuItem timerItem = menu.findItem(R.id.actresult_timer);
+        MenuItem numRepItem = menu.findItem(R.id.actresult_num_rep);
 
         timerText = (TextView) MenuItemCompat.getActionView(timerItem);
-        timerText.setOnClickListener(this);
+        //timerText.setOnClickListener(this);
+        numRep = (TextView) MenuItemCompat.getActionView(numRepItem);
 
         if (rotation && !reset)
             timerText.setText(currentTime);
@@ -207,7 +213,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             timerText.setText("00:00");
 
         timerText.setTextSize(25);
-        timerText.setPadding(10, 0, 5, 0);
+        timerText.setPadding(10, 0, 0, 0);
+
+        numRep.setText("["+getNumSets()+"]");
+        numRep.setTextSize(25);
+        numRep.setPadding(10,0,20,0);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -253,6 +263,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                     wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
                     Toast.makeText(ResultActivity.this, R.string.deleted,
                             Toast.LENGTH_SHORT).show();
+                    numRep.setText("[" + getNumSets() + "]");
                 } else {
                     Toast.makeText(ResultActivity.this, R.string.nothing_to_deleted,
                             Toast.LENGTH_SHORT).show();
@@ -287,6 +298,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
                 chronometerReset();
                 chronometerStart();
+                numRep.setText("["+getNumSets()+"]");
                 break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
@@ -296,7 +308,6 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 //                Log.d(Const.LOG_TAG, "undo set:" + set);
                 if (set != null) {
                     String value = MeasureFormatter.valueFormat(set);
-//                    Log.d(Const.LOG_TAG, "undo value:" + value);
                     message = String.format(message, value);
                     undoDialog.setMessage(message);
                     undoDialog.show();
@@ -442,5 +453,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         outState.putString("textTime", textTime);
         outState.putBoolean("resume", resume);
         outState.putBoolean("reset", reset);
+    }
+
+    private int getNumSets(){
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
+        return tr_stats.size();
     }
 }
