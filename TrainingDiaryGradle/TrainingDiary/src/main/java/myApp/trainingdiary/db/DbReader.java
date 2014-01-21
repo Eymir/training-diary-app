@@ -170,12 +170,38 @@ public class DbReader {
 //      Cursor c = db
 //                .rawQuery(sqlQuery, new String[]{String.valueOf(startDate), String.valueOf(endDate)});
 
-        String table = "TrainingStamp";
-        String selection = "start_date >= ? and start_date <= ? ";
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] selectionArgs = {String.valueOf(startDate), String.valueOf(endDate)};
-        Cursor c = db.query(table, null, selection, selectionArgs, null, null, null);
+//        String table = "TrainingStamp";
+//        String selection = "start_date >= ? and start_date <= ? ";
+//        SQLiteDatabase db = dbHelper.getReadableDatabase();
+//        String[] selectionArgs = {String.valueOf(startDate), String.valueOf(endDate)};
+//        Cursor c = db.query(table, null, selection, selectionArgs, null, null, null);
 
+        String sqlQuery =
+                "SELECT [VZ].[id] AS [id],\n" +
+                        "  [VZ].[start_date] AS [start_date],\n" +
+                        "  [VZ].[end_date] AS [end_date],\n" +
+                        "  [VZ].[comment] AS [comment],\n" +
+                        "  [VZ].[status] AS [status]\n" +
+                        "FROM (SELECT [TrainingStamp].[id],\n" +
+                        "    Count([TrainingSet].[id]) AS [idSet],\n" +
+                        "    [TrainingStamp].[start_date],\n" +
+                        "    [TrainingStamp].[end_date],\n" +
+                        "    [TrainingStamp].[comment],\n" +
+                        "    [TrainingStamp].[status]\n" +
+                        "  FROM [TrainingStamp]\n" +
+                        "    INNER JOIN [TrainingSet] ON [TrainingStamp].[id] =\n" +
+                        "      [TrainingSet].[training_stamp_id]\n" +
+                        "  WHERE [TrainingStamp].[start_date] >= ? AND\n" +
+                        "    [TrainingStamp].[start_date] <= ?\n" +
+                        "  GROUP BY [TrainingStamp].[id],\n" +
+                        "    [TrainingStamp].[start_date],\n" +
+                        "    [TrainingStamp].[end_date],\n" +
+                        "    [TrainingStamp].[comment],\n" +
+                        "    [TrainingStamp].[status]) AS [VZ]\n" +
+                        "WHERE [VZ].[idSet] > 0";
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(startDate), String.valueOf(endDate)});
         try {
             while (c.moveToNext()) {
                 Long id = c.getLong(c.getColumnIndex("id"));
