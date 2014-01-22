@@ -20,7 +20,7 @@
  # 
 
 = Интерфейс пользователя =
-[http://imglink.ru/pictures/13-12-13/af6d36ab3152430e73a175f0086cd193.jpg]
+[-http://imglink.ru/pictures/13-12-13/af6d36ab3152430e73a175f0086cd193.jpg-]
 
 [http://imglink.ru/pictures/22-01-14/706d2374f12cdc3e49a0d8e8a97a53c9.jpg]
 
