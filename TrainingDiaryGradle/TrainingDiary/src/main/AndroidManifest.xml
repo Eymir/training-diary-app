@@ -67,6 +67,9 @@
             android:name="myApp.trainingdiary.calendar.CalendarActivity"
             android:label="@string/training_radio_button" >
         </activity>
+
+        <receiver android:name=".utils.TimerAlarmBroadcastReceiver"/>
+
     </application>
 
 </manifest>
