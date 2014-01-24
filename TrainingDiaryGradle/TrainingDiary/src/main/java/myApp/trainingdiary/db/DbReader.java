@@ -962,7 +962,16 @@ public class DbReader {
     }
 
     public int getTrainingStampCount() {
-        String sqlQuery = "select count(*) as _count from TrainingStamp ";
+
+        //String sqlQuery = "select count(*) as _count from TrainingStamp ";
+
+        String sqlQuery ="SELECT Count([VZ].[id]) AS [_count]\n" +
+                "FROM (SELECT [TrainingStamp].[id]\n" +
+                "  FROM [TrainingStamp]\n" +
+                "    INNER JOIN [TrainingSet] ON [TrainingStamp].[id] =\n" +
+                "      [TrainingSet].[training_stamp_id]\n" +
+                "  GROUP BY [TrainingStamp].[id]) AS [VZ]";
+
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         int count = c.getInt(c.getColumnIndex("_count"));
@@ -970,10 +979,21 @@ public class DbReader {
         return count;
     }
 
-
     public long getTrainingDurationSumm() {
-        String sqlQuery = "select sum(dur_sum1) as dur_sum from (select (stat.end_date - stat.start_date) as dur_sum1 " +
-                "from TrainingStamp stat where stat.end_date not null and stat.end_date <> 0 and stat.status = 'CLOSED' and stat.end_date <> stat.start_date);";
+
+//        String sqlQuery = "select sum(dur_sum1) as dur_sum from (select (stat.end_date - stat.start_date) as dur_sum1 " +
+//                "from TrainingStamp stat where stat.end_date not null and stat.end_date <> 0 and stat.status = 'CLOSED' and stat.end_date <> stat.start_date);";
+
+        String sqlQuery = "SELECT Sum([VZ].[all]) AS [dur_sum]\n" +
+                "FROM (SELECT [TrainingStamp].[end_date] - [TrainingStamp].[start_date] AS [all]\n" +
+                "  FROM [TrainingStamp]\n" +
+                "    INNER JOIN [TrainingSet] ON [TrainingStamp].[id] =\n" +
+                "      [TrainingSet].[training_stamp_id]\n" +
+                "  WHERE [TrainingStamp].[start_date] IS NOT NULL AND\n" +
+                "    [TrainingStamp].[end_date] <> 0 AND [TrainingStamp].[status] = 'CLOSED' AND\n" +
+                "    [TrainingStamp].[start_date] <> 0 AND [TrainingStamp].[end_date] IS NOT NULL\n" +
+                "  GROUP BY [TrainingStamp].[end_date] - [TrainingStamp].[start_date]) AS [VZ]";
+
         Cursor c = dbHelper.getReadableDatabase().rawQuery(sqlQuery, null);
         c.moveToFirst();
         long dur_sum = c.getInt(c.getColumnIndex("dur_sum"));
@@ -982,11 +1002,13 @@ public class DbReader {
     }
 
     public Exercise getFavoriteExercise() {
+
         String sqlQuery = "select ex.id ex_id, ex.name ex_name,  " +
                 "ex_type.id type_id, ex_type.name type_name, ex_type.icon_res type_icon  " +
                 "from Exercise ex, ExerciseType ex_type, ( " +
                 "select exercise_id, count(id) ex_count from TrainingSet group by exercise_id order by count(id) desc limit 1) sel  " +
                 "where ex.type_id = ex_type.id AND ex.id = sel.exercise_id";
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, null);
@@ -1181,8 +1203,17 @@ public class DbReader {
     }
 
     public TrainingStamp getLastClosedTrainingStamp() {
-        String sqlQuery = "select * from TrainingStamp tr_stat " +
-                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStamp where status = 'CLOSED')";
+
+//        String sqlQuery = "select * from TrainingStamp tr_stat " +
+//                "where tr_stat.id = (SELECT MAX(id) FROM TrainingStamp where status = 'CLOSED')";
+
+        String sqlQuery = "SELECT [TrainingStamp].*\n" +
+                "FROM [TrainingStamp]\n" +
+                "WHERE [TrainingStamp].[id] = (SELECT Max([TrainingStamp].[id])\n" +
+                "  FROM [TrainingStamp] INNER JOIN [TrainingSet] ON [TrainingStamp].[id] =\n" +
+                "      [TrainingSet].[training_stamp_id]\n" +
+                "  WHERE [TrainingStamp].[status] = 'CLOSED')";
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, null);
