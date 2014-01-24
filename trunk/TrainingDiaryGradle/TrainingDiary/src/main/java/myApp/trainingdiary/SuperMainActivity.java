@@ -73,14 +73,6 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         ImageButton editStat = (ImageButton) findViewById(R.id.edit_user_activity);
         editStat.setOnClickListener(this);
 
-//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-//        boolean firstStart = sp.getBoolean("about", true);
-//
-//        if (firstStart) {
-//            showWhatNewsDialog();
-//            changeFirsStartPreference();
-//        }
-
         createEditStatListDialog();
         showCommonStatisticList();
     }
@@ -136,10 +128,6 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
                 Intent intentAddEx = new Intent(SuperMainActivity.this, AddExerciseActivity.class);
                 startActivity(intentAddEx);
                 break;
-//            case R.id.history_main_button:
-//                Intent intentHist = new Intent(SuperMainActivity.this, HistoryMainActivity.class);
-//                startActivity(intentHist);
-//                break;
             case R.id.history_main_button:
                 Intent intentHistCalendar = new Intent(SuperMainActivity.this, CalendarActivity.class);
                 startActivity(intentHistCalendar);
@@ -173,39 +161,5 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         }
         return true;
     }
-
-    private void showWhatNewsDialog() {
-        String version = "";
-        try {
-            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.newInVersionTitle) + " " + version);
-        final TextView message = new TextView(this);
-        final SpannableString s = new SpannableString(getResources()
-                .getString(R.string.newInVersionMessage));
-        Linkify.addLinks(s, Linkify.WEB_URLS);
-        message.setText(s);
-        message.setMovementMethod(LinkMovementMethod.getInstance());
-        message.setTextColor(Color.BLACK);
-        builder.setView(message);
-        builder.setPositiveButton(R.string.btn_txt_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-            }
-        });
-        AlertDialog AD = builder.create();
-        AD.show();
-    }
-
-//    private void changeFirsStartPreference() {
-//        //SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
-//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-//        SharedPreferences.Editor editor = settings.edit();
-//        editor.putBoolean("about", false);
-//        editor.commit();
-//    }
 
 }

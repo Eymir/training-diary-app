@@ -62,6 +62,7 @@ public class HistoryMainActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         ActionBar.Tab tab = actionBar.newTab()
                 .setText(R.string.training_radio_button)
@@ -111,6 +112,7 @@ public class HistoryMainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 DateItem item = (DateItem) trainingHistoryAdapter.getItem(pos);
+                Log.i("My", ""+item.getDate());
                 openTrainingDetails(item.getDate());
             }
         });
