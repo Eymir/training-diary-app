@@ -26,14 +26,14 @@ public class FolderGeneratorService {
         createFolderIfNotExist(dir);
 
         if (dir.listFiles().length < maxFileInFolder) {
-            createFolderIfNotExist(new File(baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId()));
-            return baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId();
+            createFolderIfNotExist(new File(dir.getAbsolutePath() + IOUtils.DIR_SEPARATOR + userData.getId()));
+            return dir.getAbsolutePath() + IOUtils.DIR_SEPARATOR + userData.getId();
         } else {
 
             folderGeneratorRepository.incrementCount();
             folderIndex = folderGeneratorRepository.getCount();
-            createFolderIfNotExist(new File(baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId()));
-            return baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getRegistrationId();
+            createFolderIfNotExist(new File(baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getId()));
+            return baseFolderPath + IOUtils.DIR_SEPARATOR + folderIndex + IOUtils.DIR_SEPARATOR + userData.getId();
 
         }
     }

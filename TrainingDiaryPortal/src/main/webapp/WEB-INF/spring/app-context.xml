@@ -13,14 +13,14 @@
         <property name="jdbcTemplate" ref="centralDbJdbcTemplate"/>
     </bean>
     <bean id="folderGeneratorService" class="ru.td.portal.service.FolderGeneratorService">
-        <property name="baseFolderPath" value="F:\tests\TDP"/>
+        <property name="baseFolderPath" value="D:\tests\TDP"/>
         <!--<property name="baseFolderPath" value="/home/boris/TDP"/>-->
         <property name="folderGeneratorRepository" ref="folderGeneratorRepository"/>
         <property name="maxFileInFolder" value="500"/>
     </bean>
 
-    <bean id="uploadDbRestController" class="ru.td.portal.controller.UploadDbRestController">
-        <property name="folderGeneratorService" ref="folderGeneratorService"/>
-        <property name="userDataRepository" ref="userDataRepository"/>
-    </bean>
+    <!--<bean id="restController" class="ru.td.portal.controller.RestController">-->
+        <!--<property name="folderGeneratorService" ref="folderGeneratorService"/>-->
+        <!--<property name="userDataRepository" ref="userDataRepository"/>-->
+    <!--</bean>-->
 </beans>
