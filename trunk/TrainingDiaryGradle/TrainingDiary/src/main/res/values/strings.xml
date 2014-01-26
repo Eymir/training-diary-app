@@ -200,5 +200,9 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="set_timer_vibro_summary">Вибрировать при срабатываний таймера</string>
     <string name="set_timer_sound_title">Мелодия сигнала</string>
     <string name="set_timer_sound_summary">****.mp3</string>
+    <string name="min">мин.</string>
+    <string name="sec">сек.</string>
+    <string name="no_media_toast">Нет медиа файлов на внешнем носителе</string>
+    <string name="select_sound">Выберете звуковой файл</string>
 
 </resources>

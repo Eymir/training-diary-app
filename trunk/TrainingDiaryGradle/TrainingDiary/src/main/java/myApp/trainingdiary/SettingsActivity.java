@@ -3,22 +3,30 @@ package myApp.trainingdiary;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Calendar;
 
 import kankan.wheel.widget.OnWheelChangedListener;
@@ -30,6 +38,7 @@ import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.BackupManager;
 import myApp.trainingdiary.utils.Const;
+import myApp.trainingdiary.utils.SoundPlayer;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
@@ -45,6 +54,11 @@ public class SettingsActivity extends PreferenceActivity  implements
     private CheckBoxPreference checkBoxUseTimer;
 
     private Preference set_timer_time;
+    private Preference set_timer_sound;
+
+    private Cursor cursorMelody;
+
+    SharedPreferences preferences;
 
     private static final String KEY_STOPWATCH = "use_stopwatch";
     private static final String KEY_TIMER = "use_timer";
@@ -54,6 +68,8 @@ public class SettingsActivity extends PreferenceActivity  implements
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         context = this.getApplicationContext();
+
+        preferences = getSharedPreferences("preferences", MODE_PRIVATE);
 
         checkBoxUseStopWatch = (CheckBoxPreference)findPreference(KEY_STOPWATCH);
         checkBoxUseTimer = (CheckBoxPreference)findPreference(KEY_TIMER);
@@ -157,8 +173,7 @@ public class SettingsActivity extends PreferenceActivity  implements
         });
 
         set_timer_time = findPreference("set_timer_time");
-        SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
-        Long storedTime = pref.getLong("set_timer_time", 0L);
+        Long storedTime = preferences.getLong("set_timer_time", 0L);
         int min = 5;
         int sec = 0;
         if(storedTime != 0L){
@@ -167,7 +182,8 @@ public class SettingsActivity extends PreferenceActivity  implements
             min = cal.get(Calendar.MINUTE);
             sec = cal.get(Calendar.SECOND);
         }
-        set_timer_time.setSummary(""+min+" мин. "+sec+" сек.");
+        set_timer_time.setSummary(""+min+" "+getResources().getString(R.string.min)
+                +" "+sec+" "+getResources().getString(R.string.sec)+"");
         set_timer_time.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
                 showTimePickerDialog();
@@ -175,10 +191,15 @@ public class SettingsActivity extends PreferenceActivity  implements
             }
         });
 
-        Preference set_timer_sound = findPreference("set_timer_sound");
+        set_timer_sound = findPreference("set_timer_sound");
+        String uriStr = preferences.getString("set_timer_sound", "");
+        String path = "def uri";
+        if(uriStr.length() !=0)
+            path = getRealPathFromURI(Uri.parse(uriStr));
+        set_timer_sound.setSummary(path);
         set_timer_sound.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
-
+                selectSound();
                 return false;
             }
         });
@@ -282,7 +303,8 @@ public class SettingsActivity extends PreferenceActivity  implements
             min = cal.get(Calendar.MINUTE);
             sec = cal.get(Calendar.SECOND);
         }
-        d.setTitle(""+min+" мин. "+sec+" сек.");
+        d.setTitle(""+min+" "+getResources().getString(R.string.min)
+                +" "+sec+" "+getResources().getString(R.string.sec)+"");
         d.setContentView(R.layout.number_picker_dialog);
         Button btnOk = (Button) d.findViewById(R.id.set_timer_btn_yes);
         Button btnNo = (Button) d.findViewById(R.id.set_timer_btn_no);
@@ -297,7 +319,8 @@ public class SettingsActivity extends PreferenceActivity  implements
         wheelMin.setCurrentItem(min);
         wheelMin.addChangingListener(new OnWheelChangedListener() {
             public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                d.setTitle(""+newValue+" мин. "+wheelSec.getCurrentItem()+" сек.");
+                d.setTitle(""+newValue+" "+getResources().getString(R.string.min)
+                        +" "+wheelSec.getCurrentItem()+" "+getResources().getString(R.string.sec)+"");
             }
         });
 
@@ -309,7 +332,8 @@ public class SettingsActivity extends PreferenceActivity  implements
         wheelSec.setCurrentItem(sec);
         wheelSec.addChangingListener(new OnWheelChangedListener() {
             public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                d.setTitle(""+wheelMin.getCurrentItem()+" мин. "+newValue+" сек.");
+                d.setTitle(""+wheelMin.getCurrentItem()+" "+getResources().getString(R.string.min)
+                        +" "+newValue+" "+getResources().getString(R.string.sec)+"");
             }
         });
 
@@ -326,7 +350,8 @@ public class SettingsActivity extends PreferenceActivity  implements
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putLong("set_timer_time",c.getTimeInMillis());
                 editor.commit();
-                set_timer_time.setSummary(""+min+" мин. "+sec+" сек.");
+                set_timer_time.setSummary("" + min + " " + getResources().getString(R.string.min)
+                        + " " + sec + " " + getResources().getString(R.string.sec) + "");
                 d.dismiss();
             }
         });
@@ -339,5 +364,82 @@ public class SettingsActivity extends PreferenceActivity  implements
             }
         });
         d.show();
+    }
+
+    private void showSelectSoundDialog(){
+        final Uri[] uri = new Uri[1];
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.select_sound);
+        builder.setSingleChoiceItems(cursorMelody, -1, "title", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ListView lv = ((AlertDialog)dialogInterface).getListView();
+                if (cursorMelody.moveToPosition(lv.getCheckedItemPosition())){
+                    int idColumn = cursorMelody.getColumnIndex(android.provider.MediaStore.Audio.Media._ID);
+                    Long thisId = cursorMelody.getLong(idColumn);
+                    uri[0] = ContentUris
+                            .withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
+                    SoundPlayer.getInstance(context).playSound(uri[0]);
+                }
+            }
+        });
+
+        builder.setPositiveButton(R.string.YES, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if(!(((AlertDialog)dialog).getListView().getCheckedItemPosition() == -1)){
+                    set_timer_sound.setSummary(getRealPathFromURI( uri[0]));
+                    SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("set_timer_sound", uri[0].toString());
+                    editor.commit();
+                }
+                else{
+                    String uriStr = preferences.getString("set_timer_sound", "");
+                    String path = "def uri";
+                    if(uriStr.length() !=0)
+                        path = getRealPathFromURI(Uri.parse(uriStr));
+                    set_timer_sound.setSummary(path);
+                }
+                SoundPlayer.getInstance(context).stopPlaySound();
+            }
+        });
+        builder.setNegativeButton(R.string.NO, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                SoundPlayer.getInstance(context).stopPlaySound();
+            }
+        });
+        AlertDialog AD = builder.create();
+        AD.show();
+    }
+
+    private void selectSound(){
+        ContentResolver contentResolver = getContentResolver();
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        cursorMelody = contentResolver.query(uri, null, null, null, null);
+
+        if(cursorMelody != null){
+            if(cursorMelody.getCount() == 0)
+                Toast.makeText(context, getResources().getText(R.string.no_media_toast), Toast.LENGTH_SHORT).show();
+            else
+                showSelectSoundDialog();
+        }
+        else {
+            Toast.makeText(context, getResources().getText(R.string.no_media_toast), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getRealPathFromURI(Uri contentUri) {
+        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+        if(cursor.moveToFirst()){
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            String realPath = cursor.getString(idx);
+            cursor.close();
+            return realPath;
+        }
+        else {
+            cursor.close();
+            return "";
+        }
     }
 }
