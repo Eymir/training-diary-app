@@ -1,8 +1,11 @@
 package myApp.trainingdiary;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -10,8 +13,17 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
+import kankan.wheel.widget.OnWheelChangedListener;
+import kankan.wheel.widget.WheelView;
+import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import myApp.trainingdiary.calculators.MaxWeightCalculatorActivity;
 import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.db.DBHelper;
@@ -31,6 +43,8 @@ public class SettingsActivity extends PreferenceActivity  implements
 
     private CheckBoxPreference checkBoxUseStopWatch;
     private CheckBoxPreference checkBoxUseTimer;
+
+    private Preference set_timer_time;
 
     private static final String KEY_STOPWATCH = "use_stopwatch";
     private static final String KEY_TIMER = "use_timer";
@@ -142,10 +156,21 @@ public class SettingsActivity extends PreferenceActivity  implements
             }
         });
 
-        Preference set_timer_time = findPreference("set_timer_time");
+        set_timer_time = findPreference("set_timer_time");
+        SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+        Long storedTime = pref.getLong("set_timer_time", 0L);
+        int min = 5;
+        int sec = 0;
+        if(storedTime != 0L){
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(storedTime);
+            min = cal.get(Calendar.MINUTE);
+            sec = cal.get(Calendar.SECOND);
+        }
+        set_timer_time.setSummary(""+min+" мин. "+sec+" сек.");
         set_timer_time.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
-
+                showTimePickerDialog();
                 return false;
             }
         });
@@ -242,5 +267,77 @@ public class SettingsActivity extends PreferenceActivity  implements
             }
         }
         return true;
+    }
+
+    private void showTimePickerDialog(){
+
+        final Dialog d = new Dialog(this);
+        SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+        Long storedTime = pref.getLong("set_timer_time", 0L);
+        int min = 5;
+        int sec = 0;
+        if(storedTime != 0L){
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(storedTime);
+            min = cal.get(Calendar.MINUTE);
+            sec = cal.get(Calendar.SECOND);
+        }
+        d.setTitle(""+min+" мин. "+sec+" сек.");
+        d.setContentView(R.layout.number_picker_dialog);
+        Button btnOk = (Button) d.findViewById(R.id.set_timer_btn_yes);
+        Button btnNo = (Button) d.findViewById(R.id.set_timer_btn_no);
+        final WheelView wheelMin = (WheelView) d.findViewById(R.id.set_timer_wheel_min);
+        final WheelView wheelSec = (WheelView) d.findViewById(R.id.set_timer_wheel_sec);
+
+        NumericWheelAdapter minAdapter = new NumericWheelAdapter(this, 0, 59, "%02d");
+        minAdapter.setItemResource(R.layout.wheel_text_item);
+        minAdapter.setItemTextResource(R.id.text);
+        wheelMin.setViewAdapter(minAdapter);
+        wheelMin.setCyclic(true);
+        wheelMin.setCurrentItem(min);
+        wheelMin.addChangingListener(new OnWheelChangedListener() {
+            public void onChanged(WheelView wheel, int oldValue, int newValue) {
+                d.setTitle(""+newValue+" мин. "+wheelSec.getCurrentItem()+" сек.");
+            }
+        });
+
+        NumericWheelAdapter secAdapter = new NumericWheelAdapter(this, 0, 59, "%02d");
+        secAdapter.setItemResource(R.layout.wheel_text_item);
+        secAdapter.setItemTextResource(R.id.text);
+        wheelSec.setViewAdapter(minAdapter);
+        wheelSec.setCyclic(true);
+        wheelSec.setCurrentItem(sec);
+        wheelSec.addChangingListener(new OnWheelChangedListener() {
+            public void onChanged(WheelView wheel, int oldValue, int newValue) {
+                d.setTitle(""+wheelMin.getCurrentItem()+" мин. "+newValue+" сек.");
+            }
+        });
+
+        btnOk.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                int min = wheelMin.getCurrentItem();
+                int sec = wheelSec.getCurrentItem();
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.MINUTE,min);
+                c.set(Calendar.SECOND, sec);
+                SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putLong("set_timer_time",c.getTimeInMillis());
+                editor.commit();
+                set_timer_time.setSummary(""+min+" мин. "+sec+" сек.");
+                d.dismiss();
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        d.show();
     }
 }
