@@ -185,5 +185,20 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="pref_chb_keep_screen_summ">Не даёт телефону выключить экран в режиме выполнения подходов</string>
     <string name="pref_screen_backup_title">Резервное копирование</string>
     <string name="pref_screen_backup_summary">Управление резервными копиями</string>
+    <!--Настройки таймера-->
+    <string name="timer_set_screen_title">Таймер/секундомер</string>
+    <string name="timer_set_screen_summary">Настройки таймера отдыха между подходами</string>
+    <string name="use_timer_title">Таймер</string>
+    <string name="use_timer_summary">Использовать таймер с оповщением во время отдыха между подходами</string>
+    <string name="use_stopwatch_title">Секундомер</string>
+    <string name="use_stopwatch_summary">Использовать секундомер во время отдыха между подходами</string>
+    <string name="set_timer_time_title">Интервал</string>
+    <string name="set_timer_time_summary">Установить время Таймера</string>
+    <string name="set_timer_alarm_title">Звуковой сигнал</string>
+    <string name="set_timer_alarm_summary">Подавать сигнал при истечении времени таймера</string>
+    <string name="set_timer_vibro_title">Вибрировать</string>
+    <string name="set_timer_vibro_summary">Вибрировать при срабатываний таймера</string>
+    <string name="set_timer_sound_title">Мелодия сигнала</string>
+    <string name="set_timer_sound_summary">****.mp3</string>
 
 </resources>
