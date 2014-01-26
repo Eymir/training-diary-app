@@ -10,6 +10,50 @@
             android:summary="@string/pref_screen_settings_summary"
             android:title="@string/pref_screen_settings_title">
 
+            <PreferenceScreen
+                android:key="timer_set_screen"
+                android:title="@string/timer_set_screen_title"
+                android:summary="@string/timer_set_screen_summary">
+                <CheckBoxPreference
+                    android:key="use_timer"
+                    android:title="@string/use_timer_title"
+                    android:summary="@string/use_timer_summary"
+                    android:defaultValue="false">
+                </CheckBoxPreference>
+                <CheckBoxPreference
+                    android:key="use_stopwatch"
+                    android:title="@string/use_stopwatch_title"
+                    android:summary="@string/use_stopwatch_summary"
+                    android:defaultValue="true">
+                </CheckBoxPreference>
+                <Preference
+                    android:key="set_timer_time"
+                    android:title="@string/set_timer_time_title"
+                    android:summary="@string/set_timer_time_summary"
+                    android:dependency="use_timer">
+                </Preference>
+                <CheckBoxPreference
+                    android:key="set_timer_alarm"
+                    android:title="@string/set_timer_alarm_title"
+                    android:summary="@string/set_timer_alarm_summary"
+                    android:defaultValue="true"
+                    android:dependency="use_timer">
+                </CheckBoxPreference>
+                <Preference
+                    android:key="set_timer_sound"
+                    android:title="@string/set_timer_sound_title"
+                    android:summary="@string/set_timer_sound_summary"
+                    android:dependency="use_timer">
+                </Preference>
+                <CheckBoxPreference
+                    android:key="set_timer_vibro"
+                    android:title="@string/set_timer_vibro_title"
+                    android:summary="@string/set_timer_vibro_summary"
+                    android:defaultValue="true"
+                    android:dependency="use_timer">
+                </CheckBoxPreference>
+            </PreferenceScreen>
+
             <CheckBoxPreference
                 android:key="disable_sound"
                 android:title="@string/sound_switcher_title"

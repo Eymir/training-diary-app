@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.util.Log;
@@ -22,16 +23,28 @@ import myApp.trainingdiary.utils.Const;
  * �������� � ���������� � ���� ��� ����������� ���������� 
  */
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity  implements
+        Preference.OnPreferenceChangeListener {
 
     private DBHelper dbHelper;
     private Context context;
+
+    private CheckBoxPreference checkBoxUseStopWatch;
+    private CheckBoxPreference checkBoxUseTimer;
+
+    private static final String KEY_STOPWATCH = "use_stopwatch";
+    private static final String KEY_TIMER = "use_timer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         context = this.getApplicationContext();
+
+        checkBoxUseStopWatch = (CheckBoxPreference)findPreference(KEY_STOPWATCH);
+        checkBoxUseTimer = (CheckBoxPreference)findPreference(KEY_TIMER);
+        checkBoxUseStopWatch.setOnPreferenceChangeListener(this);
+        checkBoxUseTimer.setOnPreferenceChangeListener(this);
 
         Preference about = findPreference("about");
         String version = null;
@@ -129,6 +142,22 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
 
+        Preference set_timer_time = findPreference("set_timer_time");
+        set_timer_time.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+
+                return false;
+            }
+        });
+
+        Preference set_timer_sound = findPreference("set_timer_sound");
+        set_timer_sound.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+
+                return false;
+            }
+        });
+
 //        Раздел PRO
 //        Preference max_Weight = findPreference("max_Weight");
 //        assert max_Weight !=null;
@@ -189,4 +218,29 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
 
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object o) {
+
+        String key =  preference.getKey();
+
+        if(key.equalsIgnoreCase(KEY_TIMER)){
+            if(!checkBoxUseTimer.isChecked()){
+                checkBoxUseStopWatch.setChecked(false);
+            }
+            else {
+                if(!checkBoxUseStopWatch.isChecked())
+                    return false;
+            }
+        }
+        else if(key.equalsIgnoreCase(KEY_STOPWATCH)){
+            if(!checkBoxUseStopWatch.isChecked()){
+                checkBoxUseTimer.setChecked(false);
+            }
+            else {
+                if(!checkBoxUseTimer.isChecked())
+                    return false;
+            }
+        }
+        return true;
+    }
 }
