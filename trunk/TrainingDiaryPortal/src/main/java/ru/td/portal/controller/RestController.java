@@ -55,9 +55,9 @@ public class RestController {
     }
 
     @RequestMapping(value = "/downloadDb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
-    public  @ResponseBody Response downloadClientDb(@RequestParam("id") String id,@RequestParam("channel") String channel) {
-        UserData result = userDataRepository.getUserDataByRegIdAndChannel(id, channel);
-        checkUserDataNotNull(id, channel, result);
+    public  @ResponseBody Response downloadClientDb(@RequestBody UserData userData) {
+        UserData result = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
+        checkUserDataNotNull(userData.getRegistrationId(), userData.getRegistrationChannel(), result);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(new File(result.getDbPath()));
