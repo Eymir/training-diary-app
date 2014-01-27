@@ -10,6 +10,7 @@ import ru.td.portal.domain.UserData;
 import ru.td.portal.repository.UserDataRepository;
 import ru.td.portal.service.FolderGeneratorService;
 
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -37,7 +38,9 @@ public class RestController {
     //TODO:Костыль с возвращаемым типом, бул почему-то вернуть не получается
     @RequestMapping(value = "/uploadDb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
 
-    public @ResponseBody Response uploadClientDb(@RequestBody UserData userData) {
+    public
+    @ResponseBody
+    Response uploadClientDb(@RequestBody UserData userData) {
         String dbPath = folderGeneratorService.generateFolderPath(userData) + IOUtils.DIR_SEPARATOR + "db.sqlite";
         FileOutputStream fos = null;
         try {
@@ -55,9 +58,11 @@ public class RestController {
     }
 
     @RequestMapping(value = "/downloadDb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
-    public  @ResponseBody Response downloadClientDb(@RequestBody UserData userData) {
-        UserData result = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
-        checkUserDataNotNull(userData.getRegistrationId(), userData.getRegistrationChannel(), result);
+    public
+    @ResponseBody
+    Response downloadClientDb(@HeaderParam("id") String id, @HeaderParam("channel") String channel) {
+        UserData result = userDataRepository.getUserDataByRegIdAndChannel(id, channel);
+        checkUserDataNotNull(id, channel, result);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(new File(result.getDbPath()));
@@ -73,8 +78,8 @@ public class RestController {
     }
 
     private void checkUserDataNotNull(String id, String channel, UserData result) {
-        if (result == null || result.getDbPath() == null){
-            throw new RuntimeException("Error! Record with id="+id+" and channel="+channel+" not found");
+        if (result == null || result.getDbPath() == null) {
+            throw new RuntimeException("Error! Record with id=" + id + " and channel=" + channel + " not found");
         }
     }
 
