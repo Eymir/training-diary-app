@@ -11,6 +11,7 @@ import ru.td.portal.repository.UserDataRepository;
 import ru.td.portal.service.FolderGeneratorService;
 
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -60,7 +61,7 @@ public class RestController {
     @RequestMapping(value = "/downloadDb", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
     public
     @ResponseBody
-    Response downloadClientDb(@HeaderParam("id") String id, @HeaderParam("channel") String channel) {
+    Response downloadClientDb(@QueryParam("id") String id, @QueryParam("channel") String channel) {
         UserData result = userDataRepository.getUserDataByRegIdAndChannel(id, channel);
         checkUserDataNotNull(id, channel, result);
         FileInputStream fis = null;
