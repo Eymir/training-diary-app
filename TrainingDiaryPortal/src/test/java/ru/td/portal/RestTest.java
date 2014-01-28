@@ -4,6 +4,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import ru.td.portal.domain.UserData;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -30,7 +31,7 @@ public class RestTest {
             }
 
             System.out.println("Output from Server .... \n");
-            String output = response.getEntity(String.class);
+            UserData output = response.getEntity(UserData.class);
             System.out.println(output);
 
         } catch (Exception e) {
