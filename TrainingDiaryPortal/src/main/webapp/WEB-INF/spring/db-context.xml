@@ -4,15 +4,18 @@
        xmlns:jd="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
+    <bean id="centralDbDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
-    <jd:embedded-database id="centralDbDataSource" type="HSQL">
-        <jd:script location="classpath:db/centralDbSchema.sql"/>
-        <jd:script location="classpath:db/centralDbData.sql"/>
-    </jd:embedded-database>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://62.109.24.88:3306/training_diary_central" />
+        <property name="username" value="td_admin" />
+        <property name="password" value="6vXcWY2BAFJUA6D4" />
+    </bean>
 
 
     <bean id="centralDbJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="centralDbDataSource"></property>
+        <property name="dataSource" ref="centralDbDataSource"/>
     </bean>
 
     <bean id="userDataRepository" class="ru.td.portal.repository.UserDataRepository">
