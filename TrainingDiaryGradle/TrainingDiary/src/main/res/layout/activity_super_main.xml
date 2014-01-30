@@ -61,10 +61,10 @@
 
         <Button
             style="?hugeSpecificButtonRef"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
             android:text="@string/start_training"
             android:textStyle="bold"
+            android:layout_height="80dp"
             android:id="@+id/start_training_button"
             android:padding="26dp" />
 
@@ -79,13 +79,13 @@
                 android:id="@+id/continue_workout_button"
                 style="?hugeSpecificButtonRef"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="80dp"
                 android:text="@string/continue_workout"
                 android:layout_weight="1" />
 
             <ImageButton
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_weight="0"
                 style="?hugeSpecificButtonRef"
                 android:id="@+id/stop_workout_button"

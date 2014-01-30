@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.utils.Const;
@@ -18,12 +19,12 @@ import myApp.trainingdiary.utils.Const;
  */
 public class StatItemArrayAdapter extends ArrayAdapter {
     private Context context;
-    private ArrayList items;
+    private List items;
     private LayoutInflater vi;
     private int mainLayout;
     private int dropLayout;
 
-    public StatItemArrayAdapter(Context context, int mainLayout, int dropLayout, ArrayList items) {
+    public StatItemArrayAdapter(Context context, int mainLayout, int dropLayout, List<StatItem> items) {
         super(context, 0, items);
         this.context = context;
         this.items = items;

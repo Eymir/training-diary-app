@@ -2,6 +2,7 @@ package myApp.trainingdiary.result;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -87,18 +88,20 @@ public final class ResultFragment extends Fragment {
     }
 
     private void refreshView(View view) {
-        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(view.getContext()).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(exercise.getId(), tr_stamp_id);
         Log.d(Const.LOG_TAG, "tr_stats: " + tr_stats);
         Log.d(Const.LOG_TAG, "exercise: " + exercise.getName());
         TextView training_stat_text = (TextView) view.findViewById(R.id.cur_training_stats);
         String s = formTrainingStats(tr_stats);
         int color = view.getResources().getColor(R.color.white_little_transparent);
-        training_stat_text.setText(makeSeparatorsTransparent(s,color));
+        training_stat_text.setText(makeSeparatorsTransparent(s, color));
         view.invalidate();
     }
 
-    private SpannableStringBuilder makeSeparatorsTransparent(String s,int color) {
+    private SpannableStringBuilder makeSeparatorsTransparent(String s, int color) {
         final Pattern p1 = Pattern.compile("[x;]");
         final Matcher matcher = p1.matcher(s);
 

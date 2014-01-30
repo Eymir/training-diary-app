@@ -14,6 +14,7 @@ public class Const {
 
     //It needs to be a setting
     public final static int THREE_HOURS = 10800000;
+    public static final String KEY_WORKOUT_EXPIRING = "workout_expiring";
 
     public static final String HISTORY_TYPE = "history_type";
     public static final int TRAINING_TYPE = 0;

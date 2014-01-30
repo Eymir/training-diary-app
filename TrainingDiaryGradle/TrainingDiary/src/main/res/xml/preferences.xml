@@ -54,6 +54,14 @@
                 </CheckBoxPreference>
             </PreferenceScreen>
 
+            <ListPreference
+                android:key="workout_expiring"
+                android:title="@string/workout_expiring_title"
+                android:summary="@string/workout_expiring_summary"
+                android:defaultValue="1800000"
+                android:entries="@array/workout_expiring_key_list"
+                android:entryValues="@array/workout_expiring_value_list" />
+
             <CheckBoxPreference
                 android:key="disable_sound"
                 android:title="@string/sound_switcher_title"
@@ -65,13 +73,6 @@
                 android:title="@string/pref_chb_keep_screen_title"
                 android:summary="@string/pref_chb_keep_screen_summ"
                 android:defaultValue="false"/>
-
-            <ListPreference
-                android:key="workout_expiring"
-                android:title="@string/workout_expiring_title"
-                android:summary="@string/workout_expiring_summary"
-                android:defaultValue="false"/>
-
 
         </PreferenceScreen>
     </PreferenceCategory>
