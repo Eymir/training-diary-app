@@ -1,18 +1,11 @@
 package myApp.trainingdiary;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -31,17 +24,19 @@ import myApp.trainingdiary.customview.stat.StatItemArrayAdapter;
 import myApp.trainingdiary.customview.stat.StatisticEnum;
 import myApp.trainingdiary.customview.stat.StatisticValueFactory;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.db.entity.TrainingStamp;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.excercise.AddExerciseActivity;
-import myApp.trainingdiary.history.HistoryMainActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.training.TrainingActivity;
 import myApp.trainingdiary.utils.Const;
+import myApp.trainingdiary.utils.TrainingDurationManger;
 
 public class SuperMainActivity extends ActionBarActivity implements View.OnClickListener {
 
     private DBHelper dbHelper;
     private AlertDialog editStatListDialog;
+    private AlertDialog stopWorkoutDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +53,6 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         actionBar.setDisplayShowTitleEnabled(true);
         initStatPref();
 
-        Button start = (Button) findViewById(R.id.start_training_button);
-        start.setOnClickListener(this);
-
         Button exercise = (Button) findViewById(R.id.exercise_main_button);
         exercise.setOnClickListener(this);
 
@@ -75,6 +67,31 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
         createEditStatListDialog();
         showCommonStatisticList();
+        createDeletionDialog();
+    }
+
+    private void manageWorkoutButtons() {
+        TrainingDurationManger.closeExpiredTrainingStamps(Const.THREE_HOURS);
+        TrainingStamp tr_stamp = dbHelper.READ.getOpenTrainingStamp();
+        if (tr_stamp != null && dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp.getId()) != null) {
+            findViewById(R.id.start_training_button).setVisibility(View.GONE);
+            findViewById(R.id.continue_workout_panel).setVisibility(View.VISIBLE);
+            Button cont = (Button) findViewById(R.id.continue_workout_button);
+            cont.setOnClickListener(this);
+            ImageButton stop = (ImageButton) findViewById(R.id.stop_workout_button);
+            stop.setOnClickListener(this);
+        } else {
+            findViewById(R.id.start_training_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.continue_workout_panel).setVisibility(View.GONE);
+            Button start = (Button) findViewById(R.id.start_training_button);
+            start.setOnClickListener(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        manageWorkoutButtons();
     }
 
     private void initStatPref() {
@@ -124,6 +141,13 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
                 Intent intent = new Intent(SuperMainActivity.this, TrainingActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.continue_workout_button:
+                Intent intentCon = new Intent(SuperMainActivity.this, TrainingActivity.class);
+                startActivity(intentCon);
+                break;
+            case R.id.stop_workout_button:
+                stopWorkoutDialog.show();
+                break;
             case R.id.exercise_main_button:
                 Intent intentAddEx = new Intent(SuperMainActivity.this, AddExerciseActivity.class);
                 startActivity(intentAddEx);
@@ -140,6 +164,28 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
                 editStatListDialog.show();
                 break;
         }
+    }
+
+    private void createDeletionDialog() {
+
+        String title = getResources().getString(R.string.stop_training_dialog_title);
+        String cancelButton = getResources().getString(R.string.cancel_button);
+        String btnDel = getResources().getString(R.string.stop_button);
+
+        stopWorkoutDialog = DialogProvider.createSimpleDialog(this, title, null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+            @Override
+            public void onPositiveClick() {
+                TrainingDurationManger.closeOpenTrainingStamps();
+                Toast.makeText(SuperMainActivity.this, R.string.workout_stopped,
+                        Toast.LENGTH_SHORT).show();
+                manageWorkoutButtons();
+            }
+
+            @Override
+            public void onNegativeClick() {
+                stopWorkoutDialog.cancel();
+            }
+        });
     }
 
 

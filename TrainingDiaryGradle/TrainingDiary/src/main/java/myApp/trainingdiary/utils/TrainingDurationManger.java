@@ -38,4 +38,18 @@ public class TrainingDurationManger {
             }
         }
     }
+
+    public static void closeOpenTrainingStamps() {
+        List<TrainingStamp> stamps = dbHelper.READ.getOpenTrainingStampList();
+        for (TrainingStamp tr_stamp : stamps) {
+            TrainingSet set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp.getId());
+            Long date = tr_stamp.getStartDate().getTime();
+            if (set != null) date = set.getDate().getTime();
+            if (set == null) {
+                dbHelper.WRITE.deleteTrainingStamp(tr_stamp.getId());
+            } else {
+                dbHelper.WRITE.closeTrainingStamp(tr_stamp.getId(), set.getDate());
+            }
+        }
+    }
 }

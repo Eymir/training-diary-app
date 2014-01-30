@@ -67,6 +67,31 @@
             android:textStyle="bold"
             android:id="@+id/start_training_button"
             android:padding="26dp" />
+
+        <LinearLayout
+            android:id="@+id/continue_workout_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/continue_workout_button"
+                style="?hugeSpecificButtonRef"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="@string/continue_workout"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_weight="0"
+                style="?hugeSpecificButtonRef"
+                android:id="@+id/stop_workout_button"
+                android:src="@drawable/icon_stop" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

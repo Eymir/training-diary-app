@@ -44,7 +44,7 @@ public class BackupManager {
     public static void restoreFromSD(Context context) throws BackupException {
         try {
             File sd = Environment.getExternalStorageDirectory();
-            if (sd.canWrite()) {
+            if (sd.canRead()) {
                 String backupDBPath = DBHelper.DATABASE_NAME;
                 File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
                 File backupDB = new File(sd + "/" + BACKUP_FOLDER, backupDBPath);
