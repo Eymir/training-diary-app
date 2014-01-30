@@ -2,14 +2,12 @@ package myApp.trainingdiary;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,32 +19,38 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
-import myApp.trainingdiary.calculators.MaxWeightCalculatorActivity;
-import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
+import myApp.trainingdiary.service.TrainingDiaryCloudService;
+import myApp.trainingdiary.service.UserData;
 import myApp.trainingdiary.utils.BackupManager;
 import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.SoundPlayer;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /*
  * �������� � ���������� � ���� ��� ����������� ���������� 
  */
 
-public class SettingsActivity extends PreferenceActivity  implements
+public class SettingsActivity extends PreferenceActivity implements
         Preference.OnPreferenceChangeListener {
 
+    public static final String GOOGLE_AUTH_TYPE = "com.google";
     private DBHelper dbHelper;
     private Context context;
 
@@ -71,8 +75,8 @@ public class SettingsActivity extends PreferenceActivity  implements
 
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
 
-        checkBoxUseStopWatch = (CheckBoxPreference)findPreference(KEY_STOPWATCH);
-        checkBoxUseTimer = (CheckBoxPreference)findPreference(KEY_TIMER);
+        checkBoxUseStopWatch = (CheckBoxPreference) findPreference(KEY_STOPWATCH);
+        checkBoxUseTimer = (CheckBoxPreference) findPreference(KEY_TIMER);
         checkBoxUseStopWatch.setOnPreferenceChangeListener(this);
         checkBoxUseTimer.setOnPreferenceChangeListener(this);
 
@@ -137,8 +141,8 @@ public class SettingsActivity extends PreferenceActivity  implements
         });
 
         final AlertDialog restoreDialog = DialogProvider.createSimpleDialog(SettingsActivity.this,
-                getString(R.string.restoration_data_base),getString(R.string.restoration_ask_for_continue),
-                getResources().getString(R.string.YES),getResources().getString(R.string.NO),  new DialogProvider.SimpleDialogClickListener(){
+                getString(R.string.restoration_data_base), getString(R.string.restoration_ask_for_continue),
+                getResources().getString(R.string.YES), getResources().getString(R.string.NO), new DialogProvider.SimpleDialogClickListener() {
 
             @Override
             public void onPositiveClick() {
@@ -172,18 +176,130 @@ public class SettingsActivity extends PreferenceActivity  implements
             }
         });
 
+        Preference cloud_upload = findPreference("cloud_upload");
+        assert cloud_upload != null;
+        cloud_upload.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+//                    AccountManager accountManager = AccountManager.get(SettingsActivity.this);
+//                    assert accountManager != null;
+//                    Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
+//                    if (accountManager.getAccounts() != null)
+//                        Log.d(Const.LOG_TAG, Arrays.asList(accountManager.getAccounts()).toString());
+//                    if (accounts == null || accounts.length == 0) {
+//                        throw new Exception(getString(R.string.accounts_not_found));
+//                    }
+                    UserData userData = new UserData();
+                    File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
+                    userData.setDb(IOUtils.toByteArray(new FileInputStream(currentDB)));
+//                    userData.setRegistrationId(accounts[0].name);
+                    userData.setRegistrationId("genydevice_1@gmail.com");
+                    userData.setRegistrationChannel(GOOGLE_AUTH_TYPE);
+                    TrainingDiaryCloudService.API.uploadCloudBackup(userData, new Callback<UserData>() {
+                        @Override
+                        public void success(UserData userData, Response response) {
+                            Log.d(Const.LOG_TAG, "Callback.success");
+                            Toast.makeText(
+                                    SettingsActivity.this,
+                                    getResources().getString(
+                                            R.string.cloud_backup_success), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void failure(RetrofitError retrofitError) {
+                            Log.d(Const.LOG_TAG, "Callback.failure: " + retrofitError);
+                            Log.d(Const.LOG_TAG, "Callback.failure.getMessage(): " + retrofitError.getMessage());
+                            Log.d(Const.LOG_TAG, "Callback.failure.getResponse(): " + retrofitError.getResponse());
+                            Toast.makeText(
+                                    SettingsActivity.this,
+                                    getResources().getString(
+                                            R.string.cloud_backup_fail), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG);
+                }
+                return false;
+            }
+        });
+
+        Preference cloud_download = findPreference("cloud_download");
+        assert cloud_download != null;
+        cloud_download.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+//                    AccountManager accountManager = AccountManager.get(SettingsActivity.this);
+//                    assert accountManager != null;
+//                    Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
+//                    if (accountManager.getAccounts() != null)
+//                        Log.d(Const.LOG_TAG, Arrays.asList(accountManager.getAccounts()).toString());
+//                    if (accounts == null || accounts.length == 0) {
+//                        throw new Exception(getString(R.string.accounts_not_found));
+//                    }
+                    UserData userData = new UserData();
+//                    userData.setRegistrationId(accounts[0].name);
+                    userData.setRegistrationId("genydevice_1@gmail.com");
+                    userData.setRegistrationChannel(GOOGLE_AUTH_TYPE);
+                    Log.d(Const.LOG_TAG, "cloud_download, userData: " + userData);
+
+                    TrainingDiaryCloudService.API.downloadCloudBackup(userData.getRegistrationId(), userData.getRegistrationChannel(),
+                            new Callback<UserData>() {
+                                @Override
+                                public void success(UserData userData, Response response) {
+                                    if (userData != null) {
+                                        Log.d(Const.LOG_TAG, userData.toString());
+                                        Toast.makeText(
+                                                SettingsActivity.this,
+                                                getResources().getString(
+                                                        R.string.backup_cloud_download_success), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.e(Const.LOG_TAG, "userData is null");
+                                    }
+
+                                }
+
+                                @Override
+                                public void failure(RetrofitError retrofitError) {
+                                    Log.e(Const.LOG_TAG, "retrofitError: " + retrofitError);
+                                    Log.e(Const.LOG_TAG, "retrofitError.getMessage: " + retrofitError.getLocalizedMessage());
+                                    if (retrofitError.getResponse() != null) {
+                                        Log.e(Const.LOG_TAG, "retrofitError.getReason: " + retrofitError.getResponse().getReason());
+                                        Log.e(Const.LOG_TAG, "retrofitError.getStatus: " + retrofitError.getResponse().getStatus());
+                                        Log.e(Const.LOG_TAG, "retrofitError.getBody().mimeType: " + retrofitError.getResponse().getBody().mimeType());
+                                        Log.e(Const.LOG_TAG, "retrofitError.getBody: " + retrofitError.getResponse().getBody());
+                                        Log.e(Const.LOG_TAG, "retrofitError.getHeaders: " + retrofitError.getResponse().getHeaders());
+                                    }
+                                    Log.e(Const.LOG_TAG, "retrofitError.getStackTrace: " + Arrays.asList(retrofitError.getStackTrace()));
+                                    Log.e(Const.LOG_TAG, "retrofitError.getUrl: " + retrofitError.getUrl());
+                                    Toast.makeText(
+                                            SettingsActivity.this,
+                                            getResources().getString(
+                                                    R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } catch (Throwable e) {
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+                return false;
+            }
+        }
+
+        );
+
         set_timer_time = findPreference("set_timer_time");
         Long storedTime = preferences.getLong("set_timer_time", 0L);
         int min = 5;
         int sec = 0;
-        if(storedTime != 0L){
+        if (storedTime != 0L) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(storedTime);
             min = cal.get(Calendar.MINUTE);
             sec = cal.get(Calendar.SECOND);
         }
-        set_timer_time.setSummary(""+min+" "+getResources().getString(R.string.min)
-                +" "+sec+" "+getResources().getString(R.string.sec)+"");
+        set_timer_time.setSummary("" + min + " " + getResources().getString(R.string.min)
+                + " " + sec + " " + getResources().getString(R.string.sec) + "");
         set_timer_time.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference arg0) {
                 showTimePickerDialog();
@@ -194,7 +310,7 @@ public class SettingsActivity extends PreferenceActivity  implements
         set_timer_sound = findPreference("set_timer_sound");
         String uriStr = preferences.getString("set_timer_sound", "");
         String path = "def uri";
-        if(uriStr.length() !=0)
+        if (uriStr.length() != 0)
             path = getRealPathFromURI(Uri.parse(uriStr));
         set_timer_sound.setSummary(path);
         set_timer_sound.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -267,44 +383,41 @@ public class SettingsActivity extends PreferenceActivity  implements
     @Override
     public boolean onPreferenceChange(Preference preference, Object o) {
 
-        String key =  preference.getKey();
+        String key = preference.getKey();
 
-        if(key.equalsIgnoreCase(KEY_TIMER)){
-            if(!checkBoxUseTimer.isChecked()){
+        if (key.equalsIgnoreCase(KEY_TIMER)) {
+            if (!checkBoxUseTimer.isChecked()) {
                 checkBoxUseStopWatch.setChecked(false);
-            }
-            else {
-                if(!checkBoxUseStopWatch.isChecked())
+            } else {
+                if (!checkBoxUseStopWatch.isChecked())
                     return false;
             }
-        }
-        else if(key.equalsIgnoreCase(KEY_STOPWATCH)){
-            if(!checkBoxUseStopWatch.isChecked()){
+        } else if (key.equalsIgnoreCase(KEY_STOPWATCH)) {
+            if (!checkBoxUseStopWatch.isChecked()) {
                 checkBoxUseTimer.setChecked(false);
-            }
-            else {
-                if(!checkBoxUseTimer.isChecked())
+            } else {
+                if (!checkBoxUseTimer.isChecked())
                     return false;
             }
         }
         return true;
     }
 
-    private void showTimePickerDialog(){
+    private void showTimePickerDialog() {
 
         final Dialog d = new Dialog(this);
         SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
         Long storedTime = pref.getLong("set_timer_time", 0L);
         int min = 5;
         int sec = 0;
-        if(storedTime != 0L){
+        if (storedTime != 0L) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(storedTime);
             min = cal.get(Calendar.MINUTE);
             sec = cal.get(Calendar.SECOND);
         }
-        d.setTitle(""+min+" "+getResources().getString(R.string.min)
-                +" "+sec+" "+getResources().getString(R.string.sec)+"");
+        d.setTitle("" + min + " " + getResources().getString(R.string.min)
+                + " " + sec + " " + getResources().getString(R.string.sec) + "");
         d.setContentView(R.layout.number_picker_dialog);
         Button btnOk = (Button) d.findViewById(R.id.set_timer_btn_yes);
         Button btnNo = (Button) d.findViewById(R.id.set_timer_btn_no);
@@ -319,8 +432,8 @@ public class SettingsActivity extends PreferenceActivity  implements
         wheelMin.setCurrentItem(min);
         wheelMin.addChangingListener(new OnWheelChangedListener() {
             public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                d.setTitle(""+newValue+" "+getResources().getString(R.string.min)
-                        +" "+wheelSec.getCurrentItem()+" "+getResources().getString(R.string.sec)+"");
+                d.setTitle("" + newValue + " " + getResources().getString(R.string.min)
+                        + " " + wheelSec.getCurrentItem() + " " + getResources().getString(R.string.sec) + "");
             }
         });
 
@@ -332,23 +445,22 @@ public class SettingsActivity extends PreferenceActivity  implements
         wheelSec.setCurrentItem(sec);
         wheelSec.addChangingListener(new OnWheelChangedListener() {
             public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                d.setTitle(""+wheelMin.getCurrentItem()+" "+getResources().getString(R.string.min)
-                        +" "+newValue+" "+getResources().getString(R.string.sec)+"");
+                d.setTitle("" + wheelMin.getCurrentItem() + " " + getResources().getString(R.string.min)
+                        + " " + newValue + " " + getResources().getString(R.string.sec) + "");
             }
         });
 
-        btnOk.setOnClickListener(new View.OnClickListener()
-        {
+        btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int min = wheelMin.getCurrentItem();
                 int sec = wheelSec.getCurrentItem();
                 Calendar c = Calendar.getInstance();
-                c.set(Calendar.MINUTE,min);
+                c.set(Calendar.MINUTE, min);
                 c.set(Calendar.SECOND, sec);
                 SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
-                editor.putLong("set_timer_time",c.getTimeInMillis());
+                editor.putLong("set_timer_time", c.getTimeInMillis());
                 editor.commit();
                 set_timer_time.setSummary("" + min + " " + getResources().getString(R.string.min)
                         + " " + sec + " " + getResources().getString(R.string.sec) + "");
@@ -356,8 +468,7 @@ public class SettingsActivity extends PreferenceActivity  implements
             }
         });
 
-        btnNo.setOnClickListener(new View.OnClickListener()
-        {
+        btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 d.dismiss();
@@ -366,16 +477,15 @@ public class SettingsActivity extends PreferenceActivity  implements
         d.show();
     }
 
-    private void showSelectSoundDialog(){
+    private void showSelectSoundDialog() {
         final Uri[] uri = new Uri[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_sound);
-        builder.setSingleChoiceItems(cursorMelody, -1, "title", new DialogInterface.OnClickListener()
-        {
+        builder.setSingleChoiceItems(cursorMelody, -1, "title", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                ListView lv = ((AlertDialog)dialogInterface).getListView();
-                if (cursorMelody.moveToPosition(lv.getCheckedItemPosition())){
+                ListView lv = ((AlertDialog) dialogInterface).getListView();
+                if (cursorMelody.moveToPosition(lv.getCheckedItemPosition())) {
                     int idColumn = cursorMelody.getColumnIndex(android.provider.MediaStore.Audio.Media._ID);
                     Long thisId = cursorMelody.getLong(idColumn);
                     uri[0] = ContentUris
@@ -387,17 +497,16 @@ public class SettingsActivity extends PreferenceActivity  implements
 
         builder.setPositiveButton(R.string.YES, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                if(!(((AlertDialog)dialog).getListView().getCheckedItemPosition() == -1)){
-                    set_timer_sound.setSummary(getRealPathFromURI( uri[0]));
+                if (!(((AlertDialog) dialog).getListView().getCheckedItemPosition() == -1)) {
+                    set_timer_sound.setSummary(getRealPathFromURI(uri[0]));
                     SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString("set_timer_sound", uri[0].toString());
                     editor.commit();
-                }
-                else{
+                } else {
                     String uriStr = preferences.getString("set_timer_sound", "");
                     String path = "def uri";
-                    if(uriStr.length() !=0)
+                    if (uriStr.length() != 0)
                         path = getRealPathFromURI(Uri.parse(uriStr));
                     set_timer_sound.setSummary(path);
                 }
@@ -413,31 +522,29 @@ public class SettingsActivity extends PreferenceActivity  implements
         AD.show();
     }
 
-    private void selectSound(){
+    private void selectSound() {
         ContentResolver contentResolver = getContentResolver();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         cursorMelody = contentResolver.query(uri, null, null, null, null);
 
-        if(cursorMelody != null){
-            if(cursorMelody.getCount() == 0)
+        if (cursorMelody != null) {
+            if (cursorMelody.getCount() == 0)
                 Toast.makeText(context, getResources().getText(R.string.no_media_toast), Toast.LENGTH_SHORT).show();
             else
                 showSelectSoundDialog();
-        }
-        else {
+        } else {
             Toast.makeText(context, getResources().getText(R.string.no_media_toast), Toast.LENGTH_SHORT).show();
         }
     }
 
     private String getRealPathFromURI(Uri contentUri) {
         Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             String realPath = cursor.getString(idx);
             cursor.close();
             return realPath;
-        }
-        else {
+        } else {
             cursor.close();
             return "";
         }

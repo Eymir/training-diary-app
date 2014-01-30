@@ -175,5 +175,20 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="stat_max">макс.</string>
     <string name="stat_min">мин.</string>
     <string name="stat_avg">сред.</string>
+    <string name="backup_cloud_title">Сохранить в облако</string>
+    <string name="backup_cloud__summary">Бета версия облачного хранения ваших тренировок</string>
+    <string name="cloud_backup_success">База успешно сохранена в облако</string>
+    <string name="accounts_not_found">Нет ни одной учетной записи</string>
+    <string name="backup_cloud_download_success">База данных успешно скачана из облака</string>
+    <string name="backup_cloud_download_title">Получить из облака</string>
+    <string name="backup_cloud_download_summary">Загрузить ранее сохраненную копию базы данных из облана</string>
+    <string name="continue_workout">Продолжить тренировку</string>
+    <string name="stop_training_dialog_title">Закончить текущую тренировку?</string>
+    <string name="stop_button">Закончить</string>
+    <string name="workout_stopped">Тренировка закончена</string>
+    <string name="cloud_backup_fail">Не удалось передать данные</string>
+    <string name="workout_expiring_title">Время до автозавершения тренировки</string>
+    <string name="workout_expiring_summary">Время с  последнего подхода, через которое тренировка зваершится автоматически</string>
+    <string name="backup_cloud_download_fail">Не удалось получить данные</string>
 
 </resources>

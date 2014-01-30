@@ -58,15 +58,20 @@
                 android:key="disable_sound"
                 android:title="@string/sound_switcher_title"
                 android:summary="@string/sound_switcher_summary"
-                android:defaultValue="false">
-            </CheckBoxPreference>
+                android:defaultValue="false"/>
 
             <CheckBoxPreference
                 android:key="keep_screen_on"
                 android:title="@string/pref_chb_keep_screen_title"
                 android:summary="@string/pref_chb_keep_screen_summ"
-                android:defaultValue="false">
-            </CheckBoxPreference>
+                android:defaultValue="false"/>
+
+            <ListPreference
+                android:key="workout_expiring"
+                android:title="@string/workout_expiring_title"
+                android:summary="@string/workout_expiring_summary"
+                android:defaultValue="false"/>
+
 
         </PreferenceScreen>
     </PreferenceCategory>
@@ -78,33 +83,33 @@
 
         <!--Раздел PRO-->
         <!--<PreferenceScreen-->
-            <!--android:key="util_Screen"-->
-            <!--android:summary="@string/utilScreenSummary"-->
-            <!--android:title="@string/utilScreenTitle">-->
-            <!--<Preference-->
-                <!--android:key="max_Weight"-->
-                <!--android:title="@string/utilMaxWeightTitle"-->
-                <!--android:summary="@string/utilMaxWeightSummary">-->
-            <!--</Preference>-->
-            <!--<Preference-->
-                <!--android:key="max_Repeat"-->
-                <!--android:title="@string/utilMaxRepTitle"-->
-                <!--android:summary="@string/utilMaxRepSummary">-->
-            <!--</Preference>-->
-            <!--<Preference-->
-                <!--android:key="work_Weight"-->
-                <!--android:title="@string/utilWorkWeightTitle"-->
-                <!--android:summary="@string/utilWorkWeightSummary">-->
-            <!--</Preference>-->
-            <!--<Preference-->
-                <!--android:key="percent"-->
-                <!--android:title="@string/utilPercentTitle"-->
-                <!--android:summary="@string/utilPercentSummary">-->
-            <!--</Preference>-->
-            <!--<Preference-->
-                <!--android:key="cal"-->
-                <!--android:title="calendar">-->
-            <!--</Preference>-->
+        <!--android:key="util_Screen"-->
+        <!--android:summary="@string/utilScreenSummary"-->
+        <!--android:title="@string/utilScreenTitle">-->
+        <!--<Preference-->
+        <!--android:key="max_Weight"-->
+        <!--android:title="@string/utilMaxWeightTitle"-->
+        <!--android:summary="@string/utilMaxWeightSummary">-->
+        <!--</Preference>-->
+        <!--<Preference-->
+        <!--android:key="max_Repeat"-->
+        <!--android:title="@string/utilMaxRepTitle"-->
+        <!--android:summary="@string/utilMaxRepSummary">-->
+        <!--</Preference>-->
+        <!--<Preference-->
+        <!--android:key="work_Weight"-->
+        <!--android:title="@string/utilWorkWeightTitle"-->
+        <!--android:summary="@string/utilWorkWeightSummary">-->
+        <!--</Preference>-->
+        <!--<Preference-->
+        <!--android:key="percent"-->
+        <!--android:title="@string/utilPercentTitle"-->
+        <!--android:summary="@string/utilPercentSummary">-->
+        <!--</Preference>-->
+        <!--<Preference-->
+        <!--android:key="cal"-->
+        <!--android:title="calendar">-->
+        <!--</Preference>-->
         <!--</PreferenceScreen>-->
 
         <PreferenceScreen
@@ -121,6 +126,16 @@
                 android:title="@string/restore_title"
                 android:summary="@string/restore_summary"
                 android:icon="@drawable/action_restore_db" />
+            <Preference
+                android:key="cloud_upload"
+                android:title="@string/backup_cloud_title"
+                android:summary="@string/backup_cloud__summary"
+                android:icon="@drawable/icon_action_cloud_upload_black" />
+            <Preference
+                android:key="cloud_download"
+                android:title="@string/backup_cloud_download_title"
+                android:summary="@string/backup_cloud_download_summary"
+                android:icon="@drawable/icon_action_cloud_download_black" />
         </PreferenceScreen>
     </PreferenceCategory>
 
