@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.provider.MediaStore;
@@ -67,6 +68,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private static final String KEY_STOPWATCH = "use_stopwatch";
     private static final String KEY_TIMER = "use_timer";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,10 +77,15 @@ public class SettingsActivity extends PreferenceActivity implements
 
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
 
+
+        ListPreference workout_expiring = (ListPreference) findPreference(Const.KEY_WORKOUT_EXPIRING);
+        workout_expiring.setOnPreferenceChangeListener(this);
+        workout_expiring.setSummary(workout_expiring.getEntry());
         checkBoxUseStopWatch = (CheckBoxPreference) findPreference(KEY_STOPWATCH);
         checkBoxUseTimer = (CheckBoxPreference) findPreference(KEY_TIMER);
         checkBoxUseStopWatch.setOnPreferenceChangeListener(this);
         checkBoxUseTimer.setOnPreferenceChangeListener(this);
+
 
         Preference about = findPreference("about");
         String version = null;
@@ -120,6 +127,8 @@ public class SettingsActivity extends PreferenceActivity implements
                 return false;
             }
         });
+
+
         Preference backup = findPreference("backup");
 
         assert backup != null;
@@ -400,8 +409,16 @@ public class SettingsActivity extends PreferenceActivity implements
                     return false;
             }
         }
+        if (preference instanceof ListPreference) {
+            ListPreference listPref = (ListPreference) preference;
+            CharSequence[]mass = listPref.getEntries();
+            preference.setSummary(mass[listPref.findIndexOfValue((String) o)]);
+        }
+
+
         return true;
     }
+
 
     private void showTimePickerDialog() {
 
@@ -549,4 +566,6 @@ public class SettingsActivity extends PreferenceActivity implements
             return "";
         }
     }
+
+
 }

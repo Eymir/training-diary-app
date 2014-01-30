@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,17 +17,17 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.customview.stat.StatItem;
 import myApp.trainingdiary.customview.stat.StatItemArrayAdapter;
 import myApp.trainingdiary.customview.stat.StatisticEnum;
-import myApp.trainingdiary.customview.stat.StatisticValueFactory;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.TrainingStamp;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.excercise.AddExerciseActivity;
+import myApp.trainingdiary.service.GetCommonStatisticsTask;
 import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.training.TrainingActivity;
 import myApp.trainingdiary.utils.Const;
@@ -66,12 +67,13 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         editStat.setOnClickListener(this);
 
         createEditStatListDialog();
-        showCommonStatisticList();
         createDeletionDialog();
     }
 
     private void manageWorkoutButtons() {
-        TrainingDurationManger.closeExpiredTrainingStamps(Const.THREE_HOURS);
+        String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+        Log.d(Const.LOG_TAG, "workoutExpiringTimeout: " + workoutExpiringTimeout);
+        TrainingDurationManger.closeExpiredTrainingStamps(Integer.valueOf(workoutExpiringTimeout));
         TrainingStamp tr_stamp = dbHelper.READ.getOpenTrainingStamp();
         if (tr_stamp != null && dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp.getId()) != null) {
             findViewById(R.id.start_training_button).setVisibility(View.GONE);
@@ -92,6 +94,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
         manageWorkoutButtons();
+        showCommonStatisticList();
     }
 
     private void initStatPref() {
@@ -120,17 +123,24 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     }
 
     private void showCommonStatisticList() {
-        SharedPreferences sp = getSharedPreferences(Const.CHOSEN_STATISTIC, MODE_PRIVATE);
-        ArrayList<StatItem> list = new ArrayList<StatItem>();
-        for (StatisticEnum stat : StatisticEnum.values()) {
-            if (sp.getBoolean(stat.name(), false)) {
-                list.add(StatisticValueFactory.create(stat));
-                Log.d(Const.LOG_TAG, "stat.name() is true:  " + stat.name());
+
+        final ListView listView = (ListView) findViewById(R.id.statListView);
+        GetCommonStatisticsTask.start(this, new GetCommonStatisticsTask.GetCommonStatisticsTaskCallback() {
+
+            @Override
+            protected void onUploadSuccess(List<StatItem> result) {
+                StatItemArrayAdapter statListadapter = new StatItemArrayAdapter(SuperMainActivity.this, R.layout.stat_plain_row, R.layout.stat_plain_row, result);
+                listView.setAdapter(statListadapter);
             }
-        }
-        ListView listView = (ListView) findViewById(R.id.statListView);
-        StatItemArrayAdapter statListadapter = new StatItemArrayAdapter(this, R.layout.stat_plain_row, R.layout.stat_plain_row, list);
-        listView.setAdapter(statListadapter);
+
+            @Override
+            protected void onUploadError() {
+                Toast.makeText(SuperMainActivity.this, R.string.error,
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
 
 

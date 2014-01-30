@@ -1,9 +1,11 @@
 package myApp.trainingdiary.customview.stat;
 
+import java.io.Serializable;
+
 /**
  * Created by Lenovo on 22.10.13.
  */
-public class StatItem {
+public class StatItem implements Serializable{
     private StatisticEnum item;
     private String value;
 

@@ -145,8 +145,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         undoButton.setOnClickListener(this);
 
         createUndoDialog();
-
-        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(ResultActivity.this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         TrainingSet last_set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp_id);
 
         // If Activity is created after rotation
@@ -255,7 +255,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         undoDialog = DialogProvider.createSimpleDialog(this, title, null, deleteButton, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
-                Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+                String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(ResultActivity.this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+                Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
                 int deleted = dbHelper.WRITE.deleteLastTrainingSetInCurrentTrainingStamp(ex_id);
                 if (deleted > 0) {
                     curResultFragment.refreshView(ResultActivity.this);
@@ -329,7 +330,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void writeToDB() {
-        Long training_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(ResultActivity.this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+        Long training_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         List<TrainingSetValue> values = getTrainingSetValues();
         TrainingSet trainingSet = new TrainingSet(null, training_stamp_id, new Date(), ex_id, tr_id, values);
         dbHelper.EM.persist(trainingSet);
@@ -456,7 +458,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private int getNumSets(){
-        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Const.THREE_HOURS);
+        String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(ResultActivity.this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
         return tr_stats.size();
     }

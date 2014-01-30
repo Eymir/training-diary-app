@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="workout_expiring_key_list">
+        <item>10 минут</item>
+        <item>30 минут</item>
+        <item>1 час</item>
+        <item>2 часа</item>
+        <item>12 часов</item>
+    </string-array>
+
+    <string-array name="workout_expiring_value_list">
+        <item>600000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>43200000</item>
+    </string-array>
+
+</resources>
