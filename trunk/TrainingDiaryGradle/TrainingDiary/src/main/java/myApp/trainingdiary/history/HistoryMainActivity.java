@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +53,10 @@ public class HistoryMainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_main);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
 
         dbHelper = DBHelper.getInstance(this);
 
@@ -236,6 +242,20 @@ public class HistoryMainActivity extends ActionBarActivity {
         intentOpenHistoryDetails.putExtra(Const.EXERCISE_ID, ex_id);
         intentOpenHistoryDetails.putExtra(Const.HISTORY_TYPE, Const.EXERCISE_TYPE);
         startActivity(intentOpenHistoryDetails);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 
 }

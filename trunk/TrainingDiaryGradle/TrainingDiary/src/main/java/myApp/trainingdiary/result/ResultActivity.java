@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private boolean rotation = false;
     private String textTime;
     private TextView numRep;
-
+    private boolean useTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
 
         mChrono = (Chronometer) findViewById(R.id.mChrono);
         setChronoTickListener();
@@ -148,6 +153,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(ResultActivity.this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
         Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         TrainingSet last_set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp_id);
+
+        useTimer = getSharedPreferences("preferences", MODE_PRIVATE).getBoolean("use_timer",false);
 
         // If Activity is created after rotation
         if (savedInstanceState != null) {
@@ -198,7 +205,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actresult_actsettings_menu, menu);
+        inflater.inflate(R.menu.actresult_stopwatch_menu, menu);
 
         MenuItem timerItem = menu.findItem(R.id.actresult_timer);
         MenuItem numRepItem = menu.findItem(R.id.actresult_num_rep);
@@ -359,45 +366,60 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void chronometerStart() {
-        reset = false;
-        timerOn = true;
-        rotation = false;
-        if (!resume) {
-            mChrono.setBase(SystemClock.elapsedRealtime());
-            mChrono.start();
-        } else {
-            mChrono.start();
+        if(useTimer){
+
+        }
+        else {
+            reset = false;
+            timerOn = true;
+            rotation = false;
+            if (!resume) {
+                mChrono.setBase(SystemClock.elapsedRealtime());
+                mChrono.start();
+            } else {
+                mChrono.start();
+            }
         }
     }
 
     private void chronometerStop() {
-        mChrono.stop();
-        timerOn = false;
-        rotation = false;
-        if (reset) {
-            mChrono.setText("00:00");
-            if (timerText != null)
-                timerText.setText("00:00");
-            textTime = "00:00";
-            resume = false;
-        } else {
-            mChrono.setText(currentTime);
-            if (timerText != null) {
-                timerText.setText(currentTime);
-                textTime = currentTime;
+        if(useTimer){
+
+        }
+        else {
+            mChrono.stop();
+            timerOn = false;
+            rotation = false;
+            if (reset) {
+                mChrono.setText("00:00");
+                if (timerText != null)
+                    timerText.setText("00:00");
+                textTime = "00:00";
+                resume = false;
+            } else {
+                mChrono.setText(currentTime);
+                if (timerText != null) {
+                    timerText.setText(currentTime);
+                    textTime = currentTime;
+                }
+                resume = true;
             }
-            resume = true;
         }
     }
 
     private void chronometerReset() {
-        mChrono.stop();
-        timerOn = false;
-        mChrono.setText("00:00");
-        if (timerText != null)
-            timerText.setText("00:00");
-        resume = false;
-        reset = true;
+        if(useTimer){
+
+        }
+        else {
+            mChrono.stop();
+            timerOn = false;
+            mChrono.setText("00:00");
+            if (timerText != null)
+                timerText.setText("00:00");
+            resume = false;
+            reset = true;
+        }
     }
 
     private void setChronoTickListener() {
@@ -462,5 +484,19 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
         return tr_stats.size();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 }
