@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +50,10 @@ public class StatisticActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -245,6 +251,20 @@ public class StatisticActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         graph.repaint();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 
 

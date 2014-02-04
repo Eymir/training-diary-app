@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import myApp.trainingdiary.R;
 
 public class MaxWeightCalculatorActivity extends ActionBarActivity {
@@ -22,6 +24,10 @@ public class MaxWeightCalculatorActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_max_weight_calculator);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
 
     }
 
@@ -74,6 +80,20 @@ public class MaxWeightCalculatorActivity extends ActionBarActivity {
                 R.string.by_lender+" "+maxLender;
         tvResult.setText(result);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 
 }

@@ -33,6 +33,9 @@ import myApp.trainingdiary.training.TrainingActivity;
 import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.TrainingDurationManger;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
+
 public class SuperMainActivity extends ActionBarActivity implements View.OnClickListener {
 
     private DBHelper dbHelper;
@@ -43,6 +46,11 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super_main);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
+
         dbHelper = DBHelper.getInstance(this);
         try {
             Log.i(Const.LOG_TAG, "DB version: " + String.valueOf(dbHelper.getVersion()));
@@ -216,6 +224,20 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
         }
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 
 }

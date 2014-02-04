@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -91,6 +92,10 @@ public class CalendarActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -201,6 +206,20 @@ public class CalendarActivity extends ActionBarActivity {
                 return true;
         }
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 
 }

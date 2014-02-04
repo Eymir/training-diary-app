@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
 
@@ -67,6 +69,11 @@ public class AddExerciseActivity extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_exercise);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
+
         dbHelper = DBHelper.getInstance(this);
 
         createCreateExerciseDialog();
@@ -381,5 +388,19 @@ public class AddExerciseActivity extends ActionBarActivity {
         Intent activity = new Intent(this, StatisticActivity.class);
         activity.putExtra(Const.EXERCISE_ID, ex_id);
         startActivity(activity);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 }

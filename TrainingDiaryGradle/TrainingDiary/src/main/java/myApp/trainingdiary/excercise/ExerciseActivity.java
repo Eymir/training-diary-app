@@ -19,6 +19,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.mobeta.android.dslv.DragSortListView;
 import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 
@@ -71,6 +72,10 @@ public class ExerciseActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        //google analytics
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().setContext(this);
 
         dbHelper = DBHelper.getInstance(this);
         tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
@@ -365,6 +370,20 @@ public class ExerciseActivity extends ActionBarActivity {
 
         }
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(getResources().getBoolean(R.bool.analytics_enable))
+            EasyTracker.getInstance().activityStop(this);
     }
 
 }

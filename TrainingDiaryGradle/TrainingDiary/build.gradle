@@ -1,7 +1,7 @@
 apply plugin: 'android'
 
 repositories {
-    maven { url "http://dl.bintray.com/populov/maven" }
+    maven { url 'http://dl.bintray.com/populov/maven' }
     mavenCentral()
 }
 
@@ -17,11 +17,12 @@ dependencies {
     compile project('libraries:ExampleActivity')
     compile project('libraries:wheel')
     compile project('libraries:Caldroid-gradle:library')
+    compile files('libraries/libGoogleAnalyticsV2.jar')
 }
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+    buildToolsVersion '18.0.1'
 
     defaultConfig {
         minSdkVersion 8
