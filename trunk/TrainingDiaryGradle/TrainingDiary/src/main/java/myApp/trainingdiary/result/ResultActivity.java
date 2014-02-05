@@ -2,6 +2,7 @@ package myApp.trainingdiary.result;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -29,13 +30,16 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
+import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.TrainingSet;
 import myApp.trainingdiary.db.entity.TrainingSetValue;
@@ -43,7 +47,10 @@ import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.utils.TimerAlarmBroadcastReceiver;
 import myApp.trainingdiary.utils.TrainingDurationManger;
+
+import android.os.AsyncTask;
 
 /*
  * ��������� ��� ������ ���������� ������� ���������� 
@@ -88,6 +95,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private String textTime;
     private TextView numRep;
     private boolean useTimer;
+    private TimerTask timerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,24 +162,33 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         TrainingSet last_set = dbHelper.READ.getLastTrainingSetTrainingStamp(tr_stamp_id);
 
-        useTimer = getSharedPreferences("preferences", MODE_PRIVATE).getBoolean("use_timer",false);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        useTimer = sp.getBoolean("use_timer", false);
+        //useTimer = getSharedPreferences("preferences", MODE_PRIVATE).getBoolean("use_timer",false);
+
+        Log.d("MY", "useTimer="+useTimer);
 
         // If Activity is created after rotation
-        if (savedInstanceState != null) {
-            rotation = true;
-            elapsedTime = savedInstanceState.getLong("elapsedTime");
-            currentTime = savedInstanceState.getString("currentTime");
-            textTime = savedInstanceState.getString("textTime");
-            timerOn = savedInstanceState.getBoolean("timerOn");
-            base = savedInstanceState.getLong("base");
-            resume = savedInstanceState.getBoolean("resume");
-            reset = savedInstanceState.getBoolean("reset");
+        if(!useTimer){
+            if (savedInstanceState != null) {
+                rotation = true;
+                elapsedTime = savedInstanceState.getLong("elapsedTime");
+                currentTime = savedInstanceState.getString("currentTime");
+                textTime = savedInstanceState.getString("textTime");
+                timerOn = savedInstanceState.getBoolean("timerOn");
+                base = savedInstanceState.getLong("base");
+                resume = savedInstanceState.getBoolean("resume");
+                reset = savedInstanceState.getBoolean("reset");
 
-            chronometerReturn();
-        } else {
-            if (last_set != null) {
-                chronometerReset();
-                chronometerStart();
+
+                chronometerReturn();
+
+            }
+            else {
+                if (last_set != null) {
+                    chronometerReset();
+                    chronometerStart();
+                }
             }
         }
     }
@@ -209,6 +226,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         MenuItem timerItem = menu.findItem(R.id.actresult_timer);
         MenuItem numRepItem = menu.findItem(R.id.actresult_num_rep);
+
+//        if(useTimer){
+//            MenuItem title = menu.findItem(R.id.resultmenu_play_title);
+//            TextView tvTitle = (TextView)MenuItemCompat.getActionView(title);
+//            tvTitle.setText("Таймер:");
+//        }
 
         timerText = (TextView) MenuItemCompat.getActionView(timerItem);
         //timerText.setOnClickListener(this);
@@ -357,17 +380,29 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void chronometerReturn() {
-        if (timerOn) {
-            mChrono.setBase(base);
-            mChrono.start();
-        } else {
-            mChrono.setBase(base);
+        if(useTimer){
+            if(timerTask != null)
+                cancelTimerTask();
+            timerTask = new TimerTask();
+            timerTask.execute(getTimerRemainInSec());
+        }
+        else {
+            if (timerOn) {
+                mChrono.setBase(base);
+                mChrono.start();
+            } else {
+                mChrono.setBase(base);
+            }
         }
     }
 
     private void chronometerStart() {
         if(useTimer){
-
+            TimerAlarmBroadcastReceiver.getInstance(this).SetAlarm(getTimerTime(),999);
+            if(timerTask != null)
+                cancelTimerTask();
+            timerTask = new TimerTask();
+            timerTask.execute(getTimerRemainInSec());
         }
         else {
             reset = false;
@@ -384,7 +419,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
     private void chronometerStop() {
         if(useTimer){
-
+            TimerAlarmBroadcastReceiver.getInstance(this).CancelAlarm(999);
+            if(timerTask != null)
+                cancelTimerTask();
         }
         else {
             mChrono.stop();
@@ -407,9 +444,33 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         }
     }
 
+    private long getTimerTime(){
+        long time = getSharedPreferences("preferences", MODE_PRIVATE).getLong("set_timer_time",0L);
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(time);
+        int min = c.get(Calendar.MINUTE);
+        int sec = c.get(Calendar.SECOND);
+        long timerInt = sec*1000+60*100*min;
+        c = Calendar.getInstance();
+        long timerTime = c.getTimeInMillis()+timerInt;
+        return timerTime;
+    }
+
+    private int getTimerRemainInSec(){
+        Calendar c = Calendar.getInstance();
+        long cTime = c.getTimeInMillis();
+        c.setTimeInMillis(TimerAlarmBroadcastReceiver.TIME);
+        long tTime = c.getTimeInMillis();
+        c.setTimeInMillis(tTime-cTime);
+        int sec = c.get(Calendar.MINUTE)*60+ c.get(Calendar.SECOND);
+        return sec;
+    }
+
     private void chronometerReset() {
         if(useTimer){
-
+            timerText.setText("00:00");
+            if(timerTask != null)
+                cancelTimerTask();
         }
         else {
             mChrono.stop();
@@ -498,5 +559,60 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         super.onStop();
         if(getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStop(this);
+    }
+
+    private void cancelTimerTask(){
+        if(timerTask != null)
+            timerTask.cancel(false);
+    }
+
+    class TimerTask extends AsyncTask<Integer, Integer, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Integer... sec) {
+            try {
+                int cnt = 0;
+                int progress = sec[0];
+                while(cnt <= sec[0]) {
+                    publishProgress(--progress);
+                }
+                // разъединяемся
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            int min = values[0]/60;
+            int sec = values[0] - min*60;
+            String minutes;
+            String seconds;
+            if(min < 10)
+                minutes = "0"+min;
+            else
+                minutes = ""+min;
+            if(sec <10)
+                seconds = "0"+sec;
+            else
+                seconds = ""+sec;
+
+            String res = minutes + ":"+seconds;
+            timerText.setText(res);
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
     }
 }

@@ -12,12 +12,28 @@ import android.content.Intent;
  */
 public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
 
+    private static TimerAlarmBroadcastReceiver mInstance = null;
+    private Context context;
+    public static long TIME;
+
+    public static TimerAlarmBroadcastReceiver getInstance(Context ctx) {
+        if (mInstance == null) {
+            mInstance = new TimerAlarmBroadcastReceiver(ctx.getApplicationContext());
+        }
+        return mInstance;
+    }
+
+    public TimerAlarmBroadcastReceiver(Context c) {
+        context = c;
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         int id = intent.getExtras().getInt("id");
     }
 
-    public void SetAlarm(Context context, long alarmTime, int requestCode){
+    public void SetAlarm(long alarmTime, int requestCode){
+        TIME = alarmTime;
         AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
         intent.setAction(Integer.toString(requestCode));
@@ -27,7 +43,7 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
         am.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 86400000 , pi);
     }
 
-    public void CancelAlarm(Context context, int requestCode){
+    public void CancelAlarm(int requestCode){
         Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
         intent.setAction(Integer.toString(requestCode));
         intent.putExtra("id", requestCode);
