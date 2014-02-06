@@ -15,6 +15,7 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
     private static TimerAlarmBroadcastReceiver mInstance = null;
     private Context context;
     public static long TIME;
+    public static boolean RUN;
 
     public static TimerAlarmBroadcastReceiver getInstance(Context ctx) {
         if (mInstance == null) {
@@ -30,10 +31,13 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int id = intent.getExtras().getInt("id");
+        RUN = false;
+        TIME = 0L;
     }
 
     public void SetAlarm(long alarmTime, int requestCode){
         TIME = alarmTime;
+        RUN = true;
         AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
         intent.setAction(Integer.toString(requestCode));
@@ -44,6 +48,8 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
     }
 
     public void CancelAlarm(int requestCode){
+        RUN = false;
+        TIME = 0L;
         Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
         intent.setAction(Integer.toString(requestCode));
         intent.putExtra("id", requestCode);
