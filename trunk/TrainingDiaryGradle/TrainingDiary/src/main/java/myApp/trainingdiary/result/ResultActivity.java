@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.viewpagerindicator.TitlePageIndicator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,29 +59,16 @@ import android.os.AsyncTask;
 
 public class ResultActivity extends ActionBarActivity implements OnClickListener {
 
-
     private DBHelper dbHelper;
-//    final int MENU_DEL_LAST_SET = 1;
-//    final int MENU_SHOW_LAST_RESULT = 2;
-//
-//    private final int ID_STOP = 1;
-//    private final int ID_START = 2;
-//    private final int ID_RESET = 3;
-
-    // forms
-    //private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
     private SoundPool soundPool;
     private int soundClick;
     private AudioManager audioManager;
     private long ex_id;
     private long tr_id;
-
     private AlertDialog undoDialog;
     private Resources resources;
-
     private Chronometer mChrono;
-
     private long elapsedTime = 0L;
     private long base = 0L;
     private String currentTime = "";
@@ -164,13 +152,18 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         useTimer = sp.getBoolean("use_timer", false);
-        //useTimer = getSharedPreferences("preferences", MODE_PRIVATE).getBoolean("use_timer",false);
-
-        Log.d("MY", "useTimer="+useTimer);
 
         // If Activity is created after rotation
-        if(!useTimer){
-            if (savedInstanceState != null) {
+        if (savedInstanceState != null) {
+            if(useTimer){
+                if(TimerAlarmBroadcastReceiver.RUN){
+                    if(timerTask != null)
+                        timerTask.cancel(false);
+                    timerTask = new TimerTask();
+                    timerTask.execute(getTimerRemainInSec());
+                }
+            }
+            else {
                 rotation = true;
                 elapsedTime = savedInstanceState.getLong("elapsedTime");
                 currentTime = savedInstanceState.getString("currentTime");
@@ -179,13 +172,20 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 base = savedInstanceState.getLong("base");
                 resume = savedInstanceState.getBoolean("resume");
                 reset = savedInstanceState.getBoolean("reset");
-
-
                 chronometerReturn();
-
             }
-            else {
-                if (last_set != null) {
+        }
+        else {
+            if (last_set != null) {
+                if(useTimer){
+                    if(TimerAlarmBroadcastReceiver.RUN){//если ресивер заведён
+                        if(timerTask != null)
+                            timerTask.cancel(false);
+                        timerTask = new TimerTask();
+                        timerTask.execute(getTimerRemainInSec());
+                    }
+                }
+                else {
                     chronometerReset();
                     chronometerStart();
                 }
@@ -220,21 +220,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actresult_stopwatch_menu, menu);
-
         MenuItem timerItem = menu.findItem(R.id.actresult_timer);
         MenuItem numRepItem = menu.findItem(R.id.actresult_num_rep);
-
-//        if(useTimer){
-//            MenuItem title = menu.findItem(R.id.resultmenu_play_title);
-//            TextView tvTitle = (TextView)MenuItemCompat.getActionView(title);
-//            tvTitle.setText("Таймер:");
-//        }
-
         timerText = (TextView) MenuItemCompat.getActionView(timerItem);
-        //timerText.setOnClickListener(this);
         numRep = (TextView) MenuItemCompat.getActionView(numRepItem);
 
         if (rotation && !reset)
@@ -399,8 +390,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private void chronometerStart() {
         if(useTimer){
             TimerAlarmBroadcastReceiver.getInstance(this).SetAlarm(getTimerTime(),999);
-            if(timerTask != null)
+
+            if(timerTask != null){
                 cancelTimerTask();
+            }
             timerTask = new TimerTask();
             timerTask.execute(getTimerRemainInSec());
         }
@@ -450,9 +443,10 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         c.setTimeInMillis(time);
         int min = c.get(Calendar.MINUTE);
         int sec = c.get(Calendar.SECOND);
-        long timerInt = sec*1000+60*100*min;
+        long timerInt = sec*1000+60*1000*min;
         c = Calendar.getInstance();
         long timerTime = c.getTimeInMillis()+timerInt;
+        c.setTimeInMillis(timerTime);
         return timerTime;
     }
 
@@ -550,6 +544,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     @Override
     protected void onStart() {
         super.onStart();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        useTimer = sp.getBoolean("use_timer", false);
         if(getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStart(this);
     }
@@ -559,6 +555,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         super.onStop();
         if(getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStop(this);
+        if(timerTask !=  null)
+            timerTask.cancel(false);
     }
 
     private void cancelTimerTask(){
@@ -577,18 +575,20 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         protected Void doInBackground(Integer... sec) {
             try {
                 int cnt = 0;
-                int progress = sec[0];
-                while(cnt <= sec[0]) {
+                int progress = sec[0]+1;
+                while(cnt < sec[0]) {
+                    if(isCancelled())
+                        return null;
                     publishProgress(--progress);
+                    cnt++;
+                    TimeUnit.SECONDS.sleep(1);
                 }
-                // разъединяемся
-                TimeUnit.SECONDS.sleep(1);
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             return null;
         }
-
 
         @Override
         protected void onProgressUpdate(Integer... values) {
@@ -607,12 +607,19 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 seconds = ""+sec;
 
             String res = minutes + ":"+seconds;
-            timerText.setText(res);
+            if(timerText != null)
+                timerText.setText(res);
         }
 
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
     }
+
 }
