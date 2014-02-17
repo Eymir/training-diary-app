@@ -15,7 +15,7 @@ import java.util.Arrays;
 @XmlRootElement
 public class UserData {
     private int id;
-    private byte[] db;
+    private String db;
     private String registrationId;
     private String registrationChannel;
     private String email;
@@ -61,11 +61,11 @@ public class UserData {
         this.dbPath = dbPath;
     }
 
-    public byte[] getDb() {
+    public String getDb() {
         return db;
     }
 
-    public void setDb(byte[] db) {
+    public void setDb(String db) {
         this.db = db;
     }
 
@@ -73,7 +73,7 @@ public class UserData {
     public String toString() {
         return "UserData{" +
                 "id=" + id +
-                ", db=" + Arrays.toString(db) +
+                ", db='" + db + '\'' +
                 ", registrationId='" + registrationId + '\'' +
                 ", registrationChannel='" + registrationChannel + '\'' +
                 ", email='" + email + '\'' +
