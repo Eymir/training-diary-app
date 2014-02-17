@@ -22,4 +22,6 @@ public class Const {
 
     public static final String STATISTIC_TYPE = "STATISTIC_TYPE";
     public static final String CHOSEN_STATISTIC = "CHOSEN_STATISTIC";
+    public static final String UTF_8 = "UTF-8";
+    public static final String ACCOUNT_PREF = "account";
 }

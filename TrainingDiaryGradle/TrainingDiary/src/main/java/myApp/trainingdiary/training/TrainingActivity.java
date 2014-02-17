@@ -33,10 +33,10 @@ import java.util.List;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.excercise.ExerciseActivity;
 import myApp.trainingdiary.utils.Const;
-import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.EmptyStringValidator;
 import myApp.trainingdiary.utils.TrainingExistValidator;
 
@@ -67,7 +67,7 @@ public class TrainingActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         //google analytics
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().setContext(this);
 
         setContentView(R.layout.training_list);
@@ -257,6 +257,18 @@ public class TrainingActivity extends ActionBarActivity {
                 return false;
             }
         });
+        trainingList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                long tr_id = trainingDragAdapter.getItemId(position);
+                cur_tr_id = tr_id;
+                trainingActionTools.show(view);
+                cur_drag_handler = (ImageView) (view
+                )
+                        .findViewById(R.id.drag_handler);
+                return false;
+            }
+        });
         trainingList.setAdapter(trainingDragAdapter);
         // dbHelper.close();
     }
@@ -272,7 +284,7 @@ public class TrainingActivity extends ActionBarActivity {
         String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        deleteTrainingDialog = DialogProvider.createSimpleDialog(this, title,null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+        deleteTrainingDialog = DialogProvider.createSimpleDialog(this, title, null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
                 dbHelper.WRITE.deleteTraining(cur_tr_id);
@@ -316,14 +328,14 @@ public class TrainingActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStop(this);
     }
 

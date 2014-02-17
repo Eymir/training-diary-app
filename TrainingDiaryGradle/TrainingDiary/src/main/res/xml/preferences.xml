@@ -18,40 +18,34 @@
                     android:key="use_timer"
                     android:title="@string/use_timer_title"
                     android:summary="@string/use_timer_summary"
-                    android:defaultValue="false">
-                </CheckBoxPreference>
+                    android:defaultValue="false"></CheckBoxPreference>
                 <CheckBoxPreference
                     android:key="use_stopwatch"
                     android:title="@string/use_stopwatch_title"
                     android:summary="@string/use_stopwatch_summary"
-                    android:defaultValue="true">
-                </CheckBoxPreference>
+                    android:defaultValue="true"></CheckBoxPreference>
                 <Preference
                     android:key="set_timer_time"
                     android:title="@string/set_timer_time_title"
                     android:summary="@string/set_timer_time_summary"
-                    android:dependency="use_timer">
-                </Preference>
+                    android:dependency="use_timer"></Preference>
                 <CheckBoxPreference
                     android:key="set_timer_alarm"
                     android:title="@string/set_timer_alarm_title"
                     android:summary="@string/set_timer_alarm_summary"
                     android:defaultValue="true"
-                    android:dependency="use_timer">
-                </CheckBoxPreference>
+                    android:dependency="use_timer"></CheckBoxPreference>
                 <Preference
                     android:key="set_timer_sound"
                     android:title="@string/set_timer_sound_title"
                     android:summary="@string/set_timer_sound_summary"
-                    android:dependency="use_timer">
-                </Preference>
+                    android:dependency="use_timer"></Preference>
                 <CheckBoxPreference
                     android:key="set_timer_vibro"
                     android:title="@string/set_timer_vibro_title"
                     android:summary="@string/set_timer_vibro_summary"
                     android:defaultValue="true"
-                    android:dependency="use_timer">
-                </CheckBoxPreference>
+                    android:dependency="use_timer"></CheckBoxPreference>
             </PreferenceScreen>
 
             <ListPreference
@@ -66,13 +60,13 @@
                 android:key="disable_sound"
                 android:title="@string/sound_switcher_title"
                 android:summary="@string/sound_switcher_summary"
-                android:defaultValue="false"/>
+                android:defaultValue="false" />
 
             <CheckBoxPreference
                 android:key="keep_screen_on"
                 android:title="@string/pref_chb_keep_screen_title"
                 android:summary="@string/pref_chb_keep_screen_summ"
-                android:defaultValue="false"/>
+                android:defaultValue="false" />
 
         </PreferenceScreen>
     </PreferenceCategory>
@@ -117,26 +111,41 @@
             android:key="buckup_screen"
             android:summary="@string/pref_screen_backup_summary"
             android:title="@string/pref_screen_backup_title">
-            <Preference
-                android:key="backup"
-                android:title="@string/backup_title"
-                android:summary="@string/backup_summary"
-                android:icon="@drawable/action_backup_db" />
-            <Preference
-                android:key="restore"
-                android:title="@string/restore_title"
-                android:summary="@string/restore_summary"
-                android:icon="@drawable/action_restore_db" />
-            <Preference
-                android:key="cloud_upload"
-                android:title="@string/backup_cloud_title"
-                android:summary="@string/backup_cloud__summary"
-                android:icon="@drawable/icon_action_cloud_upload_black" />
-            <Preference
-                android:key="cloud_download"
-                android:title="@string/backup_cloud_download_title"
-                android:summary="@string/backup_cloud_download_summary"
-                android:icon="@drawable/icon_action_cloud_download_black" />
+            <PreferenceCategory
+                android:key="settings"
+                android:title="@string/pref_cat_title_sd_backup">
+                <Preference
+                    android:key="backup"
+                    android:title="@string/backup_title"
+                    android:summary="@string/backup_summary"
+                    android:icon="@drawable/action_backup_db" />
+                <Preference
+                    android:key="restore"
+                    android:title="@string/restore_title"
+                    android:summary="@string/restore_summary"
+                    android:icon="@drawable/action_restore_db" />
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                android:key="settings"
+                android:title="@string/pref_cat_title_cloud_backup">
+                <Preference
+                    android:key="cloud_account"
+                    android:title="@string/acount_cloud_title"
+                    android:summary="@string/acount_cloud_empty_summary"
+                    android:icon="@drawable/action_account_user" />
+                <Preference
+                    android:key="cloud_upload"
+                    android:title="@string/backup_cloud_title"
+                    android:summary="@string/backup_cloud__summary"
+                    android:icon="@drawable/icon_action_cloud_upload_black" />
+                <Preference
+                    android:key="cloud_download"
+                    android:title="@string/backup_cloud_download_title"
+                    android:summary="@string/backup_cloud_download_summary"
+                    android:icon="@drawable/icon_action_cloud_download_black" />
+            </PreferenceCategory>
+
         </PreferenceScreen>
     </PreferenceCategory>
 

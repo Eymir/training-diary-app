@@ -362,6 +362,24 @@ public class DialogProvider {
         return adapter;
     }
 
+    public static AlertDialog createChooseStringDialog(final Activity activity, final String[] accounts, final ChooseStringDialogListener listener) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.account_list_dialog_title);
+        builder.setItems(accounts, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onClick(accounts[which]);
+            }
+        });
+
+        return builder.create();
+    }
+
+
+    public static interface ChooseStringDialogListener {
+        void onClick(String text);
+    }
+
 
     public static interface InputTextDialogClickListener {
         void onPositiveClick(String text);

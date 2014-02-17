@@ -71,7 +71,7 @@ public class AddExerciseActivity extends ActionBarActivity {
         setContentView(R.layout.activity_add_exercise);
 
         //google analytics
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().setContext(this);
 
         dbHelper = DBHelper.getInstance(this);
@@ -122,6 +122,7 @@ public class AddExerciseActivity extends ActionBarActivity {
             });
 
         }
+
         initExerciseList();
         View emptyView = findViewById(R.id.empty_view);
         exerciseList.setEmptyView(emptyView);
@@ -198,7 +199,7 @@ public class AddExerciseActivity extends ActionBarActivity {
         String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title,null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title, null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
                 if (dbHelper.WRITE.deleteExerciseWithStat(cur_ex_id)) {
@@ -295,7 +296,15 @@ public class AddExerciseActivity extends ActionBarActivity {
 
             }
         });
-
+        exerciseList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                long ex_id = exerciseAdapter.getItemId(position);
+                cur_ex_id = ex_id;
+                exerciseActionTools.show(view);
+                return false;
+            }
+        });
         exerciseList.setAdapter(exerciseAdapter);
     }
 
@@ -393,14 +402,14 @@ public class AddExerciseActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStop(this);
     }
 }
