@@ -1,6 +1,7 @@
 package ru.td.portal.controller;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class RestController {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(new File(dbPath));
-            IOUtils.write(userData.getDb(), fos);
+            IOUtils.write(userData.getDb(), fos, CharEncoding.UTF_8);
             userData.setDbPath(dbPath);
             userDataRepository.saveUserData(userData);
         } catch (IOException e) {
@@ -67,7 +68,9 @@ public class RestController {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(new File(result.getDbPath()));
-            result.setDb(IOUtils.toByteArray(fis));
+            result.setRegistrationId(id);
+            result.setRegistrationChannel(channel);
+            result.setDb(IOUtils.toString(fis, CharEncoding.UTF_8));
             return Response.status(200).entity(result).build();
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
