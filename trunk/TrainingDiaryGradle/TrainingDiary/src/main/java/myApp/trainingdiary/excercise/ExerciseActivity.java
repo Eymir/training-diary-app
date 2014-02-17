@@ -34,12 +34,12 @@ import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.SettingsActivity;
 import myApp.trainingdiary.db.DBHelper;
+import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.dialog.EditDialog;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.result.ResultActivity;
 import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.utils.Const;
-import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.utils.EmptyStringValidator;
 import myApp.trainingdiary.utils.ExerciseExistValidator;
 
@@ -74,7 +74,7 @@ public class ExerciseActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         //google analytics
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().setContext(this);
 
         dbHelper = DBHelper.getInstance(this);
@@ -196,7 +196,19 @@ public class ExerciseActivity extends ActionBarActivity {
                 return false;
             }
         });
+        exerciseList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                long ex_id = exerciseAdapter.getItemId(position);
+                cur_ex_id = ex_id;
+                exerciseActionTools.show(view);
+                cur_drag_handler = (ImageView) ((View) view
+                )
+                        .findViewById(R.id.drag_handler);
 
+                return false;
+            }
+        });
         exerciseList.setAdapter(exerciseAdapter);
     }
 
@@ -331,7 +343,7 @@ public class ExerciseActivity extends ActionBarActivity {
         String cancelButton = getResources().getString(R.string.cancel_button);
         String btnDel = getResources().getString(R.string.delete_button);
 
-        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title,null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
+        removeExerciseDialog = DialogProvider.createSimpleDialog(this, title, null, btnDel, cancelButton, new DialogProvider.SimpleDialogClickListener() {
             @Override
             public void onPositiveClick() {
                 dbHelper.WRITE.deleteExerciseFromTraining(tr_id, cur_ex_id);
@@ -375,14 +387,14 @@ public class ExerciseActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStop(this);
     }
 

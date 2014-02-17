@@ -219,5 +219,10 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="workout_expiring_title">Время до автозавершения тренировки</string>
     <string name="workout_expiring_summary">Время с  последнего подхода, через которое тренировка зваершится автоматически</string>
     <string name="backup_cloud_download_fail">Не удалось получить данные</string>
+    <string name="pref_cat_title_sd_backup">Карта памяти</string>
+    <string name="pref_cat_title_cloud_backup">Облачное хранение</string>
+    <string name="acount_cloud_empty_summary">Учетная запись не выбрана</string>
+    <string name="acount_cloud_title">Учетная запись</string>
+    <string name="account_list_dialog_title">Выберите учетную запись</string>
 
 </resources>

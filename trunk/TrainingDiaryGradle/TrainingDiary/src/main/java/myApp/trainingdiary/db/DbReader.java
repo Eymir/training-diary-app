@@ -594,6 +594,7 @@ public class DbReader {
             return stats;
         } finally {
             if (c != null) c.close();
+            if (db != null) db.close();
         }
     }
 
@@ -1338,5 +1339,23 @@ public class DbReader {
             if (db != null) db.close();
         }
 
+    }
+
+    public List<Long> getTrainingSetIdListByExercise(SQLiteDatabase db, long ex_id) {
+        List<Long> list = new ArrayList<Long>();
+        String sqlQuery = "select tr_set.id from TrainingSet tr_set " +
+                "where tr_set.exercise_id = ? " +
+                "order by tr_set.date desc ";
+        Cursor c = db
+                .rawQuery(sqlQuery, new String[]{String.valueOf(ex_id)});
+        try {
+            while (c.moveToNext()) {
+                Long id = c.getLong(c.getColumnIndex("id"));
+                list.add(id);
+            }
+            return list;
+        } finally {
+            if (c != null) c.close();
+        }
     }
 }

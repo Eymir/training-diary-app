@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import myApp.trainingdiary.db.entity.Measure;
+import myApp.trainingdiary.db.entity.TrainingSet;
 import myApp.trainingdiary.db.entity.TrainingStampStatus;
 import myApp.trainingdiary.utils.Const;
 
@@ -275,9 +276,16 @@ public class DbWriter {
             int countExerciseInTraining = db.delete("ExerciseInTraining", "exercise_id=" + ex_id, null);
             Log.d(Const.LOG_TAG, "countExerciseInTraining: "
                     + countExerciseInTraining);
-            int countTrainingStat = db.delete("TrainingStat", "exercise_id=" + ex_id, null);
-            Log.d(Const.LOG_TAG, "countTrainingStat: "
-                    + countTrainingStat);
+            List<Long> trainingSetList = dbHelper.READ.getTrainingSetIdListByExercise(db, ex_id);
+            for (Long setId : trainingSetList){
+                int countTrainingSetValue = db.delete("TrainingSetValue", "training_set_id=" + setId, null);
+                Log.d(Const.LOG_TAG, "countTrainingSetValue: "
+                        + countTrainingSetValue);
+                int countTrainingSet = db.delete("TrainingSet", "id=" + setId, null);
+                Log.d(Const.LOG_TAG, "countTrainingSet: "
+                        + countTrainingSet);
+
+            }
             int countExercise = db.delete("Exercise", "id=" + ex_id, null);
             Log.d(Const.LOG_TAG, "countExercise: "
                     + countExercise);
@@ -288,6 +296,8 @@ public class DbWriter {
             return false;
         } finally {
             db.endTransaction();
+            if (db != null)
+                db.close();
         }
     }
 
