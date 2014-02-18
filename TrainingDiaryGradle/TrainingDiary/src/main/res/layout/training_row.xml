@@ -42,7 +42,7 @@
             android:layout_marginTop="4px"
             android:layout_weight="0.69"
             android:scaleType="fitCenter"
-            android:src="@drawable/icon_action_overflow" >
+            android:src="@drawable/icon_content_edit_white" >
         </ImageView>
 
         <ImageView
