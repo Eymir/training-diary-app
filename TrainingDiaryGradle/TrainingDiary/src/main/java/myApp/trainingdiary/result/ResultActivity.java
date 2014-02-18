@@ -390,6 +390,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private void chronometerStart() {
         if(useTimer){
             TimerAlarmBroadcastReceiver.getInstance(this).SetAlarm(getTimerTime(),999);
+            timerText.setText("00:00");
 
             if(timerTask != null){
                 cancelTimerTask();
@@ -480,6 +481,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private void setChronoTickListener() {
         mChrono.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             public void onChronometerTick(Chronometer arg0) {
+
+                if(useTimer){
+                    return;
+                }
+
                 if (!resume) {
                     long minutes = ((SystemClock.elapsedRealtime() - mChrono.getBase()) / 1000) / 60;
                     long seconds = ((SystemClock.elapsedRealtime() - mChrono.getBase()) / 1000) % 60;
