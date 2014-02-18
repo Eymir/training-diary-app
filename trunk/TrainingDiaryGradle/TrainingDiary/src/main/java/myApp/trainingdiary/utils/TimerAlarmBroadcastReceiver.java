@@ -24,6 +24,10 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
         return mInstance;
     }
 
+    public TimerAlarmBroadcastReceiver() {
+
+    }
+
     public TimerAlarmBroadcastReceiver(Context c) {
         context = c;
     }
