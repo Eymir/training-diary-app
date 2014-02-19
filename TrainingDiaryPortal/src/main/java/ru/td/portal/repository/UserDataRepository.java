@@ -1,5 +1,8 @@
 package ru.td.portal.repository;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,7 +19,7 @@ import java.util.List;
  */
 public class UserDataRepository {
     JdbcTemplate jdbcTemplate;
-
+    private static Logger log = LoggerFactory.getLogger(UserDataRepository.class);
     public UserData saveUserData(UserData userData) {
         String sqlInsert = "insert into UserData(registration_id,registration_channel,email,db_path) values (?,?,?,?)";
         String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=?";
@@ -34,12 +37,12 @@ public class UserDataRepository {
     }
 
     public UserData getUserDataByRegIdAndChannel(String regId, String channel) {
-        String sql = "select * from UserData where registration_id=? and registration_channel=?";
+        String sql = "select top 1 * from UserData where registration_id=? and registration_channel=?";
 
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{regId, channel}, new UserDataMapper());
         } catch (DataAccessException e) {
-            System.out.println(e);
+            log.warn("user and data not found!",e);
             return null;
         }
     }
