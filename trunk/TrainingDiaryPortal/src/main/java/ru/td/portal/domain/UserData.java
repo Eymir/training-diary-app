@@ -1,6 +1,9 @@
 package ru.td.portal.domain;
 
+import org.apache.commons.io.IOUtils;
+
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.FileInputStream;
 import java.util.Arrays;
 
 /**

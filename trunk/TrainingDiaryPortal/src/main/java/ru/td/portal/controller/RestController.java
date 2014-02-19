@@ -43,13 +43,17 @@ public class RestController {
     public
     @ResponseBody
     Response uploadClientDb(@RequestBody UserData userData) {
-        String dbPath = folderGeneratorService.generateFolderPath(userData) + IOUtils.DIR_SEPARATOR + "db.sqlite";
+       UserData userDataFromDb = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(),userData.getRegistrationChannel());
+       if (userDataFromDb == null){
+            userDataFromDb = userDataRepository.saveUserData(userData);
+       }
+        String dbPath = folderGeneratorService.generateFolderPath(userDataFromDb) + IOUtils.DIR_SEPARATOR + "db.sqlite";
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(new File(dbPath));
-            IOUtils.write(userData.getDb(), fos, CharEncoding.UTF_8);
-            userData.setDbPath(dbPath);
-            userDataRepository.saveUserData(userData);
+            IOUtils.write(userDataFromDb.getDb(), fos, CharEncoding.UTF_8);
+            userDataFromDb.setDbPath(dbPath);
+            userDataRepository.saveUserData(userDataFromDb);
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
             return Response.status(500).entity("Error").build();

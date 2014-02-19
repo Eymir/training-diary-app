@@ -36,113 +36,115 @@
         });
     });
 </script>
-<div class="form-group">
-</div>
-<div class="row">
-    <div class="col-md-10" style=" margin-bottom:15px; background:lightgray">
-        <div id="logo" style="float: left; margin-left:15px;">
-            <img src="https://s3.amazonaws.com/jetstrap-site/images/website/index/what_icon.png"
-                 height="60">
-        </div>
-        <div id="head" style="float: left; margin-left:15px;">
-            <h3>
-                Дневник тренировок
-            </h3>
-        </div>
-    </div>
-    <div class="col-md-2" style="background:lightgray">
-
-    </div>
-</div>
-<div class="row" style=" margin-left:15px;">
-    <div class="col-md-2">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    Календарь
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10" style=" margin-bottom:15px; background:lightgray">
+            <div id="logo" style="float: left; margin-left:15px;">
+                <img src="https://s3.amazonaws.com/jetstrap-site/images/website/index/what_icon.png"
+                     height="60">
+            </div>
+            <div id="head" style="float: left; margin-left:15px;">
+                <h3>
+                    Дневник тренировок
                 </h3>
             </div>
-
-            <div class="panel-body">
-                <center>
-                    <div id="dp6" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
-                </center>
-            </div>
         </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    Тренировки за дату
-                </h3>
-            </div>
-            <div class="panel-body">
-                <div>
-                    1. 19:50 - 20:20
-                </div>
-                <div>
-                    2.19:50 - 20:20
-                </div>
-                <div>
-                    3. 19:50 - 20:20
-                </div>
-            </div>
+        <div class="col-md-2" style="background:lightgray">
+
         </div>
     </div>
-    <div class="col-md-8">
-        <table class="table table-striped">
-            <tbody>
-            <tr>
-                <td>
-                    2х15
-                    <br>
-                    3х 20
-                </td>
-            </tr>
-            </tbody>
-            <thead>
-            <tr>
-                <th>
-                    Жим лежа
-                </th>
-            </tr>
-            </thead>
-        </table>
-        <table class="table table-striped">
-            <tbody>
-            <tr>
-                <td>
-                    2х15
-                    <br>
-                    3х 20
-                </td>
-            </tr>
-            </tbody>
-            <thead>
-            <tr>
-                <th>
-                    Становая тяга
-                </th>
-            </tr>
-            </thead>
-        </table>
-        <table class="table table-striped">
-            <tbody>
-            <tr>
-                <td>
-                    2х15
-                    <br>
-                    3х 20
-                </td>
-            </tr>
-            </tbody>
-            <thead>
-            <tr>
-                <th>
-                    Французский жим
-                </th>
-            </tr>
-            </thead>
-        </table>
+    <div class="row" style=" margin-left:15px;">
+        <div class="col-md-2">
+            <div class="sidebar-nav-fixed">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Календарь
+                        </h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <center>
+                            <div id="dp6" data-date="12-02-2012" data-date-format="dd-mm-yyyy"></div>
+                        </center>
+                    </div>
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Тренировки за дату
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            1. 19:50 - 20:20
+                        </div>
+                        <div>
+                            2.19:50 - 20:20
+                        </div>
+                        <div>
+                            3. 19:50 - 20:20
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>
+                        2х15
+                        <br>
+                        3х 20
+                    </td>
+                </tr>
+                </tbody>
+                <thead>
+                <tr>
+                    <th>
+                        Жим лежа
+                    </th>
+                </tr>
+                </thead>
+            </table>
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>
+                        2х15
+                        <br>
+                        3х 20
+                    </td>
+                </tr>
+                </tbody>
+                <thead>
+                <tr>
+                    <th>
+                        Становая тяга
+                    </th>
+                </tr>
+                </thead>
+            </table>
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>
+                        2х15
+                        <br>
+                        3х 20
+                    </td>
+                </tr>
+                </tbody>
+                <thead>
+                <tr>
+                    <th>
+                        Французский жим
+                    </th>
+                </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 </body>

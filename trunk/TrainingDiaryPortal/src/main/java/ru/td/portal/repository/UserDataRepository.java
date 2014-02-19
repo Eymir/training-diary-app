@@ -17,17 +17,16 @@ import java.util.List;
 public class UserDataRepository {
     JdbcTemplate jdbcTemplate;
 
-    public void saveUserData(UserData userData) {
+    public UserData saveUserData(UserData userData) {
         String sqlInsert = "insert into UserData(registration_id,registration_channel,email,db_path) values (?,?,?,?)";
         String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=?";
-        UserData old = getUserDataByRegIdAndChannel(userData.getRegistrationId(),userData.getRegistrationChannel());
+        UserData old = getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
         if (old == null) {
             jdbcTemplate.update(sqlInsert, new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
         } else {
             jdbcTemplate.update(sqlUpdate, new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
         }
-        System.out.println(getAllUserData());
-
+        return getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
     }
 
     public List<UserData> getAllUserData() {
@@ -53,7 +52,6 @@ public class UserDataRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 }
-
 
 class UserDataMapper implements RowMapper<UserData> {
     @Override
