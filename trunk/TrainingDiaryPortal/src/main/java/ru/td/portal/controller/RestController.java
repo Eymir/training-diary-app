@@ -77,7 +77,7 @@ public class RestController {
             fis = new FileInputStream(new File(result.getDbPath()));
             result.setRegistrationId(id);
             result.setRegistrationChannel(channel);
-            result.setDb(IOUtils.toString(fis, CharEncoding.UTF_8));
+            result.setDb(Base64.encodeBase64String(IOUtils.toByteArray(fis)));
             return Response.status(200).entity(result).build();
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
