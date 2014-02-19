@@ -5,6 +5,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import ru.td.portal.domain.UserData;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.ws.rs.core.MultivaluedMap;
 
