@@ -37,7 +37,7 @@ public class UserDataRepository {
     }
 
     public UserData getUserDataByRegIdAndChannel(String regId, String channel) {
-        String sql = "select top 1 * from UserData where registration_id=? and registration_channel=?";
+        String sql = "select * from UserData where registration_id=? and registration_channel=? limit 1";
 
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{regId, channel}, new UserDataMapper());
