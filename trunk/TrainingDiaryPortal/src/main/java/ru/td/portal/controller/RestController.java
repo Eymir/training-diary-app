@@ -45,6 +45,8 @@ public class RestController {
     @ResponseBody
     Response uploadClientDb(@RequestBody UserData userData) {
        UserData userDataFromDb = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(),userData.getRegistrationChannel());
+       userDataFromDb.setDb(userData.getDb());
+       userDataFromDb.setEmail(userData.getEmail());
        if (userDataFromDb == null){
             userDataFromDb = userDataRepository.saveUserData(userData);
        }
