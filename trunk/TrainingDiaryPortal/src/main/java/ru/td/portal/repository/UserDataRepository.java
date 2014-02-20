@@ -20,6 +20,7 @@ import java.util.List;
 public class UserDataRepository {
     JdbcTemplate jdbcTemplate;
     private static Logger log = LoggerFactory.getLogger(UserDataRepository.class);
+
     public UserData saveUserData(UserData userData) {
         String sqlInsert = "insert into UserData(registration_id,registration_channel,email,db_path) values (?,?,?,?)";
         String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=?";
@@ -37,13 +38,21 @@ public class UserDataRepository {
     }
 
     public UserData getUserDataByRegIdAndChannel(String regId, String channel) {
-        String sql = "select * from UserData where registration_id=? and registration_channel=? limit 1";
+        String query = "select * from UserData where registration_id=? and registration_channel=?";
 
         try {
-            return jdbcTemplate.queryForObject(sql, new Object[]{regId, channel}, new UserDataMapper());
-        } catch (DataAccessException e) {
-            log.warn("user and data not found!",e);
-            return null;
+            List<UserData> dataList = jdbcTemplate.query(query, new Object[]{regId, channel}, new UserDataMapper());
+            if (dataList.size() > 1) {
+                throw new RuntimeException("for UserData with regId=" + regId + ", and channel=" + channel + " exists more than 1 records");
+            }
+            if (dataList.size() == 0) {
+                return null;
+            }
+            return dataList.get(0);
+
+        } catch (Exception e) {
+            log.error("Error getUserData! Details:", e);
+            throw new RuntimeException(e);
         }
     }
 
