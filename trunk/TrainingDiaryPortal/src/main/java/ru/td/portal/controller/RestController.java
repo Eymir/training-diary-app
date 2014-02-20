@@ -45,18 +45,18 @@ public class RestController {
     @ResponseBody
     Response uploadClientDb(@RequestBody UserData userData) {
        UserData userDataFromDb = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(),userData.getRegistrationChannel());
-       userDataFromDb.setDb(userData.getDb());
-       userDataFromDb.setEmail(userData.getEmail());
        if (userDataFromDb == null){
-            userDataFromDb = userDataRepository.saveUserData(userData);
+            userData.setId(userDataRepository.saveUserData(userData).getId());
+       } else{
+           userData.setId(userDataFromDb.getId());
        }
-        String dbPath = folderGeneratorService.generateFolderPath(userDataFromDb) + IOUtils.DIR_SEPARATOR + "db.sqlite";
+        String dbPath = folderGeneratorService.generateFolderPath(userData) + IOUtils.DIR_SEPARATOR + "db.sqlite";
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(new File(dbPath));
-            IOUtils.write(Base64.decodeBase64(userDataFromDb.getDb()), fos);
-            userDataFromDb.setDbPath(dbPath);
-            userDataRepository.saveUserData(userDataFromDb);
+            IOUtils.write(Base64.decodeBase64(userData.getDb()), fos);
+            userData.setDbPath(dbPath);
+            userDataRepository.saveUserData(userData);
         } catch (IOException e) {
             log.error("Error upload database! Details:", e);
             return Response.status(500).entity("Error").build();
@@ -80,7 +80,7 @@ public class RestController {
             result.setDb(Base64.encodeBase64String(IOUtils.toByteArray(fis)));
             return Response.status(200).entity(result).build();
         } catch (IOException e) {
-            log.error("Error upload database! Details:", e);
+            log.error("Error download database! Details:", e);
             return Response.status(500).entity(e).build();
         } finally {
             IOUtils.closeQuietly(fis);
