@@ -23,12 +23,14 @@ public class UserDataRepository {
 
     public UserData saveUserData(UserData userData) {
         String sqlInsert = "insert into UserData(registration_id,registration_channel,email,db_path) values (?,?,?,?)";
-        String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=?";
+        String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=? where id = ?";
         UserData old = getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
         if (old == null) {
-            jdbcTemplate.update(sqlInsert, new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
+            jdbcTemplate.update(sqlInsert,
+                    new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
         } else {
-            jdbcTemplate.update(sqlUpdate, new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
+            jdbcTemplate.update(sqlUpdate,
+                    new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath(), userData.getId()});
         }
         return getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
     }

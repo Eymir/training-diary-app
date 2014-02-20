@@ -8,7 +8,7 @@
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://62.109.24.88:3306/training_diary_central" />
+        <property name="url" value="jdbc:mysql://62.109.24.88:3306/training_diary_central?generateSimpleParameterMetadata=true" />
         <property name="username" value="td_admin" />
         <property name="password" value="6vXcWY2BAFJUA6D4" />
     </bean>
