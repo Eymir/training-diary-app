@@ -372,9 +372,7 @@ public class SettingsActivity extends PreferenceActivity implements
         String uriStr = preferences.getString("set_timer_sound", "");
         String path = "def uri";
         if (uriStr.length() != 0)
-            path =
-
-                    getRealPathFromURI(Uri.parse(uriStr)
+            path = getRealPathFromURI(Uri.parse(uriStr)
 
                     );
         set_timer_sound.setSummary(path);
