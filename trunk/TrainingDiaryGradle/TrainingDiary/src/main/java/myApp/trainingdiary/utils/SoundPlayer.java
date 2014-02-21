@@ -1,6 +1,7 @@
 package myApp.trainingdiary.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
@@ -9,9 +10,12 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.IOException;
+
+import myApp.trainingdiary.R;
 
 /**
  * Created by s_malugin on 26.01.14.
@@ -33,11 +37,15 @@ public class SoundPlayer {
         return instance;
     }
 
-    public void playSound(Uri uri){
+    public void playSound(Uri defaultUri){
 
-        //Будем провверять ури на наличие файла и если его нет заменять на мелдию по умолчанию
-        //if(uriFileExist(uri))
-            //uri = Uri.parse("android.resource://ru.adhoc.truealarmfree/" + R.raw.nature);
+        Uri uri = defaultUri;
+        SharedPreferences pref = context.getSharedPreferences("preferences", context.MODE_PRIVATE);
+        String uriStr = pref.getString("set_timer_sound", "");
+        Uri userUri = Uri.parse(uriStr);
+
+        if(uriFileExist(userUri))
+            uri = userUri;
 
         if (mediaPlayer != null){
             mediaPlayer.stop();

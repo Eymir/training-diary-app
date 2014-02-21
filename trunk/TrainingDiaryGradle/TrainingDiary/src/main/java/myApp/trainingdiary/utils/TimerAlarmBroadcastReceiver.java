@@ -37,6 +37,8 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
         int id = intent.getExtras().getInt("id");
         RUN = false;
         TIME = 0L;
+        //Vibrator.getInstance(context).startVibrator();
+        SoundPlayer.getInstance(context).playSound(Const.DEFAULT_SOUND_URI);
     }
 
     public void SetAlarm(long alarmTime, int requestCode){

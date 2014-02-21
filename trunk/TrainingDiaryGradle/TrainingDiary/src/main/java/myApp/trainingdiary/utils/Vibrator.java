@@ -25,7 +25,7 @@ public class Vibrator {
 
     public void startVibrator(){
         long[] pattern = {0, 2000, 1000};
-        v.vibrate(pattern,0);
+        v.vibrate(pattern,3);
     }
 
     public void stopVibrator(){

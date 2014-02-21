@@ -48,6 +48,7 @@ import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.utils.SoundPlayer;
 import myApp.trainingdiary.utils.TimerAlarmBroadcastReceiver;
 import myApp.trainingdiary.utils.TrainingDurationManger;
 
@@ -257,12 +258,15 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 return true;
             case R.id.resultmenu_play:
                 chronometerStart();
+                SoundPlayer.getInstance(this).stopPlaySound();
                 return true;
             case R.id.resultmenu_stop:
                 chronometerStop();
+                SoundPlayer.getInstance(this).stopPlaySound();
                 return true;
             case R.id.resultmenu_replay:
                 chronometerReset();
+                SoundPlayer.getInstance(this).stopPlaySound();
                 return true;
         }
         return true;
@@ -321,6 +325,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 chronometerReset();
                 chronometerStart();
                 numRep.setText("["+getNumSets()+"]");
+                SoundPlayer.getInstance(this).stopPlaySound();
                 break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
@@ -582,7 +587,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             try {
                 int cnt = 0;
                 int progress = sec[0]+1;
-                while(cnt < sec[0]) {
+                while(cnt <= sec[0]) {
                     if(isCancelled())
                         return null;
                     publishProgress(--progress);
