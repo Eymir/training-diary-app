@@ -70,7 +70,7 @@ public class SoundPlayer {
             e.printStackTrace();
         }
 
-           mediaPlayer.setLooping(true);
+           //mediaPlayer.setLooping(true);
 
         if(!mediaPlayer.isPlaying()){
             mediaPlayer.start();
