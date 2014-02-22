@@ -18,6 +18,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +33,10 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
@@ -206,6 +209,11 @@ public class SettingsActivity extends PreferenceActivity implements
             }
         });
 
+        SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+        String account = pref.getString(Const.ACCOUNT_PREF, null);
+        if (account != null)
+            cloud_account.setSummary(account);
+
         Preference cloud_upload = findPreference("cloud_upload");
         assert cloud_upload != null;
         cloud_upload.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -216,7 +224,7 @@ public class SettingsActivity extends PreferenceActivity implements
                     if (account != null) {
                         UserData userData = new UserData();
                         File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
-                        userData.setDb(IOUtils.toString(new FileInputStream(currentDB), Const.UTF_8));
+                        userData.setDb(Base64.encodeToString(IOUtils.toByteArray(new FileInputStream(currentDB)), Base64.DEFAULT));
                         userData.setRegistrationId(account);
                         userData.setRegistrationChannel(GOOGLE_AUTH_TYPE);
                         TrainingDiaryCloudService.API.uploadCloudBackup(userData, new Callback<UserData>() {
@@ -277,7 +285,7 @@ public class SettingsActivity extends PreferenceActivity implements
                                                 Log.d(Const.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath());
                                                 Log.d(Const.LOG_TAG, "currentDB.exists: " + currentDB.exists());
                                                 if (currentDB.exists()) {
-                                                    FileUtils.writeStringToFile(currentDB, userData.getEntity().getDb(), Const.UTF_8);
+                                                    FileUtils.writeByteArrayToFile(currentDB, Base64.decode(userData.getEntity().getDb(), Base64.DEFAULT));
                                                     Toast.makeText(
                                                             SettingsActivity.this,
                                                             getResources().getString(
@@ -440,13 +448,18 @@ public class SettingsActivity extends PreferenceActivity implements
         try {
             AccountManager accountManager = AccountManager.get(SettingsActivity.this);
             assert accountManager != null;
-            Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
-            if (accountManager.getAccounts() != null)
+//            Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
+
+            Account[] accounts = new Account[3];
+            accounts[0] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
+            accounts[1] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
+            accounts[2] = new Account("234523452345", GOOGLE_AUTH_TYPE);
+            if (accounts != null)
                 Log.d(Const.LOG_TAG, Arrays.asList(accountManager.getAccounts()).toString());
             if (accounts == null || accounts.length == 0) {
                 throw new Exception(getString(R.string.accounts_not_found));
             }
-            DialogProvider.createChooseStringDialog(SettingsActivity.this, toStringArray(accountManager.getAccounts()), new DialogProvider.ChooseStringDialogListener() {
+            DialogProvider.createChooseStringDialog(SettingsActivity.this, toStringArray(accounts), new DialogProvider.ChooseStringDialogListener() {
                 public void onClick(String text) {
                     SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
@@ -463,11 +476,13 @@ public class SettingsActivity extends PreferenceActivity implements
     }
 
     private String[] toStringArray(Account[] accounts) {
-        String[] strings = new String[accounts.length];
+        List<String> list = new ArrayList<String>();
         for (int i = 0; i < accounts.length; i++) {
-            strings[i] = accounts[i].name;
+            if (!list.contains(accounts[i].name))
+                list.add(accounts[i].name);
         }
-        return strings;
+
+        return list.toArray(new String[list.size()]);
     }
 
     @Override

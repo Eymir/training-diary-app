@@ -28,5 +28,6 @@ public class Const {
     public static final String CHOSEN_STATISTIC = "CHOSEN_STATISTIC";
     public static final String UTF_8 = "UTF-8";
     public static final String ACCOUNT_PREF = "account";
-    public static final Uri DEFAULT_SOUND_URI = Uri.parse("android.resource://myApp.trainingdiary/" + R.raw.click3);
+    public static final String STAT_VIEW = "STAT_VIEW_";
+    public static final Uri DEFAULT_SOUND_URI = Uri.parse("android.resource://myApp.trainingdiary/" + R.raw.ringringring);
 }

@@ -23,12 +23,13 @@ class ResultFragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Log.d(Const.LOG_TAG, "getItem at " + position);
+        if (position >= exerciseListInTraining.size()) position = exerciseListInTraining.size() - 1;
         return ResultFragment.newInstance(exerciseListInTraining.get(position));
     }
 
     @Override
     public int getItemPosition(Object item) {
-        return POSITION_NONE;
+        return super.getItemPosition(item);
     }
 
     @Override
