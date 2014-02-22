@@ -778,12 +778,16 @@ public class DbReader {
 
     public String getTrainingNameById(SQLiteDatabase db, long tr_id) {
         String sqlQuery = "select tr.name from Training tr where tr.id = ?";
-        Cursor c = db
-                .rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
-        c.moveToFirst();
-        String name = c.getString(c.getColumnIndex("name"));
-        if (c != null) c.close();
-        return name;
+        Cursor c = null;
+        try {
+            c = db.rawQuery(sqlQuery, new String[]{String.valueOf(tr_id)});
+            c.moveToFirst();
+            String name = c.getString(c.getColumnIndex("name"));
+            return name;
+        } finally {
+            if (c != null)
+                c.close();
+        }
     }
 
     /**
@@ -966,7 +970,7 @@ public class DbReader {
 
         //String sqlQuery = "select count(*) as _count from TrainingStamp ";
 
-        String sqlQuery ="SELECT Count([VZ].[id]) AS [_count]\n" +
+        String sqlQuery = "SELECT Count([VZ].[id]) AS [_count]\n" +
                 "FROM (SELECT [TrainingStamp].[id]\n" +
                 "  FROM [TrainingStamp]\n" +
                 "    INNER JOIN [TrainingSet] ON [TrainingStamp].[id] =\n" +
