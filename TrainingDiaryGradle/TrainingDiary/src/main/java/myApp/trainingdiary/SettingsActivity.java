@@ -382,7 +382,7 @@ public class SettingsActivity extends PreferenceActivity implements
         if (uriStr.length() != 0)
             path = getRealPathFromURI(Uri.parse(uriStr)
 
-                    );
+            );
         set_timer_sound.setSummary(path);
         set_timer_sound.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
 
@@ -448,12 +448,12 @@ public class SettingsActivity extends PreferenceActivity implements
         try {
             AccountManager accountManager = AccountManager.get(SettingsActivity.this);
             assert accountManager != null;
-//            Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
+            Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
 
-            Account[] accounts = new Account[3];
-            accounts[0] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
-            accounts[1] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
-            accounts[2] = new Account("234523452345", GOOGLE_AUTH_TYPE);
+//            Account[] accounts = new Account[3];
+//            accounts[0] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
+//            accounts[1] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
+//            accounts[2] = new Account("234523452345", GOOGLE_AUTH_TYPE);
             if (accounts != null)
                 Log.d(Const.LOG_TAG, Arrays.asList(accountManager.getAccounts()).toString());
             if (accounts == null || accounts.length == 0) {
