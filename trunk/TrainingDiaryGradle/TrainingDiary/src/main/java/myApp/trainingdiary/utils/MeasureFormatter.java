@@ -1,10 +1,19 @@
 package myApp.trainingdiary.utils;
 
+import android.preference.PreferenceManager;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import myApp.trainingdiary.R;
+import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Measure;
 import myApp.trainingdiary.db.entity.TrainingSet;
 import myApp.trainingdiary.db.entity.TrainingSetValue;
@@ -88,5 +97,39 @@ public class MeasureFormatter {
                 }
         }
         return null;
+    }
+
+    public static void writeResultStatView(TextView view, Long exercise_id) {
+        String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(view.getContext()).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
+        Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
+        List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(exercise_id, tr_stamp_id);
+        Log.d(Const.LOG_TAG, "tr_stats: " + tr_stats);
+        String s = formTrainingStats(tr_stats);
+        int color = view.getResources().getColor(R.color.white_little_transparent);
+        view.setText(makeSeparatorsTransparent(s, color));
+    }
+
+    private static String formTrainingStats(List<TrainingSet> sets) {
+        String result = "";
+        for (int i = 0; i < sets.size(); i++) {
+            TrainingSet set = sets.get(i);
+            result += MeasureFormatter.valueFormat(set) + ";  ";
+        }
+        return result;
+    }
+
+    private static SpannableStringBuilder makeSeparatorsTransparent(String s, int color) {
+        final Pattern p1 = Pattern.compile("[x;]");
+        final Matcher matcher = p1.matcher(s);
+
+        final SpannableStringBuilder spannable = new SpannableStringBuilder(s);
+        while (matcher.find()) {
+
+            final ForegroundColorSpan span = new ForegroundColorSpan(color);
+            spannable.setSpan(
+                    span, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return spannable;
     }
 }

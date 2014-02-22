@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -40,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
-import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.TrainingSet;
 import myApp.trainingdiary.db.entity.TrainingSetValue;
@@ -51,8 +51,6 @@ import myApp.trainingdiary.utils.MeasureFormatter;
 import myApp.trainingdiary.utils.SoundPlayer;
 import myApp.trainingdiary.utils.TimerAlarmBroadcastReceiver;
 import myApp.trainingdiary.utils.TrainingDurationManger;
-
-import android.os.AsyncTask;
 
 /*
  * ��������� ��� ������ ���������� ������� ���������� 
@@ -85,6 +83,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     private TextView numRep;
     private boolean useTimer;
     private TimerTask timerTask;
+    private ViewPager mPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +99,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         actionBar.setDisplayShowTitleEnabled(false);
 
         //google analytics
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().setContext(this);
 
         mChrono = (Chronometer) findViewById(R.id.mChrono);
@@ -113,7 +112,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         Log.d(Const.LOG_TAG, "ex_id:" + ex_id + " tr_id:" + tr_id);
 
         mAdapter = new ResultFragmentAdapter(getSupportFragmentManager(), tr_id);
-        ViewPager mPager = (ViewPager) findViewById(R.id.result_pager);
+        mPager = (ViewPager) findViewById(R.id.result_pager);
         mPager.setAdapter(mAdapter);
         TitlePageIndicator mIndicator = (TitlePageIndicator) findViewById(R.id.result_indicator);
         mIndicator.setViewPager(mPager);
@@ -132,14 +131,14 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 Log.d(Const.LOG_TAG, "onPageSelected.ex: " + dbHelper.READ.getExerciseById(ex_id).getName());
                 WheelFragment wheelFragment = getWheelFragmentByExId(ex_id);
                 attachWheelFragment(wheelFragment);
-                if(numRep != null)
-                    numRep.setText("["+getNumSets()+"]");
+                if (numRep != null)
+                    numRep.setText("[" + getNumSets() + "]");
             }
         });
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        soundClick = soundPool.load(this, R.raw.click3, 1);
+        soundClick = soundPool.load(this, R.raw.bom, 1);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         Button writeButton = (Button) findViewById(R.id.write_button);
         writeButton.setOnClickListener(this);
@@ -156,15 +155,14 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         // If Activity is created after rotation
         if (savedInstanceState != null) {
-            if(useTimer){
-                if(TimerAlarmBroadcastReceiver.RUN){
-                    if(timerTask != null)
+            if (useTimer) {
+                if (TimerAlarmBroadcastReceiver.RUN) {
+                    if (timerTask != null)
                         timerTask.cancel(false);
                     timerTask = new TimerTask();
                     timerTask.execute(getTimerRemainInSec());
                 }
-            }
-            else {
+            } else {
                 rotation = true;
                 elapsedTime = savedInstanceState.getLong("elapsedTime");
                 currentTime = savedInstanceState.getString("currentTime");
@@ -175,18 +173,16 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 reset = savedInstanceState.getBoolean("reset");
                 chronometerReturn();
             }
-        }
-        else {
+        } else {
             if (last_set != null) {
-                if(useTimer){
-                    if(TimerAlarmBroadcastReceiver.RUN){//если ресивер заведён
-                        if(timerTask != null)
+                if (useTimer) {
+                    if (TimerAlarmBroadcastReceiver.RUN) {//если ресивер заведён
+                        if (timerTask != null)
                             timerTask.cancel(false);
                         timerTask = new TimerTask();
                         timerTask.execute(getTimerRemainInSec());
                     }
-                }
-                else {
+                } else {
                     chronometerReset();
                     chronometerStart();
                 }
@@ -237,9 +233,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         timerText.setTextSize(25);
         timerText.setPadding(10, 0, 0, 0);
 
-        numRep.setText("["+getNumSets()+"]");
+        numRep.setText("[" + getNumSets() + "]");
         numRep.setTextSize(25);
-        numRep.setPadding(10,0,20,0);
+        numRep.setPadding(10, 0, 20, 0);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -284,8 +280,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
                 int deleted = dbHelper.WRITE.deleteLastTrainingSetInCurrentTrainingStamp(ex_id);
                 if (deleted > 0) {
-                    curResultFragment.refreshView(ResultActivity.this);
-                    mAdapter.notifyDataSetChanged();
+                    TextView training_stat_text = (TextView) mPager.findViewWithTag(Const.STAT_VIEW + ex_id);
+                    MeasureFormatter.writeResultStatView(training_stat_text, ex_id);
                     wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
                     Toast.makeText(ResultActivity.this, R.string.deleted,
                             Toast.LENGTH_SHORT).show();
@@ -319,20 +315,17 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         switch (arg0.getId()) {
             case R.id.write_button:
                 writeToDB();
-                curResultFragment.refreshView(ResultActivity.this);
-                mAdapter.notifyDataSetChanged();
+                TextView training_stat_text = (TextView) mPager.findViewWithTag(Const.STAT_VIEW + ex_id);
+                MeasureFormatter.writeResultStatView(training_stat_text, ex_id);
                 wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
                 chronometerReset();
                 chronometerStart();
-                numRep.setText("["+getNumSets()+"]");
+                numRep.setText("[" + getNumSets() + "]");
                 SoundPlayer.getInstance(this).stopPlaySound();
                 break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);
                 TrainingSet set = dbHelper.READ.getLastTrainingSetByExerciseInLastOpenTrainingStamp(ex_id, tr_id);
-//                Log.d(Const.LOG_TAG, "undo TrainingStamp:" + dbHelper.READ.getLastTrainingStamp());
-//                Log.d(Const.LOG_TAG, "undo ex_id:" + ex_id + " tr_id:" + tr_id);
-//                Log.d(Const.LOG_TAG, "undo set:" + set);
                 if (set != null) {
                     String value = MeasureFormatter.valueFormat(set);
                     message = String.format(message, value);
@@ -376,13 +369,12 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void chronometerReturn() {
-        if(useTimer){
-            if(timerTask != null)
+        if (useTimer) {
+            if (timerTask != null)
                 cancelTimerTask();
             timerTask = new TimerTask();
             timerTask.execute(getTimerRemainInSec());
-        }
-        else {
+        } else {
             if (timerOn) {
                 mChrono.setBase(base);
                 mChrono.start();
@@ -393,17 +385,16 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void chronometerStart() {
-        if(useTimer){
-            TimerAlarmBroadcastReceiver.getInstance(this).SetAlarm(getTimerTime(),999);
+        if (useTimer) {
+            TimerAlarmBroadcastReceiver.getInstance(this).SetAlarm(getTimerTime(), 999);
             timerText.setText("00:00");
 
-            if(timerTask != null){
+            if (timerTask != null) {
                 cancelTimerTask();
             }
             timerTask = new TimerTask();
             timerTask.execute(getTimerRemainInSec());
-        }
-        else {
+        } else {
             reset = false;
             timerOn = true;
             rotation = false;
@@ -417,12 +408,11 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
     }
 
     private void chronometerStop() {
-        if(useTimer){
+        if (useTimer) {
             TimerAlarmBroadcastReceiver.getInstance(this).CancelAlarm(999);
-            if(timerTask != null)
+            if (timerTask != null)
                 cancelTimerTask();
-        }
-        else {
+        } else {
             mChrono.stop();
             timerOn = false;
             rotation = false;
@@ -443,36 +433,35 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         }
     }
 
-    private long getTimerTime(){
-        long time = getSharedPreferences("preferences", MODE_PRIVATE).getLong("set_timer_time",0L);
+    private long getTimerTime() {
+        long time = getSharedPreferences("preferences", MODE_PRIVATE).getLong("set_timer_time", 0L);
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(time);
         int min = c.get(Calendar.MINUTE);
         int sec = c.get(Calendar.SECOND);
-        long timerInt = sec*1000+60*1000*min;
+        long timerInt = sec * 1000 + 60 * 1000 * min;
         c = Calendar.getInstance();
-        long timerTime = c.getTimeInMillis()+timerInt;
+        long timerTime = c.getTimeInMillis() + timerInt;
         c.setTimeInMillis(timerTime);
         return timerTime;
     }
 
-    private int getTimerRemainInSec(){
+    private int getTimerRemainInSec() {
         Calendar c = Calendar.getInstance();
         long cTime = c.getTimeInMillis();
         c.setTimeInMillis(TimerAlarmBroadcastReceiver.TIME);
         long tTime = c.getTimeInMillis();
-        c.setTimeInMillis(tTime-cTime);
-        int sec = c.get(Calendar.MINUTE)*60+ c.get(Calendar.SECOND);
+        c.setTimeInMillis(tTime - cTime);
+        int sec = c.get(Calendar.MINUTE) * 60 + c.get(Calendar.SECOND);
         return sec;
     }
 
     private void chronometerReset() {
-        if(useTimer){
+        if (useTimer) {
             timerText.setText("00:00");
-            if(timerTask != null)
+            if (timerTask != null)
                 cancelTimerTask();
-        }
-        else {
+        } else {
             mChrono.stop();
             timerOn = false;
             mChrono.setText("00:00");
@@ -487,7 +476,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         mChrono.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             public void onChronometerTick(Chronometer arg0) {
 
-                if(useTimer){
+                if (useTimer) {
                     return;
                 }
 
@@ -545,7 +534,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         outState.putBoolean("reset", reset);
     }
 
-    private int getNumSets(){
+    private int getNumSets() {
         String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(ResultActivity.this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
         Long tr_stamp_id = TrainingDurationManger.getTrainingStamp(Integer.valueOf(workoutExpiringTimeout));
         List<TrainingSet> tr_stats = DBHelper.getInstance(null).READ.getTrainingSetListInTrainingStampByExercise(ex_id, tr_stamp_id);
@@ -557,21 +546,21 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         super.onStart();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         useTimer = sp.getBoolean("use_timer", false);
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(getResources().getBoolean(R.bool.analytics_enable))
+        if (getResources().getBoolean(R.bool.analytics_enable))
             EasyTracker.getInstance().activityStop(this);
-        if(timerTask !=  null)
+        if (timerTask != null)
             timerTask.cancel(false);
     }
 
-    private void cancelTimerTask(){
-        if(timerTask != null)
+    private void cancelTimerTask() {
+        if (timerTask != null)
             timerTask.cancel(false);
     }
 
@@ -586,9 +575,9 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         protected Void doInBackground(Integer... sec) {
             try {
                 int cnt = 0;
-                int progress = sec[0]+1;
-                while(cnt <= sec[0]) {
-                    if(isCancelled())
+                int progress = sec[0] + 1;
+                while (cnt <= sec[0]) {
+                    if (isCancelled())
                         return null;
                     publishProgress(--progress);
                     cnt++;
@@ -604,21 +593,21 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            int min = values[0]/60;
-            int sec = values[0] - min*60;
+            int min = values[0] / 60;
+            int sec = values[0] - min * 60;
             String minutes;
             String seconds;
-            if(min < 10)
-                minutes = "0"+min;
+            if (min < 10)
+                minutes = "0" + min;
             else
-                minutes = ""+min;
-            if(sec <10)
-                seconds = "0"+sec;
+                minutes = "" + min;
+            if (sec < 10)
+                seconds = "0" + sec;
             else
-                seconds = ""+sec;
+                seconds = "" + sec;
 
-            String res = minutes + ":"+seconds;
-            if(timerText != null)
+            String res = minutes + ":" + seconds;
+            if (timerText != null)
                 timerText.setText(res);
         }
 

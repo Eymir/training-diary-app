@@ -41,19 +41,19 @@ public class TimerAlarmBroadcastReceiver extends BroadcastReceiver {
         SoundPlayer.getInstance(context).playSound(Const.DEFAULT_SOUND_URI);
     }
 
-    public void SetAlarm(long alarmTime, int requestCode){
+    public void SetAlarm(long alarmTime, int requestCode) {
         TIME = alarmTime;
         RUN = true;
-        AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
         intent.setAction(Integer.toString(requestCode));
         intent.putExtra("id", requestCode);
         PendingIntent pi = PendingIntent.getBroadcast(context, requestCode, intent, 0);
         am.set(AlarmManager.RTC_WAKEUP, alarmTime, pi);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 86400000 , pi);
+//        am.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime, 86400000 , pi);
     }
 
-    public void CancelAlarm(int requestCode){
+    public void CancelAlarm(int requestCode) {
         RUN = false;
         TIME = 0L;
         Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
