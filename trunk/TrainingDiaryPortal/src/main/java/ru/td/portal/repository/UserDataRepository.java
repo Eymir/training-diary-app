@@ -3,13 +3,13 @@ package ru.td.portal.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import ru.td.portal.domain.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,16 +18,16 @@ import java.util.List;
  * Time: 11:39 AM
  */
 public class UserDataRepository {
-    JdbcTemplate jdbcTemplate;
     private static Logger log = LoggerFactory.getLogger(UserDataRepository.class);
+    JdbcTemplate jdbcTemplate;
 
     public UserData saveUserData(UserData userData) {
-        String sqlInsert = "insert into UserData(registration_id,registration_channel,email,db_path) values (?,?,?,?)";
+        String sqlInsert = "insert into UserData(registration_id, registration_date, registration_channel,email,db_path) values (?,?,?,?,?)";
         String sqlUpdate = "update UserData set registration_id=?,registration_channel=?,email=?,db_path=? where id = ?";
         UserData old = getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
         if (old == null) {
             jdbcTemplate.update(sqlInsert,
-                    new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
+                    new Object[]{userData.getRegistrationId(), new Date().getTime(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
         } else {
             jdbcTemplate.update(sqlUpdate,
                     new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath(), userData.getId()});

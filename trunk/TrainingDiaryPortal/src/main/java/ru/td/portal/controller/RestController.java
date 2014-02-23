@@ -1,18 +1,21 @@
 package ru.td.portal.controller;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.apache.commons.codec.binary.Base64;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import ru.td.portal.converter.UserDataConverter;
+import ru.td.portal.domain.TransferData;
 import ru.td.portal.domain.UserData;
 import ru.td.portal.repository.UserDataRepository;
 import ru.td.portal.service.FolderGeneratorService;
 
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -43,13 +46,14 @@ public class RestController {
 
     public
     @ResponseBody
-    Response uploadClientDb(@RequestBody UserData userData) {
-       UserData userDataFromDb = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(),userData.getRegistrationChannel());
-       if (userDataFromDb == null){
+    Response uploadClientDb(@RequestBody TransferData transferData) {
+        UserData userData = UserDataConverter.convertTransferDataObjectToUserData(transferData);
+        UserData userDataFromDb = userDataRepository.getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
+        if (userDataFromDb == null) {
             userData.setId(userDataRepository.saveUserData(userData).getId());
-       } else{
-           userData.setId(userDataFromDb.getId());
-       }
+        } else {
+            userData.setId(userDataFromDb.getId());
+        }
         String dbPath = folderGeneratorService.generateFolderPath(userData) + IOUtils.DIR_SEPARATOR + "db.sqlite";
         FileOutputStream fos = null;
         try {
@@ -70,15 +74,15 @@ public class RestController {
     public
     @ResponseBody
     Response downloadClientDb(@QueryParam("id") String id, @QueryParam("channel") String channel) {
-        UserData result = userDataRepository.getUserDataByRegIdAndChannel(id, channel);
-        checkUserDataNotNull(id, channel, result);
+        UserData userData = userDataRepository.getUserDataByRegIdAndChannel(id, channel);
+        checkUserDataNotNull(id, channel, userData);
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(new File(result.getDbPath()));
-            result.setRegistrationId(id);
-            result.setRegistrationChannel(channel);
-            result.setDb(Base64.encodeBase64String(IOUtils.toByteArray(fis)));
-            return Response.status(200).entity(result).build();
+            fis = new FileInputStream(new File(userData.getDbPath()));
+            userData.setRegistrationId(id);
+            userData.setRegistrationChannel(channel);
+            userData.setDb(Base64.encodeBase64String(IOUtils.toByteArray(fis)));
+            return Response.status(200).entity(UserDataConverter.convertUserDataToTransferDataObject(userData)).build();
         } catch (IOException e) {
             log.error("Error download database! Details:", e);
             return Response.status(500).entity(e).build();
@@ -87,6 +91,8 @@ public class RestController {
         }
 
     }
+
+
 
     private void checkUserDataNotNull(String id, String channel, UserData result) {
         if (result == null || result.getDbPath() == null) {
