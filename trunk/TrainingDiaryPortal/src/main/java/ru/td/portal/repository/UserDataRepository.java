@@ -30,7 +30,7 @@ public class UserDataRepository {
                     new Object[]{userData.getRegistrationId(), new Date().getTime(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath()});
         } else {
             jdbcTemplate.update(sqlUpdate,
-                    new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath(), userData.getId()});
+                    new Object[]{userData.getRegistrationId(), userData.getRegistrationChannel(), userData.getEmail(), userData.getDbPath(), old.getId()});
         }
         return getUserDataByRegIdAndChannel(userData.getRegistrationId(), userData.getRegistrationChannel());
     }
