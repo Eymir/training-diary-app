@@ -123,7 +123,7 @@ public class HistoryDetailActivity extends ActionBarActivity {
         Long prevExId = null;
         Integer i = 1;
         List<TrainingSet> setList = stamp.getTrainingSetList();
-        int count = setList.size();
+        //int count = setList.size();
         for (TrainingSet set : setList) {
             String value = MeasureFormatter.valueFormat(set);
             if (!set.getExerciseId().equals(prevExId)) {
@@ -132,7 +132,7 @@ public class HistoryDetailActivity extends ActionBarActivity {
                 items.add(new BigSectionItem(ex.getName(), ex.getType().getIcon().name()));
                 i = 1;
             }
-            items.add(new StatisticItem(count-i, value));
+            items.add(new StatisticItem(i, value));
             i++;
         }
         return items;

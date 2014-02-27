@@ -578,7 +578,7 @@ public class DbReader {
         List<TrainingSet> stats = new ArrayList<TrainingSet>();
         String sqlQuery = "select tr_set.* from TrainingSet tr_set " +
                 "where tr_set.training_stamp_id = ? " +
-                "order by tr_set.exercise_id desc, tr_set.date desc ";
+                "order by tr_set.exercise_id asc, tr_set.date asc ";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db
                 .rawQuery(sqlQuery, new String[]{String.valueOf(tr_stamp_id)});
