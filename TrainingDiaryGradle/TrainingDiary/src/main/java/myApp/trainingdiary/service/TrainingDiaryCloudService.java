@@ -1,12 +1,7 @@
 package myApp.trainingdiary.service;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.GsonBuilder;
-import com.google.gson.internal.bind.ObjectTypeAdapter;
-
 import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Headers;
@@ -23,13 +18,13 @@ public interface TrainingDiaryCloudService {
 
 
     @POST("/uploadDb")
-    public void uploadCloudBackup(@Body UserData user, Callback<UserData> cb);
+    public void uploadCloudBackup(@Body TransferData user, Callback<TransferData> cb);
 
     @Headers({
             "Content-type: application/json"
     })
     @GET("/downloadDb")
-    public void downloadCloudBackup(@Query("id") String id, @Query("channel") String channel, Callback<ResponseUserData> cb);
+    public void downloadCloudBackup(@Query("id") String id, @Query("channel") String channel, Callback<ResponseData> cb);
 
     public static TrainingDiaryCloudService API = new RestAdapter.Builder()
             .setServer(TrainingDiaryCloudService.API_URL)
