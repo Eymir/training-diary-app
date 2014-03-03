@@ -3,11 +3,11 @@ package myApp.trainingdiary.service;
 /**
  * Created by Lenovo on 17.02.14.
  */
-public class ResponseUserData {
+public class ResponseData {
 
     private Long status;
     private MetadataType metadata;
-    private UserData entity;
+    private TransferData entity;
 
 
     public Long getStatus() {
@@ -26,11 +26,11 @@ public class ResponseUserData {
         this.metadata = metadata;
     }
 
-    public UserData getEntity() {
+    public TransferData getEntity() {
         return entity;
     }
 
-    public void setEntity(UserData entity) {
+    public void setEntity(TransferData entity) {
         this.entity = entity;
     }
 }

@@ -210,7 +210,7 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="accounts_not_found">Нет ни одной учетной записи</string>
     <string name="backup_cloud_download_success">База данных успешно скачана из облака</string>
     <string name="backup_cloud_download_title">Получить из облака</string>
-    <string name="backup_cloud_download_summary">Загрузить ранее сохраненную копию базы данных из облана</string>
+    <string name="backup_cloud_download_summary">Загрузить ранее сохраненную копию базы данных из облака</string>
     <string name="continue_workout">Продолжить</string>
     <string name="stop_training_dialog_title">Закончить текущую тренировку?</string>
     <string name="stop_button">Закончить</string>
