@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="myApp.trainingdiary"
-    android:versionCode="22"
-    android:versionName="0.13.0b" >
+    android:versionCode="23"
+    android:versionName="0.13.1b" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

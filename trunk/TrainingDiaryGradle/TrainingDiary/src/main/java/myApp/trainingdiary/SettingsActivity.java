@@ -200,134 +200,134 @@ public class SettingsActivity extends PreferenceActivity implements
         });
 
 
-//        cloud_account = findPreference("cloud_account");
-//        assert cloud_account != null;
-//        cloud_account.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            public boolean onPreferenceClick(Preference arg0) {
-//                chooseAccount();
-//                return false;
-//            }
-//        });
-//
-//        SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
-//        String account = pref.getString(Const.ACCOUNT_PREF, null);
-//        if (account != null)
-//            cloud_account.setSummary(account);
-//
-//        Preference cloud_upload = findPreference("cloud_upload");
-//        assert cloud_upload != null;
-//        cloud_upload.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            public boolean onPreferenceClick(Preference arg0) {
-//                try {
-//                    SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
-//                    String account = pref.getString(Const.ACCOUNT_PREF, null);
-//                    if (account != null) {
-//                        TransferData userData = new TransferData();
-//                        File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
-//                        userData.getMap().put(TransferData.DATABASE_STRING, Base64.encodeToString(IOUtils.toByteArray(new FileInputStream(currentDB)), Base64.DEFAULT));
-//                        userData.getMap().put(TransferData.REG_ID, account);
-//                        userData.getMap().put(TransferData.REG_CHANNEL, GOOGLE_AUTH_TYPE);
-//                        TrainingDiaryCloudService.API.uploadCloudBackup(userData, new Callback<TransferData>() {
-//                            @Override
-//                            public void success(TransferData userData, Response response) {
-//                                Log.d(Const.LOG_TAG, "Callback.success");
-//                                Toast.makeText(
-//                                        SettingsActivity.this,
-//                                        getResources().getString(
-//                                                R.string.cloud_backup_success), Toast.LENGTH_SHORT).show();
-//                            }
-//
-//                            @Override
-//                            public void failure(RetrofitError retrofitError) {
-//                                Log.d(Const.LOG_TAG, "Callback.failure: " + retrofitError);
-//                                Log.d(Const.LOG_TAG, "Callback.failure.getMessage(): " + retrofitError.getMessage());
-//                                Log.d(Const.LOG_TAG, "Callback.failure.getResponse(): " + retrofitError.getResponse());
-//                                Toast.makeText(
-//                                        SettingsActivity.this,
-//                                        getResources().getString(
-//                                                R.string.cloud_backup_fail), Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//                    } else {
-//                        chooseAccount();
-//                    }
-//
-//                } catch (Exception e) {
-//                    Log.e(Const.LOG_TAG, e.getMessage(), e);
-//                    Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//                }
-//                return false;
-//            }
-//        });
-//
-//        Preference cloud_download = findPreference("cloud_download");
-//        assert cloud_download != null;
-//        cloud_download.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-//            public boolean onPreferenceClick(Preference arg0) {
-//                try {
-//                    SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
-//                    String account = pref.getString(Const.ACCOUNT_PREF, null);
-//                    if (account != null) {
-//                        TransferData data = new TransferData();
-//                        data.getMap().put(TransferData.REG_ID, account);
-//                        data.getMap().put(TransferData.REG_CHANNEL, GOOGLE_AUTH_TYPE);
-//                        Log.d(Const.LOG_TAG, "cloud_download, userData: " + data);
-//
-//                        TrainingDiaryCloudService.API.downloadCloudBackup(account, GOOGLE_AUTH_TYPE,
-//                                new Callback<ResponseData>() {
-//                                    @Override
-//                                    public void success(ResponseData userData, Response response) {
-//                                        try {
-//                                            if (userData != null && userData.getEntity() != null && userData.getEntity().getMap().get(TransferData.DATABASE_STRING) != null) {
-//                                                Log.d(Const.LOG_TAG, userData.toString());
-//                                                Log.d(Const.LOG_TAG, "response: " + response.toString());
-//                                                File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
-//                                                Log.d(Const.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath());
-//                                                Log.d(Const.LOG_TAG, "currentDB.exists: " + currentDB.exists());
-//                                                if (currentDB.exists()) {
-//                                                    FileUtils.writeByteArrayToFile(currentDB, Base64.decode((String) userData.getEntity().getMap().get(TransferData.DATABASE_STRING), Base64.DEFAULT));
-//                                                    Toast.makeText(
-//                                                            SettingsActivity.this,
-//                                                            getResources().getString(
-//                                                                    R.string.backup_cloud_download_success), Toast.LENGTH_SHORT).show();
-//                                                }
-//                                            } else {
-//                                                Toast.makeText(
-//                                                        SettingsActivity.this,
-//                                                        getResources().getString(
-//                                                                R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        } catch (Exception e) {
-//                                            Toast.makeText(
-//                                                    SettingsActivity.this,
-//                                                    getResources().getString(
-//                                                            R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
-//
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void failure(RetrofitError retrofitError) {
-//                                        Log.e(Const.LOG_TAG, "retrofitError: " + retrofitError);
-//                                        Toast.makeText(
-//                                                SettingsActivity.this,
-//                                                getResources().getString(
-//                                                        R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-//                    } else {
-//                        chooseAccount();
-//                    }
-//                } catch (Throwable e) {
-//                    Log.e(Const.LOG_TAG, e.getMessage(), e);
-//                    Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//                }
-//
-//                return false;
-//            }
-//        }
-//
-//        );
+        cloud_account = findPreference("cloud_account");
+        assert cloud_account != null;
+        cloud_account.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                chooseAccount();
+                return false;
+            }
+        });
+
+        SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+        String account = pref.getString(Const.ACCOUNT_PREF, null);
+        if (account != null)
+            cloud_account.setSummary(account);
+
+        Preference cloud_upload = findPreference("cloud_upload");
+        assert cloud_upload != null;
+        cloud_upload.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+                    SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+                    String account = pref.getString(Const.ACCOUNT_PREF, null);
+                    if (account != null) {
+                        TransferData userData = new TransferData();
+                        File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
+                        userData.getMap().put(TransferData.DATABASE_STRING, Base64.encodeToString(IOUtils.toByteArray(new FileInputStream(currentDB)), Base64.DEFAULT));
+                        userData.getMap().put(TransferData.REG_ID, account);
+                        userData.getMap().put(TransferData.REG_CHANNEL, GOOGLE_AUTH_TYPE);
+                        TrainingDiaryCloudService.API.uploadCloudBackup(userData, new Callback<TransferData>() {
+                            @Override
+                            public void success(TransferData userData, Response response) {
+                                Log.d(Const.LOG_TAG, "Callback.success");
+                                Toast.makeText(
+                                        SettingsActivity.this,
+                                        getResources().getString(
+                                                R.string.cloud_backup_success), Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Log.d(Const.LOG_TAG, "Callback.failure: " + retrofitError);
+                                Log.d(Const.LOG_TAG, "Callback.failure.getMessage(): " + retrofitError.getMessage());
+                                Log.d(Const.LOG_TAG, "Callback.failure.getResponse(): " + retrofitError.getResponse());
+                                Toast.makeText(
+                                        SettingsActivity.this,
+                                        getResources().getString(
+                                                R.string.cloud_backup_fail), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        chooseAccount();
+                    }
+
+                } catch (Exception e) {
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+                return false;
+            }
+        });
+
+        Preference cloud_download = findPreference("cloud_download");
+        assert cloud_download != null;
+        cloud_download.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference arg0) {
+                try {
+                    SharedPreferences pref = getSharedPreferences("preferences", MODE_PRIVATE);
+                    String account = pref.getString(Const.ACCOUNT_PREF, null);
+                    if (account != null) {
+                        TransferData data = new TransferData();
+                        data.getMap().put(TransferData.REG_ID, account);
+                        data.getMap().put(TransferData.REG_CHANNEL, GOOGLE_AUTH_TYPE);
+                        Log.d(Const.LOG_TAG, "cloud_download, userData: " + data);
+
+                        TrainingDiaryCloudService.API.downloadCloudBackup(account, GOOGLE_AUTH_TYPE,
+                                new Callback<ResponseData>() {
+                                    @Override
+                                    public void success(ResponseData userData, Response response) {
+                                        try {
+                                            if (userData != null && userData.getEntity() != null && userData.getEntity().getMap().get(TransferData.DATABASE_STRING) != null) {
+                                                Log.d(Const.LOG_TAG, userData.toString());
+                                                Log.d(Const.LOG_TAG, "response: " + response.toString());
+                                                File currentDB = context.getDatabasePath(DBHelper.DATABASE_NAME);
+                                                Log.d(Const.LOG_TAG, "currentDB: " + currentDB.getAbsolutePath());
+                                                Log.d(Const.LOG_TAG, "currentDB.exists: " + currentDB.exists());
+                                                if (currentDB.exists()) {
+                                                    FileUtils.writeByteArrayToFile(currentDB, Base64.decode((String) userData.getEntity().getMap().get(TransferData.DATABASE_STRING), Base64.DEFAULT));
+                                                    Toast.makeText(
+                                                            SettingsActivity.this,
+                                                            getResources().getString(
+                                                                    R.string.backup_cloud_download_success), Toast.LENGTH_SHORT).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(
+                                                        SettingsActivity.this,
+                                                        getResources().getString(
+                                                                R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
+                                            }
+                                        } catch (Exception e) {
+                                            Toast.makeText(
+                                                    SettingsActivity.this,
+                                                    getResources().getString(
+                                                            R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError retrofitError) {
+                                        Log.e(Const.LOG_TAG, "retrofitError: " + retrofitError);
+                                        Toast.makeText(
+                                                SettingsActivity.this,
+                                                getResources().getString(
+                                                        R.string.backup_cloud_download_fail), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        chooseAccount();
+                    }
+                } catch (Throwable e) {
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(SettingsActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                return false;
+            }
+        }
+
+        );
 
         set_timer_time =
 
@@ -448,12 +448,12 @@ public class SettingsActivity extends PreferenceActivity implements
         try {
             AccountManager accountManager = AccountManager.get(SettingsActivity.this);
             assert accountManager != null;
-//            Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
+            Account[] accounts = accountManager.getAccountsByType(GOOGLE_AUTH_TYPE);
 
-            Account[] accounts = new Account[3];
-            accounts[0] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
-            accounts[1] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
-            accounts[2] = new Account("234523452345", GOOGLE_AUTH_TYPE);
+//            Account[] accounts = new Account[3];
+//            accounts[0] = new Account("boris.shestakov@gmail.com", GOOGLE_AUTH_TYPE);
+//            accounts[1] = new Account("testov.test@gmail.com", GOOGLE_AUTH_TYPE);
+//            accounts[2] = new Account("234523452345", GOOGLE_AUTH_TYPE);
             if (accounts != null)
                 Log.d(Const.LOG_TAG, Arrays.asList(accountManager.getAccounts()).toString());
             if (accounts == null || accounts.length == 0) {
