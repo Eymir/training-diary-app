@@ -24,4 +24,14 @@ public class TransferData {
         }
         return map;
     }
+
+    public TransferData() {
+        if (map == null) {
+            map = new HashMap<String, Object>();
+        }
+    }
+
+    public void setMap(Map<String, Object> map) {
+        this.map = map;
+    }
 }

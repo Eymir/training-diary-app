@@ -126,25 +126,25 @@
                     android:icon="@drawable/action_restore_db" />
             </PreferenceCategory>
 
-            <!--<PreferenceCategory-->
-                <!--android:key="settings"-->
-                <!--android:title="@string/pref_cat_title_cloud_backup">-->
-                <!--<Preference-->
-                    <!--android:key="cloud_account"-->
-                    <!--android:title="@string/acount_cloud_title"-->
-                    <!--android:summary="@string/acount_cloud_empty_summary"-->
-                    <!--android:icon="@drawable/action_account_user" />-->
-                <!--<Preference-->
-                    <!--android:key="cloud_upload"-->
-                    <!--android:title="@string/backup_cloud_title"-->
-                    <!--android:summary="@string/backup_cloud__summary"-->
-                    <!--android:icon="@drawable/icon_action_cloud_upload_black" />-->
-                <!--<Preference-->
-                    <!--android:key="cloud_download"-->
-                    <!--android:title="@string/backup_cloud_download_title"-->
-                    <!--android:summary="@string/backup_cloud_download_summary"-->
-                    <!--android:icon="@drawable/icon_action_cloud_download_black" />-->
-            <!--</PreferenceCategory>-->
+            <PreferenceCategory
+                android:key="settings"
+                android:title="@string/pref_cat_title_cloud_backup">
+                <Preference
+                    android:key="cloud_account"
+                    android:title="@string/acount_cloud_title"
+                    android:summary="@string/acount_cloud_empty_summary"
+                    android:icon="@drawable/action_account_user" />
+                <Preference
+                    android:key="cloud_upload"
+                    android:title="@string/backup_cloud_title"
+                    android:summary="@string/backup_cloud__summary"
+                    android:icon="@drawable/icon_action_cloud_upload_black" />
+                <Preference
+                    android:key="cloud_download"
+                    android:title="@string/backup_cloud_download_title"
+                    android:summary="@string/backup_cloud_download_summary"
+                    android:icon="@drawable/icon_action_cloud_download_black" />
+            </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
 
