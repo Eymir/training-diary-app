@@ -1,6 +1,7 @@
 package ru.td.portal.domain;
 
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import java.util.Map;
  * Time: 3:58 PM
  */
 
-
+@XmlRootElement
 public class TransferData {
     public static final String REG_CHANNEL = "registration_channel";
     public static final String REG_ID = "registration_id";
