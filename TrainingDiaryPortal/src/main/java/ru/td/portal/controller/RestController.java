@@ -41,7 +41,7 @@ public class RestController {
     FolderGeneratorService folderGeneratorService;
     private Logger log = LoggerFactory.getLogger(RestController.class);
 
-    //TODO:Костыль с возвращаемым типом, бул почему-то вернуть не получается
+
     @RequestMapping(value = "/uploadDb", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
 
     public
