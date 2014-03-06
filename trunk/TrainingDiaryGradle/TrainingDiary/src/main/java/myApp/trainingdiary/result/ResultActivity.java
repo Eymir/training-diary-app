@@ -51,6 +51,7 @@ import myApp.trainingdiary.utils.MeasureFormatter;
 import myApp.trainingdiary.utils.SoundPlayer;
 import myApp.trainingdiary.utils.TimerAlarmBroadcastReceiver;
 import myApp.trainingdiary.utils.TrainingDurationManger;
+import myApp.trainingdiary.utils.Vibrator;
 
 /*
  * ��������� ��� ������ ���������� ������� ���������� 
@@ -255,14 +256,17 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
             case R.id.resultmenu_play:
                 chronometerStart();
                 SoundPlayer.getInstance(this).stopPlaySound();
+                Vibrator.getInstance(this).stopVibrator();
                 return true;
             case R.id.resultmenu_stop:
                 chronometerStop();
                 SoundPlayer.getInstance(this).stopPlaySound();
+                Vibrator.getInstance(this).stopVibrator();
                 return true;
             case R.id.resultmenu_replay:
                 chronometerReset();
                 SoundPlayer.getInstance(this).stopPlaySound();
+                Vibrator.getInstance(this).stopVibrator();
                 return true;
         }
         return true;
@@ -322,6 +326,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
                 chronometerStart();
                 numRep.setText("[" + getNumSets() + "]");
                 SoundPlayer.getInstance(this).stopPlaySound();
+                Vibrator.getInstance(this).stopVibrator();
                 break;
             case R.id.undo_button:
                 String message = getResources().getString(R.string.dialog_del_approach_msg);

@@ -44,7 +44,7 @@
                     android:key="set_timer_vibro"
                     android:title="@string/set_timer_vibro_title"
                     android:summary="@string/set_timer_vibro_summary"
-                    android:defaultValue="true"
+                    android:defaultValue="false"
                     android:dependency="use_timer"></CheckBoxPreference>
             </PreferenceScreen>
 
