@@ -37,15 +37,18 @@ public class SoundPlayer {
         return instance;
     }
 
-    public void playSound(Uri defaultUri){
+    public void playSound(Uri defaultUri, boolean isAlarm){
 
         Uri uri = defaultUri;
+
+        if(isAlarm){
         SharedPreferences pref = context.getSharedPreferences("preferences", context.MODE_PRIVATE);
         String uriStr = pref.getString("set_timer_sound", "");
         Uri userUri = Uri.parse(uriStr);
 
         if(uriFileExist(userUri))
             uri = userUri;
+        }
 
         if (mediaPlayer != null){
             mediaPlayer.stop();

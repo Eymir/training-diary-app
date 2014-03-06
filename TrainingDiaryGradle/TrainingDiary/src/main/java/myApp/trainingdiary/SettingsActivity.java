@@ -378,7 +378,7 @@ public class SettingsActivity extends PreferenceActivity implements
                 findPreference("set_timer_sound");
 
         String uriStr = preferences.getString("set_timer_sound", "");
-        String path = "def uri";
+        String path = "DEFAULT";
         if (uriStr.length() != 0)
             path = getRealPathFromURI(Uri.parse(uriStr)
 
@@ -614,7 +614,7 @@ public class SettingsActivity extends PreferenceActivity implements
                     Long thisId = cursorMelody.getLong(idColumn);
                     uri[0] = ContentUris
                             .withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisId);
-                    SoundPlayer.getInstance(context).playSound(uri[0]);
+                    SoundPlayer.getInstance(context).playSound(uri[0], false);
                 }
             }
         });
