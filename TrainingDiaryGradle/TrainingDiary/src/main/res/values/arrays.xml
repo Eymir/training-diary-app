@@ -17,4 +17,16 @@
         <item>43200000</item>
     </string-array>
 
+    <string-array name="entries_lang">
+        <item>Язык телефона</item>
+        <item>English</item>
+        <item>Русский</item>
+    </string-array>
+
+    <string-array name="entryvalues_lang">
+        <item>default</item>
+        <item>en</item>
+        <item>ru</item>
+    </string-array>
+
 </resources>

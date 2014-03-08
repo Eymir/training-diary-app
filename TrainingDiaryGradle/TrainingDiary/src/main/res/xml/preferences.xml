@@ -45,7 +45,7 @@
                     android:title="@string/set_timer_vibro_title"
                     android:summary="@string/set_timer_vibro_summary"
                     android:defaultValue="false"
-                    android:dependency="use_timer"></CheckBoxPreference>
+                    android:dependency="use_timer"/>
             </PreferenceScreen>
 
             <ListPreference
@@ -55,6 +55,16 @@
                 android:defaultValue="1800000"
                 android:entries="@array/workout_expiring_key_list"
                 android:entryValues="@array/workout_expiring_value_list" />
+
+            <!--<ListPreference-->
+                <!--android:key="lang"-->
+                <!--android:title="@string/lang_title"-->
+                <!--android:summary="@string/lang_summary"-->
+                <!--android:entries="@array/entries_lang"-->
+                <!--android:entryValues="@array/entryvalues_lang"-->
+                <!--android:dialogTitle="@string/lang_dialog_title" />-->
+
+            <!--<PreferenceScreen android:title="@string/restart_title" android:key="restart"/>-->
 
             <CheckBoxPreference
                 android:key="disable_sound"

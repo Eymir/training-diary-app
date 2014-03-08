@@ -2,8 +2,10 @@ package myApp.trainingdiary;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -381,7 +383,6 @@ public class SettingsActivity extends PreferenceActivity implements
         String path = "DEFAULT";
         if (uriStr.length() != 0)
             path = getRealPathFromURI(Uri.parse(uriStr)
-
             );
         set_timer_sound.setSummary(path);
         set_timer_sound.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -394,6 +395,21 @@ public class SettingsActivity extends PreferenceActivity implements
         }
 
         );
+
+        Preference restart = findPreference("restart");
+
+
+        if (restart != null)
+            restart.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(getApplicationContext(), 0,
+                            new Intent(getIntent()), 0));
+                    System.exit(1);
+                    return true;
+                }
+            });
 
 //        Раздел PRO
 //        Preference max_Weight = findPreference("max_Weight");
