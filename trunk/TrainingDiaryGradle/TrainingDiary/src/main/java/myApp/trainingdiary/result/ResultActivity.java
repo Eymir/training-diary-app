@@ -139,7 +139,7 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
 
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        soundClick = soundPool.load(this, R.raw.bom, 1);
+        soundClick = soundPool.load(this, R.raw.tam, 1);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         Button writeButton = (Button) findViewById(R.id.write_button);
         writeButton.setOnClickListener(this);

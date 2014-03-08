@@ -135,7 +135,7 @@ https://twitter.com/TrainingDiaryGT\n
 \tА так же не забывайте ставить оценки и оставлять отзывы, нам это очень помогает.</string>
     <string name="help_developers">Помочь разработчикам</string>
     <string name="rate_app_title">Поставить оценку</string>
-    <string name="rate_app_summ">Оценить приложиние на маркете</string>
+    <string name="rate_app_summ">Оценить приложение на маркете</string>
     <string name="backup_problem">Проблема при попытке создать бекап</string>
     <string name="restore_problem">Проблема при восстановлении БД из бекапа</string>
     <string name="backup_restore_category">Резервное копирование</string>
@@ -224,5 +224,9 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="acount_cloud_empty_summary">Учетная запись не выбрана</string>
     <string name="acount_cloud_title">Учетная запись</string>
     <string name="account_list_dialog_title">Выберите учетную запись</string>
+    <string name="lang_title">Язык приложения</string>
+    <string name="lang_summary">Язык приложения.\nНеобходимо перезапустить приложение для принятия изменений.</string>
+    <string name="lang_dialog_title">Выберите язык:</string>
+    <string name="restart_title">Перезапуск приложения</string>
 
 </resources>
