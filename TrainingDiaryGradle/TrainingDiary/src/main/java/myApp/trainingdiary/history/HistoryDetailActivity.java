@@ -72,11 +72,9 @@ public class HistoryDetailActivity extends ActionBarActivity {
                 Long timeEnd = cal.getTimeInMillis();
                 List< TrainingStamp > trainingStamps  = dbHelper.READ.
                         getTrainingStampInIntervalWithTrainingSet(timeStart, timeEnd);
-                for (TrainingStamp trainingStamp : trainingStamps){
-                    ArrayList<?> trItemArrayList = trainingCursorToItemArray(trainingStamp);
+                    ArrayList<?> trItemArrayList = trainingCursorToItemArray(trainingStamps);
                     CustomItemAdapter trainingHistoryAdapter = new CustomItemAdapter(HistoryDetailActivity.this, trItemArrayList);
                     listView.setAdapter(trainingHistoryAdapter);
-                }
                 break;
             case Const.EXERCISE_TYPE:
                 ex_id = getIntent().getExtras().getLong(Const.EXERCISE_ID);
@@ -118,22 +116,24 @@ public class HistoryDetailActivity extends ActionBarActivity {
         return true;
     }
 
-    private ArrayList<?> trainingCursorToItemArray(TrainingStamp stamp) {
+    private ArrayList<?> trainingCursorToItemArray(List<TrainingStamp> stamps) {
         ArrayList<Item> items = new ArrayList<Item>();
         Long prevExId = null;
         Integer i = 1;
-        List<TrainingSet> setList = stamp.getTrainingSetList();
-        //int count = setList.size();
-        for (TrainingSet set : setList) {
-            String value = MeasureFormatter.valueFormat(set);
-            if (!set.getExerciseId().equals(prevExId)) {
-                prevExId = set.getExerciseId();
-                Exercise ex = dbHelper.READ.getExerciseById(set.getExerciseId());
-                items.add(new BigSectionItem(ex.getName(), ex.getType().getIcon().name()));
-                i = 1;
+        for (TrainingStamp stamp : stamps) {
+            List<TrainingSet> setList = stamp.getTrainingSetList();
+            //int count = setList.size();
+            for (TrainingSet set : setList) {
+                String value = MeasureFormatter.valueFormat(set);
+                if (!set.getExerciseId().equals(prevExId)) {
+                    prevExId = set.getExerciseId();
+                    Exercise ex = dbHelper.READ.getExerciseById(set.getExerciseId());
+                    items.add(new BigSectionItem(ex.getName(), ex.getType().getIcon().name()));
+                    i = 1;
+                }
+                items.add(new StatisticItem(i, value));
+                i++;
             }
-            items.add(new StatisticItem(i, value));
-            i++;
         }
         return items;
     }
