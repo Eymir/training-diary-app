@@ -52,7 +52,7 @@
                 android:key="workout_expiring"
                 android:title="@string/workout_expiring_title"
                 android:summary="@string/workout_expiring_summary"
-                android:defaultValue="1800000"
+                android:defaultValue="7200000"
                 android:entries="@array/workout_expiring_key_list"
                 android:entryValues="@array/workout_expiring_value_list" />
 
