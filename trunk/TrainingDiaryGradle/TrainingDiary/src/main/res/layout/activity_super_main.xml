@@ -1,4 +1,6 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -51,6 +53,15 @@
                 android:text="@string/stat_main_button" />
         </LinearLayout>
     </HorizontalScrollView>
+
+    <com.google.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-6771093204089983/7896431558"
+        ads:loadAdOnCreate="true"
+        android:layout_gravity="center_horizontal" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -136,4 +147,5 @@
             android:cacheColorHint="#00000000"
             android:dividerHeight="1px" />
     </LinearLayout>
+
 </LinearLayout>
