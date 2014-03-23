@@ -18,6 +18,7 @@ dependencies {
     compile project('libraries:ExampleActivity')
     compile project('libraries:wheel')
     compile project('libraries:Caldroid-gradle:library')
+    compile files('libraries/GoogleAdMobAdsSdk-6.4.1.jar')
 }
 
 android {

@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -73,8 +74,13 @@
             android:label="@string/training_radio_button" >
         </activity>
 
+        <!--ad_mob-->
+        <activity android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+
         <receiver android:name=".utils.TimerAlarmBroadcastReceiver"/>
         <service android:name="com.telly.groundy.GroundyService"/>
+
     </application>
 
 </manifest>
