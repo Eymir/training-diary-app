@@ -3,5 +3,6 @@
 
     <bool name="analytics_enable">true</bool>
     <bool name="show_ads">true</bool>
+    <bool name="iab_debug_logging">true</bool>
 
 </resources>
