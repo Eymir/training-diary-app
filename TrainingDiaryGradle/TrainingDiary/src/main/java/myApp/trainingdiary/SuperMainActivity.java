@@ -1,10 +1,12 @@
 package myApp.trainingdiary;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -14,11 +16,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import myApp.trainingdiary.billing.AdMobController;
+import myApp.trainingdiary.billing.AdsControllerBase;
+import myApp.trainingdiary.billing.BillingPreferencesHelper;
+import myApp.trainingdiary.billing.util.IabHelper;
+import myApp.trainingdiary.billing.util.IabResult;
+import myApp.trainingdiary.billing.util.Inventory;
+import myApp.trainingdiary.billing.util.Purchase;
 import myApp.trainingdiary.calendar.CalendarActivity;
 import myApp.trainingdiary.customview.stat.StatItem;
 import myApp.trainingdiary.customview.stat.StatItemArrayAdapter;
@@ -41,11 +52,18 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     private DBHelper dbHelper;
     private AlertDialog editStatListDialog;
     private AlertDialog stopWorkoutDialog;
+    public Context context;
+
+    ////////////////billing////////////
+    IabHelper mHelper;
+    AdsControllerBase ads;
+    LinearLayout adsLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super_main);
+        context = this;
 
         //google analytics
         if(getResources().getBoolean(R.bool.analytics_enable))
@@ -77,6 +95,94 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         createEditStatListDialog();
         createDeletionDialog();
     }
+
+    private void adsShow(){
+        BillingPreferencesHelper.loadSettings(this);
+        billingInit();
+        ads = new AdMobController(this, adsLayout);
+        // если отключили рекламу, то не будем показывать
+        ads.show(!BillingPreferencesHelper.isAdsDisabled());
+    }
+
+    private void buy() {
+        if (!BillingPreferencesHelper.isAdsDisabled()) {
+			/*
+			 * для безопасности сгенерьте payload для верификации. В данном
+			 * примере просто пустая строка юзается. Но в реальном приложение
+			 * подходить к этому шагу с умом.
+			 */
+            String payload = "";
+            mHelper.launchPurchaseFlow(this, Const.SKU_ADS_DISABLE, Const.RC_REQUEST,
+                    mPurchaseFinishedListener, payload);
+        }
+    }
+
+    private void billingInit() {
+        mHelper = new IabHelper(this, Const.BASE64_PUBLIC_KEY);
+        // включаем дебагинг (в релизной версии ОБЯЗАТЕЛЬНО выставьте в false)
+        mHelper.enableDebugLogging(true);
+        // инициализируем; запрос асинхронен
+        // будет вызван, когда инициализация завершится
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    return;
+                }
+                // чекаем уже купленное
+                mHelper.queryInventoryAsync(mGotInventoryListener);
+            }
+        });
+    }
+
+    // Слушатель для востановителя покупок.
+    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+            if (result.isFailure()) {
+                return;
+            }
+			/*
+			 * Проверяются покупки. Обратите внимание, что надо проверить каждую
+			 * покупку, чтобы убедиться, что всё норм! см.
+			 * verifyDeveloperPayload().
+			 */
+            Purchase purchase = inventory.getPurchase(Const.SKU_ADS_DISABLE);
+            BillingPreferencesHelper.savePurchase(context,
+                    BillingPreferencesHelper.Purchase.DISABLE_ADS, purchase != null
+                    && verifyDeveloperPayload(purchase));
+            ads.show(!BillingPreferencesHelper.isAdsDisabled());
+        }
+    };
+
+    boolean verifyDeveloperPayload(Purchase p) {
+        String payload = p.getDeveloperPayload();
+		/*
+		 * TODO: здесь необходимо свою верификацию реализовать Хорошо бы ещё с
+		 * использованием собственного стороннего сервера.
+		 */
+        return true;
+    }
+
+    // Прокает, когда покупка завершена
+    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+            if (result.isFailure()) {
+                return;
+            }
+            if (!verifyDeveloperPayload(purchase)) {
+                return;
+            }
+            //LOG.d(TAG, "Purchase successful.");
+            if (purchase.getSku().equals(Const.SKU_ADS_DISABLE)) {
+
+                Toast.makeText(getApplicationContext(), "Purchase for disabling ads done.", Toast.LENGTH_SHORT);
+                // сохраняем в настройках, что отключили рекламу
+                BillingPreferencesHelper.savePurchase(context, BillingPreferencesHelper.Purchase.DISABLE_ADS, true);
+                // отключаем рекламу
+                ads.show(!BillingPreferencesHelper.isAdsDisabled());
+            }
+
+        }
+    };
 
     private void manageWorkoutButtons() {
         String workoutExpiringTimeout = PreferenceManager.getDefaultSharedPreferences(this).getString(Const.KEY_WORKOUT_EXPIRING, String.valueOf(Const.THREE_HOURS));
@@ -212,6 +318,12 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actsettings_menu, menu);
+
+        if(!getResources().getBoolean(R.bool.show_ads)){
+            MenuItem item = menu.findItem(R.id.action_disable_ads);
+            item.setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 

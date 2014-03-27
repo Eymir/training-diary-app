@@ -30,4 +30,9 @@ public class Const {
     public static final String ACCOUNT_PREF = "account";
     public static final String STAT_VIEW = "STAT_VIEW_";
     public static final Uri DEFAULT_SOUND_URI = Uri.parse("android.resource://myApp.trainingdiary/" + R.raw.ringringring);
+
+    //    billing const
+    public static final int RC_REQUEST = 10001;
+    public static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgik7dJMRCI2/Fp8tEux8Zg8obzIFLemEScdVcvpykH7vbyXXHiWRLgZKh07Oq1G87aHHiqtLf9Wv8XEkWfQD5ttWrFobV+jzOT+AeaD3Jp5+DKpTJQxywYstrXDIxFedrrcmdH4q8+g38OgNA/NlgeOfnbor4wGFT/qqPW1blHFc3wC75W0WHMQA8VRfx1SRxvwhJFE/G3jRTiEw1D/6ryWG9jsJUl+uqBpPNMZIHcZvwPOkZHGmuw0CKiiWWPMl2vhBY9G8FS1Ka3rQuqJgjyPosBRtoUUVqHYYprIqI1ZXyAFdK7WVMtruDJ1tVE6meW27x3vg82j8H9DzAij2aQIDAQAB";
+    public static final String SKU_ADS_DISABLE = "myApp.trainingdiary.ads.disable";
 }
