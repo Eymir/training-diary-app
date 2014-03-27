@@ -54,14 +54,14 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.google.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-6771093204089983/7896431558"
-        ads:loadAdOnCreate="true"
-        android:layout_gravity="center_horizontal" />
+    <!--<com.google.ads.AdView-->
+        <!--android:id="@+id/adView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--ads:adSize="BANNER"-->
+        <!--ads:adUnitId="ca-app-pub-6771093204089983/7896431558"-->
+        <!--ads:loadAdOnCreate="true"-->
+        <!--android:layout_gravity="center_horizontal" />-->
 
     <LinearLayout
         android:orientation="vertical"
@@ -146,6 +146,13 @@
             android:divider="?android:listDivider"
             android:cacheColorHint="#00000000"
             android:dividerHeight="1px" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/ads_layout_main_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     </LinearLayout>
 
 </LinearLayout>
