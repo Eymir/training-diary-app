@@ -2,5 +2,6 @@
 <resources>
 
     <bool name="analytics_enable">true</bool>
+    <bool name="show_ads">true</bool>
 
 </resources>

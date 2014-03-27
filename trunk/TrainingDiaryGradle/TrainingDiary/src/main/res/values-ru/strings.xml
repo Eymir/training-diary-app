@@ -200,4 +200,5 @@ https://twitter.com/TrainingDiaryGT\n
     <string name="lang_summary">Язык приложения.\nНеобходимо перезапустить приложение для принятия изменений.</string>
     <string name="lang_dialog_title">Выберите язык:</string>
     <string name="restart_title">Перезапуск приложения</string>
+    <string name="action_disable_ads">Отключить рекламу</string>
 </resources>
