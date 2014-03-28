@@ -16,7 +16,7 @@ import com.google.ads.AdView;
  */
 public class AdMobController implements AdsControllerBase, AdListener {
 
-    private static final String ADMOB_ID = "ca-app-pub-6771093204089983/6676797152";
+    private static final String ADMOB_ID = "ca-app-pub-6771093204089983/7896431558";
     private static final int REQUEST_TIMEOUT = 30000;
     private AdView adView;
     private Context c;

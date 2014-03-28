@@ -54,15 +54,6 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!--<com.google.ads.AdView-->
-        <!--android:id="@+id/adView"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--ads:adSize="BANNER"-->
-        <!--ads:adUnitId="ca-app-pub-6771093204089983/7896431558"-->
-        <!--ads:loadAdOnCreate="true"-->
-        <!--android:layout_gravity="center_horizontal" />-->
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -107,52 +98,62 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:padding="5dp">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#50000000">
+            android:padding="5dp"
+            android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                android:text="@string/statistic_main"
-                android:gravity="left|center"
-                android:layout_weight="1"
-                android:padding="5dp" />
+                android:orientation="horizontal"
+                android:background="#50000000">
 
-            <ImageButton
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                    android:text="@string/statistic_main"
+                    android:gravity="left|center"
+                    android:layout_weight="1"
+                    android:padding="5dp" />
+
+                <ImageButton
+                    android:background="@android:color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edit_user_activity"
+                    android:src="@drawable/icon_content_edit_white"
+                    android:gravity="right"
+                    android:layout_weight="0"
+                    android:padding="5dp" />
+            </LinearLayout>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/statListView"
                 android:background="@android:color/transparent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/edit_user_activity"
-                android:src="@drawable/icon_content_edit_white"
-                android:gravity="right"
-                android:layout_weight="0"
-                android:padding="5dp" />
+                android:layout_margin="5dp"
+                android:divider="?android:listDivider"
+                android:cacheColorHint="#00000000"
+                android:dividerHeight="1px" />
+
         </LinearLayout>
 
-        <ListView
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/ads_layout_main_activity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/statListView"
-            android:background="@android:color/transparent"
-            android:layout_margin="5dp"
-            android:divider="?android:listDivider"
-            android:cacheColorHint="#00000000"
-            android:dividerHeight="1px" />
-    </LinearLayout>
+            android:layout_gravity="bottom">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/ads_layout_main_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
