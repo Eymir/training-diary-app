@@ -1,11 +1,15 @@
 package myApp.trainingdiary.billing;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import myApp.trainingdiary.R;
+import myApp.trainingdiary.SuperMainActivity;
 import myApp.trainingdiary.billing.util.IabHelper;
 import myApp.trainingdiary.billing.util.IabResult;
 import myApp.trainingdiary.billing.util.Inventory;
@@ -117,6 +121,11 @@ public class BillingHelper {
                 BillingPreferencesHelper.savePurchase(context, BillingPreferencesHelper.Purchase.DISABLE_ADS, true);
                 // отключаем рекламу
                 ads.show(!BillingPreferencesHelper.isAdsDisabled());
+                //restart app after successful purchase for apply new settings
+                AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(context, 0,
+                        new Intent(context, SuperMainActivity.class), 0));
+                System.exit(1);
             }
 
         }
