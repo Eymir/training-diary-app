@@ -140,7 +140,11 @@
             <version>2.2</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -188,7 +192,7 @@
                 <configuration>
                     <url>http://62.109.24.88:8080/manager/html</url>
                     <server>TomcatServer</server>
-                    <path>/TrainingDiaryOnline</path>
+                    <path>/TrainingDiaryAdminConsole</path>
                     <username>boris</username>
                     <password>tomcat</password>
                 </configuration>

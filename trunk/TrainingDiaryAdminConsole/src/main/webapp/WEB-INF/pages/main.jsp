@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="ru">
 
@@ -36,7 +36,7 @@
 <hr>
 <div>Logging</div>
 
-<form method="GET" action="/TDPAdminConsole/main" name="logs" id="logs">
+<form method="GET" action="${pageContext.request.contextPath}/main" name="logs">
     <!--  Вместо "URL сервера" вставляете сервак, который обрабатывает данные и выдаёт логи  -->
 
     <p><span>Count of lines:</span>

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <mvc:annotation-driven/>
-    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:annotation-driven />
+    <mvc:resources mapping="/resources/**" location="/resources/" />
 
 
     <bean id="logFinder" class="ru.td.admin.service.FileLogFinder">
-        <property name="path" value="D:\tests\AdminConsole\log.txt"/>
+        <property name="path" value="/home/boris/TDP/tdp.log" />
     </bean>
 
-   <bean id="adminController" class="ru.td.admin.controller.AdminController">
-       <property name="reportRepository" ref="reportRepository"/>
-   </bean>
+    <bean id="adminController" class="ru.td.admin.controller.AdminController">
+        <property name="reportRepository" ref="reportRepository" />
+    </bean>
 
     <!--<bean id="restController" class="ru.td.portal.controller.RestController">-->
-        <!--<property qqq="folderGeneratorService" ref="folderGeneratorService"/>-->
-        <!--<property qqq="userDataRepository" ref="userDataRepository"/>-->
+    <!--<property qqq="folderGeneratorService" ref="folderGeneratorService"/>-->
+    <!--<property qqq="userDataRepository" ref="userDataRepository"/>-->
     <!--</bean>-->
 </beans>
