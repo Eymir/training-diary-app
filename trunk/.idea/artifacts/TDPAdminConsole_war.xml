@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="TDPAdminConsole:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="Training Diary Admin Console.war">
+      <element id="artifact" artifact-name="TDPAdminConsole:war exploded" />
+    </root>
+  </artifact>
+</component>
