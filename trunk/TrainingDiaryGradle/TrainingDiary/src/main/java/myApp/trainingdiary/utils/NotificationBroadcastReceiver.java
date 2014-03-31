@@ -51,16 +51,16 @@ public class NotificationBroadcastReceiver  extends BroadcastReceiver {
     }
 
     public void startNotificationReceiver() {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationBroadcastReceiver.class);
         intent.setAction(Integer.toString(REQUEST_CODE));
         intent.putExtra("id", REQUEST_CODE);
-        PendingIntent pi = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, 0);
-        am.set(AlarmManager.RTC_WAKEUP, 1000*60*5, pi);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, 0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000*60*1 , pendingIntent);
     }
 
     public void stopNotificationReceiver() {
-        Intent intent = new Intent(context, TimerAlarmBroadcastReceiver.class);
+        Intent intent = new Intent(context, NotificationBroadcastReceiver.class);
         intent.setAction(Integer.toString(REQUEST_CODE));
         intent.putExtra("id", REQUEST_CODE);
         PendingIntent sender = PendingIntent.getBroadcast(context, REQUEST_CODE, intent, 0);
