@@ -4,7 +4,7 @@
       xmlns:trainingdiary="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_disable_ads"
-        android:icon="@drawable/icon_action_info"
+        android:icon="@drawable/icon_action_bin_white"
         android:title="@string/action_disable_ads"
         trainingdiary:showAsAction="ifRoom"/>
 
