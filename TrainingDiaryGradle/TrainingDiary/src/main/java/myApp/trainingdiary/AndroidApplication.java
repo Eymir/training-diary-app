@@ -1,6 +1,7 @@
 package myApp.trainingdiary;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
@@ -13,6 +14,7 @@ public class AndroidApplication extends Application {
     private static AndroidApplication sInstance;
     private Locale locale;
     private String lang;
+    private static Context context;
 
     public static AndroidApplication getInstance() {
         return sInstance;
@@ -21,6 +23,9 @@ public class AndroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        AndroidApplication.context = getApplicationContext();
+
         sInstance = this;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         lang = preferences.getString("lang", "default");
@@ -44,4 +49,9 @@ public class AndroidApplication extends Application {
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config, null);
     }
+
+    public static Context getAppContext(){
+        return AndroidApplication.context;
+    }
+
 }

@@ -1,8 +1,11 @@
 package myApp.trainingdiary.utils;
 
+import android.content.Context;
+
 import java.util.Date;
 import java.util.List;
 
+import myApp.trainingdiary.AndroidApplication;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.TrainingSet;
 import myApp.trainingdiary.db.entity.TrainingStamp;
@@ -35,6 +38,8 @@ public class TrainingDurationManger {
                 } else {
                     dbHelper.WRITE.closeTrainingStamp(tr_stamp.getId(), set.getDate());
                 }
+                NotificationHelper.getInstance(AndroidApplication.getAppContext()).stopShowNotification();
+                NotificationBroadcastReceiver.getInstance(AndroidApplication.getAppContext()).stopNotificationReceiver();
             }
         }
     }

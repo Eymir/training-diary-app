@@ -22,7 +22,7 @@
         android:icon="@drawable/ic_barbell"
         android:label="@string/app_name"
         android:theme="@style/TrTheme.Blue_black_orange"
-        android:debuggable="false">
+        android:debuggable="true">
         <activity
             android:name="myApp.trainingdiary.training.TrainingActivity"
             android:label="@string/my_program" >

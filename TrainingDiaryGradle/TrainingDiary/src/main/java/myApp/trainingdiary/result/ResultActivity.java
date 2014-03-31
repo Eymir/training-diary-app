@@ -48,6 +48,8 @@ import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.history.HistoryDetailActivity;
 import myApp.trainingdiary.utils.Const;
 import myApp.trainingdiary.utils.MeasureFormatter;
+import myApp.trainingdiary.utils.NotificationBroadcastReceiver;
+import myApp.trainingdiary.utils.NotificationHelper;
 import myApp.trainingdiary.utils.SoundPlayer;
 import myApp.trainingdiary.utils.TimerAlarmBroadcastReceiver;
 import myApp.trainingdiary.utils.TrainingDurationManger;
@@ -319,6 +321,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         switch (arg0.getId()) {
             case R.id.write_button:
                 writeToDB();
+                NotificationHelper.getInstance(this).showNotification();
+                NotificationBroadcastReceiver.getInstance(this).startNotificationReceiver();
                 TextView training_stat_text = (TextView) mPager.findViewWithTag(Const.STAT_VIEW + ex_id);
                 MeasureFormatter.writeResultStatView(training_stat_text, ex_id);
                 wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
