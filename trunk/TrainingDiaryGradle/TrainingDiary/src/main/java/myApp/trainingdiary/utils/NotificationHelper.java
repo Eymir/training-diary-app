@@ -35,19 +35,22 @@ public class NotificationHelper{
         return instance;
     }
 
-    public void showNotification(){
+    public void showNotification(long ex_id, long tr_id){
 
-        //Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_launch_barbell);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_barbell)
-        //                .setLargeIcon(bm)
+                        .setLargeIcon(bm)
                         .setContentTitle("GYM UP")
-        //                .setContentText(newsListModel.getText())
+                        .setContentText("Running training")
                         .setTicker("GYM UP")
                         .setAutoCancel(true);
         Intent resultIntent = new Intent(context, ResultActivity.class);
+        resultIntent.putExtra(Const.EXERCISE_ID, ex_id);
+        resultIntent.putExtra(Const.TRAINING_ID, tr_id);
+
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SuperMainActivity.class);
         stackBuilder.addNextIntent(resultIntent);
@@ -57,6 +60,7 @@ public class NotificationHelper{
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setOngoing(true);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

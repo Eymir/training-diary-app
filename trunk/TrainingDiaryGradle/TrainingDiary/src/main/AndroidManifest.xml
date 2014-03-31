@@ -79,6 +79,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
 
         <receiver android:name=".utils.TimerAlarmBroadcastReceiver"/>
+        <receiver android:name=".utils.NotificationBroadcastReceiver"/>
         <service android:name="com.telly.groundy.GroundyService"/>
 
     </application>
