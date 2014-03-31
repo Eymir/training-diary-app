@@ -35,10 +35,15 @@
             android:name="myApp.trainingdiary.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+
         <activity
             android:name="myApp.trainingdiary.result.ResultActivity"
             android:label="@string/title_activity_result" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="myApp.trainingdiary.SuperMainActivity" />
         </activity>
+
         <activity
             android:name="myApp.trainingdiary.excercise.ExerciseActivity"
             android:label="@string/title_activity_exercise_in_training" >
