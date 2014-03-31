@@ -45,6 +45,8 @@ import myApp.trainingdiary.service.GetCommonStatisticsTask;
 import myApp.trainingdiary.statistic.StatisticActivity;
 import myApp.trainingdiary.training.TrainingActivity;
 import myApp.trainingdiary.utils.Const;
+import myApp.trainingdiary.utils.NotificationBroadcastReceiver;
+import myApp.trainingdiary.utils.NotificationHelper;
 import myApp.trainingdiary.utils.TrainingDurationManger;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -179,7 +181,6 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
 
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -225,6 +226,8 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
                 Toast.makeText(SuperMainActivity.this, R.string.workout_stopped,
                         Toast.LENGTH_SHORT).show();
                 manageWorkoutButtons();
+                NotificationHelper.getInstance(context).stopShowNotification();
+                NotificationBroadcastReceiver.getInstance(context).stopNotificationReceiver();
             }
 
             @Override
