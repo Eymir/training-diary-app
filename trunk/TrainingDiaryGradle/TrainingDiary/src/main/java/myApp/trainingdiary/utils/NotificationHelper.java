@@ -38,7 +38,6 @@ public class NotificationHelper{
     public void showNotification(long ex_id, long tr_id){
 
         Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_launch_barbell);
-
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_barbell)
@@ -50,10 +49,9 @@ public class NotificationHelper{
         Intent resultIntent = new Intent(context, ResultActivity.class);
         resultIntent.putExtra(Const.EXERCISE_ID, ex_id);
         resultIntent.putExtra(Const.TRAINING_ID, tr_id);
-
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(SuperMainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
                         0,
@@ -61,6 +59,7 @@ public class NotificationHelper{
                 );
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setOngoing(true);
+        mBuilder.setAutoCancel(false);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
