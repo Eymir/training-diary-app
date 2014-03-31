@@ -8,9 +8,10 @@
 
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/list_panel">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/list_panel"
+            android:layout_weight="1">
 
             <ListView
                     android:id="@+id/exercise_list"
@@ -29,6 +30,15 @@
                     android:text="@string/empty"
                     android:id="@+id/empty_view"/>
         </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/ads_layout_add_exercise_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+    </LinearLayout>
 
 
 </LinearLayout>

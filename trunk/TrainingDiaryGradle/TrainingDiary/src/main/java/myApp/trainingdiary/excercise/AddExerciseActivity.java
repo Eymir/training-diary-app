@@ -2,6 +2,7 @@ package myApp.trainingdiary.excercise;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,6 +32,8 @@ import net.londatiga.android.QuickAction;
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.SettingsActivity;
+import myApp.trainingdiary.billing.BillingHelper;
+import myApp.trainingdiary.billing.BillingPreferencesHelper;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.Exercise;
 import myApp.trainingdiary.dialog.DialogProvider;
@@ -64,6 +68,11 @@ public class AddExerciseActivity extends ActionBarActivity {
     private QuickAction exerciseActionTools;
     private ViewExerciseDialog viewExerciseDialog;
 
+    ////////////////billing////////////
+    private LinearLayout adsLayout;
+    private BillingHelper billingHelper;
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -81,6 +90,14 @@ public class AddExerciseActivity extends ActionBarActivity {
         createExcerciseTools();
         createRenameExDialog();
         createDeletionDialog();
+
+        context = this;
+        billingHelper = BillingHelper.getInstance(this);
+        adsLayout = (LinearLayout)findViewById(R.id.ads_layout_add_exercise_activity);
+
+        //ads
+        if(getResources().getBoolean(R.bool.show_ads))
+            billingHelper.adsShow(adsLayout);
 
         try {
             tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
@@ -235,6 +252,14 @@ public class AddExerciseActivity extends ActionBarActivity {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actadd_actsettings_menu, menu);
+
+        //make buy button invisible if ads is not disable
+        BillingPreferencesHelper.loadSettings(context);
+        if(!getResources().getBoolean(R.bool.show_ads) || BillingPreferencesHelper.isAdsDisabled()){
+            MenuItem item = menu.findItem(R.id.action_disable_ads_actadd);
+            item.setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -250,7 +275,9 @@ public class AddExerciseActivity extends ActionBarActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
+            case R.id.action_disable_ads_actadd:
+                billingHelper.adsBuy();
+                return true;
         }
         return true;
     }

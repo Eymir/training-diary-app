@@ -1,6 +1,7 @@
 package myApp.trainingdiary.excercise;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -33,6 +35,8 @@ import myApp.trainingdiary.R;
 import myApp.trainingdiary.R.id;
 import myApp.trainingdiary.R.layout;
 import myApp.trainingdiary.SettingsActivity;
+import myApp.trainingdiary.billing.BillingHelper;
+import myApp.trainingdiary.billing.BillingPreferencesHelper;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.dialog.DialogProvider;
 import myApp.trainingdiary.dialog.EditDialog;
@@ -64,6 +68,11 @@ public class ExerciseActivity extends ActionBarActivity {
     private EditDialog renameExerciseDialog;
     private AlertDialog removeExerciseDialog;
 
+    ////////////////billing////////////
+    private LinearLayout adsLayout;
+    private BillingHelper billingHelper;
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -79,6 +88,14 @@ public class ExerciseActivity extends ActionBarActivity {
 
         dbHelper = DBHelper.getInstance(this);
         tr_id = getIntent().getExtras().getLong(Const.TRAINING_ID);
+
+        context = this;
+        billingHelper = BillingHelper.getInstance(this);
+        adsLayout = (LinearLayout)findViewById(R.id.ads_layout_exercise_list_activity);
+
+        //ads
+        if(getResources().getBoolean(R.bool.show_ads))
+            billingHelper.adsShow(adsLayout);
 
         trainingName = dbHelper.READ.getTrainingNameById(tr_id);
         setTitle(getTitle() + ": " + trainingName);
@@ -364,6 +381,14 @@ public class ExerciseActivity extends ActionBarActivity {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actadd_actsettings_menu, menu);
+
+        //make buy button invisible if ads is not disable
+        BillingPreferencesHelper.loadSettings(context);
+        if(!getResources().getBoolean(R.bool.show_ads) || BillingPreferencesHelper.isAdsDisabled()){
+            MenuItem item = menu.findItem(R.id.action_disable_ads_actadd);
+            item.setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -379,7 +404,9 @@ public class ExerciseActivity extends ActionBarActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
+            case R.id.action_disable_ads_actadd:
+                billingHelper.adsBuy();
+                return true;
         }
         return true;
     }
