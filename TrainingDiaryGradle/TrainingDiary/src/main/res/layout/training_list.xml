@@ -11,7 +11,7 @@
         android:background="@android:color/transparent"
         android:id="@+id/training_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:descendantFocusability="beforeDescendants"
         android:divider="?android:listDivider"
@@ -30,4 +30,14 @@
         dslv:sort_enabled="true"
         dslv:track_drag_sort="false"
         dslv:use_default_controller="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/ads_layout_trainig_list_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="true">
+    </LinearLayout>
 </RelativeLayout>

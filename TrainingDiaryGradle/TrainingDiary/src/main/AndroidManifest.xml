@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="myApp.trainingdiary"
-    android:versionCode="27"
-    android:versionName="0.14.1b" >
+    android:versionCode="28"
+    android:versionName="0.14.2b" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -19,7 +19,7 @@
     <application
         android:name="myApp.trainingdiary.AndroidApplication"
         android:allowBackup="false"
-        android:icon="@drawable/ic_dairy"
+        android:icon="@drawable/ic_barbell"
         android:label="@string/app_name"
         android:theme="@style/TrTheme.Blue_black_orange"
         android:debuggable="false">

@@ -1,6 +1,7 @@
 package myApp.trainingdiary.calendar;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.roomorama.caldroid.CaldroidFragment;
@@ -23,6 +25,8 @@ import java.util.List;
 
 import myApp.trainingdiary.R;
 import myApp.trainingdiary.SettingsActivity;
+import myApp.trainingdiary.billing.BillingHelper;
+import myApp.trainingdiary.billing.BillingPreferencesHelper;
 import myApp.trainingdiary.db.DBHelper;
 import myApp.trainingdiary.db.entity.TrainingStamp;
 import myApp.trainingdiary.history.HistoryDetailActivity;
@@ -35,6 +39,11 @@ public class CalendarActivity extends ActionBarActivity {
     //final SimpleDateFormat formatterMy = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     //final SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
     private DBHelper dbHelper;
+    private Context context;
+
+    ////////////////billing////////////
+    private LinearLayout adsLayout;
+    private BillingHelper billingHelper;
 
     List<TrainingStamp> stamps = new ArrayList<TrainingStamp>();
 
@@ -101,6 +110,13 @@ public class CalendarActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         dbHelper = DBHelper.getInstance(this);
+        context = this;
+        billingHelper = BillingHelper.getInstance(this);
+        adsLayout = (LinearLayout)findViewById(R.id.ads_layout_calendar_activity);
+
+        //ads
+        if(getResources().getBoolean(R.bool.show_ads))
+            billingHelper.adsShow(adsLayout);
 
         // Setup caldroid fragment
         // **** If you want normal CaldroidFragment, use below line ****
@@ -192,6 +208,14 @@ public class CalendarActivity extends ActionBarActivity {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actsettings_menu, menu);
+
+        //make buy button invisible if ads is not disable
+        BillingPreferencesHelper.loadSettings(context);
+        if(!getResources().getBoolean(R.bool.show_ads) || BillingPreferencesHelper.isAdsDisabled()){
+            MenuItem item = menu.findItem(R.id.action_disable_ads);
+            item.setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -204,6 +228,8 @@ public class CalendarActivity extends ActionBarActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.action_disable_ads:
+                billingHelper.adsBuy();
         }
         return true;
     }

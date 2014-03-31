@@ -51,7 +51,6 @@ public class BillingPreferencesHelper {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(TAG_DISABLED_ADS, disabledADS);
-
         editor.commit();
     }
 

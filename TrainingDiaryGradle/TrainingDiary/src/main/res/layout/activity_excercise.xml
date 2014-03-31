@@ -11,7 +11,7 @@
             android:id="@+id/exercise_in_training_list"
             android:background="@android:color/transparent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:divider="?android:listDivider"
             android:dividerHeight="1px"
@@ -30,5 +30,14 @@
             dslv:sort_enabled="true"
             dslv:track_drag_sort="false"
             dslv:use_default_controller="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/ads_layout_exercise_list_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+    </LinearLayout>
 
 </RelativeLayout>

@@ -55,11 +55,9 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     private DBHelper dbHelper;
     private AlertDialog editStatListDialog;
     private AlertDialog stopWorkoutDialog;
-    public Context context;
+    private Context context;
 
     ////////////////billing////////////
-    private IabHelper mHelper;
-    private AdsControllerBase ads;
     private LinearLayout adsLayout;
     private BillingHelper billingHelper;
 
@@ -103,7 +101,8 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         createDeletionDialog();
 
         //ads
-        billingHelper.adsShow(adsLayout);
+        if(getResources().getBoolean(R.bool.show_ads))
+            billingHelper.adsShow(adsLayout);
 
     }
 
@@ -243,10 +242,11 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
         inflater.inflate(R.menu.actsettings_menu, menu);
 
         //make buy button invisible if ads is not disable
-        if(!getResources().getBoolean(R.bool.show_ads)){
+        BillingPreferencesHelper.loadSettings(context);
+        if(!getResources().getBoolean(R.bool.show_ads) || BillingPreferencesHelper.isAdsDisabled()){
             MenuItem item = menu.findItem(R.id.action_disable_ads);
-            item.setVisible(!BillingPreferencesHelper.isAdsDisabled());
-        }
+            item.setVisible(false);
+       }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -254,11 +254,14 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+//                BillingPreferencesHelper.disabledADS = false;
+//                BillingPreferencesHelper.saveSettings(context);
                 Intent intentStat = new Intent(SuperMainActivity.this, SettingsActivity.class);
                 startActivity(intentStat);
                 return true;
             case R.id.action_disable_ads:
                 billingHelper.adsBuy();
+                return true;
         }
         return true;
     }
