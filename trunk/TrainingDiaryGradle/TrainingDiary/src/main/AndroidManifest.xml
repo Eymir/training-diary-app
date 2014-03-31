@@ -19,7 +19,7 @@
     <application
         android:name="myApp.trainingdiary.AndroidApplication"
         android:allowBackup="false"
-        android:icon="@drawable/ic_barbell"
+        android:icon="@drawable/icon_launch_barbell"
         android:label="@string/app_name"
         android:theme="@style/TrTheme.Blue_black_orange"
         android:debuggable="true">
