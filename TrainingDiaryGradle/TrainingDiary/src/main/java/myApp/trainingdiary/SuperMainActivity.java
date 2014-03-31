@@ -227,7 +227,7 @@ public class SuperMainActivity extends ActionBarActivity implements View.OnClick
                         Toast.LENGTH_SHORT).show();
                 manageWorkoutButtons();
                 NotificationHelper.getInstance(context).stopShowNotification();
-                NotificationBroadcastReceiver.getInstance(context).stopNotificationReceiver();
+                NotificationBroadcastReceiver.getInstance().stopNotificationReceiver();
             }
 
             @Override

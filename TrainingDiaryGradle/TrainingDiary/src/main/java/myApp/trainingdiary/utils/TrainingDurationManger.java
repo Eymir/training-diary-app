@@ -39,7 +39,7 @@ public class TrainingDurationManger {
                     dbHelper.WRITE.closeTrainingStamp(tr_stamp.getId(), set.getDate());
                 }
                 NotificationHelper.getInstance(AndroidApplication.getAppContext()).stopShowNotification();
-                NotificationBroadcastReceiver.getInstance(AndroidApplication.getAppContext()).stopNotificationReceiver();
+                NotificationBroadcastReceiver.getInstance().stopNotificationReceiver();
             }
         }
     }

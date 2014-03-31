@@ -321,8 +321,8 @@ public class ResultActivity extends ActionBarActivity implements OnClickListener
         switch (arg0.getId()) {
             case R.id.write_button:
                 writeToDB();
-                NotificationHelper.getInstance(this).showNotification();
-                NotificationBroadcastReceiver.getInstance(this).startNotificationReceiver();
+                NotificationHelper.getInstance(this).showNotification(ex_id, tr_id);
+                NotificationBroadcastReceiver.getInstance().startNotificationReceiver();
                 TextView training_stat_text = (TextView) mPager.findViewWithTag(Const.STAT_VIEW + ex_id);
                 MeasureFormatter.writeResultStatView(training_stat_text, ex_id);
                 wheelMap.get(ex_id).setTrainingSet(dbHelper.READ.getLastTrainingSetByExerciseInLastTrainingStamp(ex_id, tr_id));
