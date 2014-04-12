@@ -1,5 +1,7 @@
 package ru.adhocapp.instaprint;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,9 +22,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import ru.adhocapp.instaprint.billing.IabHelper;
+import ru.adhocapp.instaprint.billing.IabResult;
+import ru.adhocapp.instaprint.billing.Purchase;
 import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.PageFragment;
-import ru.adhocapp.instaprint.util.mail.MailHelper;
+import ru.adhocapp.instaprint.mail.MailHelper;
 
 public class MainActivity extends FragmentActivity {
 
@@ -30,14 +35,19 @@ public class MainActivity extends FragmentActivity {
     static final int SELECT_FOTO_REQUEST_CODE = 199;
     Bitmap selectedImage;
     String selectedImagefilePath = "";
+    Context context;
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
+
+    private IabHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = this;
 
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
@@ -139,7 +149,11 @@ public class MainActivity extends FragmentActivity {
         startActivityForResult(photoPickerIntent, SELECT_FOTO_REQUEST_CODE);
     }
 
-    public void clickSend(View view){
+    public void sendOrderWithPurchase(View view){
+        buyPurchase();
+    }
+
+    public void sendOrderWithoutPurchase(View view){
 
         EditText etUserText = (EditText)findViewById(R.id.et_user_text);
         EditText etFromFio = (EditText)findViewById(R.id.et_from_fio);
@@ -156,6 +170,7 @@ public class MainActivity extends FragmentActivity {
                 +"\tto_address<"+etToAddress.getText().toString()+">"
                 +"\tto_index<"+etToZip.getText().toString()+">";
         Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+
         MailHelper.getInstance("order #0", text, selectedImagefilePath).sendMail();
 
     }
@@ -184,6 +199,64 @@ public class MainActivity extends FragmentActivity {
 
                 }
         }
+    }
+
+    private void billingInit() {
+        mHelper = new IabHelper(this, Const.BASE64_PUBLIC_KEY);
+        mHelper.enableDebugLogging(Const.IAB_DEBUG_LOGGING);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    return;
+                }
+            }
+        });
+    }
+
+    //Стартует покупку
+    private void buyPurchase() {
+        billingInit();
+        mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+                mPurchaseFinishedListener, "");
+    }
+
+    // срабатывает, когда покупка завершена
+    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+            if (result.isFailure()) {
+                return;
+            }
+            if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
+                Toast.makeText(context, "Purchase done.", Toast.LENGTH_SHORT);
+                sendOrder(purchase);
+            }
+        }
+    };
+
+    private void sendOrder(Purchase purchase){
+
+        String orderId = purchase.getOrderId();
+        String p = purchase.toString();
+
+        EditText etUserText = (EditText)findViewById(R.id.et_user_text);
+        EditText etFromFio = (EditText)findViewById(R.id.et_from_fio);
+        EditText etFromAddress = (EditText)findViewById(R.id.et_from_address);
+        EditText etFromZip = (EditText)findViewById(R.id.et_from_zip);
+        EditText etToFio = (EditText)findViewById(R.id.et_to_fio);
+        EditText etToAddress = (EditText)findViewById(R.id.et_to_address);
+        EditText etToZip = (EditText)findViewById(R.id.et_to_zip);
+        String text = "user_text<"+etUserText.getText().toString()+">"
+                +"\tfrom_fio<"+etFromFio.getText().toString()+">"
+                +"\tfrom_address<"+etFromAddress.getText().toString()+">"
+                +"\tfrom_index<"+etFromZip.getText().toString()+">"
+                +"\tto_fio<"+etToFio.getText().toString()+">"
+                +"\tto_address<"+etToAddress.getText().toString()+">"
+                +"\tto_index<"+etToZip.getText().toString()+">"
+                +"\t\torderId<"+orderId+">"
+                +"\t\tpurchase<"+p+">";
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+
+        MailHelper.getInstance("order - "+etFromFio.getText().toString(), text, selectedImagefilePath).sendMail();
     }
 
 }

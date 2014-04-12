@@ -25,14 +25,26 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp">
+        android:layout_marginRight="30dp"
+        android:layout_alignParentTop="false">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Отправить"
+            android:text="Отправить free"
             android:id="@+id/button"
             android:background="@color/holo_blue_dark"
-            android:onClick="clickSend" />
+            android:onClick="sendOrderWithoutPurchase"
+            android:layout_centerInParent="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Отправить за бабки"
+            android:id="@+id/button2"
+            android:background="@color/holo_blue_dark"
+            android:layout_marginTop="10dp"
+            android:onClick="sendOrderWithPurchase" />
+
     </LinearLayout>
 </RelativeLayout>
