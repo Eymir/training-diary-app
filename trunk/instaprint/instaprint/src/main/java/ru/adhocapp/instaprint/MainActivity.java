@@ -20,14 +20,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.PageFragment;
+import ru.adhocapp.instaprint.util.mail.MailHelper;
 
 public class MainActivity extends FragmentActivity {
 
-    static final String TAG = "myLogs";
     static final int PAGE_COUNT = 4;
     static final int SELECT_FOTO_REQUEST_CODE = 199;
     Bitmap selectedImage;
+    String selectedImagefilePath = "";
 
     ViewPager pager;
     PagerAdapter pagerAdapter;
@@ -37,11 +39,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-        //count pages will be stored in buffer
         pager.setOffscreenPageLimit(4);
         pager.setAdapter(pagerAdapter);
 
@@ -49,7 +48,7 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(TAG, "onPageSelected, position = " + position);
+                Log.d(Const.LOG_TAG, "onPageSelected, position = " + position);
             }
 
             @Override
@@ -149,15 +148,15 @@ public class MainActivity extends FragmentActivity {
         EditText etToFio = (EditText)findViewById(R.id.et_to_fio);
         EditText etToAddress = (EditText)findViewById(R.id.et_to_address);
         EditText etToZip = (EditText)findViewById(R.id.et_to_zip);
-        String text = selectedImage.toString()
-                +"\t"+etUserText.getText().toString()
-                +"\t"+etFromFio.getText().toString()
-                +"\t"+etFromAddress.getText().toString()
-                +"\t"+etFromZip.getText().toString()
-                +"\t"+etToFio.getText().toString()
-                +"\t"+etToAddress.getText().toString()
-                +"\t"+etToZip.getText().toString();
+        String text = "user_text<"+etUserText.getText().toString()+">"
+                +"\tfrom_fio<"+etFromFio.getText().toString()+">"
+                +"\tfrom_address<"+etFromAddress.getText().toString()+">"
+                +"\tfrom_index<"+etFromZip.getText().toString()+">"
+                +"\tto_fio<"+etToFio.getText().toString()+">"
+                +"\tto_address<"+etToAddress.getText().toString()+">"
+                +"\tto_index<"+etToZip.getText().toString()+">";
         Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        MailHelper.getInstance("order #0", text, selectedImagefilePath).sendMail();
 
     }
 
@@ -176,14 +175,15 @@ public class MainActivity extends FragmentActivity {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String filePath = cursor.getString(columnIndex);
+                    selectedImagefilePath = cursor.getString(columnIndex);
                     cursor.close();
 
-                    selectedImage = BitmapFactory.decodeFile(filePath);
+                    selectedImage = BitmapFactory.decodeFile(selectedImagefilePath);
                     ImageView imageView = (ImageView)findViewById(R.id.ivUserFoto);
                     imageView.setImageBitmap(selectedImage);
 
                 }
         }
     }
+
 }

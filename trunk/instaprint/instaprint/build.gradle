@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    buildToolsVersion '19.0.1'
 
     defaultConfig {
         minSdkVersion 11
@@ -21,4 +21,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:+'
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    compile files('libraries/activation.jar')
+    compile files('libraries/additionnal.jar')
+    compile files('libraries/mail.jar')
 }
