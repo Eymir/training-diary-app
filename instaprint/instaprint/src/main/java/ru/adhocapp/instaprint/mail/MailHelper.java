@@ -1,4 +1,4 @@
-package ru.adhocapp.instaprint.util.mail;
+package ru.adhocapp.instaprint.mail;
 
 import android.os.AsyncTask;
 import android.util.Log;
