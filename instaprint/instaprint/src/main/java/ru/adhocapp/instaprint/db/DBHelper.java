@@ -17,7 +17,7 @@ import ru.adhocapp.instaprint.db.entity.EntityManager;
 import ru.adhocapp.instaprint.db.entity.Order;
 import ru.adhocapp.instaprint.db.entity.OrderStatus;
 import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
-import ru.adhocapp.instaprint.util.C;
+import ru.adhocapp.instaprint.util.Const;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper mInstance = null;
@@ -46,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(C.LOG_TAG, "onDowngrade. oldVer: " + oldVersion + " newVer: " + newVersion);
+        Log.d(Const.LOG_TAG, "onDowngrade. oldVer: " + oldVersion + " newVer: " + newVersion);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //                + "FOREIGN KEY(ADDRESS_FROM_ID) REFERENCES ADDRESS(id),"
 //                + "FOREIGN KEY(ADDRESS_TO_ID) REFERENCES ADDRESS(id),"
                 + "FOREIGN KEY(PURCHASE_DETAILS_ID) REFERENCES PURCHASE_DETAILS(id)" + ");");
-        Log.d(C.LOG_TAG, "--- onCreate table ORDER  ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table ORDER  ---");
     }
 
     private void createAddressTable(SQLiteDatabase db) {
@@ -85,7 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "FULL_ADDRESS text,"
                 + "FULL_NAME text,"
                 + "INDEX text" + ");");
-        Log.d(C.LOG_TAG, "--- onCreate table ADDRESS  ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table ADDRESS  ---");
     }
 
     private void createPurchaseDetailsTable(SQLiteDatabase db) {
@@ -94,7 +94,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "ORDER_NUMBER text,"
                 + "PAY_DATE datetime,"
                 + "PRICE double" + ");");
-        Log.d(C.LOG_TAG, "--- onCreate table PURCHASE_DETAILS  ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table PURCHASE_DETAILS  ---");
     }
 
 

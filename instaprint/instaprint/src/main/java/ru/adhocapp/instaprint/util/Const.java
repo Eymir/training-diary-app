@@ -7,9 +7,9 @@ import android.support.v7.appcompat.R;
  */
 public class Const {
 
-    public static String MAIL_ACCOUNT = "ru.adhocapp.instaprint@yandex.ru";
-    public static String MAIL_PASSWORD = "instaprint2163927";
-    public static String LOG_TAG = "instaprint";
+    public static final String MAIL_ACCOUNT = "ru.adhocapp.instaprint@yandex.ru";
+    public static final String MAIL_PASSWORD = "instaprint2163927";
+    public static final String LOG_TAG = "adhoc";
 
 
 }
