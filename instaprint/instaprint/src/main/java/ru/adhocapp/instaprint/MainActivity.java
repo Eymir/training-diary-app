@@ -253,9 +253,11 @@ public class MainActivity extends FragmentActivity {
                     return;
                 }
                 //Делаем запрос на получения инфрмации о покупке
-                List additionalSkuList = new ArrayList();
-                additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
-                mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+//                List additionalSkuList = new ArrayList();
+//                additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
+//                mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+                mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+                        mPurchaseFinishedListener, "");
             }
         });
     }
@@ -266,18 +268,18 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    //тут получаем инуфу о покупке
-    IabHelper.QueryInventoryFinishedListener
-            mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            if (result.isFailure()) {
-                // handle error
-                return;
-            }
-            //делаем запрос на использование покупки
-            mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
-        }
-    };
+//    //тут получаем инуфу о покупке
+//    IabHelper.QueryInventoryFinishedListener
+//            mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
+//        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+//            if (result.isFailure()) {
+//                // handle error
+//                return;
+//            }
+//            //делаем запрос на использование покупки
+//            mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
+//        }
+//    };
 
     // срабатывает, когда покупка завершена
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
@@ -293,7 +295,7 @@ public class MainActivity extends FragmentActivity {
                 Toast.makeText(context, "Purchase done.", Toast.LENGTH_SHORT);
                 sendOrder(order);
                 //Испльзуем контент..требуется в версии билинга3 для повтороного приобретения контента
-                //mHelper.consumeAsync(purchase,mConsumeFinishedListener);
+                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
             }
         }
     };
