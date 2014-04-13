@@ -314,8 +314,8 @@ public class MainActivity extends FragmentActivity {
                 public void onConsumeFinished(Purchase purchase, IabResult result) {
                     if (result.isSuccess()) {
                         //если ок то делаем покупку
-                        mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-                                mPurchaseFinishedListener, "");
+//                        mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+//                                mPurchaseFinishedListener, "");
                     } else {
 
                     }
