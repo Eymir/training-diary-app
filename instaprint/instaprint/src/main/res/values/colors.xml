@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="holo_blue_dark">#ff0099cc</color>
+    <color name="wheat">#FFE7BA</color>
+    <color name="snow2">#EEE9E9</color>
+    <color name="linen">#FAF0E6</color>
+    <color name="white_smoke">#F5F5F5</color>
+    <color name="old_lace">#FDF5E6</color>
 </resources>
