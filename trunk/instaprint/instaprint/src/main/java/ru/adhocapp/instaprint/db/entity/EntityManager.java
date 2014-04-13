@@ -88,6 +88,7 @@ public class EntityManager {
 
 
     private void merge(SQLiteDatabase db, Entity entity) {
+        if (entity == null) return;
         if (entity.getId() == null) {
             persist(db, entity);
             return;
@@ -120,6 +121,7 @@ public class EntityManager {
     }
 
     private void remove(SQLiteDatabase db, Entity entity) {
+        if (entity == null) return;
         if (entity instanceof Address) {
             dbHelper.delete(db, entity);
         }
@@ -134,6 +136,7 @@ public class EntityManager {
     }
 
     private void persist(SQLiteDatabase db, Entity entity) {
+        if (entity == null) return;
         if (entity instanceof Address) {
             persist(db, (Address) entity);
         }
@@ -150,14 +153,17 @@ public class EntityManager {
     }
 
     private void persist(SQLiteDatabase db, PurchaseDetails purchaseDetails) {
+        if (purchaseDetails == null)return;
         purchaseDetails.setId(dbHelper.insertPurchaseDetails(db, purchaseDetails));
     }
 
     private void persist(SQLiteDatabase db, Order order) {
+        if (order == null)return;
         order.setId(dbHelper.insertOrder(db, order));
     }
 
     private void persist(SQLiteDatabase db, Address address) {
+        if (address == null)return;
         address.setId(dbHelper.insertAddress(db, address));
     }
 }

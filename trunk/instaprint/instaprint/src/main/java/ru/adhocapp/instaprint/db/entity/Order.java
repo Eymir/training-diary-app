@@ -2,6 +2,9 @@ package ru.adhocapp.instaprint.db.entity;
 
 import java.util.Date;
 
+import ru.adhocapp.instaprint.R;
+import ru.adhocapp.instaprint.util.ResourceAccess;
+
 /**
  * Created by Lenovo on 12.04.2014.
  */
@@ -17,6 +20,16 @@ public class Order extends Entity {
 
     public Order(Long id, Address addressFrom, Address addressTo, String text, String photoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
         this.id = id;
+        this.addressFrom = addressFrom;
+        this.addressTo = addressTo;
+        this.text = text;
+        this.photoPath = photoPath;
+        this.date = date;
+        this.purchaseDetails = purchaseDetails;
+        this.status = status;
+    }
+
+    public Order(Address addressFrom, Address addressTo, String text, String photoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
         this.addressFrom = addressFrom;
         this.addressTo = addressTo;
         this.text = text;
@@ -88,5 +101,38 @@ public class Order extends Entity {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+
+    public String toMailTitle() {
+        String title = "SENDER: ";
+        if (addressFrom != null && addressFrom.getFullName() != null) {
+            title += addressFrom.getFullName();
+        } else {
+            title += ResourceAccess.getInstance(null).getResources().getString(R.string.title_without_sender);
+        }
+        if (purchaseDetails != null){
+            title += " PAYMENT: " + purchaseDetails.getOrderNumber();} else {
+            title += " PAYMENT: " +  ResourceAccess.getInstance(null).getResources().getString(R.string.title_wasnt_payed);
+        }
+        return title;
+    }
+
+    public String toMailBody() {
+        return toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", addressFrom=" + addressFrom +
+                ", addressTo=" + addressTo +
+                ", text='" + text + '\'' +
+                ", photoPath='" + photoPath + '\'' +
+                ", date=" + date +
+                ", purchaseDetails=" + purchaseDetails +
+                ", status=" + status +
+                '}';
     }
 }

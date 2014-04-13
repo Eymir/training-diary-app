@@ -23,28 +23,38 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ru.adhocapp.instaprint.billing.IabHelper;
 import ru.adhocapp.instaprint.billing.IabResult;
 import ru.adhocapp.instaprint.billing.Inventory;
 import ru.adhocapp.instaprint.billing.Purchase;
+import ru.adhocapp.instaprint.db.DBHelper;
+import ru.adhocapp.instaprint.db.entity.Address;
+import ru.adhocapp.instaprint.db.entity.EntityManager;
+import ru.adhocapp.instaprint.db.entity.Order;
+import ru.adhocapp.instaprint.db.entity.OrderStatus;
+import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
+import ru.adhocapp.instaprint.mail.MailHelper;
 import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.PageFragment;
-import ru.adhocapp.instaprint.mail.MailHelper;
+import ru.adhocapp.instaprint.util.ResourceAccess;
 
 public class MainActivity extends FragmentActivity {
 
-    static final int PAGE_COUNT = 4;
-    static final int SELECT_FOTO_REQUEST_CODE = 199;
-    Bitmap selectedImage;
-    String selectedImagefilePath = "";
-    Context context;
+    private static final int PAGE_COUNT = 4;
+    private static final int SELECT_FOTO_REQUEST_CODE = 199;
+    private Bitmap selectedImage;
+    private String selectedImagefilePath = "";
+    private Context context;
 
-    ViewPager pager;
-    PagerAdapter pagerAdapter;
+    private ViewPager pager;
+    private PagerAdapter pagerAdapter;
+    private Order order;
 
     private IabHelper mHelper;
+    private  EntityManager em;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +62,17 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
-
+        em = DBHelper.getInstance(this).EM;
         pager = (ViewPager) findViewById(R.id.pager);
         pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setOffscreenPageLimit(4);
         pager.setAdapter(pagerAdapter);
-
+        ResourceAccess.getInstance(this);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(Const.LOG_TAG, "onPageSelected, position = " + position);
+                Log.d(Const.LOG_TAG, "onPageSelected, positioLog.en = " + position);
             }
 
             @Override
@@ -97,13 +107,13 @@ public class MainActivity extends FragmentActivity {
         public CharSequence getPageTitle(int position) {
 
             String title = "";
-            switch (position){
+            switch (position) {
                 case 0:
                     title = getString(R.string.page_title_select_foto);
                     break;
                 case 1:
                     title = getString(R.string.page_title_edit_text);
-                   break;
+                    break;
                 case 2:
                     title = getString(R.string.page_title_edit_address);
                     break;
@@ -123,59 +133,86 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    public void clickNexеtSelectFoto(View view){
+    public void clickNexеtSelectFoto(View view) {
         pager.setCurrentItem(1);
     }
 
-    public void clickPreviousEditText(View view){
+    public void clickPreviousEditText(View view) {
         pager.setCurrentItem(0);
     }
 
-    public void clickNextEditText(View view){
+    public void clickNextEditText(View view) {
         pager.setCurrentItem(2);
     }
 
-    public void clickPreviousEditAddress(View view){
+    public void clickPreviousEditAddress(View view) {
         pager.setCurrentItem(1);
     }
 
-    public void clickNextEditAddress(View view){
+    public void clickNextEditAddress(View view) {
         pager.setCurrentItem(3);
     }
 
-    public void clickPreviousResult(View view){
+    public void clickPreviousResult(View view) {
         pager.setCurrentItem(2);
     }
 
-    public void clickSelectFoto(View view){
+    public void clickSelectFoto(View view) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, SELECT_FOTO_REQUEST_CODE);
     }
 
-    public void sendOrderWithPurchase(View view){
+    public void sendOrderWithPurchase(View view) {
+        //TODO: сделать валидацию
+        EditText etUserText = (EditText) findViewById(R.id.et_user_text);
+        String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
+
+        EditText etFromFio = (EditText) findViewById(R.id.et_from_fio);
+        EditText etFromAddress = (EditText) findViewById(R.id.et_from_address);
+        EditText etFromZip = (EditText) findViewById(R.id.et_from_zip);
+        String etFromFioStr = (etFromFio.getText() != null) ? etFromFio.getText().toString() : null;
+        String etFromAddressStr = (etFromAddress.getText() != null) ? etFromAddress.getText().toString() : null;
+        String etFromZipStr = (etFromZip.getText() != null) ? etFromZip.getText().toString() : null;
+        Address fromAddress = new Address(etFromAddressStr, etFromZipStr, etFromFioStr);
+
+        EditText etToFio = (EditText) findViewById(R.id.et_to_fio);
+        EditText etToAddress = (EditText) findViewById(R.id.et_to_address);
+        EditText etToZip = (EditText) findViewById(R.id.et_to_zip);
+        String etToFioStr = (etToFio.getText() != null) ? etToFio.getText().toString() : null;
+        String etToAddressStr = (etToAddress.getText() != null) ? etToAddress.getText().toString() : null;
+        String etToZipStr = (etToZip.getText() != null) ? etToZip.getText().toString() : null;
+        Address toAddress = new Address(etToAddressStr, etToZipStr, etToFioStr);
+
+        order = new Order(fromAddress, toAddress, etUserTextStr, selectedImagefilePath, new Date(), null, OrderStatus.PAYING);
+
+        em.persist(order);
         buyPurchase();
     }
 
-    public void sendOrderWithoutPurchase(View view){
+    public void sendOrderWithoutPurchase(View view) {
 
-        EditText etUserText = (EditText)findViewById(R.id.et_user_text);
-        EditText etFromFio = (EditText)findViewById(R.id.et_from_fio);
-        EditText etFromAddress = (EditText)findViewById(R.id.et_from_address);
-        EditText etFromZip = (EditText)findViewById(R.id.et_from_zip);
-        EditText etToFio = (EditText)findViewById(R.id.et_to_fio);
-        EditText etToAddress = (EditText)findViewById(R.id.et_to_address);
-        EditText etToZip = (EditText)findViewById(R.id.et_to_zip);
-        String text = "user_text<"+etUserText.getText().toString()+">"
-                +"\tfrom_fio<"+etFromFio.getText().toString()+">"
-                +"\tfrom_address<"+etFromAddress.getText().toString()+">"
-                +"\tfrom_index<"+etFromZip.getText().toString()+">"
-                +"\tto_fio<"+etToFio.getText().toString()+">"
-                +"\tto_address<"+etToAddress.getText().toString()+">"
-                +"\tto_index<"+etToZip.getText().toString()+">";
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        EditText etUserText = (EditText) findViewById(R.id.et_user_text);
+        String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
 
-        MailHelper.getInstance("order #0", text, selectedImagefilePath).sendMail();
+        EditText etFromFio = (EditText) findViewById(R.id.et_from_fio);
+        EditText etFromAddress = (EditText) findViewById(R.id.et_from_address);
+        EditText etFromZip = (EditText) findViewById(R.id.et_from_zip);
+        String etFromFioStr = (etFromFio.getText() != null) ? etFromFio.getText().toString() : null;
+        String etFromAddressStr = (etFromAddress.getText() != null) ? etFromAddress.getText().toString() : null;
+        String etFromZipStr = (etFromZip.getText() != null) ? etFromZip.getText().toString() : null;
+        Address fromAddress = new Address(etFromAddressStr, etFromZipStr, etFromFioStr);
+
+        EditText etToFio = (EditText) findViewById(R.id.et_to_fio);
+        EditText etToAddress = (EditText) findViewById(R.id.et_to_address);
+        EditText etToZip = (EditText) findViewById(R.id.et_to_zip);
+        String etToFioStr = (etToFio.getText() != null) ? etToFio.getText().toString() : null;
+        String etToAddressStr = (etToAddress.getText() != null) ? etToAddress.getText().toString() : null;
+        String etToZipStr = (etToZip.getText() != null) ? etToZip.getText().toString() : null;
+        Address toAddress = new Address(etToAddressStr, etToZipStr, etToFioStr);
+
+        order = new Order(fromAddress, toAddress, etUserTextStr, selectedImagefilePath, new Date(), null, OrderStatus.PAYING);
+        MailHelper.getInstance().sendMail(order);
 
     }
 
@@ -183,9 +220,9 @@ public class MainActivity extends FragmentActivity {
                                     Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        switch(requestCode) {
+        switch (requestCode) {
             case SELECT_FOTO_REQUEST_CODE:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     Uri selectedImageURI = imageReturnedIntent.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -198,7 +235,7 @@ public class MainActivity extends FragmentActivity {
                     cursor.close();
 
                     selectedImage = BitmapFactory.decodeFile(selectedImagefilePath);
-                    ImageView imageView = (ImageView)findViewById(R.id.ivUserFoto);
+                    ImageView imageView = (ImageView) findViewById(R.id.ivUserFoto);
                     imageView.setImageBitmap(selectedImage);
 
                 }
@@ -224,23 +261,21 @@ public class MainActivity extends FragmentActivity {
         //Делаем запрос на получения инфрмации о покупке
         List additionalSkuList = new ArrayList();
         additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
-        mHelper.queryInventoryAsync(true, additionalSkuList,mQueryFinishedListener);
+        mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
     }
 
     //тут получаем инуфу о покупке
     IabHelper.QueryInventoryFinishedListener
             mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory){
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
             if (result.isFailure()) {
                 // handle error
                 return;
             }
             //делаем запрос на использование покупки
-            mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1),mConsumeFinishedListener);
+            mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
         }
     };
-
-
 
     // срабатывает, когда покупка завершена
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
@@ -249,38 +284,24 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
             if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
+                Log.d(Const.LOG_TAG, "Purchase done");
+                order.setStatus(OrderStatus.SENDING);
+                order.setPurchaseDetails(new PurchaseDetails(purchase.getOrderId(), new Date(purchase.getPurchaseTime()), null));
+                em.merge(order);
                 Toast.makeText(context, "Purchase done.", Toast.LENGTH_SHORT);
-                sendOrder(purchase);
+                sendOrder(order);
                 //Испльзуем контент..требуется в версии билинга3 для повтороного приобретения контента
                 //mHelper.consumeAsync(purchase,mConsumeFinishedListener);
             }
         }
     };
 
-    private void sendOrder(Purchase purchase){
+    private void sendOrder(Order order) {
 
-        String orderId = purchase.getOrderId();
-        String p = purchase.toString();
+        Toast.makeText(this, order.toString(), Toast.LENGTH_LONG).show();
 
-        EditText etUserText = (EditText)findViewById(R.id.et_user_text);
-        EditText etFromFio = (EditText)findViewById(R.id.et_from_fio);
-        EditText etFromAddress = (EditText)findViewById(R.id.et_from_address);
-        EditText etFromZip = (EditText)findViewById(R.id.et_from_zip);
-        EditText etToFio = (EditText)findViewById(R.id.et_to_fio);
-        EditText etToAddress = (EditText)findViewById(R.id.et_to_address);
-        EditText etToZip = (EditText)findViewById(R.id.et_to_zip);
-        String text = "user_text<"+etUserText.getText().toString()+">"
-                +"\tfrom_fio<"+etFromFio.getText().toString()+">"
-                +"\tfrom_address<"+etFromAddress.getText().toString()+">"
-                +"\tfrom_index<"+etFromZip.getText().toString()+">"
-                +"\tto_fio<"+etToFio.getText().toString()+">"
-                +"\tto_address<"+etToAddress.getText().toString()+">"
-                +"\tto_index<"+etToZip.getText().toString()+">"
-                +"\t\torderId<"+orderId+">"
-                +"\t\tpurchase<"+p+">";
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
 
-        MailHelper.getInstance("order - "+etFromFio.getText().toString(), text, selectedImagefilePath).sendMail();
+        MailHelper.getInstance().sendMail(order);
     }
 
     //тут проводим использование покупки
@@ -291,8 +312,7 @@ public class MainActivity extends FragmentActivity {
                         //если ок то делаем покупку
                         mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
                                 mPurchaseFinishedListener, "");
-                    }
-                    else {
+                    } else {
 
                     }
                 }
