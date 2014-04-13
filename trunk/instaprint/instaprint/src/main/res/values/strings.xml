@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">instaprint</string>
+    <string name="app_name">InstaPrint</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="page_title_select_foto">Выбор фото</string>
-    <string name="page_title_edit_text">Редактирование текста</string>
-    <string name="page_title_edit_address">Ввод адреса</string>
-    <string name="page_title_result">Результат</string>
+    <string name="page_title_select_foto">Фотография</string>
+    <string name="page_title_edit_text">Сообщение</string>
+    <string name="page_title_edit_address">Адрес</string>
+    <string name="page_title_result">Отправка</string>
     <string name="menu_item_addresses">Адреса</string>
     <string name="menu_item_orders">Заказы</string>
     <string name="menu_item_main">Меню</string>
+    <string name="account_info">Аккаунт</string>
 
 </resources>
