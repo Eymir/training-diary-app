@@ -32,7 +32,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Отправить free"
+            android:text="Отправить открытку"
             android:id="@+id/button"
             android:background="@color/holo_blue_dark"
             android:onClick="sendOrderWithoutPurchase"
@@ -45,7 +45,8 @@
             android:id="@+id/button2"
             android:background="@color/holo_blue_dark"
             android:layout_marginTop="10dp"
-            android:onClick="sendOrderWithPurchase" />
+            android:onClick="sendOrderWithPurchase"
+            android:visibility="gone" />
 
     </LinearLayout>
 </RelativeLayout>
