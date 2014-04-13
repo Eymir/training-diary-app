@@ -5,7 +5,7 @@
         android:showAsAction="ifRoom">
         <menu>
             <item android:id="@+id/custom_menu_foto"
-                android:title="@string/page_title_select_foto"/>
+                android:title="@string/account_info"/>
             <item android:id="@+id/custom_menu_addresses"
                 android:title="@string/menu_item_addresses"/>
             <item android:id="@+id/custom_menu_orders"
