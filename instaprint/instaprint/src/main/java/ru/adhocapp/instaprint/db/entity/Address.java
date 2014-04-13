@@ -5,19 +5,19 @@ package ru.adhocapp.instaprint.db.entity;
  */
 public class Address extends Entity {
     private String fullAddress;
-    private String index;
+    private String zipCode;
     private String fullName;
 
-    public Address(Long id, String fullAddress, String index, String fullName) {
+    public Address(Long id, String fullAddress, String zipCode, String fullName) {
         this.id = id;
         this.fullAddress = fullAddress;
-        this.index = index;
+        this.zipCode = zipCode;
         this.fullName = fullName;
     }
 
-    public Address(String fullAddress, String index, String fullName) {
+    public Address(String fullAddress, String zipCode, String fullName) {
         this.fullAddress = fullAddress;
-        this.index = index;
+        this.zipCode = zipCode;
         this.fullName = fullName;
     }
 
@@ -34,12 +34,12 @@ public class Address extends Entity {
         this.fullAddress = fullAddress;
     }
 
-    public String getIndex() {
-        return index;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setIndex(String index) {
-        this.index = index;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 
     public String getFullName() {
@@ -55,7 +55,7 @@ public class Address extends Entity {
         return "Address{" +
                 "id=" + id +
                 ", fullAddress='" + fullAddress + '\'' +
-                ", index='" + index + '\'' +
+                ", zipCode='" + zipCode + '\'' +
                 ", fullName='" + fullName + '\'' +
                 '}';
     }

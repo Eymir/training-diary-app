@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private final static int DB_VERSION = 1;
     public final static String DATABASE_NAME = "InstaPrintDB";
-    public final static String ORDER_TABLE = "ORDER";
+    public final static String ORDER_TABLE = "CLIENT_ORDER";
     public final static String ADDRESS_TABLE = "ADDRESS";
     public final static String PURCHASE_DETAILS_TABLE = "PURCHASE_DETAILS";
 
@@ -63,7 +63,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private void createOrderTable(SQLiteDatabase db) {
-        db.execSQL("create table ORDER ("
+        db.execSQL("create table CLIENT_ORDER ("
                 + "ID integer primary key autoincrement,"
                 + "TEXT text,"
                 + "STATUS text,"
@@ -76,7 +76,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //                + "FOREIGN KEY(ADDRESS_FROM_ID) REFERENCES ADDRESS(id),"
 //                + "FOREIGN KEY(ADDRESS_TO_ID) REFERENCES ADDRESS(id),"
                 + "FOREIGN KEY(PURCHASE_DETAILS_ID) REFERENCES PURCHASE_DETAILS(id)" + ");");
-        Log.d(Const.LOG_TAG, "--- onCreate table ORDER  ---");
+        Log.d(Const.LOG_TAG, "--- onCreate table CLIENT_ORDER  ---");
     }
 
     private void createAddressTable(SQLiteDatabase db) {
@@ -84,7 +84,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "ID integer primary key autoincrement,"
                 + "FULL_ADDRESS text,"
                 + "FULL_NAME text,"
-                + "INDEX text" + ");");
+                + "ZIPCODE text" + ");");
         Log.d(Const.LOG_TAG, "--- onCreate table ADDRESS  ---");
     }
 
@@ -102,15 +102,13 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("FULL_ADDRESS", address.getFullAddress());
         cv.put("FULL_NAME", address.getFullName());
-        cv.put("INDEX", address.getIndex());
+        cv.put("ZIPCODE", address.getZipCode());
         long id = db.insert(ADDRESS_TABLE, null, cv);
         return id;
     }
 
     public long insertOrder(SQLiteDatabase db, Order order) {
         ContentValues cv = new ContentValues();
-        cv.put("FULL_ADDRESS", order.getPhotoPath());
-        cv.put("FULL_NAME", order.getText());
         cv.put("TEXT", order.getText());
         if (order.getDate() != null)
             cv.put("DATE", order.getDate().getTime());
@@ -154,7 +152,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("FULL_ADDRESS", address.getFullAddress());
         cv.put("FULL_NAME", address.getFullName());
-        cv.put("INDEX", address.getIndex());
+        cv.put("ZIPCODE", address.getZipCode());
         db.update(ADDRESS_TABLE, cv, "id = ? ",
                 new String[]{String.valueOf(address.getId())});
     }
@@ -199,7 +197,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Long id = c.getLong(c.getColumnIndex("ID"));
             String full_address = c.getString(c.getColumnIndex("FULL_ADDRESS"));
             String full_name = c.getString(c.getColumnIndex("FULL_NAME"));
-            String index = c.getString(c.getColumnIndex("INDEX"));
+            String index = c.getString(c.getColumnIndex("ZIPCODE"));
             return new Address(id, full_address, index, full_name);
         }
         if (c != null) c.close();
@@ -251,7 +249,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Long id = c.getLong(c.getColumnIndex("ID"));
             String full_address = c.getString(c.getColumnIndex("FULL_ADDRESS"));
             String full_name = c.getString(c.getColumnIndex("FULL_NAME"));
-            String index = c.getString(c.getColumnIndex("INDEX"));
+            String index = c.getString(c.getColumnIndex("ZIPCODE"));
             list.add(new Address(id, full_address, index, full_name));
         }
         if (c != null) c.close();

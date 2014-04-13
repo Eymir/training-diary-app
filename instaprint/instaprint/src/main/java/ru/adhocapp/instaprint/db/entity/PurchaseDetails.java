@@ -59,4 +59,14 @@ public class PurchaseDetails extends Entity {
     public void setPrice(Double price) {
         this.price = price;
     }
+
+    @Override
+    public String toString() {
+        return "PurchaseDetails{" +
+                "id=" + id +
+                ", orderNumber='" + orderNumber + '\'' +
+                ", payDate=" + payDate +
+                ", price=" + price +
+                '}';
+    }
 }
