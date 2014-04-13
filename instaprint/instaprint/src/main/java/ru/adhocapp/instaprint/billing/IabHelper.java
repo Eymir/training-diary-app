@@ -36,6 +36,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.adhocapp.instaprint.util.Const;
+
 
 /**
  * Provides convenience methods for in-app billing. You can create one instance of this
@@ -261,7 +263,12 @@ public class IabHelper {
 
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
         serviceIntent.setPackage("com.android.vending");
-        if (!mContext.getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
+        if (mContext == null)
+            Log.e(Const.LOG_TAG, "CONTEXT IS NULL!");
+        if (mContext.getPackageManager() == null)
+            Log.e(Const.LOG_TAG, "mContext.getPackageManager() IS NULL!");
+        if (mContext.getPackageManager().queryIntentServices(serviceIntent, 0) != null &&
+                !mContext.getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
             // service available to handle that Intent
             mContext.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
         } else {
