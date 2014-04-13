@@ -22,8 +22,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.adhocapp.instaprint.billing.IabHelper;
 import ru.adhocapp.instaprint.billing.IabResult;
+import ru.adhocapp.instaprint.billing.Inventory;
 import ru.adhocapp.instaprint.billing.Purchase;
 import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.PageFragment;
@@ -216,9 +220,27 @@ public class MainActivity extends FragmentActivity {
     //Стартует покупку
     private void buyPurchase() {
         billingInit();
-        mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-                mPurchaseFinishedListener, "");
+
+        //Делаем запрос на получения инфрмации о покупке
+        List additionalSkuList = new ArrayList();
+        additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
+        mHelper.queryInventoryAsync(true, additionalSkuList,mQueryFinishedListener);
     }
+
+    //тут получаем инуфу о покупке
+    IabHelper.QueryInventoryFinishedListener
+            mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory){
+            if (result.isFailure()) {
+                // handle error
+                return;
+            }
+            //делаем запрос на использование покупки
+            mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1),mConsumeFinishedListener);
+        }
+    };
+
+
 
     // срабатывает, когда покупка завершена
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
@@ -229,6 +251,8 @@ public class MainActivity extends FragmentActivity {
             if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
                 Toast.makeText(context, "Purchase done.", Toast.LENGTH_SHORT);
                 sendOrder(purchase);
+                //Испльзуем контент..требуется в версии билинга3 для повтороного приобретения контента
+                //mHelper.consumeAsync(purchase,mConsumeFinishedListener);
             }
         }
     };
@@ -259,4 +283,18 @@ public class MainActivity extends FragmentActivity {
         MailHelper.getInstance("order - "+etFromFio.getText().toString(), text, selectedImagefilePath).sendMail();
     }
 
+    //тут проводим использование покупки
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener =
+            new IabHelper.OnConsumeFinishedListener() {
+                public void onConsumeFinished(Purchase purchase, IabResult result) {
+                    if (result.isSuccess()) {
+                        //если ок то делаем покупку
+                        mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+                                mPurchaseFinishedListener, "");
+                    }
+                    else {
+
+                    }
+                }
+            };
 }
