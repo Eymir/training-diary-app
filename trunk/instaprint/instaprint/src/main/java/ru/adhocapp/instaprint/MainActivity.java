@@ -54,7 +54,7 @@ public class MainActivity extends FragmentActivity {
     private Order order;
 
     private IabHelper mHelper;
-    private  EntityManager em;
+    private EntityManager em;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,13 +243,19 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void billingInit() {
-        mHelper = new IabHelper(this, Const.BASE64_PUBLIC_KEY);
+        mHelper = new IabHelper(MainActivity.this, Const.BASE64_PUBLIC_KEY);
         mHelper.enableDebugLogging(Const.IAB_DEBUG_LOGGING);
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
                 if (!result.isSuccess()) {
+                    Log.e(Const.LOG_TAG, "onIabSetupFinished call is NOT SUCCESS");
+                    Log.e(Const.LOG_TAG, "result:" + result.getMessage());
                     return;
                 }
+                //Делаем запрос на получения инфрмации о покупке
+                List additionalSkuList = new ArrayList();
+                additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
+                mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
             }
         });
     }
@@ -258,10 +264,6 @@ public class MainActivity extends FragmentActivity {
     private void buyPurchase() {
         billingInit();
 
-        //Делаем запрос на получения инфрмации о покупке
-        List additionalSkuList = new ArrayList();
-        additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
-        mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
     }
 
     //тут получаем инуфу о покупке
