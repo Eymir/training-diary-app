@@ -11,7 +11,8 @@
     <string name="menu_item_addresses">Адреса</string>
     <string name="menu_item_orders">Заказы</string>
     <string name="menu_item_main">Меню</string>
-    <string name="account_info">Аккаунт</string>    <string name="title_without_sender">Без отправителя</string>
+    <string name="account_info">Аккаунт</string>
+    <string name="title_without_sender">Без отправителя</string>
     <string name="title_wasnt_payed">Не оплачен</string>
 
 </resources>
