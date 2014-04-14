@@ -64,7 +64,8 @@ public class EntityManager {
         try {
             merge(db, entity);
         } finally {
-            if (db != null && db.isOpen()) db.close();
+            if (db != null && db.isOpen())
+                db.close();
         }
     }
 

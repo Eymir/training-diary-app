@@ -188,6 +188,7 @@ public class MainActivity extends FragmentActivity {
 
         em.persist(order);
         buyPurchase();
+
     }
 
     public void sendOrderWithoutPurchase(View view) {
@@ -242,83 +243,91 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private void billingInit() {
-        mHelper = new IabHelper(MainActivity.this, Const.BASE64_PUBLIC_KEY);
-        mHelper.enableDebugLogging(Const.IAB_DEBUG_LOGGING);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    Log.e(Const.LOG_TAG, "onIabSetupFinished call is NOT SUCCESS");
-                    Log.e(Const.LOG_TAG, "result:" + result.getMessage());
-                    return;
-                }
-                //Делаем запрос на получения инфрмации о покупке
-//                List additionalSkuList = new ArrayList();
-//                additionalSkuList.add(Const.PURCHASE_NOTE_TAG_1);
-//                mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
-                mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-                        mPurchaseFinishedListener, "");
-            }
-        });
-    }
-
     //Стартует покупку
     private void buyPurchase() {
         billingInit();
 
     }
 
-//    //тут получаем инуфу о покупке
-//    IabHelper.QueryInventoryFinishedListener
-//            mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
-//        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-//            if (result.isFailure()) {
-//                // handle error
-//                return;
-//            }
-//            //делаем запрос на использование покупки
-//            mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
-//        }
-//    };
+    private void billingInit() {
+        mHelper = new IabHelper(MainActivity.this, Const.BASE64_PUBLIC_KEY);
+        mHelper.enableDebugLogging(Const.IAB_DEBUG_LOGGING);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    return;
+                }
+                mHelper.queryInventoryAsync(mGotInventoryListener);
+            }
+        });
+    }
 
-    // срабатывает, когда покупка завершена
+    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+            Log.d(Const.LOG_TAG, "Query inventory finished.");
+
+            if (mHelper == null) return;
+
+            if (result.isFailure()) {
+                Log.d(Const.LOG_TAG, "Failed to query inventory:" + result);
+                return;
+            }
+
+            Log.d(Const.LOG_TAG, "Query inventory was successful.");
+
+            Purchase note_1 = inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1);
+            if (note_1 != null) {
+                Log.d(Const.LOG_TAG, "We have purchase PURCHASE_NOTE_TAG_1. Consuming it");
+                mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
+                return;
+            }
+            else {
+                //Старутем покупку так как ещё не покупали ни одного раза.
+                mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+                        mPurchaseFinishedListener, "");
+
+            }
+            Log.d(Const.LOG_TAG, "Initial inventory query finished");
+        }
+    };
+
+    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
+        public void onConsumeFinished(Purchase purchase, IabResult result) {
+            Log.d(Const.LOG_TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
+
+            if (mHelper == null) return;
+
+            if (result.isSuccess()) {
+                //Стартуем покупку тут после успешного использования
+                mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+                        mPurchaseFinishedListener, "");
+
+            }
+            else {
+                Log.d(Const.LOG_TAG, "Error while consuming: " + result);
+            }
+            Log.d(Const.LOG_TAG, "End consumption flow.");
+        }
+    };
+
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             if (result.isFailure()) {
                 return;
             }
             if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
-                Log.d(Const.LOG_TAG, "Purchase done");
                 order.setStatus(OrderStatus.SENDING);
                 order.setPurchaseDetails(new PurchaseDetails(purchase.getOrderId(), new Date(purchase.getPurchaseTime()), null));
-                em.merge(order);
-                Toast.makeText(context, "Purchase done.", Toast.LENGTH_SHORT);
                 sendOrder(order);
-                //Испльзуем контент..требуется в версии билинга3 для повтороного приобретения контента
-                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+                //em.merge(order);
+                Toast.makeText(context, "Заказ отправлен.", Toast.LENGTH_SHORT).show();
             }
         }
     };
 
     private void sendOrder(Order order) {
-
         Toast.makeText(this, order.toString(), Toast.LENGTH_LONG).show();
-
-
         MailHelper.getInstance().sendMail(order);
     }
 
-    //тут проводим использование покупки
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener =
-            new IabHelper.OnConsumeFinishedListener() {
-                public void onConsumeFinished(Purchase purchase, IabResult result) {
-                    if (result.isSuccess()) {
-                        //если ок то делаем покупку
-//                        mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-//                                mPurchaseFinishedListener, "");
-                    } else {
-
-                    }
-                }
-            };
 }

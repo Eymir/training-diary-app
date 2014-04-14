@@ -34,9 +34,9 @@
             android:layout_height="wrap_content"
             android:text="Отправить открытку"
             android:id="@+id/button"
-            android:background="@color/holo_blue_dark"
-            android:onClick="sendOrderWithPurchase"
-            android:layout_centerInParent="true" />
+            android:background="@drawable/btn_states_blue"
+            android:layout_centerInParent="true"
+            android:onClick="sendOrderWithPurchase" />
 
         <Button
             android:layout_width="match_parent"
