@@ -1,5 +1,7 @@
 package ru.adhocapp.instaprint;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -16,15 +19,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import ru.adhocapp.instaprint.billing.IabHelper;
 import ru.adhocapp.instaprint.billing.IabResult;
@@ -85,6 +87,18 @@ public class MainActivity extends FragmentActivity {
             }
 
         });
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(actionBar.getThemedContext(), R.array.action_list,
+                    android.R.layout.simple_spinner_dropdown_item);
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            actionBar.setListNavigationCallbacks(mSpinnerAdapter, new ActionBar.OnNavigationListener() {
+                @Override
+                public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                    return false;
+                }
+            });
+        }
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -123,13 +137,6 @@ public class MainActivity extends FragmentActivity {
             }
             return title;
         }
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.custom, menu);
-        return super.onCreateOptionsMenu(menu);
 
     }
 
@@ -246,7 +253,6 @@ public class MainActivity extends FragmentActivity {
     //Стартует покупку
     private void buyPurchase() {
         billingInit();
-
     }
 
     private void billingInit() {
@@ -280,8 +286,7 @@ public class MainActivity extends FragmentActivity {
                 Log.d(Const.LOG_TAG, "We have purchase PURCHASE_NOTE_TAG_1. Consuming it");
                 mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
                 return;
-            }
-            else {
+            } else {
                 //Старутем покупку так как ещё не покупали ни одного раза.
                 mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
                         mPurchaseFinishedListener, "");
@@ -302,8 +307,7 @@ public class MainActivity extends FragmentActivity {
                 mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
                         mPurchaseFinishedListener, "");
 
-            }
-            else {
+            } else {
                 Log.d(Const.LOG_TAG, "Error while consuming: " + result);
             }
             Log.d(Const.LOG_TAG, "End consumption flow.");
