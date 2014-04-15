@@ -170,8 +170,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateOrder(SQLiteDatabase db, Order order) {
         ContentValues cv = new ContentValues();
-        cv.put("FULL_ADDRESS", order.getPhotoPath());
-        cv.put("FULL_NAME", order.getText());
         cv.put("TEXT", order.getText());
         if (order.getDate() != null)
             cv.put("DATE", order.getDate().getTime());

@@ -1,15 +1,12 @@
 package ru.adhocapp.instaprint;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -98,6 +95,20 @@ public class MainActivity extends FragmentActivity {
             actionBar.setListNavigationCallbacks(mSpinnerAdapter, new ActionBar.OnNavigationListener() {
                 @Override
                 public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                    switch (itemPosition) {
+//                        case 0:
+//                            Log.d(Const.LOG_TAG, em.findAll(Order.class).toString());
+//                            break;
+//                        case 1:
+//                            Log.d(Const.LOG_TAG, em.findAll(Address.class).toString());
+//                            break;
+//                        case 2:
+//                            Log.d(Const.LOG_TAG, em.findAll(PurchaseDetails.class).toString());
+//                            break;
+//                        case 3:
+//                            sendOrderWithoutPurchase(null);
+//                            break;
+                    }
                     return false;
                 }
             });
@@ -254,8 +265,7 @@ public class MainActivity extends FragmentActivity {
         if (mHelper == null) return;
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-        else {
+        } else {
             Log.d(Const.LOG_TAG, "onActivityResult handled by IABUtil.");
         }
     }
