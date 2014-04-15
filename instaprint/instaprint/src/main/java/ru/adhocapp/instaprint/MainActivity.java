@@ -70,6 +70,9 @@ public class MainActivity extends FragmentActivity {
         pager.setOffscreenPageLimit(4);
         pager.setAdapter(pagerAdapter);
         ResourceAccess.getInstance(this);
+
+        billingInit();
+
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -225,13 +228,13 @@ public class MainActivity extends FragmentActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
             case SELECT_FOTO_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    Uri selectedImageURI = imageReturnedIntent.getData();
+                    Uri selectedImageURI = data.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                     Cursor cursor = getContentResolver().query(
@@ -248,15 +251,23 @@ public class MainActivity extends FragmentActivity {
 
                 }
         }
+        if (mHelper == null) return;
+        if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+        else {
+            Log.d(Const.LOG_TAG, "onActivityResult handled by IABUtil.");
+        }
     }
 
     //Стартует покупку
     private void buyPurchase() {
-        billingInit();
+        mHelper.launchPurchaseFlow(this, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
+                mPurchaseFinishedListener, "");
     }
 
     private void billingInit() {
-        mHelper = new IabHelper(MainActivity.this, Const.BASE64_PUBLIC_KEY);
+        mHelper = new IabHelper(this, Const.BASE64_PUBLIC_KEY);
         mHelper.enableDebugLogging(Const.IAB_DEBUG_LOGGING);
         mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
             public void onIabSetupFinished(IabResult result) {
@@ -287,9 +298,6 @@ public class MainActivity extends FragmentActivity {
                 mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
                 return;
             } else {
-                //Старутем покупку так как ещё не покупали ни одного раза.
-                mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-                        mPurchaseFinishedListener, "");
 
             }
             Log.d(Const.LOG_TAG, "Initial inventory query finished");
@@ -299,14 +307,8 @@ public class MainActivity extends FragmentActivity {
     IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
         public void onConsumeFinished(Purchase purchase, IabResult result) {
             Log.d(Const.LOG_TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-
             if (mHelper == null) return;
-
             if (result.isSuccess()) {
-                //Стартуем покупку тут после успешного использования
-                mHelper.launchPurchaseFlow((Activity) context, Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-                        mPurchaseFinishedListener, "");
-
             } else {
                 Log.d(Const.LOG_TAG, "Error while consuming: " + result);
             }
@@ -316,21 +318,25 @@ public class MainActivity extends FragmentActivity {
 
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+            Log.d(Const.LOG_TAG, "Purchase finished: " + result + ", purchase: " + purchase);
             if (result.isFailure()) {
+                Log.d(Const.LOG_TAG, "Error purchasing: " + result);
                 return;
             }
+            Log.d(Const.LOG_TAG, "Purchase successful.");
             if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
                 order.setStatus(OrderStatus.SENDING);
                 order.setPurchaseDetails(new PurchaseDetails(purchase.getOrderId(), new Date(purchase.getPurchaseTime()), null));
                 sendOrder(order);
-                //em.merge(order);
+                em.merge(order);
+                Log.d(Const.LOG_TAG, "PURCHASE_NOTE_TAG_1 is done!!");
                 Toast.makeText(context, "Заказ отправлен.", Toast.LENGTH_SHORT).show();
             }
         }
     };
 
     private void sendOrder(Order order) {
-        Toast.makeText(this, order.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, order.toString(), Toast.LENGTH_LONG).show();
         MailHelper.getInstance().sendMail(order);
     }
 
