@@ -17,4 +17,5 @@ public class Const {
     public static final String PURCHASE_NOTE_TAG_1 =  "ru.adhocapp.instaprint.purchase.note1";
     public static final int RC_REQUEST = 10001;
 
+
 }

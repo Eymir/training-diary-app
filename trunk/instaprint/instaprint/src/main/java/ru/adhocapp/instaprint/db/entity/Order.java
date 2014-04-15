@@ -104,6 +104,7 @@ public class Order extends Entity {
     }
 
 
+
     public String toMailTitle() {
         String title = "SENDER: ";
         if (addressFrom != null && addressFrom.getFullName() != null) {

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="action_list">
-        <item>Создать открытку</item>
+        <item>Открытка</item>
         <item>Заказы</item>
-        <item>Контакты</item>
+        <item>Адреса</item>
+        <item>Акаунт</item>
     </string-array>
 
 </resources>
