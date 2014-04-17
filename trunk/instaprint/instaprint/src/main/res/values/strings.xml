@@ -14,5 +14,22 @@
     <string name="account_info">Аккаунт</string>
     <string name="title_without_sender">Без отправителя</string>
     <string name="title_wasnt_payed">Не оплачен</string>
+    <string name="address_from_no_named">Без отправителя</string>
+    <string name="press_to_choose">Нажмите, чтобы выбрать</string>
+    <string name="address_from">От кого</string>
+    <string name="address_to">Кому</string>
+    <string name="full_name">ФИО</string>
+    <string name="address">Адрес</string>
+    <string name="zipcode">Индекс</string>
+    <string name="address_to_no_named">Без получателя</string>
+    <string name="create_button">Создать</string>
+    <string name="create_address_dialog_title">Добавить новый адрес</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="create_account">Добавить</string>
+    <string name="edit_address_dialog_title">Редактирование адреса</string>
+    <string name="remove_address">Удаление адреса</string>
+    <string name="remove_address_message">Вы действительно хотите удалить этот адрес?</string>
+    <string name="edit_button">Редактировать</string>
+    <string name="remove_button">Удалить</string>
 
 </resources>

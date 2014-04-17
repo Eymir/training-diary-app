@@ -49,7 +49,7 @@ public class EntityManager {
     }
 
     public void remove(Entity entity) {
-        if (entity.getId() != null)
+        if (entity.getId() == null)
             return;
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
@@ -138,6 +138,7 @@ public class EntityManager {
 
     private void persist(SQLiteDatabase db, Entity entity) {
         if (entity == null) return;
+        if (entity.getId() != null) return;
         if (entity instanceof Address) {
             persist(db, (Address) entity);
         }
@@ -146,25 +147,25 @@ public class EntityManager {
         }
         if (entity instanceof Order) {
             Order order = (Order) entity;
-            persist(db, order.getPurchaseDetails());
-            persist(db, order.getAddressFrom());
-            persist(db, order.getAddressTo());
+            persist(db, (Entity) order.getPurchaseDetails());
+            persist(db, (Entity) order.getAddressFrom());
+            persist(db, (Entity) order.getAddressTo());
             persist(db, order);
         }
     }
 
     private void persist(SQLiteDatabase db, PurchaseDetails purchaseDetails) {
-        if (purchaseDetails == null)return;
+        if (purchaseDetails == null) return;
         purchaseDetails.setId(dbHelper.insertPurchaseDetails(db, purchaseDetails));
     }
 
     private void persist(SQLiteDatabase db, Order order) {
-        if (order == null)return;
+        if (order == null) return;
         order.setId(dbHelper.insertOrder(db, order));
     }
 
     private void persist(SQLiteDatabase db, Address address) {
-        if (address == null)return;
+        if (address == null) return;
         address.setId(dbHelper.insertAddress(db, address));
     }
 }

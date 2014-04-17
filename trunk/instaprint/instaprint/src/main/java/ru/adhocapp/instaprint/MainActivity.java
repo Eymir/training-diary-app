@@ -21,9 +21,12 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import ru.adhocapp.instaprint.billing.IabHelper;
 import ru.adhocapp.instaprint.billing.IabResult;
@@ -35,6 +38,8 @@ import ru.adhocapp.instaprint.db.entity.EntityManager;
 import ru.adhocapp.instaprint.db.entity.Order;
 import ru.adhocapp.instaprint.db.entity.OrderStatus;
 import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
+import ru.adhocapp.instaprint.dialog.CreateEditAddressFragmentDialog;
+import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
 import ru.adhocapp.instaprint.mail.MailHelper;
 import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.PageFragment;
@@ -44,6 +49,7 @@ public class MainActivity extends FragmentActivity {
 
     private static final int PAGE_COUNT = 4;
     private static final int SELECT_FOTO_REQUEST_CODE = 199;
+    private static final int SELECT_ADDRESS = 8080;
     private Bitmap selectedImage;
     private String selectedImagefilePath = "";
     private Context context;
@@ -54,6 +60,10 @@ public class MainActivity extends FragmentActivity {
 
     private IabHelper mHelper;
     private EntityManager em;
+    private View currentContactView;
+
+    private Address fromAddress;
+    private Address toAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,15 +125,53 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+    public interface AddressClickListener {
+        public void click(View v);
+    }
 
+    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         public MyFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.newInstance(position);
+            return PageFragment.newInstance(position, new AddressClickListener() {
+
+                @Override
+                public void click(final View v) {
+                    List all = em.findAll(Address.class);
+                    if (all == null || all.isEmpty()) {
+                        CreateEditAddressFragmentDialog createAddressFragmentDialog = CreateEditAddressFragmentDialog.newInstance(new MapPositiveNegativeClickListener() {
+                            @Override
+                            public void positiveClick(Map<String, Object> map) {
+                                Address address = (Address) map.get(Const.ADDRESS);
+                                if (v.getId() == R.id.address_from) {
+                                    fromAddress = address;
+                                } else if (v.getId() == R.id.address_to) {
+                                    toAddress = address;
+                                }
+                                TextView title = (TextView) v.findViewById(R.id.contact_title);
+                                title.setText(address.getFullName());
+                                TextView details = (TextView) v.findViewById(R.id.contact_details);
+                                details.setText(address.getFullAddress());
+                                em.persist(address);
+                            }
+
+                            @Override
+                            public void negativeClick() {
+
+                            }
+                        });
+                        createAddressFragmentDialog.show(getFragmentManager(), "");
+                    } else {
+                        currentContactView = v;
+                        Intent intent;
+                        intent = new Intent(MainActivity.this, AddressActivity.class);
+                        startActivityForResult(intent, SELECT_ADDRESS);
+                    }
+                }
+            });
         }
 
         @Override
@@ -188,25 +236,8 @@ public class MainActivity extends FragmentActivity {
         //TODO: сделать валидацию
         EditText etUserText = (EditText) findViewById(R.id.et_user_text);
         String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
-
-        EditText etFromFio = (EditText) findViewById(R.id.et_from_fio);
-        EditText etFromAddress = (EditText) findViewById(R.id.et_from_address);
-        EditText etFromZip = (EditText) findViewById(R.id.et_from_zip);
-        String etFromFioStr = (etFromFio.getText() != null) ? etFromFio.getText().toString() : null;
-        String etFromAddressStr = (etFromAddress.getText() != null) ? etFromAddress.getText().toString() : null;
-        String etFromZipStr = (etFromZip.getText() != null) ? etFromZip.getText().toString() : null;
-        Address fromAddress = new Address(etFromAddressStr, etFromZipStr, etFromFioStr);
-
-        EditText etToFio = (EditText) findViewById(R.id.et_to_fio);
-        EditText etToAddress = (EditText) findViewById(R.id.et_to_address);
-        EditText etToZip = (EditText) findViewById(R.id.et_to_zip);
-        String etToFioStr = (etToFio.getText() != null) ? etToFio.getText().toString() : null;
-        String etToAddressStr = (etToAddress.getText() != null) ? etToAddress.getText().toString() : null;
-        String etToZipStr = (etToZip.getText() != null) ? etToZip.getText().toString() : null;
-        Address toAddress = new Address(etToAddressStr, etToZipStr, etToFioStr);
-
         order = new Order(fromAddress, toAddress, etUserTextStr, selectedImagefilePath, new Date(), null, OrderStatus.PAYING);
-
+        Log.d(Const.LOG_TAG, "sendOrderWithPurchase: " + order);
         em.persist(order);
         buyPurchase();
 
@@ -217,24 +248,24 @@ public class MainActivity extends FragmentActivity {
         EditText etUserText = (EditText) findViewById(R.id.et_user_text);
         String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
 
-        EditText etFromFio = (EditText) findViewById(R.id.et_from_fio);
-        EditText etFromAddress = (EditText) findViewById(R.id.et_from_address);
-        EditText etFromZip = (EditText) findViewById(R.id.et_from_zip);
-        String etFromFioStr = (etFromFio.getText() != null) ? etFromFio.getText().toString() : null;
-        String etFromAddressStr = (etFromAddress.getText() != null) ? etFromAddress.getText().toString() : null;
-        String etFromZipStr = (etFromZip.getText() != null) ? etFromZip.getText().toString() : null;
-        Address fromAddress = new Address(etFromAddressStr, etFromZipStr, etFromFioStr);
-
-        EditText etToFio = (EditText) findViewById(R.id.et_to_fio);
-        EditText etToAddress = (EditText) findViewById(R.id.et_to_address);
-        EditText etToZip = (EditText) findViewById(R.id.et_to_zip);
-        String etToFioStr = (etToFio.getText() != null) ? etToFio.getText().toString() : null;
-        String etToAddressStr = (etToAddress.getText() != null) ? etToAddress.getText().toString() : null;
-        String etToZipStr = (etToZip.getText() != null) ? etToZip.getText().toString() : null;
-        Address toAddress = new Address(etToAddressStr, etToZipStr, etToFioStr);
-
-        order = new Order(fromAddress, toAddress, etUserTextStr, selectedImagefilePath, new Date(), null, OrderStatus.PAYING);
-        MailHelper.getInstance().sendMail(order);
+//        EditText etFromFio = (EditText) findViewById(R.id.et_from_fio);
+//        EditText etFromAddress = (EditText) findViewById(R.id.et_from_address);
+//        EditText etFromZip = (EditText) findViewById(R.id.et_from_zip);
+//        String etFromFioStr = (etFromFio.getText() != null) ? etFromFio.getText().toString() : null;
+//        String etFromAddressStr = (etFromAddress.getText() != null) ? etFromAddress.getText().toString() : null;
+//        String etFromZipStr = (etFromZip.getText() != null) ? etFromZip.getText().toString() : null;
+//        Address fromAddress = new Address(etFromAddressStr, etFromZipStr, etFromFioStr);
+//
+//        EditText etToFio = (EditText) findViewById(R.id.et_to_fio);
+//        EditText etToAddress = (EditText) findViewById(R.id.et_to_address);
+//        EditText etToZip = (EditText) findViewById(R.id.et_to_zip);
+//        String etToFioStr = (etToFio.getText() != null) ? etToFio.getText().toString() : null;
+//        String etToAddressStr = (etToAddress.getText() != null) ? etToAddress.getText().toString() : null;
+//        String etToZipStr = (etToZip.getText() != null) ? etToZip.getText().toString() : null;
+//        Address toAddress = new Address(etToAddressStr, etToZipStr, etToFioStr);
+//
+//        order = new Order(fromAddress, toAddress, etUserTextStr, selectedImagefilePath, new Date(), null, OrderStatus.PAYING);
+//        MailHelper.getInstance().sendMail(order);
 
     }
 
@@ -259,8 +290,25 @@ public class MainActivity extends FragmentActivity {
                     selectedImage = BitmapFactory.decodeFile(selectedImagefilePath);
                     ImageView imageView = (ImageView) findViewById(R.id.ivUserFoto);
                     imageView.setImageBitmap(selectedImage);
-
+                    break;
                 }
+            case SELECT_ADDRESS: {
+                if (resultCode == RESULT_OK) {
+                    Address address = (Address) data.getSerializableExtra(Const.ADDRESS);
+                    if (resultCode == RESULT_OK) {
+                        if (currentContactView.getId() == R.id.address_from) {
+                            fromAddress = address;
+                        } else if (currentContactView.getId() == R.id.address_to) {
+                            toAddress = address;
+                        }
+                        TextView title = (TextView) currentContactView.findViewById(R.id.contact_title);
+                        title.setText(address.getFullName());
+                        TextView details = (TextView) currentContactView.findViewById(R.id.contact_details);
+                        details.setText(address.getFullAddress());
+                    }
+                }
+                break;
+            }
         }
         if (mHelper == null) return;
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
