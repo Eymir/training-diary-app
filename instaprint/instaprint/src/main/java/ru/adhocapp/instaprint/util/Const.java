@@ -2,6 +2,8 @@ package ru.adhocapp.instaprint.util;
 
 import android.support.v7.appcompat.R;
 
+import java.util.Map;
+
 /**
  * Created by root on 12.04.14.
  */
@@ -18,4 +20,5 @@ public class Const {
     public static final int RC_REQUEST = 10001;
 
 
+    public static final String ADDRESS = "ADDRESS";
 }

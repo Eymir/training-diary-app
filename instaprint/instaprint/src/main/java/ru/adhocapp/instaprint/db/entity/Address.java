@@ -3,7 +3,7 @@ package ru.adhocapp.instaprint.db.entity;
 /**
  * Created by Lenovo on 12.04.2014.
  */
-public class Address extends Entity {
+public class Address extends Entity  {
     private String fullAddress;
     private String zipCode;
     private String fullName;
