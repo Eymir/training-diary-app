@@ -21,4 +21,5 @@ public class Const {
 
 
     public static final String ADDRESS = "ADDRESS";
+    public static final String ADDRESS_TYPE = "ADDRESS_TYPE";
 }

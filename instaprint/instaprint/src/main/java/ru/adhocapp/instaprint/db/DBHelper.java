@@ -38,6 +38,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return mInstance;
     }
 
+    public static DBHelper getInstance() {
+        return getInstance(null);
+    }
+
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
         this.CONTEXT = context;

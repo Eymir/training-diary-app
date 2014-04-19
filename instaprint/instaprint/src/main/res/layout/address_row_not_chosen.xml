@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:paddingRight="10dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/contact" />
+        android:src="@drawable/address_avatar_icon" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
             android:text="@string/address_from_no_named"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/contact_title"
-            android:textColor="@color/holo_dark_font"/>
+            android:textColor="@color/holo_dark_font" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,9 +34,31 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/press_to_choose"
             android:id="@+id/contact_details"
-            android:textColor="@color/holo_dark_font"/>
+            android:textColor="@color/holo_dark_font" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/action_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_weight="0"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="2px"
+            android:layout_height="fill_parent"
+            android:background="@android:color/darker_gray" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/remove_address"
+            android:src="@drawable/content_remove_icon"
+            android:layout_weight="0"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
 
 
 </LinearLayout>

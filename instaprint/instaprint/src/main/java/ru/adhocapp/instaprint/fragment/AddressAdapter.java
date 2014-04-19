@@ -1,4 +1,4 @@
-package ru.adhocapp.instaprint.util;
+package ru.adhocapp.instaprint.fragment;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -9,18 +9,19 @@
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:allowBackup="true"
         android:debuggable="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
         <activity
+            android:uiOptions="splitActionBarWhenNarrow"
             android:name="ru.adhocapp.instaprint.MainActivity"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize">
@@ -29,12 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:uiOptions="splitActionBarWhenNarrow"
+        <activity
+            android:uiOptions="splitActionBarWhenNarrow"
             android:name="ru.adhocapp.instaprint.AddressActivity"
             android:label="@string/app_name"
 
-            android:configChanges="orientation|screenSize">
-        </activity>
+            android:configChanges="orientation|screenSize"></activity>
 
     </application>
 

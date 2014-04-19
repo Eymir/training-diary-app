@@ -2,7 +2,7 @@
 
     <item
         android:id="@+id/add_contact_action"
-        android:icon="@drawable/add_contact"
+        android:icon="@drawable/add_address_icon"
         android:title="@string/create_account"
         android:showAsAction="ifRoom"/>
 

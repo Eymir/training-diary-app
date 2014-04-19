@@ -21,6 +21,10 @@ public class ResourceAccess {
         return instance;
     }
 
+    public static ResourceAccess getInstance() {
+        return getInstance(null);
+    }
+
     public Resources getResources() {
         return resources;
     }
