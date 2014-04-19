@@ -39,6 +39,10 @@ public class Order extends Entity {
         this.status = status;
     }
 
+    public Order(OrderStatus status) {
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }
@@ -104,7 +108,6 @@ public class Order extends Entity {
     }
 
 
-
     public String toMailTitle() {
         String title = "SENDER: ";
         if (addressFrom != null && addressFrom.getFullName() != null) {
@@ -112,9 +115,10 @@ public class Order extends Entity {
         } else {
             title += ResourceAccess.getInstance(null).getResources().getString(R.string.title_without_sender);
         }
-        if (purchaseDetails != null){
-            title += " PAYMENT: " + purchaseDetails.getOrderNumber();} else {
-            title += " PAYMENT: " +  ResourceAccess.getInstance(null).getResources().getString(R.string.title_wasnt_payed);
+        if (purchaseDetails != null) {
+            title += " PAYMENT: " + purchaseDetails.getOrderNumber();
+        } else {
+            title += " PAYMENT: " + ResourceAccess.getInstance(null).getResources().getString(R.string.title_wasnt_payed);
         }
         return title;
     }

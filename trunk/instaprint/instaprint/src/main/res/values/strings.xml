@@ -31,5 +31,6 @@
     <string name="remove_address_message">Вы действительно хотите удалить этот адрес?</string>
     <string name="edit_button">Редактировать</string>
     <string name="remove_button">Удалить</string>
+    <string name="purchase_not_available">Ошибка: не удается запустить систему оплаты</string>
 
 </resources>

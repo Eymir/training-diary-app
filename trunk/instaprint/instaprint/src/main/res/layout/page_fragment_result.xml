@@ -11,12 +11,12 @@
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:gravity="center"
-        android:onClick="clickPreviousResult">
+        android:id="@+id/prevPage"
+        android:onClick="myClickMethod">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView"
             android:src="@drawable/ic_action_previous_item" />
     </LinearLayout>
 
@@ -33,20 +33,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Отправить открытку"
-            android:id="@+id/button"
+            android:id="@+id/send_postcard_with_purchase"
             android:background="@drawable/btn_states_blue"
             android:layout_centerInParent="true"
-            android:onClick="sendOrderWithPurchase" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Отправить за бабки"
-            android:id="@+id/button2"
-            android:background="@color/holo_blue_dark"
-            android:layout_marginTop="10dp"
-            android:onClick="sendOrderWithoutPurchase"
-            android:visibility="gone" />
+            android:onClick="myClickMethod" />
 
     </LinearLayout>
 </RelativeLayout>
