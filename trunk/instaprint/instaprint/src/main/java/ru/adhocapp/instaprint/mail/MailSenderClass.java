@@ -67,6 +67,7 @@ public class MailSenderClass extends javax.mail.Authenticator {
                 attachBodyPart.setDataHandler(new DataHandler(source));
                 attachBodyPart.setFileName(filename);
 
+
                 _multipart.addBodyPart(attachBodyPart);
             }
 
