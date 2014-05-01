@@ -3,11 +3,15 @@ package ru.adhocapp.instaprint.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,11 +20,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +48,10 @@ import ru.adhocapp.instaprint.db.entity.OrderStatus;
 import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
 import ru.adhocapp.instaprint.dialog.CreateEditAddressFragmentDialog;
 import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
+import ru.adhocapp.instaprint.exception.SaveImageException;
 import ru.adhocapp.instaprint.mail.MailHelper;
 import ru.adhocapp.instaprint.util.Const;
+import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by malugin on 09.04.14.
@@ -52,12 +63,13 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
 
     private static final int SELECT_FOTO_REQUEST_CODE = 199;
     private static final int SELECT_ADDRESS = 8080;
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("dd-MM-yyyy");
 
     private Order order;
 
     private IabHelper mHelper;
 
-    private EntityManager em = DBHelper.getInstance().EM;
+    private EntityManager em;
 
     private static final Field sChildFragmentManagerField;
 
@@ -101,6 +113,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         FragmentPagerAdapter pagerAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
         pager.setOffscreenPageLimit(4);
         pager.setAdapter(pagerAdapter);
+        em = DBHelper.getInstance(getActivity()).EM;
         billingInit();
         return view;
     }
@@ -122,9 +135,13 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String selectedImagefilePath = cursor.getString(columnIndex);
                     cursor.close();
-
+                    ImageView labelView = (ImageView) getActivity().findViewById(R.id.imageLabel);
+                    labelView.setVisibility(View.GONE);
                     Bitmap selectedImage = BitmapFactory.decodeFile(selectedImagefilePath);
                     ImageView imageView = (ImageView) getActivity().findViewById(R.id.ivUserFoto);
+
+                    FrameLayout borderFrame = (FrameLayout) getActivity().findViewById(R.id.borderFrame);
+                    borderFrame.setVisibility(View.VISIBLE);
                     imageView.setImageBitmap(selectedImage);
                     order.setPhotoPath(selectedImagefilePath);
                     break;
@@ -253,16 +270,96 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        FrameLayout borderFrame = (FrameLayout) getActivity().findViewById(R.id.borderFrame);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            borderFrame.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+            borderFrame.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        } else {
+            borderFrame.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            borderFrame.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+    }
+
+
     public void sendOrderWithPurchase() {
         //TODO: сделать валидацию
-        EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
-        String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
-        order.setText(etUserTextStr);
-        order.setDate(new Date());
-        order.setStatus(OrderStatus.PAYING);
-        Log.d(Const.LOG_TAG, "sendOrderWithPurchase: " + order);
-        em.persist(order);
-        buyPurchase();
+        try {
+            EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
+            String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
+            PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
+            Bitmap selectedImage = BitmapFactory.decodeFile(order.getPhotoPath());
+            RectF rect = getCropRect(imageView);
+            Log.d(Const.LOG_TAG, "rect: " + rect);
+            Log.d(Const.LOG_TAG, "selectedImage, w: " + selectedImage.getWidth() + " h:" + selectedImage.getHeight());
+            Bitmap result = Bitmap.createBitmap(selectedImage, (int) rect.left, (int) rect.top,
+                    (int) rect.width(), (int) rect.height());
+            String newPath = saveBitmapToSD(result);
+            order.setPhotoPath(newPath);
+            order.setText(etUserTextStr);
+            order.setDate(new Date());
+            order.setStatus(OrderStatus.PAYING);
+            Log.d(Const.LOG_TAG, "sendOrderWithPurchase: " + order);
+            em.persist(order);
+            buyPurchase();
+        } catch (SaveImageException e) {
+            Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT);
+        } catch (Throwable e) {
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
+            Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT);
+        }
+    }
+
+    private RectF getCropRect(PhotoView imageView) {
+        RectF rect = imageView.getDisplayRect();
+        float viewScale = imageView.getScale();
+
+        float dw = rect.width() / viewScale;
+        float dh = rect.height() / viewScale;
+        Drawable drawable = imageView.getDrawable();
+        int bitmapWidth = drawable.getIntrinsicWidth();
+        int bitmapHeight = drawable.getIntrinsicHeight();
+
+        float w_ratio = bitmapWidth / dw;
+        float h_ratio = bitmapHeight / dh;
+        int b_off_x = (int) (w_ratio * (Math.abs(rect.left) / viewScale));
+        int b_off_y = (int) (h_ratio * (Math.abs(rect.top) / viewScale));
+
+        int dbw = (int) (imageView.getWidth() * w_ratio);
+        int dbh = (int) (imageView.getHeight() * h_ratio);
+
+        RectF result = new RectF();
+        Log.d(Const.LOG_TAG, "viewScale: " + viewScale);
+
+        result.left = b_off_x;
+        result.top = b_off_y;
+
+        result.right = b_off_x + dbw / viewScale;
+        result.bottom = b_off_y + dbh / viewScale;
+
+        return result;
+    }
+
+    private String saveBitmapToSD(Bitmap result) throws SaveImageException {
+        try {
+            String sd_path = Environment.getExternalStorageDirectory().toString();
+            OutputStream fOut = null;
+            File folder = new File(sd_path + "/" + Const.SAVE_FOLDER);
+            folder.mkdirs();
+            File image_file = new File(folder.toString(), Const.IMAGE_FILE_NAME + "_" + SDF.format(new Date()) + "_" + folder.list().length + ".png");
+            try {
+                fOut = new FileOutputStream(image_file);
+                result.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            } finally {
+                fOut.flush();
+                fOut.close();
+            }
+            return image_file.toString();
+        } catch (Throwable e) {
+            Log.e(Const.LOG_TAG, e.getMessage(), e);
+            throw new SaveImageException(e);
+        }
     }
 
     //Стартует покупку

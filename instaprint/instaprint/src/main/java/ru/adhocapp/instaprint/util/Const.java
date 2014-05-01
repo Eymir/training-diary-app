@@ -22,4 +22,8 @@ public class Const {
 
     public static final String ADDRESS = "ADDRESS";
     public static final String ADDRESS_TYPE = "ADDRESS_TYPE";
+    public static final String SAVE_FOLDER = "instaprint";
+
+    public static final String IMAGE_FILE_NAME = "IMAGE";
+
 }

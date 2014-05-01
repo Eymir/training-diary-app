@@ -58,7 +58,7 @@ public class CreateEditAddressFragmentDialog extends DialogFragment {
             }
             case EDIT: {
                 title = R.string.edit_address_dialog_title;
-                positive_buton = R.string.edit_button;
+                positive_buton = R.string.save_button;
                 EditText etToFio = (EditText) linearLayout.findViewById(R.id.full_name);
                 EditText etToAddress = (EditText) linearLayout.findViewById(R.id.address);
                 EditText etToZip = (EditText) linearLayout.findViewById(R.id.zipcode);
