@@ -8,4 +8,5 @@
     <color name="old_lace">#FDF5E6</color>
     <color name="holo_dark_font">#313131</color>
     <color name="white">#FFFFFF</color>
+    <color name="rotate_panel_background">#DCDCDC</color>
 </resources>

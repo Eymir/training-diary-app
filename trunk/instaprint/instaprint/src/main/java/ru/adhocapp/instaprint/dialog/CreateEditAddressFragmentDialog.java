@@ -2,9 +2,9 @@ package ru.adhocapp.instaprint.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
