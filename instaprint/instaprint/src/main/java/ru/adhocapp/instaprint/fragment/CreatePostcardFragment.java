@@ -1,19 +1,20 @@
 package ru.adhocapp.instaprint.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,6 +73,9 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     private EntityManager em;
 
     private static final Field sChildFragmentManagerField;
+
+    private Bitmap mSelectedImage;
+    private ImageView mIvUserPhoto;
 
     //Костыль для Pager BEGIN
     static {
@@ -133,17 +137,18 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String selectedImagefilePath = cursor.getString(columnIndex);
+                    String selectedImageFilePath = cursor.getString(columnIndex);
                     cursor.close();
                     ImageView labelView = (ImageView) getActivity().findViewById(R.id.imageLabel);
                     labelView.setVisibility(View.GONE);
-                    Bitmap selectedImage = BitmapFactory.decodeFile(selectedImagefilePath);
-                    ImageView imageView = (ImageView) getActivity().findViewById(R.id.ivUserFoto);
+                    mSelectedImage = BitmapFactory.decodeFile(selectedImageFilePath);
+                    mIvUserPhoto = (ImageView) getActivity().findViewById(R.id.ivUserFoto);
 
                     FrameLayout borderFrame = (FrameLayout) getActivity().findViewById(R.id.borderFrame);
                     borderFrame.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(selectedImage);
-                    order.setPhotoPath(selectedImagefilePath);
+                    mIvUserPhoto.setImageBitmap(mSelectedImage);
+                    getActivity().findViewById(R.id.ll_rotate_panel).setVisibility(View.VISIBLE);
+                    order.setPhotoPath(selectedImageFilePath);
                     break;
                 }
             case SELECT_ADDRESS: {
@@ -267,6 +272,24 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 sendOrderWithPurchase();
                 break;
             }
+            case R.id.rotate_left: {
+                if (mSelectedImage != null) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(270);
+                    mSelectedImage = Bitmap.createBitmap(mSelectedImage, 0, 0, mSelectedImage.getWidth(), mSelectedImage.getHeight(), matrix, true);
+                    mIvUserPhoto.setImageBitmap(mSelectedImage);
+                }
+                break;
+            }
+            case R.id.rotate_right: {
+                if (mSelectedImage != null) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    mSelectedImage = Bitmap.createBitmap(mSelectedImage, 0, 0, mSelectedImage.getWidth(), mSelectedImage.getHeight(), matrix, true);
+                    mIvUserPhoto.setImageBitmap(mSelectedImage);
+                }
+                break;
+            }
         }
     }
 
@@ -289,12 +312,12 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
             String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
             PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
-            Bitmap selectedImage = BitmapFactory.decodeFile(order.getPhotoPath());
             RectF rect = getCropRect(imageView);
             Log.d(Const.LOG_TAG, "rect: " + rect);
-            Log.d(Const.LOG_TAG, "selectedImage, w: " + selectedImage.getWidth() + " h:" + selectedImage.getHeight());
-            Bitmap result = Bitmap.createBitmap(selectedImage, (int) rect.left, (int) rect.top,
+            Log.d(Const.LOG_TAG, "mSelectedImage, w: " + mSelectedImage.getWidth() + " h:" + mSelectedImage.getHeight());
+            Bitmap result = Bitmap.createBitmap(mSelectedImage, (int) rect.left, (int) rect.top,
                     (int) rect.width(), (int) rect.height());
+            Log.i("CRF", "Ratio = " + rect.width() / rect.height());
             String newPath = saveBitmapToSD(result);
             order.setPhotoPath(newPath);
             order.setText(etUserTextStr);

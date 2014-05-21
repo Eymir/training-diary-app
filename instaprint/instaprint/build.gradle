@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.1'
+    buildToolsVersion '19.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -16,10 +16,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+	
+	lintOptions {
+        checkReleaseBuilds false
+		abortOnError false
+    }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:+'
+    compile ('com.android.support:appcompat-v7:+')
+    compile ('com.android.support:support-v4:+')
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     compile files('libraries/activation.jar')
     compile files('libraries/additionnal.jar')
