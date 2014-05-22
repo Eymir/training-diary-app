@@ -39,7 +39,7 @@ public class AddressAdapter extends ArrayAdapter {
         TextView title = (TextView) v.findViewById(R.id.contact_title);
         title.setText(item.getFullName());
         TextView details = (TextView) v.findViewById(R.id.contact_details);
-        details.setText(item.getFullAddress());
+        details.setText(item.getStreetAddress());
         ImageView remove_address = (ImageView) v.findViewById(R.id.remove_address);
         ImageView edit_address = (ImageView) v.findViewById(R.id.edit_address);
         remove_address.setOnClickListener(new View.OnClickListener() {

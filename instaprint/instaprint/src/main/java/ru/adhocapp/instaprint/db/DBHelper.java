@@ -86,7 +86,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private void createAddressTable(SQLiteDatabase db) {
         db.execSQL("create table ADDRESS ("
                 + "ID integer primary key autoincrement,"
-                + "FULL_ADDRESS text,"
+                + "STREET_ADDRESS text,"
+                + "CITY_NAME text,"
+                + "COUNTRY_NAME text,"
                 + "FULL_NAME text,"
                 + "ZIPCODE text" + ");");
         Log.d(Const.LOG_TAG, "--- onCreate table ADDRESS  ---");
@@ -104,7 +106,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public long insertAddress(SQLiteDatabase db, Address address) {
         ContentValues cv = new ContentValues();
-        cv.put("FULL_ADDRESS", address.getFullAddress());
+        cv.put("STREET_ADDRESS", address.getStreetAddress());
+        cv.put("CITY_NAME", address.getCityName());
+        cv.put("COUNTRY_NAME", address.getCountryName());
         cv.put("FULL_NAME", address.getFullName());
         cv.put("ZIPCODE", address.getZipCode());
         long id = db.insert(ADDRESS_TABLE, null, cv);
@@ -154,7 +158,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateAddress(SQLiteDatabase db, Address address) {
         ContentValues cv = new ContentValues();
-        cv.put("FULL_ADDRESS", address.getFullAddress());
+        cv.put("STREET_ADDRESS", address.getStreetAddress());
+        cv.put("CITY_NAME", address.getCityName());
+        cv.put("COUNTRY_NAME", address.getCountryName());
         cv.put("FULL_NAME", address.getFullName());
         cv.put("ZIPCODE", address.getZipCode());
         db.update(ADDRESS_TABLE, cv, "id = ? ",
@@ -197,10 +203,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 .rawQuery(sqlQuery, new String[]{String.valueOf(primaryKey)});
         if (c.moveToFirst()) {
             Long id = c.getLong(c.getColumnIndex("ID"));
-            String full_address = c.getString(c.getColumnIndex("FULL_ADDRESS"));
+            String street_address = c.getString(c.getColumnIndex("STREET_ADDRESS"));
+            String country_name = c.getString(c.getColumnIndex("COUNTRY_NAME"));
+            String city_name = c.getString(c.getColumnIndex("CITY_NAME"));
             String full_name = c.getString(c.getColumnIndex("FULL_NAME"));
             String index = c.getString(c.getColumnIndex("ZIPCODE"));
-            return new Address(id, full_address, index, full_name);
+            return new Address(id, street_address,city_name,country_name, index, full_name);
         }
         if (c != null) c.close();
         return null;
@@ -249,10 +257,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 .rawQuery(sqlQuery, null);
         while (c.moveToNext()) {
             Long id = c.getLong(c.getColumnIndex("ID"));
-            String full_address = c.getString(c.getColumnIndex("FULL_ADDRESS"));
+            String street_address = c.getString(c.getColumnIndex("STREET_ADDRESS"));
+            String country_name = c.getString(c.getColumnIndex("COUNTRY_NAME"));
+            String city_name = c.getString(c.getColumnIndex("CITY_NAME"));
             String full_name = c.getString(c.getColumnIndex("FULL_NAME"));
             String index = c.getString(c.getColumnIndex("ZIPCODE"));
-            list.add(new Address(id, full_address, index, full_name));
+            list.add(new Address(id, street_address,city_name,country_name, index, full_name));
         }
         if (c != null) c.close();
         return list;
