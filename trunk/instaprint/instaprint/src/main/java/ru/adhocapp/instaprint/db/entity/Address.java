@@ -3,20 +3,26 @@ package ru.adhocapp.instaprint.db.entity;
 /**
  * Created by Lenovo on 12.04.2014.
  */
-public class Address extends Entity  {
-    private String fullAddress;
+public class Address extends Entity {
+    private String streetAddress;
+    private String cityName;
+    private String countryName;
     private String zipCode;
     private String fullName;
 
-    public Address(Long id, String fullAddress, String zipCode, String fullName) {
-        this.id = id;
-        this.fullAddress = fullAddress;
+    public Address(String streetAddress, String cityName, String countryName, String zipCode, String fullName) {
+        this.streetAddress = streetAddress;
+        this.cityName = cityName;
+        this.countryName = countryName;
         this.zipCode = zipCode;
         this.fullName = fullName;
     }
 
-    public Address(String fullAddress, String zipCode, String fullName) {
-        this.fullAddress = fullAddress;
+    public Address(Long id, String streetAddress, String cityName, String countryName, String zipCode, String fullName) {
+        this.id = id;
+        this.streetAddress = streetAddress;
+        this.cityName = cityName;
+        this.countryName = countryName;
         this.zipCode = zipCode;
         this.fullName = fullName;
     }
@@ -26,12 +32,12 @@ public class Address extends Entity  {
     }
 
 
-    public String getFullAddress() {
-        return fullAddress;
+    public String getStreetAddress() {
+        return streetAddress;
     }
 
-    public void setFullAddress(String fullAddress) {
-        this.fullAddress = fullAddress;
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
     }
 
     public String getZipCode() {
@@ -50,11 +56,28 @@ public class Address extends Entity  {
         this.fullName = fullName;
     }
 
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
     @Override
     public String toString() {
         return "Address{" +
-                "id=" + id +
-                ", fullAddress='" + fullAddress + '\'' +
+                "streetAddress='" + streetAddress + '\'' +
+                ", cityName='" + cityName + '\'' +
+                ", countryName='" + countryName + '\'' +
                 ", zipCode='" + zipCode + '\'' +
                 ", fullName='" + fullName + '\'' +
                 '}';

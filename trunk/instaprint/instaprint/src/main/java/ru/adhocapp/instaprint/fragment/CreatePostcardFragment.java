@@ -182,7 +182,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         TextView title = (TextView) addressView.findViewById(R.id.contact_title);
         title.setText(address.getFullName());
         TextView details = (TextView) addressView.findViewById(R.id.contact_details);
-        details.setText(address.getFullAddress());
+        details.setText(address.getStreetAddress());
         View action_area = addressView.findViewById(R.id.action_area);
         action_area.setVisibility(View.VISIBLE);
         ImageView remove_address = (ImageView) action_area.findViewById(R.id.remove_address);

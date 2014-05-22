@@ -62,9 +62,13 @@ public class CreateEditAddressFragmentDialog extends DialogFragment {
                 EditText etToFio = (EditText) linearLayout.findViewById(R.id.full_name);
                 EditText etToAddress = (EditText) linearLayout.findViewById(R.id.address);
                 EditText etToZip = (EditText) linearLayout.findViewById(R.id.zipcode);
+                EditText etToCity = (EditText) linearLayout.findViewById(R.id.city);
+                EditText etToCountry = (EditText) linearLayout.findViewById(R.id.country);
                 etToFio.setText(address.getFullName());
-                etToAddress.setText(address.getFullAddress());
+                etToAddress.setText(address.getStreetAddress());
                 etToZip.setText(address.getZipCode());
+                etToCity.setText(address.getCityName());
+                etToCountry.setText(address.getCountryName());
             }
         }
 
@@ -80,15 +84,22 @@ public class CreateEditAddressFragmentDialog extends DialogFragment {
                 EditText etToFio = (EditText) linearLayout.findViewById(R.id.full_name);
                 EditText etToAddress = (EditText) linearLayout.findViewById(R.id.address);
                 EditText etToZip = (EditText) linearLayout.findViewById(R.id.zipcode);
+                EditText etToCity = (EditText) linearLayout.findViewById(R.id.city);
+                EditText etToCountry = (EditText) linearLayout.findViewById(R.id.country);
                 String etToFioStr = (etToFio.getText() != null) ? etToFio.getText().toString() : null;
                 String etToAddressStr = (etToAddress.getText() != null) ? etToAddress.getText().toString() : null;
                 String etToZipStr = (etToZip.getText() != null) ? etToZip.getText().toString() : null;
-                if (addressDialogMode == AddressDialogMode.CREATE)
-                    address = new Address(etToAddressStr, etToZipStr, etToFioStr);
-                else {
-                    address.setFullAddress(etToAddressStr);
+                String etToCityStr = (etToCity.getText() != null) ? etToCity.getText().toString() : null;
+                String etToCountryStr = (etToCountry.getText() != null) ? etToCountry.getText().toString() : null;
+                if (addressDialogMode == AddressDialogMode.CREATE) {
+                    //В диалог добавлю позже
+                    address = new Address(etToAddressStr, etToCityStr, etToCountryStr, etToZipStr, etToFioStr);
+                } else {
+                    address.setStreetAddress(etToAddressStr);
                     address.setFullName(etToFioStr);
                     address.setZipCode(etToZipStr);
+                    address.setCityName(etToCityStr);
+                    address.setCountryName(etToCountryStr);
                 }
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put(Const.ADDRESS, address);
