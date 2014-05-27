@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:fix="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/old_lace"
+    android:orientation="vertical">
+
+    <com.polites.android.FixedAspectRatioLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/abc_menu_dropdown_panel_holo_light"
+        android:visibility="visible"
+        fix:aspectRatio="1.40952380952381"
+        android:layout_marginTop="@dimen/base_content_spacing"
+        android:layout_marginLeft="@dimen/base_content_spacing"
+        android:layout_marginRight="@dimen/base_content_spacing">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/iv_image"/>
+
+    </com.polites.android.FixedAspectRatioLayout>
+
+    <com.polites.android.FixedAspectRatioLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/abc_menu_dropdown_panel_holo_light"
+        android:visibility="visible"
+        android:layout_marginLeft="@dimen/base_content_spacing"
+        android:layout_marginRight="@dimen/base_content_spacing"
+        fix:aspectRatio="1.40952380952381">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/iv_postcard_backside"/>
+
+    </com.polites.android.FixedAspectRatioLayout>
+</LinearLayout>

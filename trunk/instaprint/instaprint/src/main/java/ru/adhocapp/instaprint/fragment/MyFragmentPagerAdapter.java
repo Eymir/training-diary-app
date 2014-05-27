@@ -3,12 +3,13 @@ package ru.adhocapp.instaprint.fragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import ru.adhocapp.instaprint.R;
 import ru.adhocapp.instaprint.util.ResourceAccess;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
-    private static final int PAGE_COUNT = 4;
+    private static final int PAGE_COUNT = 5;
     private FragmentManager fm;
 
     public MyFragmentPagerAdapter(FragmentManager fm) {
@@ -41,6 +42,9 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
                 title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_edit_address);
                 break;
             case 3:
+                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_preview);
+                break;
+            case 4:
                 title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_result);
                 break;
         }

@@ -26,8 +26,5 @@ android {
 dependencies {
     compile ('com.android.support:appcompat-v7:+')
     compile ('com.android.support:support-v4:+')
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    compile files('libraries/activation.jar')
-    compile files('libraries/additionnal.jar')
-    compile files('libraries/mail.jar')
+    compile fileTree(dir: 'libraries', include: ['*.jar', '*.aar'])
 }

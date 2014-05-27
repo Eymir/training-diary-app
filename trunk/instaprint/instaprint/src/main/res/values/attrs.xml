@@ -4,7 +4,7 @@
         <attr name="android:verticalSpacing" />
         <attr name="android:horizontalSpacing" />
     </declare-styleable>
-    <declare-styleable name="FixedAspectRatioFrameLayout">
+    <declare-styleable name="FixedAspectRatioLayout">
         <attr name="aspectRatio" format="float" />
     </declare-styleable>
 </resources>

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import ru.adhocapp.instaprint.R;
 
@@ -52,20 +53,20 @@ import ru.adhocapp.instaprint.R;
 * </RelativeLayout>
 *
 */
-public class FixedAspectRatioFrameLayout extends FrameLayout {
+public class FixedAspectRatioLayout extends RelativeLayout {
     /**
      * (width / height)
      */
     private float aspectRatio;
 
-    public FixedAspectRatioFrameLayout(Context context, AttributeSet attrs) {
+    public FixedAspectRatioLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FixedAspectRatioLayout);
-        aspectRatio = a.getFloat(R.styleable.FixedAspectRatioLayout_aspectRatio, 1.40952380952381f) - 0.0284595929658166f;
+        aspectRatio = a.getFloat(R.styleable.FixedAspectRatioLayout_aspectRatio, 1.40952380952381f) - 0.0304595929658166f;
         a.recycle();
     }
 

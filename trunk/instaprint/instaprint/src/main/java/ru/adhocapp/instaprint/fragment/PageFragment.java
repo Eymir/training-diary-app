@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import ru.adhocapp.instaprint.R;
@@ -53,6 +54,10 @@ public class PageFragment extends Fragment {
                 break;
             }
             case 3: {
+                view = inflater.inflate(R.layout.page_fragment_preview, null);
+                break;
+            }
+            case 4: {
                 view = inflater.inflate(R.layout.page_fragment_result, null);
                 break;
             }
@@ -60,6 +65,4 @@ public class PageFragment extends Fragment {
 
         return view;
     }
-
-
 }

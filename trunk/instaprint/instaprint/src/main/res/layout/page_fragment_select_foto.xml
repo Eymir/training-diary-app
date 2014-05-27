@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_foto160" />
         <!--android:foreground="@drawable/border_frame"-->
-        <com.polites.android.FixedAspectRatioFrameLayout
+        <com.polites.android.FixedAspectRatioLayout
             android:id="@+id/borderFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,14 +46,13 @@
             android:visibility="gone"
             fix:aspectRatio="1.40952380952381">
 
-            <uk.co.senab.photoview.PhotoView
+            <ru.adhocapp.instaprint.util.ZoomImageView
                 android:id="@+id/ivUserFoto"
                 android:layout_width="match_parent"
-                android:scaleType="centerCrop"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_foto160" />
 
-        </com.polites.android.FixedAspectRatioFrameLayout>
+        </com.polites.android.FixedAspectRatioLayout>
 
         <TextView
             android:id="@+id/textView"
