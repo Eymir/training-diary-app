@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fix="http://schemas.android.com/apk/res-auto"
     android:background="@color/old_lace">
 
     <LinearLayout
@@ -51,12 +52,42 @@
             android:id="@+id/textView"
             android:layout_centerInParent="true"
             android:gravity="center"
+            android:visibility="gone"
             android:textSize="25dp"
             android:textStyle="bold|italic" />
 
-        <EditText
+        <com.polites.android.FixedAspectRatioLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/et_user_text" />
+            android:background="@color/custom_edittext_background"
+            fix:aspectRatio="1.40952380952381">
+
+            <com.neopixl.pixlui.components.edittext.EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/spacing_ui_big"
+                android:hint="Текст сообщения"
+                android:background="@color/custom_edittext_background"
+                android:id="@+id/et_user_text"
+                android:gravity="top"/>
+
+        </com.polites.android.FixedAspectRatioLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/base_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/rotate_panel_background"
+        android:id="@+id/ll_text_panel"
+        android:gravity="center_vertical|right">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:id="@+id/sc_fonts"/>
+
     </LinearLayout>
 </RelativeLayout>

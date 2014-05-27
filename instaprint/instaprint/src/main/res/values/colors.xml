@@ -9,4 +9,5 @@
     <color name="holo_dark_font">#313131</color>
     <color name="white">#FFFFFF</color>
     <color name="rotate_panel_background">#DCDCDC</color>
+    <color name="custom_edittext_background">#FFFFFF</color>
 </resources>

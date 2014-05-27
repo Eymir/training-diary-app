@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
@@ -22,7 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +56,8 @@ import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
 import ru.adhocapp.instaprint.exception.SaveImageException;
 import ru.adhocapp.instaprint.mail.MailHelper;
 import ru.adhocapp.instaprint.util.Const;
+import ru.adhocapp.instaprint.util.FontsAdder;
+import ru.adhocapp.instaprint.util.ZoomImageView;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -59,6 +65,7 @@ import uk.co.senab.photoview.PhotoView;
  */
 
 public class CreatePostcardFragment extends Fragment implements XmlClickable {
+    private static final String LOGTAG = "CreatePostcardFragment";
 
     private ViewPager pager;
 
@@ -71,6 +78,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     private IabHelper mHelper;
 
     private EntityManager em;
+    private FontsAdder mFontsAdder;
 
     private static final Field sChildFragmentManagerField;
 
@@ -115,12 +123,36 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         View view = inflater.inflate(R.layout.main_fragment_create_postcart, null);
         pager = (ViewPager) view.findViewById(R.id.pager);
         FragmentPagerAdapter pagerAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
-        pager.setOffscreenPageLimit(4);
+        pager.setOffscreenPageLimit(5);
         pager.setAdapter(pagerAdapter);
+        pager.setOnPageChangeListener(onPageChangeListener);
         em = DBHelper.getInstance(getActivity()).EM;
         billingInit();
         return view;
     }
+
+
+    ViewPager.SimpleOnPageChangeListener onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            Log.i(LOGTAG, "OnPageSelected, position = " + position);
+            switch (position) {
+                case 1:
+                    if (mFontsAdder == null) {
+                        mFontsAdder = new FontsAdder(getActivity(), ((HorizontalScrollView) getActivity().findViewById(R.id.sc_fonts)));
+                        mFontsAdder.init();
+                    }
+                    break;
+                case 3:
+                    if (mSelectedImage != null) {
+                        ImageView iv = (ImageView) getActivity().findViewById(R.id.iv_image);
+                        iv.setImageBitmap(getCurrentImage());
+                    }
+                    break;
+            }
+        }
+    };
 
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent data) {
@@ -144,7 +176,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                     mSelectedImage = BitmapFactory.decodeFile(selectedImageFilePath);
                     mIvUserPhoto = (ImageView) getActivity().findViewById(R.id.ivUserFoto);
 
-                    FrameLayout borderFrame = (FrameLayout) getActivity().findViewById(R.id.borderFrame);
+                    RelativeLayout borderFrame = (RelativeLayout) getActivity().findViewById(R.id.borderFrame);
                     borderFrame.setVisibility(View.VISIBLE);
                     mIvUserPhoto.setImageBitmap(mSelectedImage);
                     getActivity().findViewById(R.id.ll_rotate_panel).setVisibility(View.VISIBLE);
@@ -310,14 +342,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         try {
             EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
             String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
-            PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
-            RectF rect = getCropRect(imageView);
-            Log.d(Const.LOG_TAG, "rect: " + rect);
-            Log.d(Const.LOG_TAG, "mSelectedImage, w: " + mSelectedImage.getWidth() + " h:" + mSelectedImage.getHeight());
-            Bitmap result = Bitmap.createBitmap(mSelectedImage, (int) rect.left, (int) rect.top,
-                    (int) rect.width(), (int) rect.height());
-            Log.i("CRF", "Ratio = " + rect.width() / rect.height());
-            String newPath = saveBitmapToSD(result);
+            String newPath = saveBitmapToSD(getCurrentImage());
             order.setPhotoPath(newPath);
             order.setText(etUserTextStr);
             order.setDate(new Date());
@@ -333,33 +358,11 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         }
     }
 
-    private RectF getCropRect(PhotoView imageView) {
-        RectF rect = imageView.getDisplayRect();
-        float viewScale = imageView.getScale();
-
-        float dw = rect.width() / viewScale;
-        float dh = rect.height() / viewScale;
-        Drawable drawable = imageView.getDrawable();
-        int bitmapWidth = drawable.getIntrinsicWidth();
-        int bitmapHeight = drawable.getIntrinsicHeight();
-
-        float w_ratio = bitmapWidth / dw;
-        float h_ratio = bitmapHeight / dh;
-        int b_off_x = (int) (w_ratio * (Math.abs(rect.left) / viewScale));
-        int b_off_y = (int) (h_ratio * (Math.abs(rect.top) / viewScale));
-
-        int dbw = (int) (imageView.getWidth() * w_ratio);
-        int dbh = (int) (imageView.getHeight() * h_ratio);
-
-        RectF result = new RectF();
-        Log.d(Const.LOG_TAG, "viewScale: " + viewScale);
-
-        result.left = b_off_x;
-        result.top = b_off_y;
-
-        result.right = b_off_x + dbw / viewScale;
-        result.bottom = b_off_y + dbh / viewScale;
-
+    private Bitmap getCurrentImage() {
+        ZoomImageView imageView = (ZoomImageView) getActivity().findViewById(R.id.ivUserFoto);
+        imageView.setDrawingCacheEnabled(true);
+        Bitmap result = Bitmap.createBitmap(imageView.getDrawingCache());
+        imageView.setDrawingCacheEnabled(false);
         return result;
     }
 
