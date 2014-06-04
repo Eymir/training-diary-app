@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fix="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/old_lace">
 
     <LinearLayout
@@ -18,7 +18,7 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_next_item" />
+            android:src="@drawable/ic_action_next_item"/>
     </LinearLayout>
 
     <LinearLayout
@@ -36,7 +36,7 @@
             android:id="@+id/imageLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_foto160" />
+            android:src="@drawable/ic_foto160"/>
         <!--android:foreground="@drawable/border_frame"-->
         <com.polites.android.FixedAspectRatioLayout
             android:id="@+id/borderFrame"
@@ -46,11 +46,12 @@
             android:visibility="gone"
             fix:aspectRatio="1.40952380952381">
 
-            <ru.adhocapp.instaprint.util.ZoomImageView
+            <uk.co.senab.photoview.PhotoView
                 android:id="@+id/ivUserFoto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_foto160" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_foto160"/>
 
         </com.polites.android.FixedAspectRatioLayout>
 
@@ -60,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Выбрать фотографию..."
-            android:textSize="20dp" />
+            android:textSize="20dp"/>
 
     </LinearLayout>
 
@@ -80,7 +81,7 @@
             android:id="@+id/rotate_left"
             android:onClick="myClickMethod"
             android:background="@drawable/ic_rotate_left"
-            android:layout_margin="@dimen/spacing_ui_small" />
+            android:layout_margin="@dimen/spacing_ui_small"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -91,7 +92,7 @@
             android:layout_marginRight="@dimen/base_content_spacing"
             android:layout_marginLeft="@dimen/spacing_ui_small"
             android:layout_marginBottom="@dimen/spacing_ui_small"
-            android:layout_marginTop="@dimen/spacing_ui_small" />
+            android:layout_marginTop="@dimen/spacing_ui_small"/>
 
     </LinearLayout>
 </RelativeLayout>

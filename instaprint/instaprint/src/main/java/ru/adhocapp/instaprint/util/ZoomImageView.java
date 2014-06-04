@@ -125,8 +125,7 @@ public class ZoomImageView extends ImageView {
 	/**
      * the duration in milliseconds we will wait to start rotating(if multi touched)/reseting(if single touched)
 	 */
-    private static final int CHECK_TIMEOUT
-    	= ViewConfiguration.getTapTimeout() + ViewConfiguration.getLongPressTimeout();
+    private static final int CHECK_TIMEOUT = 100;
     /**
      * the duration in milliseconds we will wait to reset reversing the color of image
      */
@@ -669,7 +668,7 @@ public class ZoomImageView extends ImageView {
 			// to or less than the corresponding dimension of the view (minus padding).
 			// The image is then centered in the view
 			// leave to super class
-			super.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+			super.setScaleType(ScaleType.CENTER_CROP);
 			// the internal Matrix in the super class(that can get with ImageView#getImageMatrix)
 			// never updated when called setScaleType on current implementation.
 			// therefore call setFrame to update internal Matrix.
@@ -1032,9 +1031,9 @@ public class ZoomImageView extends ImageView {
 				mSavedColorFilter = getColorFilter();
 			}
 			if (mColorReverseFilter == null) {
-				mColorReverseFilter = new ColorMatrixColorFilter(new ColorMatrix(REVERSE));
+//				mColorReverseFilter = new ColorMatrixColorFilter(new ColorMatrix(REVERSE));
 			}
-			super.setColorFilter(mColorReverseFilter);
+//			super.setColorFilter(mColorReverseFilter);
 			// post runnable to reset the color reversing
 			if (mWaitReverseReset == null) mWaitReverseReset = new WaitReverseReset(); 
 			postDelayed(mWaitReverseReset, REVERSING_TIMEOUT);

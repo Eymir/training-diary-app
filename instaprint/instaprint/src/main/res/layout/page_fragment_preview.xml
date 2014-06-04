@@ -5,38 +5,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/old_lace"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:gravity="center">
 
-    <com.polites.android.FixedAspectRatioLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/abc_menu_dropdown_panel_holo_light"
-        android:visibility="visible"
-        fix:aspectRatio="1.40952380952381"
-        android:layout_marginTop="@dimen/base_content_spacing"
-        android:layout_marginLeft="@dimen/base_content_spacing"
-        android:layout_marginRight="@dimen/base_content_spacing">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/iv_image"/>
-
-    </com.polites.android.FixedAspectRatioLayout>
-
-    <com.polites.android.FixedAspectRatioLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/abc_menu_dropdown_panel_holo_light"
-        android:visibility="visible"
-        android:layout_marginLeft="@dimen/base_content_spacing"
-        android:layout_marginRight="@dimen/base_content_spacing"
-        fix:aspectRatio="1.40952380952381">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:id="@+id/prevPage"
+        android:onClick="myClickMethod">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/iv_postcard_backside"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_previous_item"/>
 
-    </com.polites.android.FixedAspectRatioLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <com.polites.android.FixedAspectRatioLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/abc_menu_dropdown_panel_holo_light"
+            fix:aspectRatio="1.40952380952381"
+            android:layout_marginTop="@dimen/base_content_spacing">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/iv_image"/>
+
+        </com.polites.android.FixedAspectRatioLayout>
+
+        <com.polites.android.FixedAspectRatioLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/abc_menu_dropdown_panel_holo_light"
+            fix:aspectRatio="1.40952380952381">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/iv_postcard"/>
+
+        </com.polites.android.FixedAspectRatioLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:id="@+id/nextPage"
+        android:onClick="myClickMethod">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_next_item"/>
+
+    </LinearLayout>
 </LinearLayout>
