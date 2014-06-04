@@ -1,16 +1,21 @@
 package ru.adhocapp.instaprint.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,11 +31,11 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -56,8 +61,7 @@ import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
 import ru.adhocapp.instaprint.exception.SaveImageException;
 import ru.adhocapp.instaprint.mail.MailHelper;
 import ru.adhocapp.instaprint.util.Const;
-import ru.adhocapp.instaprint.util.FontsAdder;
-import ru.adhocapp.instaprint.util.ZoomImageView;
+import ru.adhocapp.instaprint.util.FontsManager;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -78,11 +82,12 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     private IabHelper mHelper;
 
     private EntityManager em;
-    private FontsAdder mFontsAdder;
+    private FontsManager mFontsManager;
 
     private static final Field sChildFragmentManagerField;
 
-    private Bitmap mSelectedImage;
+    protected static Bitmap sSelectedImage;
+    private Bitmap mCurrentPostcard;
     private ImageView mIvUserPhoto;
 
     //Костыль для Pager BEGIN
@@ -139,20 +144,127 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             Log.i(LOGTAG, "OnPageSelected, position = " + position);
             switch (position) {
                 case 1:
-                    if (mFontsAdder == null) {
-                        mFontsAdder = new FontsAdder(getActivity(), ((HorizontalScrollView) getActivity().findViewById(R.id.sc_fonts)));
-                        mFontsAdder.init();
-                    }
+                    if (mFontsManager == null) {
+                        mFontsManager = new FontsManager(getActivity(), ((HorizontalScrollView) getActivity().findViewById(R.id.sc_fonts)));
+                        mFontsManager.init();
+                    } else mFontsManager.drawFontsList();
                     break;
                 case 3:
-                    if (mSelectedImage != null) {
-                        ImageView iv = (ImageView) getActivity().findViewById(R.id.iv_image);
-                        iv.setImageBitmap(getCurrentImage());
-                    }
+                    new DrawPreviewTask().execute();
                     break;
             }
         }
     };
+
+    private class DrawPreviewTask extends AsyncTask<Void, Void, Void> {
+        private AlertDialog mAd;
+        private Bitmap mPostcard;
+        private Bitmap mImage;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (mAd == null || !mAd.isShowing()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                View input = LayoutInflater.from(getActivity()).inflate(R.layout.wait, null);
+                builder.setView(input);
+                mAd = builder.create();
+                mAd.show();
+            } else Log.i(LOGTAG, "Dialog is showing");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inMutable = true;
+            options.inSampleSize = 2;
+            mPostcard = BitmapFactory.decodeResource(getResources(), R.drawable.postcard_background, options);
+            Log.e(LOGTAG, mPostcard.getWidth() + "; " +mPostcard.getHeight());
+
+            Canvas c = new Canvas(mPostcard);
+            c.drawColor(0x000000);
+            Paint p = new Paint();
+            p.setColor(Color.BLACK);
+            p.setTextSize(60.0f);
+            p.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/" + FontsManager.currentFont));
+
+            if (FontsManager.currentText != null) {
+                char[] currentText = FontsManager.currentText.toCharArray();
+                String printString = "";
+                int lineSizeCounter = 0;
+                int linesCounter = 0;
+                int lastY = 160;
+                for (int i = 0; i != currentText.length && linesCounter < 14; i++, lineSizeCounter++) {
+                    printString += currentText[i];
+                    if (lineSizeCounter >= (FontsManager.getValidity(FontsManager.currentFont) / 14) || i == (currentText.length - 1)) {
+                        c.drawText(printString.trim(), 75, lastY, p);
+                        lastY += 75;
+                        lineSizeCounter = 0;
+                        printString = "";
+                        linesCounter++;
+                    }
+                }
+            }
+
+            if (order.getAddressTo() != null) {
+                int maxLineSize = 20;
+                Paint p2 = new Paint();
+                p2.setColor(Color.BLACK);
+                p2.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+                p2.setTextSize(60.0f);
+
+                String fullName = order.getAddressTo().getFullName();
+                if (fullName.length() > maxLineSize) fullName = fullName.substring(0, maxLineSize);
+                c.drawText(fullName, 970, 460, p2);
+
+                String address = order.getAddressTo().getStreetAddress();
+                for (int i = 1; i != address.length(); i++) {
+                    if (address.charAt(i) != ' ' && ((int) i / maxLineSize) == ((double) i / maxLineSize)) {
+                        int lastSpaceIndex = address.lastIndexOf(' ', i);
+                        if (lastSpaceIndex != -1 && address.substring(i - maxLineSize, i + 1).contains(" ")) {
+                            address = address.substring(0, lastSpaceIndex + 1) +
+                                    FontsManager.getSpacedString(i - lastSpaceIndex) +
+                                    address.substring(lastSpaceIndex + 1);
+                        }
+                    }
+                }
+                if (address.length() > maxLineSize) {
+                    String secondAddressPart = address.substring(maxLineSize);
+                    if (secondAddressPart.length() > maxLineSize) {
+                        secondAddressPart = secondAddressPart.substring(0, maxLineSize).trim();
+                    }
+                    c.drawText(secondAddressPart, 970, 700, p2);
+                    address = address.substring(0, maxLineSize);
+                }
+                c.drawText(address, 970, 580, p2);
+
+                String cityAndZip = order.getAddressTo().getZipCode() + ", " + order.getAddressTo().getCityName();
+                if (cityAndZip.length() > maxLineSize) cityAndZip = cityAndZip.substring(0, maxLineSize);
+                c.drawText(cityAndZip, 970, 820, p2);
+
+                String country = order.getAddressTo().getCountryName();
+                if (country.length() > maxLineSize) country = country.substring(0, maxLineSize);
+                c.drawText(country, 970, 940, p2);
+            }
+
+            mCurrentPostcard = mPostcard;
+            mPostcard = Bitmap.createScaledBitmap(mPostcard, mPostcard.getWidth() / 2, mPostcard.getHeight() / 2, true);
+            if (sSelectedImage != null) mImage = getCurrentImage();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mAd.cancel();
+            ImageView ivPostcard = (ImageView) getActivity().findViewById(R.id.iv_postcard);
+            ivPostcard.setImageBitmap(mPostcard);
+
+            if (mImage != null) {
+                ImageView ivImage = (ImageView) getActivity().findViewById(R.id.iv_image);
+                ivImage.setImageBitmap(mImage);
+            }
+        }
+    }
 
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent data) {
@@ -173,12 +285,12 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                     cursor.close();
                     ImageView labelView = (ImageView) getActivity().findViewById(R.id.imageLabel);
                     labelView.setVisibility(View.GONE);
-                    mSelectedImage = BitmapFactory.decodeFile(selectedImageFilePath);
+                    sSelectedImage = getCheckedOnSizeBitmap(selectedImageFilePath);
                     mIvUserPhoto = (ImageView) getActivity().findViewById(R.id.ivUserFoto);
 
                     RelativeLayout borderFrame = (RelativeLayout) getActivity().findViewById(R.id.borderFrame);
                     borderFrame.setVisibility(View.VISIBLE);
-                    mIvUserPhoto.setImageBitmap(mSelectedImage);
+                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                     getActivity().findViewById(R.id.ll_rotate_panel).setVisibility(View.VISIBLE);
                     order.setPhotoPath(selectedImageFilePath);
                     break;
@@ -201,6 +313,34 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         } else {
             Log.d(Const.LOG_TAG, "onActivityResult handled by IABUtil.");
         }
+    }
+
+    private Bitmap getCheckedOnSizeBitmap(String selectedPath) {
+        int inSampleSize = 1;
+        Bitmap resizedBitmap = null;
+        try {
+            FileInputStream optionsStream = new FileInputStream(selectedPath);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(optionsStream, null, options);
+            optionsStream.close();
+            int width = options.outWidth;
+            int height = options.outHeight;
+            options.inJustDecodeBounds = false;
+            if (width >= 2048) {
+                inSampleSize = width/1024;
+            }
+            if (height >= 2048) {
+                inSampleSize = width/1024;
+            }
+            options.inSampleSize = inSampleSize;
+            FileInputStream input = new FileInputStream(selectedPath);
+            resizedBitmap = BitmapFactory.decodeStream(input, null, options);
+            input.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return resizedBitmap;
     }
 
     private void fillAddressField(final int addressType, Address address) {
@@ -304,20 +444,20 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 break;
             }
             case R.id.rotate_left: {
-                if (mSelectedImage != null) {
+                if (sSelectedImage != null) {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(270);
-                    mSelectedImage = Bitmap.createBitmap(mSelectedImage, 0, 0, mSelectedImage.getWidth(), mSelectedImage.getHeight(), matrix, true);
-                    mIvUserPhoto.setImageBitmap(mSelectedImage);
+                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
+                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                 }
                 break;
             }
             case R.id.rotate_right: {
-                if (mSelectedImage != null) {
+                if (sSelectedImage != null) {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(90);
-                    mSelectedImage = Bitmap.createBitmap(mSelectedImage, 0, 0, mSelectedImage.getWidth(), mSelectedImage.getHeight(), matrix, true);
-                    mIvUserPhoto.setImageBitmap(mSelectedImage);
+                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
+                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                 }
                 break;
             }
@@ -343,6 +483,8 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
             String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
             String newPath = saveBitmapToSD(getCurrentImage());
+            // тут сохранение
+            saveBitmapToSD(mCurrentPostcard);
             order.setPhotoPath(newPath);
             order.setText(etUserTextStr);
             order.setDate(new Date());
@@ -359,10 +501,41 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     }
 
     private Bitmap getCurrentImage() {
-        ZoomImageView imageView = (ZoomImageView) getActivity().findViewById(R.id.ivUserFoto);
-        imageView.setDrawingCacheEnabled(true);
-        Bitmap result = Bitmap.createBitmap(imageView.getDrawingCache());
-        imageView.setDrawingCacheEnabled(false);
+        PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
+        RectF rect = getCropRect(imageView);
+        Log.d(Const.LOG_TAG, "rect: " + rect);
+        Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
+        return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
+                (int) rect.width(), (int) rect.height());
+    }
+
+    private RectF getCropRect(PhotoView imageView) {
+        RectF rect = imageView.getDisplayRect();
+        float viewScale = imageView.getScale();
+
+        float dw = rect.width() / viewScale;
+        float dh = rect.height() / viewScale;
+        Drawable drawable = imageView.getDrawable();
+        int bitmapWidth = drawable.getIntrinsicWidth();
+        int bitmapHeight = drawable.getIntrinsicHeight();
+
+        float w_ratio = bitmapWidth / dw;
+        float h_ratio = bitmapHeight / dh;
+        int b_off_x = (int) (w_ratio * (Math.abs(rect.left) / viewScale));
+        int b_off_y = (int) (h_ratio * (Math.abs(rect.top) / viewScale));
+
+        int dbw = (int) (imageView.getWidth() * w_ratio);
+        int dbh = (int) (imageView.getHeight() * h_ratio);
+
+        RectF result = new RectF();
+        Log.d(Const.LOG_TAG, "viewScale: " + viewScale);
+
+        result.left = b_off_x;
+        result.top = b_off_y;
+
+        result.right = b_off_x + dbw / viewScale;
+        result.bottom = b_off_y + dbh / viewScale;
+
         return result;
     }
 

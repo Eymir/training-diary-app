@@ -36,6 +36,7 @@ import android.widget.ImageView.ScaleType;
 
 import java.lang.ref.WeakReference;
 
+import ru.adhocapp.instaprint.fragment.PageFragment;
 import uk.co.senab.photoview.gestures.OnGestureListener;
 import uk.co.senab.photoview.gestures.VersionedGestureDetector;
 import uk.co.senab.photoview.log.LogManager;
@@ -524,6 +525,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
             if (null != mGestureDetector && mGestureDetector.onTouchEvent(ev)) {
                 handled = true;
             }
+
+            if (PageFragment.sRotationDetector != null) PageFragment.sRotationDetector.onTouchEvent(ev);
 
             if (!handled && null != parent) {
                 parent.requestDisallowInterceptTouchEvent(false);

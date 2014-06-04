@@ -15,6 +15,11 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug {
+            packageNameSuffix ".debug"
+            signingConfig signingConfigs.debug
+            versionNameSuffix "-debug"
+        }
     }
 	
 	lintOptions {

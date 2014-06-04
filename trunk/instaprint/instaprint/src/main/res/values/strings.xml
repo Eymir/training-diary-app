@@ -36,5 +36,6 @@
     <string name="page_title_preview">Просмотр</string>
     <string name="country_caption">Страна</string>
     <string name="city_caption">Город</string>
+    <string name="please_wait">Пожалуйста подождите…</string>
 
 </resources>

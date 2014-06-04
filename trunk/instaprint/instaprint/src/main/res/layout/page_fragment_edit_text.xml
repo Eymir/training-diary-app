@@ -71,6 +71,16 @@
                 android:id="@+id/et_user_text"
                 android:gravity="top"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_validity"
+                android:text="0/0"
+                android:layout_margin="@dimen/spacing_ui_small"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:textStyle="italic"/>
+
         </com.polites.android.FixedAspectRatioLayout>
     </LinearLayout>
 

@@ -6,5 +6,8 @@
     <dimen name="spacing_ui_small">4dp</dimen>
     <dimen name="spacing_ui_big">8dp</dimen>
     <dimen name="base_content_spacing">16dp</dimen>
+    <dimen name="review_text_size">10sp</dimen>
+    <dimen name="postcard_edittext_height">20dp</dimen>
+    <dimen name="base_divider_width">1dp</dimen>
 
 </resources>
