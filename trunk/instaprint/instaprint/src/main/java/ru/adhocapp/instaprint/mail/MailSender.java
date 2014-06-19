@@ -20,15 +20,14 @@ import javax.mail.internet.MimeMultipart;
 
 import ru.adhocapp.instaprint.util.Const;
 
-public class MailSenderClass extends javax.mail.Authenticator {
+public class MailSender extends javax.mail.Authenticator {
     private String mailhost = "smtp.yandex.ru";
     private String user;
     private String password;
     private Session session;
     private Multipart _multipart;
 
-    public MailSenderClass(String user, String password) {
-
+    public MailSender(String user, String password) {
         this.user = user;
         this.password = password;
         _multipart = new MimeMultipart();
@@ -61,13 +60,11 @@ public class MailSenderClass extends javax.mail.Authenticator {
             messageBodyPart.setText(body);
             _multipart.addBodyPart(messageBodyPart);
 
-            if (!filename.equalsIgnoreCase("")) {
+            if (filename!=null && !filename.equalsIgnoreCase("")) {
                 BodyPart attachBodyPart = new MimeBodyPart();
                 DataSource source = new FileDataSource(filename);
                 attachBodyPart.setDataHandler(new DataHandler(source));
                 attachBodyPart.setFileName(filename);
-
-
                 _multipart.addBodyPart(attachBodyPart);
             }
 
@@ -75,7 +72,7 @@ public class MailSenderClass extends javax.mail.Authenticator {
             Transport.send(message);
 
         } catch (Exception e) {
-            Log.e(Const.LOG_TAG, "error sendMail - " + e.toString(), e);
+            Log.e(Const.LOG_TAG, "error sendOrderMail - " + e.toString(), e);
         }
     }
 }

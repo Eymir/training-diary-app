@@ -179,7 +179,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             options.inMutable = true;
             options.inSampleSize = 2;
             mPostcard = BitmapFactory.decodeResource(getResources(), R.drawable.postcard_background, options);
-            Log.e(LOGTAG, mPostcard.getWidth() + "; " +mPostcard.getHeight());
+            Log.e(LOGTAG, mPostcard.getWidth() + "; " + mPostcard.getHeight());
 
             Canvas c = new Canvas(mPostcard);
             c.drawColor(0x000000);
@@ -239,7 +239,8 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 c.drawText(address, 970, 580, p2);
 
                 String cityAndZip = order.getAddressTo().getZipCode() + ", " + order.getAddressTo().getCityName();
-                if (cityAndZip.length() > maxLineSize) cityAndZip = cityAndZip.substring(0, maxLineSize);
+                if (cityAndZip.length() > maxLineSize)
+                    cityAndZip = cityAndZip.substring(0, maxLineSize);
                 c.drawText(cityAndZip, 970, 820, p2);
 
                 String country = order.getAddressTo().getCountryName();
@@ -328,16 +329,16 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             int height = options.outHeight;
             options.inJustDecodeBounds = false;
             if (width >= 2048) {
-                inSampleSize = width/1024;
+                inSampleSize = width / 1024;
             }
             if (height >= 2048) {
-                inSampleSize = width/1024;
+                inSampleSize = width / 1024;
             }
             options.inSampleSize = inSampleSize;
             FileInputStream input = new FileInputStream(selectedPath);
             resizedBitmap = BitmapFactory.decodeStream(input, null, options);
             input.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return resizedBitmap;
@@ -354,7 +355,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         TextView title = (TextView) addressView.findViewById(R.id.contact_title);
         title.setText(address.getFullName());
         TextView details = (TextView) addressView.findViewById(R.id.contact_details);
-        details.setText(address.getCityName()+", "+address.getStreetAddress());
+        details.setText(address.getCityName() + ", " + address.getStreetAddress());
         View action_area = addressView.findViewById(R.id.action_area);
         action_area.setVisibility(View.VISIBLE);
         ImageView remove_address = (ImageView) action_area.findViewById(R.id.remove_address);
@@ -630,7 +631,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
 
     private void sendOrder(Order order) {
         //Toast.makeText(this, order.toString(), Toast.LENGTH_LONG).show();
-        MailHelper.getInstance().sendMail(order);
+        MailHelper.getInstance().sendOrderMail(null, order);
     }
 
     public void setOrder(Order order) {

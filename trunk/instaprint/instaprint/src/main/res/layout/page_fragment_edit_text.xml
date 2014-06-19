@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fix="http://schemas.android.com/apk/res-auto"
-    android:background="@color/old_lace">
+    android:background="@color/white_smoke">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -45,17 +45,6 @@
         android:layout_marginRight="30dp"
         android:gravity="center">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Текст сообщения:"
-            android:id="@+id/textView"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:visibility="gone"
-            android:textSize="25dp"
-            android:textStyle="bold|italic" />
-
         <com.polites.android.FixedAspectRatioLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/spacing_ui_big"
-                android:hint="Текст сообщения"
+                android:hint="@string/input_text_please"
                 android:background="@color/custom_edittext_background"
                 android:id="@+id/et_user_text"
                 android:gravity="top"/>
