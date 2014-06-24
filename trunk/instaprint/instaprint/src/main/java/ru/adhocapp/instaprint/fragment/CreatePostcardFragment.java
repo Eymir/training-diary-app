@@ -56,6 +56,7 @@ import ru.adhocapp.instaprint.db.entity.EntityManager;
 import ru.adhocapp.instaprint.db.entity.Order;
 import ru.adhocapp.instaprint.db.entity.OrderStatus;
 import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
+import ru.adhocapp.instaprint.db.model.CreatePostcardFragmentPagerAdapter;
 import ru.adhocapp.instaprint.dialog.CreateEditAddressFragmentDialog;
 import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
 import ru.adhocapp.instaprint.exception.SaveImageException;
@@ -127,7 +128,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main_fragment_create_postcart, null);
         pager = (ViewPager) view.findViewById(R.id.pager);
-        FragmentPagerAdapter pagerAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
+        FragmentPagerAdapter pagerAdapter = new CreatePostcardFragmentPagerAdapter(getChildFragmentManager());
         pager.setOffscreenPageLimit(5);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(onPageChangeListener);
@@ -619,7 +620,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             }
             Log.d(Const.LOG_TAG, "Purchase successful.");
             if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
-                order.setStatus(OrderStatus.SENDING);
+                order.setStatus(OrderStatus.EMAIL_SENDING);
                 order.setPurchaseDetails(new PurchaseDetails(purchase.getOrderId(), new Date(purchase.getPurchaseTime()), null));
                 sendOrder(order);
                 em.merge(order);

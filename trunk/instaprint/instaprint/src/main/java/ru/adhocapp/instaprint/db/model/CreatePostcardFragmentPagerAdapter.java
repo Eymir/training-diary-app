@@ -1,25 +1,25 @@
-package ru.adhocapp.instaprint.fragment;
+package ru.adhocapp.instaprint.db.model;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 import ru.adhocapp.instaprint.R;
+import ru.adhocapp.instaprint.fragment.CreatePostcardPageFragment;
 import ru.adhocapp.instaprint.util.ResourceAccess;
 
-public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+public class CreatePostcardFragmentPagerAdapter extends FragmentPagerAdapter {
     private static final int PAGE_COUNT = 5;
     private FragmentManager fm;
 
-    public MyFragmentPagerAdapter(FragmentManager fm) {
+    public CreatePostcardFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
         this.fm = fm;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return PageFragment.newInstance(position);
+        return CreatePostcardPageFragment.newInstance(position);
     }
 
     @Override

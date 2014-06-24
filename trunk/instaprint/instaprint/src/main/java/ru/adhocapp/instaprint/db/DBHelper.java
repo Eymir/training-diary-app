@@ -28,8 +28,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public final static String ADDRESS_TABLE = "ADDRESS";
     public final static String PURCHASE_DETAILS_TABLE = "PURCHASE_DETAILS";
 
-    public Context CONTEXT;
-    public EntityManager EM;
+    public final Context CONTEXT;
+    public final EntityManager EM;
+    public final DbReader READ;
 
     public static DBHelper getInstance(Context ctx) {
         if (mInstance == null) {
@@ -46,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DB_VERSION);
         this.CONTEXT = context;
         this.EM = new EntityManager(this);
+        this.READ = new DbReader(this);
     }
 
     @Override
@@ -76,9 +78,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "ADDRESS_FROM_ID integer,"
                 + "ADDRESS_TO_ID integer,"
                 + "PURCHASE_DETAILS_ID integer,"
-                //Сначала не подумал что их может и не быть
-//                + "FOREIGN KEY(ADDRESS_FROM_ID) REFERENCES ADDRESS(id),"
-//                + "FOREIGN KEY(ADDRESS_TO_ID) REFERENCES ADDRESS(id),"
                 + "FOREIGN KEY(PURCHASE_DETAILS_ID) REFERENCES PURCHASE_DETAILS(id)" + ");");
         Log.d(Const.LOG_TAG, "--- onCreate table CLIENT_ORDER  ---");
     }
@@ -208,7 +207,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String city_name = c.getString(c.getColumnIndex("CITY_NAME"));
             String full_name = c.getString(c.getColumnIndex("FULL_NAME"));
             String index = c.getString(c.getColumnIndex("ZIPCODE"));
-            return new Address(id, street_address,city_name,country_name, index, full_name);
+            return new Address(id, street_address, city_name, country_name, index, full_name);
         }
         if (c != null) c.close();
         return null;
@@ -262,7 +261,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String city_name = c.getString(c.getColumnIndex("CITY_NAME"));
             String full_name = c.getString(c.getColumnIndex("FULL_NAME"));
             String index = c.getString(c.getColumnIndex("ZIPCODE"));
-            list.add(new Address(id, street_address,city_name,country_name, index, full_name));
+            list.add(new Address(id, street_address, city_name, country_name, index, full_name));
         }
         if (c != null) c.close();
         return list;

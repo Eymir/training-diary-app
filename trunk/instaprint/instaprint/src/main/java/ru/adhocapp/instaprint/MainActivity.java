@@ -15,6 +15,7 @@ import ru.adhocapp.instaprint.db.DBHelper;
 import ru.adhocapp.instaprint.fragment.AddressListFragment;
 import ru.adhocapp.instaprint.fragment.CreatePostcardFragment;
 import ru.adhocapp.instaprint.fragment.FeedbackFragment;
+import ru.adhocapp.instaprint.fragment.OrderFragment;
 import ru.adhocapp.instaprint.fragment.XmlClickable;
 import ru.adhocapp.instaprint.util.ResourceAccess;
 
@@ -31,7 +32,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
         ResourceAccess.getInstance(this);
 
         fragments.add(CreatePostcardFragment.newInstance());
-        fragments.add(CreatePostcardFragment.newInstance());
+        fragments.add(OrderFragment.newInstance());
         fragments.add(AddressListFragment.newInstance());
         fragments.add(FeedbackFragment.newInstance());
 

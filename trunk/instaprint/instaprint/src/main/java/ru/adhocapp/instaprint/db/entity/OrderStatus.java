@@ -13,9 +13,13 @@ public enum OrderStatus {
      */
     PAYING,
     /**
-     * Посылка
+     * Посылка на сервер печати
      */
-    SENDING,
+    EMAIL_SENDING,
+    /**
+     * Печать и отправка по настоящей почте
+     */
+    PRINTING_AND_SNAILMAILING,
     /**
      * Исполнен
      */
