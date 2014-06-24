@@ -49,5 +49,13 @@
     <string name="useremail_property">USEREMAIL_PROPERTY</string>
     <string name="feedback_message_successfuly_sent">Сообщение успешно отправлено</string>
     <string name="feedback_message_sending_error">Ошибка при отправке сообщения</string>
+    <string name="page_title_rough_draft">Черновики</string>
+    <string name="page_title_proccess_orders">В обработке</string>
+    <string name="page_title_orders_history">Отправленные</string>
+    <string name="creating_category_name">На валидации</string>
+    <string name="paying_category_name">Не оплачены</string>
+    <string name="email_sending_category_name">Не отправлены на сервер</string>
+    <string name="printing_and_snailmailing_category_name">Ожидают печати</string>
+    <string name="executed_category_name">Отправлены по почте</string>
 
 </resources>

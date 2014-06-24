@@ -18,6 +18,7 @@ import java.util.Map;
 import ru.adhocapp.instaprint.R;
 import ru.adhocapp.instaprint.db.DBHelper;
 import ru.adhocapp.instaprint.db.entity.Address;
+import ru.adhocapp.instaprint.db.model.AddressAdapter;
 import ru.adhocapp.instaprint.dialog.CreateEditAddressFragmentDialog;
 import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
 import ru.adhocapp.instaprint.dialog.ObjectClickListener;

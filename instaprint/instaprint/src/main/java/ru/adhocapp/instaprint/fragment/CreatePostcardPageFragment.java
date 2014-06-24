@@ -18,19 +18,19 @@ import uk.co.senab.photoview.RotationGestureDetector;
  * Created by malugin on 09.04.14.
  */
 
-public class PageFragment extends Fragment {
+public class CreatePostcardPageFragment extends Fragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     int pageNumber;
 
     public static RotationGestureDetector sRotationDetector;
 
-    public static PageFragment newInstance(int page) {
-        PageFragment pageFragment = new PageFragment();
+    public static CreatePostcardPageFragment newInstance(int page) {
+        CreatePostcardPageFragment createPostcardPageFragment = new CreatePostcardPageFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
-        pageFragment.setArguments(arguments);
-        return pageFragment;
+        createPostcardPageFragment.setArguments(arguments);
+        return createPostcardPageFragment;
     }
 
     @Override
