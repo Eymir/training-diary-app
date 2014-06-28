@@ -57,5 +57,15 @@
     <string name="email_sending_category_name">Не отправлены на сервер</string>
     <string name="printing_and_snailmailing_category_name">Ожидают печати</string>
     <string name="executed_category_name">Отправлены по почте</string>
+    <string name="transaction_id">Номер оплаты</string>
+    <string name="pay_date">Дата оплаты</string>
+    <string name="price">Стоимость</string>
+    <string name="payment_details">Детали платежа</string>
+    <string name="message_category">Сообщение</string>
+    <string name="delivery_address">Адресат</string>
+    <string name="order_category">Детали заказа</string>
+    <string name="order_number">Номер заказа</string>
+    <string name="order_date">Дата заказа</string>
+    <string name="order_with_number">Заказ-</string>
 
 </resources>

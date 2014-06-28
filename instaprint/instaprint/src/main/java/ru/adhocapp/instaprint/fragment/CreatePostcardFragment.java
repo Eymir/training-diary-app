@@ -294,7 +294,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                     borderFrame.setVisibility(View.VISIBLE);
                     mIvUserPhoto.setImageBitmap(sSelectedImage);
                     getActivity().findViewById(R.id.ll_rotate_panel).setVisibility(View.VISIBLE);
-                    order.setPhotoPath(selectedImageFilePath);
+                    order.setRawFrontSidePath(selectedImageFilePath);
                     break;
                 }
             case SELECT_ADDRESS: {
@@ -484,10 +484,12 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         try {
             EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
             String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
-            String newPath = saveBitmapToSD(getCurrentImage());
+            String frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, getCurrentImage());
+
             // тут сохранение
-            saveBitmapToSD(mCurrentPostcard);
-            order.setPhotoPath(newPath);
+            String backside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_BACK, mCurrentPostcard);
+            order.setFrontSidePhotoPath(frontside_path);
+            order.setBackSidePhotoPath(backside_path);
             order.setText(etUserTextStr);
             order.setDate(new Date());
             order.setStatus(OrderStatus.PAYING);
@@ -495,10 +497,10 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             em.persist(order);
             buyPurchase();
         } catch (SaveImageException e) {
-            Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT).show();
         } catch (Throwable e) {
             Log.e(Const.LOG_TAG, e.getMessage(), e);
-            Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -541,13 +543,13 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         return result;
     }
 
-    private String saveBitmapToSD(Bitmap result) throws SaveImageException {
+    private String saveBitmapToSD(String prefix, Bitmap result) throws SaveImageException {
         try {
             String sd_path = Environment.getExternalStorageDirectory().toString();
             OutputStream fOut = null;
             File folder = new File(sd_path + "/" + Const.SAVE_FOLDER);
             folder.mkdirs();
-            File image_file = new File(folder.toString(), Const.IMAGE_FILE_NAME + "_" + SDF.format(new Date()) + "_" + folder.list().length + ".png");
+            File image_file = new File(folder.toString(), prefix + "_" + SDF.format(new Date()) + "_" + folder.list().length + ".png");
             try {
                 fOut = new FileOutputStream(image_file);
                 result.compress(Bitmap.CompressFormat.PNG, 100, fOut);

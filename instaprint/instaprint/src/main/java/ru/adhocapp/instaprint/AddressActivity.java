@@ -19,13 +19,12 @@ public class AddressActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         ListView listView = (ListView) findViewById(R.id.list_view);
-        final ListAdapter adapter = listView.getAdapter();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int address_type = getIntent().getIntExtra(Const.ADDRESS_TYPE, -1);
                 Log.d(Const.LOG_TAG, "getIntent().getIntExtra(Const.ADDRESS_TYPE, -1): " + address_type);
-                Address address = (Address) adapter.getItem(position);
+                Address address = (Address) parent.getAdapter().getItem(position);
                 Intent intent = new Intent();
                 intent.putExtra(Const.ADDRESS, address);
                 intent.putExtra(Const.ADDRESS_TYPE, address_type);

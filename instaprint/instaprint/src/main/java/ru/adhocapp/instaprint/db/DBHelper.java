@@ -22,7 +22,7 @@ import ru.adhocapp.instaprint.util.Const;
 public class DBHelper extends SQLiteOpenHelper {
     private static DBHelper mInstance = null;
 
-    private final static int DB_VERSION = 1;
+    private final static int DB_VERSION = 2;
     public final static String DATABASE_NAME = "InstaPrintDB";
     public final static String ORDER_TABLE = "CLIENT_ORDER";
     public final static String ADDRESS_TABLE = "ADDRESS";
@@ -62,10 +62,19 @@ public class DBHelper extends SQLiteOpenHelper {
         createOrderTable(db);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        switch (oldVersion) {
+            case 1: {
+                db.execSQL("drop table CLIENT_ORDER;");
+                db.execSQL("drop table ADDRESS;");
+                db.execSQL("drop table PURCHASE_DETAILS;");
+                createAddressTable(db);
+                createPurchaseDetailsTable(db);
+                createOrderTable(db);
+            }
 
+        }
     }
 
     private void createOrderTable(SQLiteDatabase db) {
@@ -74,7 +83,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "TEXT text,"
                 + "STATUS text,"
                 + "DATE datetime,"
-                + "PHOTO_PATH text,"
+                + "RAW_FRONT_PHOTO_PATH text,"
+                + "FRONT_PHOTO_PATH text,"
+                + "BACK_PHOTO_PATH text,"
                 + "ADDRESS_FROM_ID integer,"
                 + "ADDRESS_TO_ID integer,"
                 + "PURCHASE_DETAILS_ID integer,"
@@ -119,7 +130,9 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("TEXT", order.getText());
         if (order.getDate() != null)
             cv.put("DATE", order.getDate().getTime());
-        cv.put("PHOTO_PATH", order.getPhotoPath());
+        cv.put("RAW_FRONT_PHOTO_PATH", order.getRawFrontSidePath());
+        cv.put("FRONT_PHOTO_PATH", order.getFrontSidePhotoPath());
+        cv.put("BACK_PHOTO_PATH", order.getBackSidePhotoPath());
         if (order.getAddressFrom() != null)
             cv.put("ADDRESS_FROM_ID", order.getAddressFrom().getId());
         if (order.getAddressTo() != null)
@@ -182,7 +195,9 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("TEXT", order.getText());
         if (order.getDate() != null)
             cv.put("DATE", order.getDate().getTime());
-        cv.put("PHOTO_PATH", order.getPhotoPath());
+        cv.put("RAW_FRONT_PHOTO_PATH", order.getRawFrontSidePath());
+        cv.put("FRONT_PHOTO_PATH", order.getFrontSidePhotoPath());
+        cv.put("BACK_PHOTO_PATH", order.getBackSidePhotoPath());
         if (order.getAddressFrom() != null)
             cv.put("ADDRESS_FROM_ID", order.getAddressFrom().getId());
         if (order.getAddressTo() != null)
@@ -238,12 +253,14 @@ public class DBHelper extends SQLiteOpenHelper {
             Long id = c.getLong(c.getColumnIndex("ID"));
             String text = c.getString(c.getColumnIndex("TEXT"));
             String status = c.getString(c.getColumnIndex("STATUS"));
-            String photo_path = c.getString(c.getColumnIndex("PHOTO_PATH"));
+            String RAW_FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("RAW_FRONT_PHOTO_PATH"));
+            String FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("FRONT_PHOTO_PATH"));
+            String BACK_PHOTO_PATH = c.getString(c.getColumnIndex("BACK_PHOTO_PATH"));
             Long date = c.getLong(c.getColumnIndex("DATE"));
             Long address_from_id = c.getLong(c.getColumnIndex("ADDRESS_FROM_ID"));
             Long address_to_id = c.getLong(c.getColumnIndex("ADDRESS_TO_ID"));
             Long purchase_details_id = c.getLong(c.getColumnIndex("PURCHASE_DETAILS_ID"));
-            return new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, photo_path, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status));
+            return new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, RAW_FRONT_PHOTO_PATH, FRONT_PHOTO_PATH, BACK_PHOTO_PATH, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status));
         }
         if (c != null) c.close();
         return null;
@@ -292,12 +309,14 @@ public class DBHelper extends SQLiteOpenHelper {
             Long id = c.getLong(c.getColumnIndex("ID"));
             String text = c.getString(c.getColumnIndex("TEXT"));
             String status = c.getString(c.getColumnIndex("STATUS"));
-            String photo_path = c.getString(c.getColumnIndex("PHOTO_PATH"));
+            String RAW_FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("RAW_FRONT_PHOTO_PATH"));
+            String FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("FRONT_PHOTO_PATH"));
+            String BACK_PHOTO_PATH = c.getString(c.getColumnIndex("BACK_PHOTO_PATH"));
             Long date = c.getLong(c.getColumnIndex("DATE"));
             Long address_from_id = c.getLong(c.getColumnIndex("ADDRESS_FROM_ID"));
             Long address_to_id = c.getLong(c.getColumnIndex("ADDRESS_TO_ID"));
             Long purchase_details_id = c.getLong(c.getColumnIndex("PURCHASE_DETAILS_ID"));
-            list.add(new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, photo_path, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status)));
+            list.add(new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, RAW_FRONT_PHOTO_PATH, FRONT_PHOTO_PATH, BACK_PHOTO_PATH, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status)));
         }
         if (c != null) c.close();
         return list;

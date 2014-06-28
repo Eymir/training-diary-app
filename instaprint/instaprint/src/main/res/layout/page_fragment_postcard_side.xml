@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.polites.android.FixedAspectRatioLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fix="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/abc_menu_dropdown_panel_holo_light"
+    fix:aspectRatio="1.40952380952381">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/postcard_side" />
+
+</com.polites.android.FixedAspectRatioLayout>
