@@ -13,30 +13,61 @@ public class Order extends Entity {
     private Address addressFrom;
     private Address addressTo;
     private String text;
-    private String photoPath;
+    private String rawFrontSidePath;
+    private String frontSidePhotoPath;
+    private String backSidePhotoPath;
     private Date date;
     private PurchaseDetails purchaseDetails;
     private OrderStatus status;
 
-    public Order(Long id, Address addressFrom, Address addressTo, String text, String photoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
+    public Order(Long id, Address addressFrom, Address addressTo, String text, String frontSidePhotoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
         this.id = id;
         this.addressFrom = addressFrom;
         this.addressTo = addressTo;
         this.text = text;
-        this.photoPath = photoPath;
+        this.frontSidePhotoPath = frontSidePhotoPath;
         this.date = date;
         this.purchaseDetails = purchaseDetails;
         this.status = status;
     }
 
-    public Order(Address addressFrom, Address addressTo, String text, String photoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
+    public Order(Address addressFrom, Address addressTo, String text, String frontSidePhotoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
         this.addressFrom = addressFrom;
         this.addressTo = addressTo;
         this.text = text;
-        this.photoPath = photoPath;
+        this.frontSidePhotoPath = frontSidePhotoPath;
         this.date = date;
         this.purchaseDetails = purchaseDetails;
         this.status = status;
+    }
+
+    public Order(Long id, Address addressFrom, Address addressTo, String text, String rawFrontSidePath, String frontSidePhotoPath, String backSidePhotoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
+        this.id = id;
+        this.addressFrom = addressFrom;
+        this.addressTo = addressTo;
+        this.text = text;
+        this.rawFrontSidePath = rawFrontSidePath;
+        this.frontSidePhotoPath = frontSidePhotoPath;
+        this.backSidePhotoPath = backSidePhotoPath;
+        this.date = date;
+        this.purchaseDetails = purchaseDetails;
+        this.status = status;
+    }
+
+    public String getRawFrontSidePath() {
+        return rawFrontSidePath;
+    }
+
+    public void setRawFrontSidePath(String rawFrontSidePath) {
+        this.rawFrontSidePath = rawFrontSidePath;
+    }
+
+    public String getBackSidePhotoPath() {
+        return backSidePhotoPath;
+    }
+
+    public void setBackSidePhotoPath(String backSidePhotoPath) {
+        this.backSidePhotoPath = backSidePhotoPath;
     }
 
     public Order(OrderStatus status) {
@@ -75,12 +106,12 @@ public class Order extends Entity {
         this.text = text;
     }
 
-    public String getPhotoPath() {
-        return photoPath;
+    public String getFrontSidePhotoPath() {
+        return frontSidePhotoPath;
     }
 
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
+    public void setFrontSidePhotoPath(String frontSidePhotoPath) {
+        this.frontSidePhotoPath = frontSidePhotoPath;
     }
 
     public OrderStatus getStatus() {
@@ -134,7 +165,7 @@ public class Order extends Entity {
                 ", addressFrom=" + addressFrom +
                 ", addressTo=" + addressTo +
                 ", text='" + text + '\'' +
-                ", photoPath='" + photoPath + '\'' +
+                ", frontSidePhotoPath='" + frontSidePhotoPath + '\'' +
                 ", date=" + date +
                 ", purchaseDetails=" + purchaseDetails +
                 ", status=" + status +

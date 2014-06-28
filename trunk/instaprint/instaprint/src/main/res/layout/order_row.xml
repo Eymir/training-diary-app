@@ -4,13 +4,31 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/white_smoke"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:paddingBottom="5dp">
 
-    <ImageView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:layout_gravity="center_vertical" />
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="103dp"
+            android:layout_height="73dp"
+            android:paddingRight="8dp"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/order_image" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/hello_world"
+            android:id="@+id/order_date"
+            android:textColor="@color/holo_dark_font"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -35,22 +53,6 @@
             android:id="@+id/order_details"
             android:textColor="@color/holo_dark_font" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="2px"
-        android:layout_height="fill_parent"
-        android:background="@android:color/darker_gray" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/hello_world"
-        android:id="@+id/order_date"
-        android:textColor="@color/holo_dark_font"
-        android:padding="5dp"
-        android:layout_gravity="center_vertical"
-        />
 
     <TextView
         android:layout_width="2px"

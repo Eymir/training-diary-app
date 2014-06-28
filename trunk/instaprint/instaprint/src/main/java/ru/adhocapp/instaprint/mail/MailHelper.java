@@ -58,7 +58,7 @@ public class MailHelper {
                     if (o instanceof Order) {
                         Order order = (Order) params[0];
                         MailSender sender = new MailSender(Const.MAIL_ACCOUNT, Const.MAIL_PASSWORD);
-                        sender.sendMail(order.toMailTitle(), order.toMailBody(), Const.MAIL_ACCOUNT, Const.MAIL_ACCOUNT, order.getPhotoPath());
+                        sender.sendMail(order.toMailTitle(), order.toMailBody(), Const.MAIL_ACCOUNT, Const.MAIL_ACCOUNT, order.getFrontSidePhotoPath());
                         order.setStatus(OrderStatus.EXECUTED);
                         DBHelper.getInstance(null).EM.merge(order);
                     } else if (o instanceof FeedbackMessage) {
