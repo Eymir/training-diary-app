@@ -9,7 +9,7 @@ import ru.adhocapp.instaprint.fragment.CreatePostcardPageFragment;
 import ru.adhocapp.instaprint.util.ResourceAccess;
 
 public class CreatePostcardFragmentPagerAdapter extends FragmentPagerAdapter {
-    private static final int PAGE_COUNT = 5;
+    private static final int PAGE_COUNT = 6;
     private FragmentManager fm;
 
     public CreatePostcardFragmentPagerAdapter(FragmentManager fm) {
@@ -36,19 +36,21 @@ public class CreatePostcardFragmentPagerAdapter extends FragmentPagerAdapter {
                 title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_select_foto);
                 break;
             case 1:
-                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_edit_text);
+                title = ResourceAccess.getInstance().getResources().getString(R.string.graphics);
                 break;
             case 2:
-                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_edit_address);
+                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_edit_text);
                 break;
             case 3:
-                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_preview);
+                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_edit_address);
                 break;
             case 4:
+                title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_preview);
+                break;
+            case 5:
                 title = ResourceAccess.getInstance().getResources().getString(R.string.page_title_result);
                 break;
         }
         return title;
     }
-
 }

@@ -9,5 +9,6 @@
     <dimen name="review_text_size">10sp</dimen>
     <dimen name="postcard_edittext_height">20dp</dimen>
     <dimen name="base_divider_width">1dp</dimen>
+    <dimen name="base_frame_panel_height">100dp</dimen>
 
 </resources>

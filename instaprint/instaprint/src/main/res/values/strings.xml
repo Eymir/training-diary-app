@@ -37,6 +37,7 @@
     <string name="country_caption">Страна</string>
     <string name="city_caption">Город</string>
     <string name="please_wait">Пожалуйста подождите…</string>
+    <string name="graphics">Графика</string>
     <string name="send_button">Отправить</string>
     <string name="input_email_caption">Ваш email:</string>
     <string name="email_body">Сообщение:</string>
