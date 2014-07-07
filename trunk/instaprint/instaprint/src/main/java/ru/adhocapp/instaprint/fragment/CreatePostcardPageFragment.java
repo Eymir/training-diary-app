@@ -77,20 +77,23 @@ public class CreatePostcardPageFragment extends Fragment {
                 });
                 break;
             case 1:
+                view = inflater.inflate(R.layout.page_fragment_graphics, null);
+                break;
+            case 2:
                 view = inflater.inflate(R.layout.page_fragment_edit_text, null);
                 break;
-            case 2: {
+            case 3: {
                 view = inflater.inflate(R.layout.page_fragment_edit_address, null);
                 View v_to = view.findViewById(R.id.address_to);
                 TextView textView = (TextView) v_to.findViewById(R.id.contact_title);
                 textView.setText(R.string.address_to_no_named);
                 break;
             }
-            case 3: {
+            case 4: {
                 view = inflater.inflate(R.layout.page_fragment_preview, null);
                 break;
             }
-            case 4: {
+            case 5: {
                 view = inflater.inflate(R.layout.page_fragment_result, null);
                 break;
             }

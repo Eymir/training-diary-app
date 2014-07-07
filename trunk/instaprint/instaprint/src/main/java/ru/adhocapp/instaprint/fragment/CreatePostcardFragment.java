@@ -30,6 +30,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ import ru.adhocapp.instaprint.exception.SaveImageException;
 import ru.adhocapp.instaprint.mail.MailHelper;
 import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.FontsManager;
+import ru.adhocapp.instaprint.util.FramesManager;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -84,10 +86,12 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
 
     private EntityManager em;
     private FontsManager mFontsManager;
+    private FramesManager mFramesManager;
 
     private static final Field sChildFragmentManagerField;
 
     protected static Bitmap sSelectedImage;
+    private static Bitmap sGraphedImage;
     private Bitmap mCurrentPostcard;
     private ImageView mIvUserPhoto;
 
@@ -129,12 +133,16 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         View view = inflater.inflate(R.layout.main_fragment_create_postcart, null);
         pager = (ViewPager) view.findViewById(R.id.pager);
         FragmentPagerAdapter pagerAdapter = new CreatePostcardFragmentPagerAdapter(getChildFragmentManager());
-        pager.setOffscreenPageLimit(5);
+        pager.setOffscreenPageLimit(6);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(onPageChangeListener);
         em = DBHelper.getInstance(getActivity()).EM;
         billingInit();
         return view;
+    }
+
+    public static void setGraphedImage(Bitmap graphedImage) {
+        sGraphedImage = graphedImage;
     }
 
 
@@ -145,17 +153,24 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             Log.i(LOGTAG, "OnPageSelected, position = " + position);
             switch (position) {
                 case 1:
+                    if (mFramesManager == null) {
+                        mFramesManager = new FramesManager(getActivity(), (LinearLayout) getActivity().findViewById(R.id.ll_frames), getCurrentImage(true));
+                    } else mFramesManager.drawFramesList(getCurrentImage(true));
+                    getActivity().findViewById(R.id.ll_frames_panel).setVisibility(sSelectedImage == null ? View.GONE : View.VISIBLE);
+                    break;
+                case 2:
                     if (mFontsManager == null) {
                         mFontsManager = new FontsManager(getActivity(), ((HorizontalScrollView) getActivity().findViewById(R.id.sc_fonts)));
                         mFontsManager.init();
                     } else mFontsManager.drawFontsList();
                     break;
-                case 3:
+                case 4:
                     new DrawPreviewTask().execute();
                     break;
             }
         }
     };
+
 
     private class DrawPreviewTask extends AsyncTask<Void, Void, Void> {
         private AlertDialog mAd;
@@ -178,7 +193,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         protected Void doInBackground(Void... params) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inMutable = true;
-            options.inSampleSize = 2;
+            options.inScaled = false;
             mPostcard = BitmapFactory.decodeResource(getResources(), R.drawable.postcard_background, options);
             Log.e(LOGTAG, mPostcard.getWidth() + "; " + mPostcard.getHeight());
 
@@ -219,7 +234,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 c.drawText(fullName, 970, 460, p2);
 
                 String address = order.getAddressTo().getStreetAddress();
-                for (int i = 1; i != address.length(); i++) {
+                for (int i = 1; i < address.length(); i++) {
                     if (address.charAt(i) != ' ' && ((int) i / maxLineSize) == ((double) i / maxLineSize)) {
                         int lastSpaceIndex = address.lastIndexOf(' ', i);
                         if (lastSpaceIndex != -1 && address.substring(i - maxLineSize, i + 1).contains(" ")) {
@@ -251,7 +266,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
 
             mCurrentPostcard = mPostcard;
             mPostcard = Bitmap.createScaledBitmap(mPostcard, mPostcard.getWidth() / 2, mPostcard.getHeight() / 2, true);
-            if (sSelectedImage != null) mImage = getCurrentImage();
+            if (sSelectedImage != null) mImage = getCurrentImage(false);
             return null;
         }
 
@@ -262,7 +277,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             ivPostcard.setImageBitmap(mPostcard);
 
             if (mImage != null) {
-                ImageView ivImage = (ImageView) getActivity().findViewById(R.id.iv_image);
+                ImageView ivImage = (ImageView) getActivity().findViewById(R.id.iv_preview_image);
                 ivImage.setImageBitmap(mImage);
             }
         }
@@ -484,7 +499,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         try {
             EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
             String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
-            String frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, getCurrentImage());
+            String frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, getCurrentImage(false));
 
             // тут сохранение
             String backside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_BACK, mCurrentPostcard);
@@ -504,13 +519,16 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         }
     }
 
-    private Bitmap getCurrentImage() {
-        PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
-        RectF rect = getCropRect(imageView);
-        Log.d(Const.LOG_TAG, "rect: " + rect);
-        Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
-        return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
-                (int) rect.width(), (int) rect.height());
+    private Bitmap getCurrentImage(boolean ignorGraphed) {
+        if (sGraphedImage != null && !ignorGraphed) return sGraphedImage;
+        else if (sSelectedImage != null) {
+            PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
+            RectF rect = getCropRect(imageView);
+            Log.d(Const.LOG_TAG, "rect: " + rect);
+            Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
+            return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
+                    (int) rect.width(), (int) rect.height());
+        } else return null;
     }
 
     private RectF getCropRect(PhotoView imageView) {

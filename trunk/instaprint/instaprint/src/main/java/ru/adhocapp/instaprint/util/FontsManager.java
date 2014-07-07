@@ -117,6 +117,7 @@ public class FontsManager {
 
     TextWatcher textWatcher = new TextWatcher() {
         int lastLength = 0;
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -139,7 +140,8 @@ public class FontsManager {
                 mWasLength = setCorrectedString(str);
                 mEtUserText.setText(str);
                 mEtUserText.setSelection(lastLength);
-            } else mWasLength = setCorrectedString(mEtUserText.getText().toString());
+            }
+            else mWasLength = setCorrectedString(mEtUserText.getText().toString());
             if (currentLength >= mValidity) mTvValidity.setTextColor(Color.RED);
             else mTvValidity.setTextColor(Color.BLACK);
             lastLength = mEtUserText.length();
@@ -158,6 +160,9 @@ public class FontsManager {
                                 current.substring(lastSpaceIndex + 1);
                     }
                 }
+                try {
+                    if (!current.substring(i, current.length()).contains(" ")) break;
+                } catch (Exception e) {e.printStackTrace();}
             }
         }
         currentText = current;
@@ -178,13 +183,13 @@ public class FontsManager {
         sFontsList.put("Calibri.ttf", 308);
         sFontsList.put("Capture_It.ttf", 280);
         sFontsList.put("Handwriting_Bickhamscr.ttf", 532);
-        sFontsList.put("Handwriting_Lazy.ttf", 322);
+        sFontsList.put("Handwriting_Lazy.ttf", 308);
         sFontsList.put("Wild_honey.ttf", 280);
         sFontsList.put("Xiomara.ttf", 308);
-        sFontsList.put("YesevaOne.otf", 308);
+        sFontsList.put("YesevaOne.otf", 238);
         sFontsList.put("Funny1.ttf", 252);
         sFontsList.put("Funny2.ttf", 308);
         sFontsList.put("Typewriting.ttf", 182);
-        sFontsList.put("Simple.ttf", 294);
+        sFontsList.put("Simple.ttf", 266);
     }
 }
