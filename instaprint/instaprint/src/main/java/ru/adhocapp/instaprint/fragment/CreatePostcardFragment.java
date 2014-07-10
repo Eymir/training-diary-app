@@ -522,12 +522,16 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     private Bitmap getCurrentImage(boolean ignorGraphed) {
         if (sGraphedImage != null && !ignorGraphed) return sGraphedImage;
         else if (sSelectedImage != null) {
-            PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
-            RectF rect = getCropRect(imageView);
-            Log.d(Const.LOG_TAG, "rect: " + rect);
-            Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
-            return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
-                    (int) rect.width(), (int) rect.height());
+            try {
+                PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
+                RectF rect = getCropRect(imageView);
+                Log.d(Const.LOG_TAG, "rect: " + rect);
+                Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
+                return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
+                        (int) rect.width(), (int) rect.height());
+            } catch (Exception e) {
+                return sSelectedImage;
+            }
         } else return null;
     }
 
