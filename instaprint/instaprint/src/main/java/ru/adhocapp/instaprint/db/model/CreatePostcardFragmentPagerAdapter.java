@@ -5,11 +5,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import ru.adhocapp.instaprint.R;
-import ru.adhocapp.instaprint.fragment.CreatePostcardPageFragment;
+import ru.adhocapp.instaprint.fragment.postcard.CreatePostcardEditAddressPageFragment;
+import ru.adhocapp.instaprint.fragment.postcard.CreatePostcardGraphicsPageFragment;
+import ru.adhocapp.instaprint.fragment.postcard.CreatePostcardLoadPicturePageFragment;
+import ru.adhocapp.instaprint.fragment.postcard.CreatePostcardMessagePageFragment;
+import ru.adhocapp.instaprint.fragment.postcard.CreatePostcardPreviewPageFragment;
 import ru.adhocapp.instaprint.util.ResourceAccess;
 
 public class CreatePostcardFragmentPagerAdapter extends FragmentPagerAdapter {
-    private static final int PAGE_COUNT = 6;
+    private static final int PAGE_COUNT = 5;
     private FragmentManager fm;
 
     public CreatePostcardFragmentPagerAdapter(FragmentManager fm) {
@@ -19,7 +23,19 @@ public class CreatePostcardFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return CreatePostcardPageFragment.newInstance(position);
+        switch (position) {
+            case 0:
+                return CreatePostcardLoadPicturePageFragment.newInstance();
+            case 1:
+                return CreatePostcardGraphicsPageFragment.newInstance();
+            case 2:
+                return CreatePostcardMessagePageFragment.newInstance();
+            case 3:
+                return CreatePostcardEditAddressPageFragment.newInstance();
+            case 4:
+                return CreatePostcardPreviewPageFragment.newInstance();
+        }
+        return CreatePostcardLoadPicturePageFragment.newInstance();
     }
 
     @Override

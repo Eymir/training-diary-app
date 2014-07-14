@@ -7,42 +7,68 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import ru.adhocapp.instaprint.R;
-import ru.adhocapp.instaprint.fragment.CreatePostcardFragment;
+import ru.adhocapp.instaprint.fragment.postcard.CreatePostcardMainFragment;
 
 /**
  * Created by Игорь Ковган on 22.06.2014.
  */
-public class FramesManager {
+public class FrameManager {
     private Context mContext;
     private LinearLayout mLlFramesList;
     private ImageView mIvPicture;
+    public Bitmap currentPicture;
     private int mCurrentSession = 0;
     private int mLastEffect = 0;
+    private String currentFrame;
 
-    public FramesManager(Context context, LinearLayout framesList, Bitmap currentPicture) {
+    public FrameManager(Context context, View view, final Bitmap currentPicture, String startFrame) {
         mContext = context;
-        mLlFramesList = framesList;
-        mIvPicture = (ImageView) ((Activity) mContext).findViewById(R.id.iv_image);
+        mLlFramesList = (LinearLayout) view.findViewById(R.id.ll_frames);
+        mIvPicture = (ImageView) view.findViewById(R.id.iv_image);
+        this.currentPicture = currentPicture;
         drawFramesList(currentPicture);
+        if (startFrame != null) {
+            final int frame_res = context.getResources().getIdentifier(startFrame, "drawable", context.getPackageName());
+            new AsyncTask<Void, Void, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(Void... params) {
+                    return setUpImage(frame_res, FrameManager.this.currentPicture);
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap result) {
+                    mIvPicture.setImageBitmap(result);
+                    CreatePostcardMainFragment.setGraphedImage(result);
+                }
+            }.execute();
+        }
     }
 
     public void drawFramesList(Bitmap currentBitmap) {
+        this.currentPicture = currentBitmap;
         mCurrentSession++;
         final int lastSession = mCurrentSession;
         final Bitmap currentPicture = currentBitmap == null ? Bitmap.createBitmap(105, 148, Bitmap.Config.ARGB_8888) : currentBitmap;
         mLlFramesList.removeAllViews();
         final Handler handler = new Handler();
         // тут добавляешь ссылки на новые рамки, 0 - без рамки
-        final int[] resArray = { 0, R.drawable.frame_bycicle, R.drawable.frame_chaotic_brush, R.drawable.frame_flower };
+        final int[] resArray = {0,
+                R.drawable.frame_0,
+                R.drawable.frame_1,
+                R.drawable.frame_2,
+                R.drawable.frame_4,
+                R.drawable.frame_6,
+                R.drawable.frame_8,
+                R.drawable.frame_10};
         for (int i = 0; i != resArray.length; i++) {
             final int k = i;
             new AsyncTask<Void, Void, View>() {
@@ -50,6 +76,7 @@ public class FramesManager {
                 protected View doInBackground(Void... params) {
                     View newFrameTag = null;
                     try {
+                        Log.d(Const.LOG_TAG, "mContext: " + mContext);
                         newFrameTag = ((Activity) mContext).getLayoutInflater().inflate(R.layout.frame_tag, null, false);
                         ImageButton btn = (ImageButton) newFrameTag.findViewById(R.id.btn_frame);
 
@@ -59,28 +86,28 @@ public class FramesManager {
                             canvas.drawBitmap(Bitmap.createScaledBitmap(currentPicture, currentPicture.getWidth() / 3, currentPicture.getHeight() / 3, false), new Matrix(), null);
                             Bitmap frame = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), resArray[k]), currentPicture.getWidth() / 3, currentPicture.getHeight() / 3, false);
                             canvas.drawBitmap(frame, new Matrix(), null);
-                            btn.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(Bitmap.createBitmap(preview, 0, 0, preview.getWidth() / 4, preview.getHeight() / 4), 150, 150, false)));
-                            if (mLastEffect == k) {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new AsyncTask<Void, Void, Bitmap>() {
-                                            @Override
-                                            protected Bitmap doInBackground(Void... params) {
-                                                return setUpImage(resArray[k], currentPicture);
-                                            }
-
-                                            @Override
-                                            protected void onPostExecute(Bitmap result) {
-                                                mIvPicture.setImageBitmap(result);
-                                                CreatePostcardFragment.setGraphedImage(result);
-                                            }
-                                        }.execute();
-                                    }
-                                });
-                            }
+                            btn.setImageBitmap(Bitmap.createScaledBitmap(Bitmap.createBitmap(preview, 0, 0, preview.getWidth() / 4, preview.getWidth() / 4), 150, 150, false));
+//                            if (mLastEffect == k) {
+//                                handler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        new AsyncTask<Void, Void, Bitmap>() {
+//                                            @Override
+//                                            protected Bitmap doInBackground(Void... params) {
+//                                                return setUpImage(resArray[k], currentPicture);
+//                                            }
+//
+//                                            @Override
+//                                            protected void onPostExecute(Bitmap result) {
+//                                                mIvPicture.setImageBitmap(result);
+//                                                CreatePostcardMainFragment.setGraphedImage(result);
+//                                            }
+//                                        }.execute();
+//                                    }
+//                                });
+//                            }
                         } else {
-                            btn.setBackgroundDrawable(new BitmapDrawable(Bitmap.createScaledBitmap(Bitmap.createBitmap(currentPicture, 0, 0, currentPicture.getWidth() / 4, currentPicture.getHeight() / 4), 150, 150, false)));
+                            btn.setImageBitmap(Bitmap.createScaledBitmap(Bitmap.createBitmap(currentPicture, 0, 0, currentPicture.getWidth() / 4, currentPicture.getHeight() / 4), 150, 150, false));
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -93,6 +120,7 @@ public class FramesManager {
                             @Override
                             public void onClick(View v) {
                                 mLastEffect = k;
+                                Log.d(Const.LOG_TAG, "onClick.k: " + k + " onClick.mLastEffect: " + mLastEffect);
                                 if (k != 0) {
                                     new AsyncTask<Void, Void, Bitmap>() {
                                         @Override
@@ -103,35 +131,37 @@ public class FramesManager {
                                         @Override
                                         protected void onPostExecute(Bitmap result) {
                                             mIvPicture.setImageBitmap(result);
-                                            CreatePostcardFragment.setGraphedImage(result);
+                                            CreatePostcardMainFragment.setGraphedImage(result);
                                         }
                                     }.execute();
                                 } else {
                                     mIvPicture.setImageBitmap(currentPicture);
-                                    CreatePostcardFragment.setGraphedImage(currentPicture);
+                                    CreatePostcardMainFragment.setGraphedImage(currentPicture);
                                 }
                             }
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(Const.LOG_TAG, e.getMessage(), e);
                     }
                     return newFrameTag;
                 }
 
                 @Override
                 protected void onPostExecute(View result) {
-                    if (lastSession == mCurrentSession) mLlFramesList.addView(result);
+                    if (lastSession == mCurrentSession && mLlFramesList != null)
+                        mLlFramesList.addView(result);
                 }
             }.execute();
         }
     }
 
-    Bitmap setUpImage(int resArrayK, Bitmap currentPicture) {
+    private Bitmap setUpImage(int resArrayK, Bitmap currentPicture) {
+        Log.d(Const.LOG_TAG, "resArrayK: " + resArrayK + " currentPicture: " + currentPicture);
         Bitmap result = Bitmap.createBitmap(currentPicture.getWidth(), currentPicture.getHeight(), currentPicture.getConfig());
         Canvas canvas = new Canvas(result);
         canvas.drawBitmap(currentPicture, new Matrix(), null);
         Bitmap frame = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), resArrayK), currentPicture.getWidth(), currentPicture.getHeight(), false);
-
+        currentFrame = mContext.getResources().getResourceEntryName(resArrayK);
         for (int y = 0; y < result.getHeight(); y++) {
             for (int x = 0; x < result.getWidth(); x++) {
                 int framePixel = frame.getPixel(x, y);
@@ -148,7 +178,10 @@ public class FramesManager {
                 }
             }
         }
-
         return result;
+    }
+
+    public String getCurrentFrame() {
+        return currentFrame;
     }
 }

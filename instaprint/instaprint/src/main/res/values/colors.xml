@@ -10,4 +10,5 @@
     <color name="white">#FFFFFF</color>
     <color name="rotate_panel_background">#DCDCDC</color>
     <color name="custom_edittext_background">#FFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

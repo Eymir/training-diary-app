@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_smoke"
+    android:columnCount="2"
+    android:padding="20dp"
+    >
+
+    <ImageView
+        android:layout_marginRight="10dp"
+        android:id="@+id/ib_front_photo_valid_mark"
+        android:src="@drawable/ic_check" />
+
+    <TextView
+        android:id="@+id/tv_front_photo_valid_text"
+        android:text="@string/photo_chosen"
+        android:layout_gravity="center_vertical"
+        />
+
+    <ImageView
+        android:id="@+id/ib_message_valid_mark"
+        android:src="@drawable/ic_check" />
+
+    <TextView
+        android:id="@+id/tv_message_valid_text"
+        android:text="@string/message_chosen"
+        android:layout_gravity="center_vertical"/>
+
+    <ImageView
+        android:id="@+id/ib_address_to_valid_mark"
+        android:src="@drawable/ic_check" />
+
+    <TextView
+        android:id="@+id/tv_address_to_valid_text"
+        android:layout_gravity="center_vertical"
+        android:text="@string/address_to_chosen" />
+
+</GridLayout>

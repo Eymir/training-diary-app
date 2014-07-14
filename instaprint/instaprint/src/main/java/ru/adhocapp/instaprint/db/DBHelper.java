@@ -86,6 +86,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "RAW_FRONT_PHOTO_PATH text,"
                 + "FRONT_PHOTO_PATH text,"
                 + "BACK_PHOTO_PATH text,"
+                + "FRAME text,"
+                + "FONT text,"
                 + "ADDRESS_FROM_ID integer,"
                 + "ADDRESS_TO_ID integer,"
                 + "PURCHASE_DETAILS_ID integer,"
@@ -115,40 +117,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     public long insertAddress(SQLiteDatabase db, Address address) {
-        ContentValues cv = new ContentValues();
-        cv.put("STREET_ADDRESS", address.getStreetAddress());
-        cv.put("CITY_NAME", address.getCityName());
-        cv.put("COUNTRY_NAME", address.getCountryName());
-        cv.put("FULL_NAME", address.getFullName());
-        cv.put("ZIPCODE", address.getZipCode());
+        ContentValues cv = fillAddressContentValues(address);
         long id = db.insert(ADDRESS_TABLE, null, cv);
         return id;
     }
 
     public long insertOrder(SQLiteDatabase db, Order order) {
-        ContentValues cv = new ContentValues();
-        cv.put("TEXT", order.getText());
-        if (order.getDate() != null)
-            cv.put("DATE", order.getDate().getTime());
-        cv.put("RAW_FRONT_PHOTO_PATH", order.getRawFrontSidePath());
-        cv.put("FRONT_PHOTO_PATH", order.getFrontSidePhotoPath());
-        cv.put("BACK_PHOTO_PATH", order.getBackSidePhotoPath());
-        if (order.getAddressFrom() != null)
-            cv.put("ADDRESS_FROM_ID", order.getAddressFrom().getId());
-        if (order.getAddressTo() != null)
-            cv.put("ADDRESS_TO_ID", order.getAddressTo().getId());
-        if (order.getPurchaseDetails() != null)
-            cv.put("PURCHASE_DETAILS_ID", order.getPurchaseDetails().getId());
-        cv.put("STATUS", order.getStatus().name());
+        ContentValues cv = fillOrderContentValues(order);
         long id = db.insert(ORDER_TABLE, null, cv);
         return id;
     }
 
     public long insertPurchaseDetails(SQLiteDatabase db, PurchaseDetails purchaseDetails) {
-        ContentValues cv = new ContentValues();
-        cv.put("ORDER_NUMBER", purchaseDetails.getOrderNumber());
-        cv.put("PAY_DATE", purchaseDetails.getPayDate().getTime());
-        cv.put("PRICE", purchaseDetails.getPrice());
+        ContentValues cv = fillPurchaseDetailsContentValues(purchaseDetails);
         long id = db.insert(PURCHASE_DETAILS_TABLE, null, cv);
         return id;
     }
@@ -169,28 +150,26 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void updateAddress(SQLiteDatabase db, Address address) {
-        ContentValues cv = new ContentValues();
-        cv.put("STREET_ADDRESS", address.getStreetAddress());
-        cv.put("CITY_NAME", address.getCityName());
-        cv.put("COUNTRY_NAME", address.getCountryName());
-        cv.put("FULL_NAME", address.getFullName());
-        cv.put("ZIPCODE", address.getZipCode());
+        ContentValues cv = fillAddressContentValues(address);
         db.update(ADDRESS_TABLE, cv, "id = ? ",
                 new String[]{String.valueOf(address.getId())});
     }
 
 
     public void updatePurchaseDetails(SQLiteDatabase db, PurchaseDetails purchaseDetails) {
-        ContentValues cv = new ContentValues();
-        cv.put("ORDER_NUMBER", purchaseDetails.getOrderNumber());
-        cv.put("PAY_DATE", purchaseDetails.getPayDate().getTime());
-        cv.put("PRICE", purchaseDetails.getPrice());
+        ContentValues cv = fillPurchaseDetailsContentValues(purchaseDetails);
         db.update(PURCHASE_DETAILS_TABLE, cv, "id = ? ",
                 new String[]{String.valueOf(purchaseDetails.getId())});
 
     }
 
     public void updateOrder(SQLiteDatabase db, Order order) {
+        ContentValues cv = fillOrderContentValues(order);
+        db.update(ORDER_TABLE, cv, "id = ? ",
+                new String[]{String.valueOf(order.getId())});
+    }
+
+    public ContentValues fillOrderContentValues(Order order) {
         ContentValues cv = new ContentValues();
         cv.put("TEXT", order.getText());
         if (order.getDate() != null)
@@ -198,6 +177,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("RAW_FRONT_PHOTO_PATH", order.getRawFrontSidePath());
         cv.put("FRONT_PHOTO_PATH", order.getFrontSidePhotoPath());
         cv.put("BACK_PHOTO_PATH", order.getBackSidePhotoPath());
+        cv.put("FRAME", order.getFrame());
+        cv.put("FONT", order.getFont());
         if (order.getAddressFrom() != null)
             cv.put("ADDRESS_FROM_ID", order.getAddressFrom().getId());
         if (order.getAddressTo() != null)
@@ -205,10 +186,27 @@ public class DBHelper extends SQLiteOpenHelper {
         if (order.getPurchaseDetails() != null)
             cv.put("PURCHASE_DETAILS_ID", order.getPurchaseDetails().getId());
         cv.put("STATUS", order.getStatus().name());
-        db.update(ORDER_TABLE, cv, "id = ? ",
-                new String[]{String.valueOf(order.getId())});
-
+        return cv;
     }
+
+    public ContentValues fillPurchaseDetailsContentValues(PurchaseDetails purchaseDetails) {
+        ContentValues cv = new ContentValues();
+        cv.put("ORDER_NUMBER", purchaseDetails.getOrderNumber());
+        cv.put("PAY_DATE", purchaseDetails.getPayDate().getTime());
+        cv.put("PRICE", purchaseDetails.getPrice());
+        return cv;
+    }
+
+    public ContentValues fillAddressContentValues(Address address) {
+        ContentValues cv = new ContentValues();
+        cv.put("STREET_ADDRESS", address.getStreetAddress());
+        cv.put("CITY_NAME", address.getCityName());
+        cv.put("COUNTRY_NAME", address.getCountryName());
+        cv.put("FULL_NAME", address.getFullName());
+        cv.put("ZIPCODE", address.getZipCode());
+        return cv;
+    }
+
 
     public Address getAddressById(SQLiteDatabase db, Long primaryKey) {
         String sqlQuery = "select * from " + ADDRESS_TABLE +
@@ -256,11 +254,13 @@ public class DBHelper extends SQLiteOpenHelper {
             String RAW_FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("RAW_FRONT_PHOTO_PATH"));
             String FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("FRONT_PHOTO_PATH"));
             String BACK_PHOTO_PATH = c.getString(c.getColumnIndex("BACK_PHOTO_PATH"));
+            String FRAME = c.getString(c.getColumnIndex("FRAME"));
+            String FONT = c.getString(c.getColumnIndex("FONT"));
             Long date = c.getLong(c.getColumnIndex("DATE"));
             Long address_from_id = c.getLong(c.getColumnIndex("ADDRESS_FROM_ID"));
             Long address_to_id = c.getLong(c.getColumnIndex("ADDRESS_TO_ID"));
             Long purchase_details_id = c.getLong(c.getColumnIndex("PURCHASE_DETAILS_ID"));
-            return new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, RAW_FRONT_PHOTO_PATH, FRONT_PHOTO_PATH, BACK_PHOTO_PATH, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status));
+            return new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, RAW_FRONT_PHOTO_PATH, FRONT_PHOTO_PATH, BACK_PHOTO_PATH, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status), FRAME, FONT);
         }
         if (c != null) c.close();
         return null;
@@ -312,11 +312,13 @@ public class DBHelper extends SQLiteOpenHelper {
             String RAW_FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("RAW_FRONT_PHOTO_PATH"));
             String FRONT_PHOTO_PATH = c.getString(c.getColumnIndex("FRONT_PHOTO_PATH"));
             String BACK_PHOTO_PATH = c.getString(c.getColumnIndex("BACK_PHOTO_PATH"));
+            String FRAME = c.getString(c.getColumnIndex("FRAME"));
+            String FONT = c.getString(c.getColumnIndex("FONT"));
             Long date = c.getLong(c.getColumnIndex("DATE"));
             Long address_from_id = c.getLong(c.getColumnIndex("ADDRESS_FROM_ID"));
             Long address_to_id = c.getLong(c.getColumnIndex("ADDRESS_TO_ID"));
             Long purchase_details_id = c.getLong(c.getColumnIndex("PURCHASE_DETAILS_ID"));
-            list.add(new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, RAW_FRONT_PHOTO_PATH, FRONT_PHOTO_PATH, BACK_PHOTO_PATH, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status)));
+            list.add(new Order(id, getAddressById(db, address_from_id), getAddressById(db, address_to_id), text, RAW_FRONT_PHOTO_PATH, FRONT_PHOTO_PATH, BACK_PHOTO_PATH, new Date(date), getPurchaseDetailsById(db, purchase_details_id), OrderStatus.valueOf(status), FRAME, FONT));
         }
         if (c != null) c.close();
         return list;

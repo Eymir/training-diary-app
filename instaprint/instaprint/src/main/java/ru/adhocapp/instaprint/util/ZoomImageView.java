@@ -671,7 +671,7 @@ public class ZoomImageView extends ImageView {
 			super.setScaleType(ScaleType.CENTER_CROP);
 			// the internal Matrix in the super class(that can get with ImageView#getImageMatrix)
 			// never updated when called setScaleType on current implementation.
-			// therefore call setFrame to update internal Matrix.
+			// therefore call setCurrentFrame to update internal Matrix.
 			// but the behavior may change in the future implementation...
 			setFrame(getLeft(), getTop(), getRight(), getBottom());
 			// set the initial state to idle, get and save the internal Matrix.

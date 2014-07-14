@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:fix="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_smoke"
-    android:orientation="horizontal"
-    android:gravity="center">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fix="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white_smoke">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
+        android:layout_height="match_parent"
         android:gravity="center"
+        android:layout_alignParentLeft="true"
         android:id="@+id/prevPage"
         android:onClick="myClickMethod">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_previous_item"/>
-
+            android:src="@drawable/ic_action_previous_item" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="38dp"
+        android:layout_marginRight="38dp">
 
         <com.polites.android.FixedAspectRatioLayout
             android:layout_width="wrap_content"
@@ -40,7 +39,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/iv_preview_image"/>
+                android:id="@+id/iv_preview_image" />
 
         </com.polites.android.FixedAspectRatioLayout>
 
@@ -53,24 +52,56 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/iv_postcard"/>
+                android:id="@+id/iv_postcard" />
 
         </com.polites.android.FixedAspectRatioLayout>
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:gravity="center"
-        android:id="@+id/nextPage"
-        android:onClick="myClickMethod">
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/base_height"
+        android:background="@color/rotate_panel_background"
+        android:id="@+id/action_area"
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
 
-        <ImageView
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_next_item"/>
+            android:padding="5dp"
+            android:gravity="center"
+            android:id="@+id/btn_save_postcard"
+            android:text="@string/save_button"
+            android:drawableLeft="@drawable/ic_save"
+            android:background="@drawable/bg_btn_action_bar"
+            android:onClick="myClickMethod"
+            android:clickable="true" />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:gravity="center"
+            android:id="@+id/btn_send_snailmail"
+            android:text="@string/send_mail"
+            android:drawableLeft="@drawable/ic_postcard"
+            android:background="@drawable/bg_btn_action_bar"
+            android:onClick="myClickMethod"
+            android:clickable="true" />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:gravity="center"
+            android:id="@+id/btn_send_email"
+            android:text="@string/send_email"
+            android:drawableLeft="@drawable/ic_send_mail"
+            android:background="@drawable/bg_btn_action_bar"
+            android:onClick="myClickMethod"
+            android:clickable="true" />
 
     </LinearLayout>
-</LinearLayout>
+
+</RelativeLayout>

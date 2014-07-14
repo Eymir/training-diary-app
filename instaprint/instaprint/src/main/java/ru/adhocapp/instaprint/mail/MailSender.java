@@ -43,7 +43,7 @@ public class MailSender extends javax.mail.Authenticator {
         return new PasswordAuthentication(user, password);
     }
 
-    public synchronized void sendMail(String subject, String body, String sender, String recipients, String filename) throws Exception {
+    public synchronized void sendMail(String subject, String body, String sender, String recipients, String... filenames) throws Exception {
         try {
             MimeMessage message = new MimeMessage(session);
             message.setSender(new InternetAddress(sender));
@@ -60,12 +60,14 @@ public class MailSender extends javax.mail.Authenticator {
             messageBodyPart.setText(body);
             _multipart.addBodyPart(messageBodyPart);
 
-            if (filename!=null && !filename.equalsIgnoreCase("")) {
-                BodyPart attachBodyPart = new MimeBodyPart();
-                DataSource source = new FileDataSource(filename);
-                attachBodyPart.setDataHandler(new DataHandler(source));
-                attachBodyPart.setFileName(filename);
-                _multipart.addBodyPart(attachBodyPart);
+            for (String filename : filenames) {
+                if (filename != null && !filename.equalsIgnoreCase("")) {
+                    BodyPart attachBodyPart = new MimeBodyPart();
+                    DataSource source = new FileDataSource(filename);
+                    attachBodyPart.setDataHandler(new DataHandler(source));
+                    attachBodyPart.setFileName(filename);
+                    _multipart.addBodyPart(attachBodyPart);
+                }
             }
 
             message.setContent(_multipart);

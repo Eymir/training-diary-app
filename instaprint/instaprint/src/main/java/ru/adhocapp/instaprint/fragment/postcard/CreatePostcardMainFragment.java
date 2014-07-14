@@ -1,4 +1,4 @@
-package ru.adhocapp.instaprint.fragment;
+package ru.adhocapp.instaprint.fragment.postcard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -30,7 +29,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +40,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +48,7 @@ import ru.adhocapp.instaprint.AddressActivity;
 import ru.adhocapp.instaprint.R;
 import ru.adhocapp.instaprint.billing.IabHelper;
 import ru.adhocapp.instaprint.billing.IabResult;
-import ru.adhocapp.instaprint.billing.Inventory;
+import ru.adhocapp.instaprint.billing.InstaPrintBillingHelper;
 import ru.adhocapp.instaprint.billing.Purchase;
 import ru.adhocapp.instaprint.db.DBHelper;
 import ru.adhocapp.instaprint.db.entity.Address;
@@ -59,20 +58,24 @@ import ru.adhocapp.instaprint.db.entity.OrderStatus;
 import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
 import ru.adhocapp.instaprint.db.model.CreatePostcardFragmentPagerAdapter;
 import ru.adhocapp.instaprint.dialog.CreateEditAddressFragmentDialog;
+import ru.adhocapp.instaprint.dialog.InputEmailFragmentDialog;
 import ru.adhocapp.instaprint.dialog.MapPositiveNegativeClickListener;
+import ru.adhocapp.instaprint.dialog.PostcardOrderValidtionFragmentDialog;
 import ru.adhocapp.instaprint.exception.SaveImageException;
+import ru.adhocapp.instaprint.fragment.XmlClickable;
 import ru.adhocapp.instaprint.mail.MailHelper;
+import ru.adhocapp.instaprint.mail.SendFinishListener;
 import ru.adhocapp.instaprint.util.Const;
 import ru.adhocapp.instaprint.util.FontsManager;
-import ru.adhocapp.instaprint.util.FramesManager;
+import ru.adhocapp.instaprint.util.FrameManager;
 import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by malugin on 09.04.14.
  */
 
-public class CreatePostcardFragment extends Fragment implements XmlClickable {
-    private static final String LOGTAG = "CreatePostcardFragment";
+public class CreatePostcardMainFragment extends Fragment implements XmlClickable {
+    private static final String LOGTAG = "CreatePostcardMainFragment";
 
     private ViewPager pager;
 
@@ -82,18 +85,17 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
 
     private Order order;
 
-    private IabHelper mHelper;
-
     private EntityManager em;
     private FontsManager mFontsManager;
-    private FramesManager mFramesManager;
+    private FrameManager mFrameManager;
 
     private static final Field sChildFragmentManagerField;
 
-    protected static Bitmap sSelectedImage;
+    protected Bitmap sSelectedImage;
     private static Bitmap sGraphedImage;
     private Bitmap mCurrentPostcard;
-    private ImageView mIvUserPhoto;
+
+    private PhotoView mIvUserPhoto;
 
     //Костыль для Pager BEGIN
     static {
@@ -110,7 +112,6 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     @Override
     public void onDetach() {
         super.onDetach();
-
         if (sChildFragmentManagerField != null) {
             try {
                 sChildFragmentManagerField.set(this, null);
@@ -121,9 +122,15 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     }
     //Костыль для Pager END
 
-    public static CreatePostcardFragment newInstance() {
-        CreatePostcardFragment pageFragment = new CreatePostcardFragment();
+    public static CreatePostcardMainFragment newInstance() {
+        CreatePostcardMainFragment pageFragment = new CreatePostcardMainFragment();
         pageFragment.setOrder(new Order(OrderStatus.CREATING));
+        return pageFragment;
+    }
+
+    public static CreatePostcardMainFragment newInstance(Order order) {
+        CreatePostcardMainFragment pageFragment = new CreatePostcardMainFragment();
+        pageFragment.setOrder(order);
         return pageFragment;
     }
 
@@ -137,7 +144,6 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(onPageChangeListener);
         em = DBHelper.getInstance(getActivity()).EM;
-        billingInit();
         return view;
     }
 
@@ -145,25 +151,53 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         sGraphedImage = graphedImage;
     }
 
-
     ViewPager.SimpleOnPageChangeListener onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
+            CreatePostcardFragmentPagerAdapter adapter = (CreatePostcardFragmentPagerAdapter) pager.getAdapter();
+            Fragment fragment = adapter.getItem(position);
             Log.i(LOGTAG, "OnPageSelected, position = " + position);
             switch (position) {
+                case 0:
+                    break;
                 case 1:
-                    if (mFramesManager == null) {
-                        mFramesManager = new FramesManager(getActivity(), (LinearLayout) getActivity().findViewById(R.id.ll_frames), getCurrentImage(true));
-                    } else mFramesManager.drawFramesList(getCurrentImage(true));
+                    Bitmap b = getCurrentImage(true);
+                    if (mFrameManager == null || b != null && !b.sameAs(mFrameManager.currentPicture)) {
+                        initFrameManager(order.getFrame());
+                    }
                     getActivity().findViewById(R.id.ll_frames_panel).setVisibility(sSelectedImage == null ? View.GONE : View.VISIBLE);
                     break;
-                case 2:
+                case 2: {
+                    Log.d(Const.LOG_TAG, "case 2: " + order);
                     if (mFontsManager == null) {
                         mFontsManager = new FontsManager(getActivity(), ((HorizontalScrollView) getActivity().findViewById(R.id.sc_fonts)));
                         mFontsManager.init();
-                    } else mFontsManager.drawFontsList();
-                    break;
+                    } else {
+                        mFontsManager.drawFontsList();
+                    }
+                    CreatePostcardMessagePageFragment messageFragment = ((CreatePostcardMessagePageFragment) fragment);
+                    if (order.getFont() != null && !order.getFont().equals(messageFragment.getCurrentFont())) {
+                        messageFragment.setCurrentFont(order.getFont());
+                        mFontsManager.setFont(order.getFont());
+                    }
+                    if (order.getText() != null && !order.getText().equals(mFontsManager.getCurrentFont())) {
+                        Log.d(Const.LOG_TAG, "messageFragment.setMessageText: " + order.getText());
+                        messageFragment.setMessageText(order.getText());
+                        EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
+                        etUserText.setText(order.getText());
+                    }
+                }
+                break;
+                case 3: {
+                    if (order.getAddressFrom() != null) {
+                        fillAddressField(R.id.address_from, order.getAddressFrom());
+                    }
+                    if (order.getAddressTo() != null) {
+                        fillAddressField(R.id.address_to, order.getAddressTo());
+                    }
+                }
+                break;
                 case 4:
                     new DrawPreviewTask().execute();
                     break;
@@ -171,6 +205,19 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         }
     };
 
+    public void initFrameManager(String frame) {
+        if (mFrameManager == null) {
+            Log.d(Const.LOG_TAG, "initFrameManager mFrameManager == null, getActivity(): " + getActivity());
+            mFrameManager = new FrameManager(getActivity(), getView(), getCurrentImage(true), frame);
+        } else {
+            Log.d(Const.LOG_TAG, "initFrameManager mFrameManager != null");
+            mFrameManager.drawFramesList(getCurrentImage(true));
+        }
+    }
+
+    public Order getOrder() {
+        return order;
+    }
 
     private class DrawPreviewTask extends AsyncTask<Void, Void, Void> {
         private AlertDialog mAd;
@@ -292,23 +339,13 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 if (resultCode == Activity.RESULT_OK) {
                     Uri selectedImageURI = data.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
                     Cursor cursor = getActivity().getContentResolver().query(
                             selectedImageURI, filePathColumn, null, null, null);
                     cursor.moveToFirst();
-
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String selectedImageFilePath = cursor.getString(columnIndex);
                     cursor.close();
-                    ImageView labelView = (ImageView) getActivity().findViewById(R.id.imageLabel);
-                    labelView.setVisibility(View.GONE);
-                    sSelectedImage = getCheckedOnSizeBitmap(selectedImageFilePath);
-                    mIvUserPhoto = (ImageView) getActivity().findViewById(R.id.ivUserFoto);
-
-                    RelativeLayout borderFrame = (RelativeLayout) getActivity().findViewById(R.id.borderFrame);
-                    borderFrame.setVisibility(View.VISIBLE);
-                    mIvUserPhoto.setImageBitmap(sSelectedImage);
-                    getActivity().findViewById(R.id.ll_rotate_panel).setVisibility(View.VISIBLE);
+                    selectRawPhoto(selectedImageFilePath, getView());
                     order.setRawFrontSidePath(selectedImageFilePath);
                     break;
                 }
@@ -324,12 +361,19 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 break;
             }
         }
-        if (mHelper == null) return;
-        if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        } else {
-            Log.d(Const.LOG_TAG, "onActivityResult handled by IABUtil.");
-        }
+
+        InstaPrintBillingHelper.getInstance().onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void selectRawPhoto(String selectedImageFilePath, View group) {
+        ImageView labelView = (ImageView) group.findViewById(R.id.imageLabel);
+        labelView.setVisibility(View.GONE);
+        sSelectedImage = getCheckedOnSizeBitmap(selectedImageFilePath);
+        mIvUserPhoto = (PhotoView) group.findViewById(R.id.ivUserFoto);
+        RelativeLayout borderFrame = (RelativeLayout) group.findViewById(R.id.borderFrame);
+        borderFrame.setVisibility(View.VISIBLE);
+        mIvUserPhoto.setImageBitmap(sSelectedImage);
+        group.findViewById(R.id.ll_rotate_panel).setVisibility(View.VISIBLE);
     }
 
     private Bitmap getCheckedOnSizeBitmap(String selectedPath) {
@@ -397,19 +441,6 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         });
     }
 
-    private void billingInit() {
-        mHelper = new IabHelper(this.getActivity(), Const.BASE64_PUBLIC_KEY);
-        mHelper.enableDebugLogging(Const.IAB_DEBUG_LOGGING);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    return;
-                }
-                mHelper.queryInventoryAsync(mGotInventoryListener);
-            }
-        });
-    }
-
 
     @Override
     public void myClickMethod(final View v) {
@@ -424,6 +455,12 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
                 break;
             }
             case R.id.photoArea: {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, SELECT_FOTO_REQUEST_CODE);
+                break;
+            }
+            case R.id.change_photo: {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, SELECT_FOTO_REQUEST_CODE);
@@ -462,23 +499,122 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
             }
             case R.id.rotate_left: {
                 if (sSelectedImage != null) {
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(270);
-                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
-                    mIvUserPhoto.setImageBitmap(sSelectedImage);
+                    order.setFrontSidePhotoRotation(order.getFrontSidePhotoRotation() - 90);
+
+                    mIvUserPhoto.setPhotoViewRotation(order.getFrontSidePhotoRotation());
+
+
+//                    Matrix matrix = new Matrix();
+//                    matrix.postRotate(-90);
+//
+//                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
+//                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                 }
                 break;
             }
             case R.id.rotate_right: {
                 if (sSelectedImage != null) {
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
-                    mIvUserPhoto.setImageBitmap(sSelectedImage);
+                    order.setFrontSidePhotoRotation(order.getFrontSidePhotoRotation() + 90);
+                    mIvUserPhoto.setPhotoViewRotation(order.getFrontSidePhotoRotation());
+
+//                    Matrix matrix = new Matrix();
+//                    matrix.postRotate(90);
+//                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
+//                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                 }
                 break;
             }
+            case R.id.btn_save_postcard: {
+                try {
+                    order = fillOrder(order);
+                    em.merge(order);
+                    Log.d(Const.LOG_TAG, "order: " + order);
+                    Toast.makeText(getActivity(), R.string.postcard_saved_to_draft, Toast.LENGTH_SHORT).show();
+                } catch (Throwable e) {
+                    Toast.makeText(getActivity(), R.string.save_draft_error, Toast.LENGTH_SHORT).show();
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                }
+                break;
+            }
+            case R.id.btn_send_snailmail: {
+                PostcardOrderValidtionFragmentDialog.newInstance(new MapPositiveNegativeClickListener() {
+                    @Override
+                    public void positiveClick(Map<String, Object> map) {
+                        String result = String.valueOf(map.get("RESULT"));
+                        if (result != null && result.equals("choose_address")) {
+                            pager.setCurrentItem(3);
+                        } else {
+                            sendOrderWithPurchase();
+                        }
+                    }
+
+                    @Override
+                    public void negativeClick() {
+
+                    }
+                }, getValidationMap()).show(getFragmentManager(), "");
+
+
+                break;
+            }
+            case R.id.btn_send_email: {
+                InputEmailFragmentDialog.newInstance(new MapPositiveNegativeClickListener() {
+                    @Override
+                    public void positiveClick(Map<String, Object> map) {
+                        String username = (String) map.get("USERNAME");
+                        String email = (String) map.get("EMAIL");
+                        MailHelper.getInstance().sendOrderMailToPrivateMail(new SendFinishListener() {
+                            @Override
+                            public void finish(Boolean result) {
+                                if (result) {
+                                    Toast.makeText(getActivity(), getString(R.string.postcard_email_successfuly_sent), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), getString(R.string.postcard_email_message_sending_error), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, order, username, email);
+                    }
+
+                    @Override
+                    public void negativeClick() {
+
+                    }
+                }).show(getFragmentManager(), "");
+                break;
+            }
         }
+    }
+
+    private Map<PostcardOrderValidtionFragmentDialog.ValidationKey, PostcardOrderValidtionFragmentDialog.ValidationValue> getValidationMap() {
+        Map<PostcardOrderValidtionFragmentDialog.ValidationKey, PostcardOrderValidtionFragmentDialog.ValidationValue> validationMap = new HashMap<PostcardOrderValidtionFragmentDialog.ValidationKey, PostcardOrderValidtionFragmentDialog.ValidationValue>();
+        if (order.getFrontSidePhotoPath() == null && sSelectedImage == null) {
+            validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.POSTCARD_FRONT_PHOTO, PostcardOrderValidtionFragmentDialog.ValidationValue.WARNING);
+        }
+        if (order.getAddressTo() == null) {
+            validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.ADDRESS_TO, PostcardOrderValidtionFragmentDialog.ValidationValue.ERROR);
+            validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.RESULT, PostcardOrderValidtionFragmentDialog.ValidationValue.ERROR);
+        }
+        if (order.getText() == null || order.getText().isEmpty()) {
+            validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.POSTCARD_MESSAGE, PostcardOrderValidtionFragmentDialog.ValidationValue.WARNING);
+        }
+        return validationMap;
+    }
+
+    public Order fillOrder(Order order) throws SaveImageException {
+        EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
+        String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
+        Bitmap frontside_bitmap = getCurrentImage(false);
+        if (frontside_bitmap != null) {
+            String frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, frontside_bitmap);
+            order.setFrontSidePhotoPath(frontside_path);
+        }
+        String backside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_BACK, mCurrentPostcard);
+        order.setBackSidePhotoPath(backside_path);
+        order.setText(etUserTextStr);
+        order.setDate(new Date());
+        order.setFrame(mFrameManager.getCurrentFrame());
+        order.setFont(mFontsManager.getCurrentFont());
+        return order;
     }
 
     @Override
@@ -497,20 +633,11 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     public void sendOrderWithPurchase() {
         //TODO: сделать валидацию
         try {
-            EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
-            String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
-            String frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, getCurrentImage(false));
-
-            // тут сохранение
-            String backside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_BACK, mCurrentPostcard);
-            order.setFrontSidePhotoPath(frontside_path);
-            order.setBackSidePhotoPath(backside_path);
-            order.setText(etUserTextStr);
-            order.setDate(new Date());
+            order = fillOrder(order);
             order.setStatus(OrderStatus.PAYING);
             Log.d(Const.LOG_TAG, "sendOrderWithPurchase: " + order);
-            em.persist(order);
-            buyPurchase();
+            em.merge(order);
+            InstaPrintBillingHelper.getInstance().buyPurchase(getActivity(), mPurchaseFinishedListener);
         } catch (SaveImageException e) {
             Toast.makeText(getActivity(), R.string.cannot_save_image_to_sd, Toast.LENGTH_SHORT).show();
         } catch (Throwable e) {
@@ -519,19 +646,16 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         }
     }
 
-    private Bitmap getCurrentImage(boolean ignorGraphed) {
+    protected Bitmap getCurrentImage(boolean ignorGraphed) {
         if (sGraphedImage != null && !ignorGraphed) return sGraphedImage;
         else if (sSelectedImage != null) {
-            try {
-                PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
-                RectF rect = getCropRect(imageView);
-                Log.d(Const.LOG_TAG, "rect: " + rect);
-                Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
-                return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
-                        (int) rect.width(), (int) rect.height());
-            } catch (Exception e) {
-                return sSelectedImage;
-            }
+            PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
+            Log.d(Const.LOG_TAG, "imageView.getDisplayMatrix(): " + imageView.getDisplayMatrix());
+            RectF rect = getCropRect(imageView);
+            Log.d(Const.LOG_TAG, "rect: " + rect);
+            Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
+            return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
+                    (int) rect.width(), (int) rect.height());
         } else return null;
     }
 
@@ -542,6 +666,7 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         float dw = rect.width() / viewScale;
         float dh = rect.height() / viewScale;
         Drawable drawable = imageView.getDrawable();
+
         int bitmapWidth = drawable.getIntrinsicWidth();
         int bitmapHeight = drawable.getIntrinsicHeight();
 
@@ -587,54 +712,6 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
     }
 
     //Стартует покупку
-    private void buyPurchase() {
-        try {
-            mHelper.launchPurchaseFlow(getActivity(), Const.PURCHASE_NOTE_TAG_1, Const.RC_REQUEST,
-                    mPurchaseFinishedListener, "");
-        } catch (Throwable e) {
-            Log.e(Const.LOG_TAG, e.getMessage(), e);
-            Toast.makeText(getActivity(), R.string.purchase_not_available, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(Const.LOG_TAG, "Query inventory finished.");
-
-            if (mHelper == null) return;
-
-            if (result.isFailure()) {
-                Log.d(Const.LOG_TAG, "Failed to query inventory:" + result);
-                return;
-            }
-
-            Log.d(Const.LOG_TAG, "Query inventory was successful.");
-
-            Purchase note_1 = inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1);
-            if (note_1 != null) {
-                Log.d(Const.LOG_TAG, "We have purchase PURCHASE_NOTE_TAG_1. Consuming it");
-                mHelper.consumeAsync(inventory.getPurchase(Const.PURCHASE_NOTE_TAG_1), mConsumeFinishedListener);
-                return;
-            } else {
-
-            }
-            Log.d(Const.LOG_TAG, "Initial inventory query finished");
-        }
-    };
-
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-            Log.d(Const.LOG_TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-            if (mHelper == null) return;
-            if (result.isSuccess()) {
-            } else {
-                Log.d(Const.LOG_TAG, "Error while consuming: " + result);
-            }
-            Log.d(Const.LOG_TAG, "End consumption flow.");
-        }
-    };
-
     IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             Log.d(Const.LOG_TAG, "Purchase finished: " + result + ", purchase: " + purchase);
@@ -654,14 +731,25 @@ public class CreatePostcardFragment extends Fragment implements XmlClickable {
         }
     };
 
-    private void sendOrder(Order order) {
+    private void sendOrder(final Order order) {
         //Toast.makeText(this, order.toString(), Toast.LENGTH_LONG).show();
-        MailHelper.getInstance().sendOrderMail(null, order);
+        MailHelper.getInstance().sendOrderMail(new SendFinishListener() {
+
+            @Override
+            public void finish(Boolean result) {
+                if (result) {
+                    order.setStatus(OrderStatus.EXECUTED);
+                    em.merge(order);
+                    Toast.makeText(getActivity(), getString(R.string.postcard_email_successfuly_sent), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.postcard_email_message_sending_error), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, order);
     }
 
     public void setOrder(Order order) {
         this.order = order;
     }
-
 
 }

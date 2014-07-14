@@ -19,6 +19,9 @@ public class Order extends Entity {
     private Date date;
     private PurchaseDetails purchaseDetails;
     private OrderStatus status;
+    private String frame;
+    private String font;
+    private Integer frontSidePhotoRotation = 0;
 
     public Order(Long id, Address addressFrom, Address addressTo, String text, String frontSidePhotoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
         this.id = id;
@@ -41,6 +44,7 @@ public class Order extends Entity {
         this.status = status;
     }
 
+
     public Order(Long id, Address addressFrom, Address addressTo, String text, String rawFrontSidePath, String frontSidePhotoPath, String backSidePhotoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status) {
         this.id = id;
         this.addressFrom = addressFrom;
@@ -52,6 +56,21 @@ public class Order extends Entity {
         this.date = date;
         this.purchaseDetails = purchaseDetails;
         this.status = status;
+    }
+
+    public Order(Long id, Address addressFrom, Address addressTo, String text, String rawFrontSidePath, String frontSidePhotoPath, String backSidePhotoPath, Date date, PurchaseDetails purchaseDetails, OrderStatus status, String frame, String font) {
+        this.id = id;
+        this.addressFrom = addressFrom;
+        this.addressTo = addressTo;
+        this.text = text;
+        this.rawFrontSidePath = rawFrontSidePath;
+        this.frontSidePhotoPath = frontSidePhotoPath;
+        this.backSidePhotoPath = backSidePhotoPath;
+        this.date = date;
+        this.purchaseDetails = purchaseDetails;
+        this.status = status;
+        this.frame = frame;
+        this.font = font;
     }
 
     public String getRawFrontSidePath() {
@@ -165,10 +184,38 @@ public class Order extends Entity {
                 ", addressFrom=" + addressFrom +
                 ", addressTo=" + addressTo +
                 ", text='" + text + '\'' +
+                ", rawFrontSidePath='" + rawFrontSidePath + '\'' +
                 ", frontSidePhotoPath='" + frontSidePhotoPath + '\'' +
+                ", backSidePhotoPath='" + backSidePhotoPath + '\'' +
                 ", date=" + date +
                 ", purchaseDetails=" + purchaseDetails +
                 ", status=" + status +
+                ", frame='" + frame + '\'' +
+                ", font='" + font + '\'' +
                 '}';
+    }
+
+    public String getFrame() {
+        return frame;
+    }
+
+    public void setFrame(String frame) {
+        this.frame = frame;
+    }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
+    public Integer getFrontSidePhotoRotation() {
+        return frontSidePhotoRotation;
+    }
+
+    public void setFrontSidePhotoRotation(Integer frontSidePhotoRotation) {
+        this.frontSidePhotoRotation = frontSidePhotoRotation;
     }
 }

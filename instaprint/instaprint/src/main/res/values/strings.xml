@@ -45,7 +45,7 @@
     <string name="input_text_please">Введите текст сообщения</string>
     <string name="clear_button">Очистить форму</string>
     <string name="validation_cannot_be_empty">Необходимо заполнить</string>
-    <string name="validation_email">Почтовый адрес не распознан</string>
+    <string name="validation_email">Электронный адрес не распознан</string>
     <string name="username_property">USERNAME_PROPERTY</string>
     <string name="useremail_property">USEREMAIL_PROPERTY</string>
     <string name="feedback_message_successfuly_sent">Сообщение успешно отправлено</string>
@@ -68,5 +68,22 @@
     <string name="order_number">Номер заказа</string>
     <string name="order_date">Дата заказа</string>
     <string name="order_with_number">Заказ-</string>
+    <string name="text_sample">Абв</string>
+    <string name="send_email">На мой email</string>
+    <string name="send_mail">По почте</string>
+    <string name="postcard_saved_to_draft">Открытка успешно сохранена в черновики</string>
+    <string name="client_mail_subject">Открытка InstaPrint #</string>
+    <string name="send_poscard_to_email">Отправить открытку на email</string>
+    <string name="postcard_email_successfuly_sent">открытка успешно отправлена</string>
+    <string name="postcard_email_message_sending_error">Не удалось отправить открытку на email</string>
+    <string name="save_draft_error">Не удалось сохранить в черновики</string>
+    <string name="photo_chosen">Фотография выбрана</string>
+    <string name="message_chosen">Сообщение для адресата написано</string>
+    <string name="address_to_chosen">Выбран адресат</string>
+    <string name="choose_address">Выбрать адресата</string>
+    <string name="address_to_not_chosen">Получатель не выбран</string>
+    <string name="photo_not_chosen">Фотография не выбрана</string>
+    <string name="message_not_chosen">Нет сообщения</string>
+    <string name="validation_dialog">Валидация</string>
 
 </resources>

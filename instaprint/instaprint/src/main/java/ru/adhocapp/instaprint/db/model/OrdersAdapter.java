@@ -74,8 +74,10 @@ public class OrdersAdapter extends ArrayAdapter {
             ImageView contextAction = (ImageView) v.findViewById(R.id.context_action);
             ImageView frontPostcard = (ImageView) v.findViewById(R.id.order_image);
             Address addressTo = item.getOrder().getAddressTo();
-            title.setText(addressTo.getFullName());
-            details.setText(addressTo.getCountryName() + ", " + addressTo.getCityName() + ", " + addressTo.getStreetAddress());
+            if (addressTo != null) {
+                title.setText(addressTo.getFullName());
+                details.setText(addressTo.getCountryName() + ", " + addressTo.getCityName() + ", " + addressTo.getStreetAddress());
+            }
             DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
             date.setText(dateFormatter.format(item.getOrder().getDate()));
             contextAction.setImageResource(getContextActionImage(item.getOrder().getStatus()));
@@ -86,7 +88,7 @@ public class OrdersAdapter extends ArrayAdapter {
                     listener.onContextButtonClick(item.getOrder());
                 }
             });
-            Log.d(Const.LOG_TAG, item.getOrder().getFrontSidePhotoPath());
+            Log.d(Const.LOG_TAG, "FrontSidePhotoPath:" + item.getOrder().getFrontSidePhotoPath());
             imageLoader.displayImage("file://" + item.getOrder().getFrontSidePhotoPath(), frontPostcard, options, animateFirstListener);
         }
         return v;
