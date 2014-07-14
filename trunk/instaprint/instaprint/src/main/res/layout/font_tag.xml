@@ -10,7 +10,8 @@
         android:layout_height="@dimen/base_height"
         android:id="@+id/tv_font_example"
         android:layout_margin="@dimen/spacing_ui_small"
-        android:text="Абв"
+        android:text="@string/text_sample"
+        android:background="@drawable/bg_btn_action_bar"
         android:gravity="center"/>
 
 </LinearLayout>

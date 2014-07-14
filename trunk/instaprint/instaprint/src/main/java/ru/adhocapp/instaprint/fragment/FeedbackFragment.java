@@ -127,9 +127,9 @@ public class FeedbackFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void finish(Boolean result) {
         if (result) {
-            Toast.makeText(getActivity(), getString(R.string.feedback_message_successfuly_sent), Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), getString(R.string.feedback_message_successfuly_sent), Toast.LENGTH_SHORT).show();;
         } else {
-            Toast.makeText(getActivity(), getString(R.string.feedback_message_sending_error), Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), getString(R.string.feedback_message_sending_error), Toast.LENGTH_SHORT).show();;
         }
     }
 }

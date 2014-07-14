@@ -11,9 +11,11 @@ import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+
 import ru.adhocapp.instaprint.R;
 
 /**
@@ -21,7 +23,7 @@ import ru.adhocapp.instaprint.R;
  */
 public class FontsManager {
     private Context mContext;
-    private static HashMap<String, Integer> sFontsList;
+    private static Map<String, Integer> sFontsList;
     private HorizontalScrollView mScAddView;
     public static String currentFont;
     public static String currentText;
@@ -65,19 +67,21 @@ public class FontsManager {
     }
 
 
-    private class FontsTask extends AsyncTask<HashMap<String, Integer>, View, Void> {
+    private class FontsTask extends AsyncTask<Map<String, Integer>, View, Void> {
         @Override
-        protected Void doInBackground(HashMap<String, Integer>... map) {
+        protected Void doInBackground(Map<String, Integer>... maps) {
             try {
                 LinearLayout linearLayout = new LinearLayout(mContext);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-                Set<Map.Entry<String, Integer>> set = map[0].entrySet();
-                for (final Map.Entry<String, Integer> me : set) {
+                Map<String, Integer> map = maps[0];
+                Set<String> set = map.keySet();
+                for (String key : set) {
+                    Log.d(Const.LOG_TAG, "font: " + key);
+                    Integer value = map.get(key);
                     View newReviewTag = ((Activity) mContext).getLayoutInflater().inflate(R.layout.font_tag, null, false);
                     com.neopixl.pixlui.components.textview.TextView tv = (com.neopixl.pixlui.components.textview.TextView) newReviewTag.findViewById(R.id.tv_font_example);
-                    tv.setCustomFont(mContext, me.getKey());
-                    newReviewTag.setOnClickListener(new OpenReviewListener(me.getKey(), me.getValue()));
+                    tv.setCustomFont(mContext, key);
+                    newReviewTag.setOnClickListener(new OpenReviewListener(key, value));
                     linearLayout.addView(newReviewTag);
                 }
 
@@ -91,7 +95,10 @@ public class FontsManager {
         @Override
         protected void onProgressUpdate(View... viewArray) {
             super.onProgressUpdate(viewArray);
-            mScAddView.addView(viewArray[0]);
+            if (viewArray[0] != null) {
+                mScAddView.removeAllViews();
+                mScAddView.addView(viewArray[0]);
+            }
         }
     }
 
@@ -114,6 +121,17 @@ public class FontsManager {
         }
     }
 
+    public void setFont(String fontName, Integer validity) {
+        mEtUserText.setCustomFont(mContext, fontName);
+        currentFont = fontName;
+        mValidity = validity;
+        textWatcher.afterTextChanged(mEtUserText.getText());
+    }
+
+    public void setFont(String fontName) {
+        setFont(fontName, sFontsList.get(fontName));
+    }
+
 
     TextWatcher textWatcher = new TextWatcher() {
         int lastLength = 0;
@@ -134,14 +152,13 @@ public class FontsManager {
                     || (currentText.length() > mWasLength && currentLength > mValidity)) {
 
                 Log.e("FM", String.valueOf((currentLength - 1) == mValidity) + "; " + (mWasLength != currentLength + 1) + "; "
-                + (currentText.length() > mWasLength) + "; " + (currentLength > mValidity));
+                        + (currentText.length() > mWasLength) + "; " + (currentLength > mValidity));
 
                 String str = s.toString().substring(0, lastLength);
                 mWasLength = setCorrectedString(str);
                 mEtUserText.setText(str);
                 mEtUserText.setSelection(lastLength);
-            }
-            else mWasLength = setCorrectedString(mEtUserText.getText().toString());
+            } else mWasLength = setCorrectedString(mEtUserText.getText().toString());
             if (currentLength >= mValidity) mTvValidity.setTextColor(Color.RED);
             else mTvValidity.setTextColor(Color.BLACK);
             lastLength = mEtUserText.length();
@@ -162,7 +179,9 @@ public class FontsManager {
                 }
                 try {
                     if (!current.substring(i, current.length()).contains(" ")) break;
-                } catch (Exception e) {e.printStackTrace();}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         currentText = current;
@@ -177,8 +196,12 @@ public class FontsManager {
         return str;
     }
 
+    public String getCurrentFont() {
+        return currentFont;
+    }
+
     private void initList() {
-        sFontsList = new HashMap();
+        sFontsList = new TreeMap<String, Integer>();
         sFontsList.put("Boomboom.otf", 336);
         sFontsList.put("Calibri.ttf", 308);
         sFontsList.put("Capture_It.ttf", 280);
