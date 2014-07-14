@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -78,15 +79,20 @@ public class FrameManager {
                     try {
                         Log.d(Const.LOG_TAG, "mContext: " + mContext);
                         newFrameTag = ((Activity) mContext).getLayoutInflater().inflate(R.layout.frame_tag, null, false);
-                        ImageButton btn = (ImageButton) newFrameTag.findViewById(R.id.btn_frame);
 
+                        ImageButton btn = (ImageButton) newFrameTag;
                         if (resArray[k] != 0) {
-                            Bitmap preview = Bitmap.createBitmap(currentPicture.getWidth() / 3, currentPicture.getHeight() / 3, currentPicture.getConfig());
+                            Bitmap preview = Bitmap.createBitmap(currentPicture, 0, 0, currentPicture.getWidth() / 4, currentPicture.getWidth() / 4);
                             Canvas canvas = new Canvas(preview);
-                            canvas.drawBitmap(Bitmap.createScaledBitmap(currentPicture, currentPicture.getWidth() / 3, currentPicture.getHeight() / 3, false), new Matrix(), null);
-                            Bitmap frame = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), resArray[k]), currentPicture.getWidth() / 3, currentPicture.getHeight() / 3, false);
-                            canvas.drawBitmap(frame, new Matrix(), null);
-                            btn.setImageBitmap(Bitmap.createScaledBitmap(Bitmap.createBitmap(preview, 0, 0, preview.getWidth() / 4, preview.getWidth() / 4), 150, 150, false));
+                            Bitmap frame = BitmapFactory.decodeResource(mContext.getResources(), resArray[k]);
+                            Bitmap scaledCroppedFrame = Bitmap.createScaledBitmap(frame, currentPicture.getWidth(), currentPicture.getHeight(), false);
+                            Rect src = new Rect();
+                            src.set(0, 0, preview.getWidth(), preview.getHeight());
+
+                            Rect dst = new Rect();
+                            dst.set(0, 0, preview.getWidth(), preview.getHeight());
+                            canvas.drawBitmap(scaledCroppedFrame, src, dst, null);
+                            btn.setImageBitmap(preview);
 //                            if (mLastEffect == k) {
 //                                handler.post(new Runnable() {
 //                                    @Override
@@ -107,7 +113,8 @@ public class FrameManager {
 //                                });
 //                            }
                         } else {
-                            btn.setImageBitmap(Bitmap.createScaledBitmap(Bitmap.createBitmap(currentPicture, 0, 0, currentPicture.getWidth() / 4, currentPicture.getHeight() / 4), 150, 150, false));
+                            Bitmap preview = Bitmap.createBitmap(currentPicture, 0, 0, currentPicture.getWidth() / 4, currentPicture.getWidth() / 4);
+                            btn.setImageBitmap(preview);
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {

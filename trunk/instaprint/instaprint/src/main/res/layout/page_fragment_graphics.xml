@@ -65,7 +65,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/base_height"
+        android:layout_height="54dp"
         android:layout_alignParentBottom="true"
         android:background="@color/rotate_panel_background"
         android:id="@+id/ll_frames_panel"
@@ -75,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
+
             android:id="@+id/sc_frames">
 
             <LinearLayout

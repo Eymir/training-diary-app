@@ -594,7 +594,9 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
             validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.ADDRESS_TO, PostcardOrderValidtionFragmentDialog.ValidationValue.ERROR);
             validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.RESULT, PostcardOrderValidtionFragmentDialog.ValidationValue.ERROR);
         }
-        if (order.getText() == null || order.getText().isEmpty()) {
+        EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
+        String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
+        if (etUserTextStr == null || etUserTextStr.isEmpty()) {
             validationMap.put(PostcardOrderValidtionFragmentDialog.ValidationKey.POSTCARD_MESSAGE, PostcardOrderValidtionFragmentDialog.ValidationValue.WARNING);
         }
         return validationMap;
@@ -631,7 +633,6 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
 
 
     public void sendOrderWithPurchase() {
-        //TODO: сделать валидацию
         try {
             order = fillOrder(order);
             order.setStatus(OrderStatus.PAYING);
@@ -649,13 +650,18 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
     protected Bitmap getCurrentImage(boolean ignorGraphed) {
         if (sGraphedImage != null && !ignorGraphed) return sGraphedImage;
         else if (sSelectedImage != null) {
-            PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
-            Log.d(Const.LOG_TAG, "imageView.getDisplayMatrix(): " + imageView.getDisplayMatrix());
-            RectF rect = getCropRect(imageView);
-            Log.d(Const.LOG_TAG, "rect: " + rect);
-            Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
-            return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
-                    (int) rect.width(), (int) rect.height());
+            try {
+                PhotoView imageView = (PhotoView) getActivity().findViewById(R.id.ivUserFoto);
+                Log.d(Const.LOG_TAG, "imageView.getDisplayMatrix(): " + imageView.getDisplayMatrix());
+                RectF rect = getCropRect(imageView);
+                Log.d(Const.LOG_TAG, "rect: " + rect);
+                Log.d(Const.LOG_TAG, "selectedImage, w: " + sSelectedImage.getWidth() + " h:" + sSelectedImage.getHeight());
+                return Bitmap.createBitmap(sSelectedImage, (int) rect.left, (int) rect.top,
+                        (int) rect.width(), (int) rect.height());
+            } catch (Throwable e) {
+                Log.e(Const.LOG_TAG, e.getMessage(), e);
+                return sSelectedImage;
+            }
         } else return null;
     }
 

@@ -48,12 +48,10 @@ public class AddressListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.main_fragment_address_list, null);
         listView = (ListView) view.findViewById(R.id.list_view);
         createAdapter();
         listView.setAdapter(adapter);
-
         return view;
     }
 
