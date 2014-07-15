@@ -84,7 +84,7 @@
     <string name="address_to_not_chosen">Получатель не выбран</string>
     <string name="photo_not_chosen">Фотография не выбрана</string>
     <string name="message_not_chosen">Нет сообщения</string>
-    <string name="validation_dialog">Валидация</string>
+    <string name="validation_dialog">Проверка заполнения</string>
     <string name="order_copied_to_draft">Заказ был успешно скопирован в черновики</string>
 
 </resources>
