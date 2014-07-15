@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -21,6 +22,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +80,7 @@ import uk.co.senab.photoview.PhotoView;
 
 public class CreatePostcardMainFragment extends Fragment implements XmlClickable {
     private static final String LOGTAG = "CreatePostcardMainFragment";
+    public static final int TEXT_WIDTH = 750;
 
     private ViewPager pager;
 
@@ -246,36 +251,29 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
 
             Canvas c = new Canvas(mPostcard);
             c.drawColor(0x000000);
-            Paint p = new Paint();
-            p.setColor(Color.BLACK);
-            p.setTextSize(60.0f);
-            p.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/" + FontsManager.currentFont));
+            TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG
+                    | Paint.LINEAR_TEXT_FLAG);
+            textPaint.setStyle(Paint.Style.FILL);
+            textPaint.setColor(Color.DKGRAY);
+            textPaint.setTextSize(60);
+            textPaint.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/" + FontsManager.currentFont));
 
             if (FontsManager.currentText != null) {
-                char[] currentText = FontsManager.currentText.toCharArray();
-                String printString = "";
-                int lineSizeCounter = 0;
-                int linesCounter = 0;
-                int lastY = 160;
-                for (int i = 0; i != currentText.length && linesCounter < 14; i++, lineSizeCounter++) {
-                    printString += currentText[i];
-                    if (lineSizeCounter >= (FontsManager.getValidity(FontsManager.currentFont) / 14) || i == (currentText.length - 1)) {
-                        c.drawText(printString.trim(), 75, lastY, p);
-                        lastY += 75;
-                        lineSizeCounter = 0;
-                        printString = "";
-                        linesCounter++;
-                    }
-                }
+                StaticLayout textlayout = drawText(FontsManager.currentText, TEXT_WIDTH, textPaint);
+                int mediaPostcard = mPostcard.getHeight() / 2;
+                int mediaLayout = textlayout.getHeight() / 2;
+                textlayout.getHeight();
+                c.translate(75, mediaPostcard - mediaLayout);
+                textlayout.draw(c);
+                c.translate(-75, -(mediaPostcard - mediaLayout));
             }
 
             if (order.getAddressTo() != null) {
                 int maxLineSize = 20;
-                Paint p2 = new Paint();
-                p2.setColor(Color.BLACK);
+                Paint p2 = new Paint(Paint.ANTI_ALIAS_FLAG);
+                p2.setColor(Color.DKGRAY);
                 p2.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
                 p2.setTextSize(60.0f);
-
                 String fullName = order.getAddressTo().getFullName();
                 if (fullName.length() > maxLineSize) fullName = fullName.substring(0, maxLineSize);
                 c.drawText(fullName, 970, 460, p2);
@@ -328,6 +326,15 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
                 ivImage.setImageBitmap(mImage);
             }
         }
+    }
+
+    public StaticLayout drawText(String text, int textWidth, TextPaint textPaint) {
+        // Get text dimensions
+
+        StaticLayout mTextLayout = new StaticLayout(text, textPaint,
+                textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+
+        return mTextLayout;
     }
 
     public void onActivityResult(int requestCode, int resultCode,
@@ -499,28 +506,24 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
             }
             case R.id.rotate_left: {
                 if (sSelectedImage != null) {
-                    order.setFrontSidePhotoRotation(order.getFrontSidePhotoRotation() - 90);
-
-                    mIvUserPhoto.setPhotoViewRotation(order.getFrontSidePhotoRotation());
-
-
-//                    Matrix matrix = new Matrix();
-//                    matrix.postRotate(-90);
-//
-//                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
-//                    mIvUserPhoto.setImageBitmap(sSelectedImage);
+                    //TODO: способ setPhotoViewRotation работает гораздо быстрее, но для его использования нужно переделывать логику
+//                    order.setFrontSidePhotoRotation(order.getFrontSidePhotoRotation() - 90);
+//                    mIvUserPhoto.setPhotoViewRotation(order.getFrontSidePhotoRotation());
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(-90);
+                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
+                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                 }
                 break;
             }
             case R.id.rotate_right: {
                 if (sSelectedImage != null) {
-                    order.setFrontSidePhotoRotation(order.getFrontSidePhotoRotation() + 90);
-                    mIvUserPhoto.setPhotoViewRotation(order.getFrontSidePhotoRotation());
-
-//                    Matrix matrix = new Matrix();
-//                    matrix.postRotate(90);
-//                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
-//                    mIvUserPhoto.setImageBitmap(sSelectedImage);
+//                    order.setFrontSidePhotoRotation(order.getFrontSidePhotoRotation() + 90);
+//                    mIvUserPhoto.setPhotoViewRotation(order.getFrontSidePhotoRotation());
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    sSelectedImage = Bitmap.createBitmap(sSelectedImage, 0, 0, sSelectedImage.getWidth(), sSelectedImage.getHeight(), matrix, true);
+                    mIvUserPhoto.setImageBitmap(sSelectedImage);
                 }
                 break;
             }
@@ -630,7 +633,6 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
             borderFrame.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
         }
     }
-
 
     public void sendOrderWithPurchase() {
         try {
