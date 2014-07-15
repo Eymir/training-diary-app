@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/hello_world"
+            android:text="@string/address_to_not_chosen"
             android:id="@+id/order_details"
             android:textColor="@color/holo_dark_font" />
     </LinearLayout>
@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/context_action"
         android:src="@drawable/content_remove_icon"
+        android:background="@drawable/bg_btn_action_bar"
         android:layout_weight="0"
         android:paddingLeft="5dp"
         android:layout_gravity="center_vertical" />

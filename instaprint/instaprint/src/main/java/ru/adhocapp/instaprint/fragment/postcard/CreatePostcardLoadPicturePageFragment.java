@@ -47,7 +47,7 @@ public class CreatePostcardLoadPicturePageFragment extends Fragment {
                 if (parent.sSelectedImage != null) {
                     if (angle > 40) {
                         Matrix matrix = new Matrix();
-                        matrix.postRotate(270);
+                        matrix.postRotate(-90);
                         parent.sSelectedImage = Bitmap.createBitmap(parent.sSelectedImage,
                                 0, 0, parent.sSelectedImage.getWidth(),
                                 parent.sSelectedImage.getHeight(), matrix, true);

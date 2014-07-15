@@ -17,10 +17,15 @@ import java.util.Date;
 import ru.adhocapp.instaprint.MainActivity;
 import ru.adhocapp.instaprint.OrderDetailsActivity;
 import ru.adhocapp.instaprint.R;
+import ru.adhocapp.instaprint.billing.IabHelper;
+import ru.adhocapp.instaprint.billing.IabResult;
+import ru.adhocapp.instaprint.billing.InstaPrintBillingHelper;
+import ru.adhocapp.instaprint.billing.Purchase;
 import ru.adhocapp.instaprint.db.DBHelper;
 import ru.adhocapp.instaprint.db.entity.EntityManager;
 import ru.adhocapp.instaprint.db.entity.Order;
 import ru.adhocapp.instaprint.db.entity.OrderStatus;
+import ru.adhocapp.instaprint.db.entity.PurchaseDetails;
 import ru.adhocapp.instaprint.db.model.DataConverter;
 import ru.adhocapp.instaprint.db.model.OrderListClickListener;
 import ru.adhocapp.instaprint.db.model.OrdersAdapter;
@@ -73,32 +78,30 @@ public class OrdersPageFragment extends Fragment {
                         mainActivity.startEditOrder(order);
                         break;
                     case PAYING:
-                        order.setStatus(OrderStatus.EXECUTED);
-                        em.merge(order);
-//                        InstaPrintBillingHelper.getInstance().buyPurchase(getActivity(), new IabHelper.OnIabPurchaseFinishedListener() {
-//                            public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-//                                Log.d(Const.LOG_TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-//                                if (result.isFailure()) {
-//                                    Log.d(Const.LOG_TAG, "Error purchasing: " + result);
-//                                    return;
-//                                }
-//                                Log.d(Const.LOG_TAG, "Purchase successful.");
-//                                if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
-//                                    order.setStatus(OrderStatus.EMAIL_SENDING);
-//                                    order.setPurchaseDetails(new PurchaseDetails(purchase.getOrderId(), new Date(purchase.getPurchaseTime()), null));
-//                                    MailHelper.getInstance().sendOrderMail(new SendFinishListener() {
-//                                        @Override
-//                                        public void finish(Boolean result) {
-//                                            order.setStatus(OrderStatus.EXECUTED);
-//                                            em.merge(order);
-//                                        }
-//                                    }, order);
-//                                    em.merge(order);
-//                                    Log.d(Const.LOG_TAG, "PURCHASE_NOTE_TAG_1 is done!!");
-//                                    Toast.makeText(getActivity(), "Заказ отправлен.", Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
+                        InstaPrintBillingHelper.getInstance().buyPurchase(getActivity(), new IabHelper.OnIabPurchaseFinishedListener() {
+                            public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+                                Log.d(Const.LOG_TAG, "Purchase finished: " + result + ", purchase: " + purchase);
+                                if (result.isFailure()) {
+                                    Log.d(Const.LOG_TAG, "Error purchasing: " + result);
+                                    return;
+                                }
+                                Log.d(Const.LOG_TAG, "Purchase successful.");
+                                if (purchase.getSku().equals(Const.PURCHASE_NOTE_TAG_1)) {
+                                    order.setStatus(OrderStatus.EMAIL_SENDING);
+                                    order.setPurchaseDetails(new PurchaseDetails(purchase.getOrderId(), new Date(purchase.getPurchaseTime()), null));
+                                    MailHelper.getInstance().sendOrderMail(new SendFinishListener() {
+                                        @Override
+                                        public void finish(Boolean result) {
+                                            order.setStatus(OrderStatus.EXECUTED);
+                                            em.merge(order);
+                                        }
+                                    }, order);
+                                    em.merge(order);
+                                    Log.d(Const.LOG_TAG, "PURCHASE_NOTE_TAG_1 is done!!");
+                                    Toast.makeText(getActivity(), "Заказ отправлен.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                         break;
                     case PRINTING_AND_SNAILMAILING:
                         break;
@@ -121,6 +124,7 @@ public class OrdersPageFragment extends Fragment {
                                 order.getText(), order.getRawFrontSidePath(),
                                 order.getFrontSidePhotoPath(), order.getBackSidePhotoPath(), new Date(), null, OrderStatus.CREATING);
                         em.persist(new_order);
+                        Toast.makeText(getActivity(), getString(R.string.order_copied_to_draft), Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
