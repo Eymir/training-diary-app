@@ -250,7 +250,6 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
             Log.e(LOGTAG, mPostcard.getWidth() + "; " + mPostcard.getHeight());
 
             Canvas c = new Canvas(mPostcard);
-            c.drawColor(0x000000);
             TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG
                     | Paint.LINEAR_TEXT_FLAG);
             textPaint.setStyle(Paint.Style.FILL);
