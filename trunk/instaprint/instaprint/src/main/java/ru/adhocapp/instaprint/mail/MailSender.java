@@ -18,7 +18,9 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import ru.adhocapp.instaprint.R;
 import ru.adhocapp.instaprint.util.Const;
+import ru.adhocapp.instaprint.util.ResourceAccess;
 
 public class MailSender extends javax.mail.Authenticator {
     private String mailhost = "smtp.yandex.ru";
@@ -46,7 +48,7 @@ public class MailSender extends javax.mail.Authenticator {
     public synchronized void sendMail(String subject, String body, String sender, String recipients, String... filenames) throws Exception {
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setSender(new InternetAddress(sender));
+            message.setSender(new InternetAddress(sender, ResourceAccess.getInstance().getResources().getString(R.string.app_name)));
             message.setSubject(subject);
 
             if (recipients.indexOf(',') > 0)

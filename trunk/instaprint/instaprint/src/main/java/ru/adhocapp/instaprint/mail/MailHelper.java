@@ -86,7 +86,7 @@ public class MailHelper {
                             String username = (String) params[2];
                             String email = (String) params[3];
                             sender.sendMail(context.getString(R.string.client_mail_subject)
-                                    + order.getId(), order.toMailBody(), Const.MAIL_ACCOUNT, email, order.getFrontSidePhotoPath(), order.getBackSidePhotoPath());
+                                    + order.getId(), context.getString(R.string.client_email_body), Const.MAIL_ACCOUNT, email, order.getFrontSidePhotoPath(), order.getBackSidePhotoPath());
                         }
                         break;
                         case FEEDBACK: {
