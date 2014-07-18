@@ -72,7 +72,7 @@
     <string name="send_email">На мой email</string>
     <string name="send_mail">По почте</string>
     <string name="postcard_saved_to_draft">Открытка успешно сохранена в черновики</string>
-    <string name="client_mail_subject">Открытка InstaPrint #</string>
+    <string name="client_mail_subject">Открытка InstaPrint</string>
     <string name="send_poscard_to_email">Отправить открытку на email</string>
     <string name="postcard_email_successfuly_sent">открытка успешно отправлена</string>
     <string name="postcard_email_message_sending_error">Не удалось отправить открытку на email</string>
@@ -86,7 +86,7 @@
     <string name="message_not_chosen">Нет сообщения</string>
     <string name="validation_dialog">Проверка заполнения</string>
     <string name="order_copied_to_draft">Заказ был успешно скопирован в черновики</string>
-    <string name="client_email_body">Спасибо за использование сервиса InstaPrint</string>
+    <string name="client_email_body">спасибо за использование сервиса InstaPrint</string>
 
 
 </resources>

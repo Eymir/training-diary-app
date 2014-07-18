@@ -560,28 +560,34 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
                 break;
             }
             case R.id.btn_send_email: {
-                InputEmailFragmentDialog.newInstance(new MapPositiveNegativeClickListener() {
-                    @Override
-                    public void positiveClick(Map<String, Object> map) {
-                        String username = (String) map.get("USERNAME");
-                        String email = (String) map.get("EMAIL");
-                        MailHelper.getInstance().sendOrderMailToPrivateMail(new SendFinishListener() {
-                            @Override
-                            public void finish(Boolean result) {
-                                if (result) {
-                                    Toast.makeText(getActivity(), getString(R.string.postcard_email_successfuly_sent), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getActivity(), getString(R.string.postcard_email_message_sending_error), Toast.LENGTH_SHORT).show();
+                try {
+                    order = fillOrder(order);
+                    InputEmailFragmentDialog.newInstance(new MapPositiveNegativeClickListener() {
+                        @Override
+                        public void positiveClick(Map<String, Object> map) {
+                            String username = (String) map.get("USERNAME");
+                            String email = (String) map.get("EMAIL");
+                            MailHelper.getInstance().sendOrderMailToPrivateMail(new SendFinishListener() {
+                                @Override
+                                public void finish(Boolean result) {
+                                    if (result) {
+                                        Toast.makeText(getActivity(), getString(R.string.postcard_email_successfuly_sent), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getActivity(), getString(R.string.postcard_email_message_sending_error), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        }, order, username, email);
-                    }
+                            }, order, username, email);
+                        }
 
-                    @Override
-                    public void negativeClick() {
+                        @Override
+                        public void negativeClick() {
 
-                    }
-                }).show(getFragmentManager(), "");
+                        }
+                    }).show(getFragmentManager(), "");
+                } catch (Throwable e) {
+                    Toast.makeText(getActivity(), R.string.postcard_email_message_sending_error, Toast.LENGTH_SHORT).show();
+                    Log.e(Const.LOG_TAG, e.getMessage(), e);
+                }
                 break;
             }
         }
@@ -605,15 +611,29 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
     }
 
     public Order fillOrder(Order order) throws SaveImageException {
+        //TODO: сделать так что если путь до файла уже есть использовался он
         EditText etUserText = (EditText) getActivity().findViewById(R.id.et_user_text);
         String etUserTextStr = (etUserText.getText() != null) ? etUserText.getText().toString() : null;
         Bitmap frontside_bitmap = getCurrentImage(false);
         if (frontside_bitmap != null) {
-            String frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, frontside_bitmap);
+            String frontside_path;
+            if (order.getFrontSidePhotoPath() != null && !order.getFrontSidePhotoPath().isEmpty()) {
+                frontside_path = saveBitmapToSD(order.getFrontSidePhotoPath(), frontside_bitmap, true);
+            } else {
+                frontside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, frontside_bitmap, false);
+            }
             order.setFrontSidePhotoPath(frontside_path);
         }
-        String backside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_BACK, mCurrentPostcard);
-        order.setBackSidePhotoPath(backside_path);
+        if (mCurrentPostcard != null) {
+            String backside_path;
+            if (order.getBackSidePhotoPath() != null && !order.getBackSidePhotoPath().isEmpty()) {
+                backside_path = saveBitmapToSD(order.getBackSidePhotoPath(), mCurrentPostcard, true);
+            } else {
+                backside_path = saveBitmapToSD(Const.IMAGE_FILE_NAME_FRONT, mCurrentPostcard, false);
+            }
+            order.setBackSidePhotoPath(backside_path);
+        }
+
         order.setText(etUserTextStr);
         order.setDate(new Date());
         order.setFrame(mFrameManager.getCurrentFrame());
@@ -697,13 +717,18 @@ public class CreatePostcardMainFragment extends Fragment implements XmlClickable
         return result;
     }
 
-    private String saveBitmapToSD(String prefix, Bitmap result) throws SaveImageException {
+    private String saveBitmapToSD(String prefix, Bitmap result, boolean usePrefixAsFileName) throws SaveImageException {
         try {
             String sd_path = Environment.getExternalStorageDirectory().toString();
             OutputStream fOut = null;
             File folder = new File(sd_path + "/" + Const.SAVE_FOLDER);
             folder.mkdirs();
-            File image_file = new File(folder.toString(), prefix + "_" + SDF.format(new Date()) + "_" + folder.list().length + ".png");
+            File image_file;
+            if (usePrefixAsFileName) {
+                image_file = new File(prefix);
+            } else {
+                image_file = new File(folder.toString(), prefix + "_" + SDF.format(new Date()) + "_" + folder.list().length + ".png");
+            }
             try {
                 fOut = new FileOutputStream(image_file);
                 result.compress(Bitmap.CompressFormat.PNG, 100, fOut);
